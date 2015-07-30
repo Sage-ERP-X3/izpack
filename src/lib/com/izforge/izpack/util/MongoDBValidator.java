@@ -30,22 +30,30 @@ public class MongoDBValidator implements com.izforge.izpack.installer.DataValida
             String hostPort = adata.getVariable("mongodb.service.port");
             
             MongoClient mongoClient = new MongoClient( hostName , Integer.parseInt(hostPort) );
-            mongoClient.getVersion();
+            mongoClient.getVersion(); // driver version
             
-            bReturn = Status.OK; 
-
-            // test if syracuse db already exists
-            List<String> lstDb = mongoClient.getDatabaseNames();
-            
-            for (String dbb : lstDb)
+            String version = mongoClient.getDB("test").command("buildInfo").getString("version");
+            if (!version.startsWith("2.6.")) 
             {
-                if (dbb.equals("syracuse"))
-                {
-                    bReturn = Status.WARNING;
-                }
+                bReturn = Status.ERROR;
             }
+            else
+            {
             
-
+                bReturn = Status.OK; 
+    
+                // test if syracuse db already exists
+                List<String> lstDb = mongoClient.getDatabaseNames();
+                
+                for (String dbb : lstDb)
+                {
+                    if (dbb.equals("syracuse"))
+                    {
+                        bReturn = Status.WARNING;
+                    }
+                }
+                
+            }
         }
         catch (Exception ex)
         {

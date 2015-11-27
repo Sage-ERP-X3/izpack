@@ -126,9 +126,21 @@ public class InstallTypePanel extends IzPanel implements ActionListener, ListSel
                 if (uninstallKey.startsWith(uninstallKeyPrefix))
                 {
                     // read path from uninstall string :((
-                    String productPath =  rh.getValue(UninstallKeyName+"\\"+uninstallKey, "UninstallString").getStringData();
-                    String productVersion = rh.getValue(UninstallKeyName+"\\"+uninstallKey, "DisplayVersion").getStringData();
-
+                    String productPath = null;
+                    try {
+                        productPath = rh.getValue(UninstallKeyName+"\\"+uninstallKey, "UninstallString").getStringData();
+                    }
+                    catch (Exception ex) {
+                        continue; 
+                    }
+                      
+                    String productVersion = null;
+                    try {
+                        productVersion = rh.getValue(UninstallKeyName+"\\"+uninstallKey, "DisplayVersion").getStringData();
+                    }
+                    catch (Exception ex) {
+                        continue; 
+                    }
                     productPath = productPath.substring(productPath.lastIndexOf("\"", productPath.length()-2)+1, productPath.length()-29);
                     String name = uninstallKey;
                     if (name.indexOf(" - ")>0)

@@ -4,11 +4,16 @@
 package com.izforge.izpack.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
+import sun.security.x509.X500Name;
 import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.DataValidator;
 import com.izforge.izpack.installer.DataValidator.Status;
@@ -81,10 +86,23 @@ public class UpdatePassphraseValidator implements DataValidator
             String strCertsDir = adata.getVariable("syracuse.dir.certs"); // syracuse.dir.certs
             String strHOST_NAME = adata.getVariable("HOST_NAME");
             String strPassPhraseFile = strCertsDir+"\\"+strHOST_NAME+"\\"+strHOST_NAME+".pwd";
+   
             
             try
             {
                 
+                if (updateMode)
+                {
+                    CertificateFactory factory = CertificateFactory.getInstance("X.509");
+                    InputStream inPemCertFile = new FileInputStream(adata.getVariable("syracuse.ssl.certfile"));
+                    X509Certificate cert = (X509Certificate) factory.generateCertificate(inPemCertFile);
+                    
+                    X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName()); 
+                    
+                    //strHOST_NAME=x500Name.getCommonName().toLowerCase();
+                    
+                    strServerPassphrase = adata.getVariable("syracuse.ssl.pemkeypassword");
+                }
                 //delete old passphrase ?
                 File oldPassphrase = new File (strPassPhraseFile);
                 if (oldPassphrase.exists() && !oldPassphrase.delete()) throw new Exception(strPassPhraseFile);
@@ -205,7 +223,6 @@ public class UpdatePassphraseValidator implements DataValidator
                 sreturn = Status.WARNING;
             }
         }
-        
         
         
         return sreturn;

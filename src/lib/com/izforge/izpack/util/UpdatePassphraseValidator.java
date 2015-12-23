@@ -54,8 +54,8 @@ public class UpdatePassphraseValidator implements DataValidator
         if (adata.getVariable("syracuse.certificate.install")!=null)
             createCertificate = adata.getVariable("syracuse.certificate.install").equalsIgnoreCase("true");
         
-        
-        if (OsVersion.IS_WINDOWS && !updateMode ) /* && createCertificate) */ 
+//        MB passphrase management   21-12-2015
+        if (OsVersion.IS_WINDOWS && updateMode && createCertificate)  
         {
         
             String userName = adata.getVariable("syracuse.winservice.username");
@@ -211,8 +211,7 @@ public class UpdatePassphraseValidator implements DataValidator
                 sreturn = Status.WARNING;
             }
         }
-        
-        
+           
         return sreturn;
     }
 

@@ -27,7 +27,16 @@ public class WinServiceUserValidator implements DataValidator
 
     public Status validateData(AutomatedInstallData adata)
     {
-        if (!OsVersion.IS_WINDOWS) return Status.OK;
+        boolean ConfigService = false;
+        boolean updateMode = false;
+        
+        if (adata.getVariable("MODIFY.IZPACK.INSTALL")!=null)
+            updateMode = adata.getVariable("MODIFY.IZPACK.INSTALL").equalsIgnoreCase("true");
+        
+        if (adata.getVariable("SYRACUSE.service.passphraseupdate")!=null)
+            ConfigService = adata.getVariable("SYRACUSE.service.passphraseupdate").equalsIgnoreCase("true");
+        
+        if (!OsVersion.IS_WINDOWS || (updateMode && !ConfigService) ) return Status.OK;
         
         Status bReturn = Status.ERROR;
         try

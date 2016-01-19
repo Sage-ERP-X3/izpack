@@ -53,7 +53,9 @@ public class UpdatePassphraseValidator implements DataValidator
             updateMode = adata.getVariable("MODIFY.IZPACK.INSTALL").equalsIgnoreCase("true");
         if (adata.getVariable("syracuse.certificate.install")!=null)
             createCertificate = adata.getVariable("syracuse.certificate.install").equalsIgnoreCase("true");
-        
+//      MB passphrase management   21-12-2015
+        if (adata.getVariable("SYRACUSE.service.passphraseupdate")!=null)
+            createCertificate = adata.getVariable("SYRACUSE.service.passphraseupdate").equalsIgnoreCase("true");
 //        MB passphrase management   21-12-2015
         if (OsVersion.IS_WINDOWS && updateMode && createCertificate)  
         {

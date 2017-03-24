@@ -23,6 +23,7 @@ import javax.net.ssl.TrustManagerFactory;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bson.Document;
 
 import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.DataValidator;
@@ -66,7 +67,7 @@ public class MongoDBDataValidator implements DataValidator
             
                 MongoClient mongoClient = new MongoClient( hostName , Integer.parseInt(hostPort) );
                 
-                String version = mongoClient.getDB("test").command("buildInfo").getString("version");
+                String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1)).getString("version");
                 
                 if (!version.startsWith("3.")) 
             	{
@@ -156,14 +157,18 @@ public class MongoDBDataValidator implements DataValidator
                 
                 System.setProperty("jdk.tls.trustNameService","true");
                 
-        		
-                //MongoClientURI cliUri = new MongoClientURI ("mongodb://"+hostName+":"+hostPort+"/syracuse?ssl=true", new MongoClientOptions.Builder().sslEnabled(true).build());
+                MongoClientOptions.Builder opts = MongoClientOptions.builder();
+                				opts.sslEnabled(true);
+                				opts.serverSelectionTimeout(60000);
                 
+                //final MongoClient mongoClient = new MongoClient( new ServerAddress(hostName, Integer.parseInt(hostPort)) , new MongoClientOptions.Builder().sslEnabled(true).build());
+                MongoClient mongoClient = new MongoClient( new ServerAddress(hostName, Integer.parseInt(hostPort)) , opts.build());
                 
-                MongoClient mongoClient = new MongoClient( new ServerAddress(hostName, Integer.parseInt(hostPort)) , new MongoClientOptions.Builder().sslEnabled(true).build());
+                //MongoClientURI cliUri = new MongoClientURI ("mongodb://"+hostName+":"+hostPort+"/syracuse?ssl=true", new MongoClientOptions.Builder().sslEnabled(true).build());   
                 //MongoClient mongoClient = new MongoClient(cliUri);
-
-                String version = mongoClient.getDB("test").command("buildInfo").getString("version");
+                //String version = mongoClient.getDB("test").command("buildInfo").getString("version");
+                
+                String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1)).getString("version");
                 
                 if (!version.startsWith("3.")) 
             	{

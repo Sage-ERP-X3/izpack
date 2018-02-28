@@ -27,8 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * This is a convienient class, which helps you to detect / identify the running
- * OS/Distribution
+ * This is a convienient class, which helps you to detect / identify the running OS/Distribution
  * <p/>
  * Created at: Date: Nov 9, 2004 Time: 8:53:22 PM
  *
@@ -58,8 +57,7 @@ public final class OsVersion implements OsVersionConstants, StringConstants {
     /**
      * True if the processor is in the Intel x86_64 family.
      */
-    public static final boolean IS_X86_64 = StringTool.startsWithIgnoreCase(OS_ARCH, X86_64)
-            || StringTool.startsWithIgnoreCase(OS_ARCH, AMD64);
+    public static final boolean IS_X86_64 = StringTool.startsWithIgnoreCase(OS_ARCH, X86_64) || StringTool.startsWithIgnoreCase(OS_ARCH, AMD64);
 
     /**
      * True if the processor is in the PowerPC family.
@@ -135,30 +133,22 @@ public final class OsVersion implements OsVersionConstants, StringConstants {
     /**
      * True if this is Windows XP
      */
-    public static final boolean IS_WINDOWS_XP = StringTool.startsWithIgnoreCase(OS_NAME, WINDOWS_XP_NAME); // IS_WINDOWS
-                                                                                                            // &&
-                                                                                                            // OS_VERSION.equals(WINDOWS_XP_VERSION);
+    public static final boolean IS_WINDOWS_XP = StringTool.startsWithIgnoreCase(OS_NAME, WINDOWS_XP_NAME); // IS_WINDOWS && OS_VERSION.equals(WINDOWS_XP_VERSION);
 
     /**
      * True if this is Windows 2003
      */
-    public static final boolean IS_WINDOWS_2003 = StringTool.startsWithIgnoreCase(OS_NAME, WINDOWS_2003_NAME); // IS_WINDOWS
-                                                                                                                // &&
-                                                                                                                // OS_VERSION.equals(WINDOWS_2003_VERSION);
+    public static final boolean IS_WINDOWS_2003 = StringTool.startsWithIgnoreCase(OS_NAME, WINDOWS_2003_NAME); // IS_WINDOWS && OS_VERSION.equals(WINDOWS_2003_VERSION);
 
     /**
      * True if this is Windows VISTA
      */
-    public static final boolean IS_WINDOWS_VISTA = StringTool.startsWithIgnoreCase(OS_NAME, WINDOWS_VISTA_NAME); // IS_WINDOWS
-                                                                                                                    // &&
-                                                                                                                    // OS_VERSION.equals(WINDOWS_VISTA_VERSION);
+    public static final boolean IS_WINDOWS_VISTA = StringTool.startsWithIgnoreCase(OS_NAME, WINDOWS_VISTA_NAME); // IS_WINDOWS && OS_VERSION.equals(WINDOWS_VISTA_VERSION);
 
     /**
      * True if this is Windows 7
      */
-    public static final boolean IS_WINDOWS_7 = StringTool.startsWithIgnoreCase(OS_NAME, WINDOWS_7_NAME); // IS_WINDOWS
-                                                                                                            // &&
-                                                                                                            // OS_VERSION.equals(WINDOWS_7_VERSION);
+    public static final boolean IS_WINDOWS_7 = StringTool.startsWithIgnoreCase(OS_NAME, WINDOWS_7_NAME); // IS_WINDOWS && OS_VERSION.equals(WINDOWS_7_VERSION);
 
     /**
      * True if this is Windows 7
@@ -212,20 +202,17 @@ public final class OsVersion implements OsVersionConstants, StringConstants {
     /**
      * True if Mandrake/Mandriva Linux was detected
      */
-    public static final boolean IS_MANDRIVA_LINUX = (IS_LINUX && FileUtil.fileContains(getReleaseFileName(), MANDRIVA))
-            || IS_MANDRAKE_LINUX;
+    public static final boolean IS_MANDRIVA_LINUX = (IS_LINUX && FileUtil.fileContains(getReleaseFileName(), MANDRIVA)) || IS_MANDRAKE_LINUX;
 
     /**
      * True if SuSE Linux was detected
      */
-    public static final boolean IS_SUSE_LINUX = IS_LINUX
-            && FileUtil.fileContains(getReleaseFileName(), SUSE, true); /* caseInsensitive , since 'SUSE' 10 */
+    public static final boolean IS_SUSE_LINUX = IS_LINUX && FileUtil.fileContains(getReleaseFileName(), SUSE, true); /* caseInsensitive , since 'SUSE' 10 */
 
     /**
      * True if Debian Linux or derived was detected
      */
-    public static final boolean IS_DEBIAN_LINUX = (IS_LINUX && FileUtil.fileContains(PROC_VERSION, DEBIAN))
-            || (IS_LINUX && new File("/etc/debian_version").exists());
+    public static final boolean IS_DEBIAN_LINUX = (IS_LINUX && FileUtil.fileContains(PROC_VERSION, DEBIAN)) || (IS_LINUX && new File("/etc/debian_version").exists());
 
     /**
      * OS_VERSION = System.getProperty("os.version")
@@ -261,8 +248,7 @@ public final class OsVersion implements OsVersionConstants, StringConstants {
     /**
      * Gets the etc Release Filename
      *
-     * @return name of the file the release info is stored in for Linux
-     *         distributions
+     * @return name of the file the release info is stored in for Linux distributions
      */
     private static String getReleaseFileName() {
         String result = "";
@@ -316,6 +302,8 @@ public final class OsVersion implements OsVersionConstants, StringConstants {
      * DISTRIB_CODENAME=xenial 
      * DISTRIB_DESCRIPTION="Ubuntu 16.04.2 LTS"
      * 
+     * @return version number with the pattern $MAJOR.$MINOR.$SECURITY. 
+     * Ex: "16.04.2", "5.3", "7.1.1503", etc ... 
      */
     private static String getLinuxVersionFromFile(String strReleaseFile) {
         final String regex = "^(?:(\\d+)\\.)?(?:(\\d+)\\.)?(\\*|\\d+)$";
@@ -428,50 +416,43 @@ public final class OsVersion implements OsVersionConstants, StringConstants {
             }
         } else if (IS_REDHAT_LINUX) {
             try {
-                result = REDHAT + SP + LINUX + NL
-                        + StringTool.stringArrayListToString(FileUtil.getFileContent("/etc/redhat-release"));
+                result = REDHAT + SP + LINUX + NL + StringTool.stringArrayListToString(FileUtil.getFileContent("/etc/redhat-release"));
             } catch (IOException e) {
                 // TODO ignore
             }
         } else if (IS_CENTOS_LINUX) {
             try {
-                result = CENTOS + SP + LINUX + NL
-                        + StringTool.stringArrayListToString(FileUtil.getFileContent("/etc/centos-release"));
+                result = CENTOS + SP + LINUX + NL + StringTool.stringArrayListToString(FileUtil.getFileContent("/etc/centos-release"));
             } catch (IOException e) {
                 // TODO ignore
             }
         } else if (IS_ORACLE_LINUX) {
             try {
-                result = ORACLE + SP + LINUX + NL
-                        + StringTool.stringArrayListToString(FileUtil.getFileContent("/etc/oracle-release"));
+                result = ORACLE + SP + LINUX + NL + StringTool.stringArrayListToString(FileUtil.getFileContent("/etc/oracle-release"));
             } catch (IOException e) {
                 // TODO ignore
             }
         } else if (IS_FEDORA_LINUX) {
             try {
-                result = FEDORA + SP + LINUX + NL
-                        + StringTool.stringArrayListToString(FileUtil.getFileContent(getReleaseFileName()));
+                result = FEDORA + SP + LINUX + NL + StringTool.stringArrayListToString(FileUtil.getFileContent(getReleaseFileName()));
             } catch (IOException e) {
                 // TODO ignore
             }
         } else if (IS_MANDRAKE_LINUX) {
             try {
-                result = MANDRAKE + SP + LINUX + NL
-                        + StringTool.stringArrayListToString(FileUtil.getFileContent(getReleaseFileName()));
+                result = MANDRAKE + SP + LINUX + NL + StringTool.stringArrayListToString(FileUtil.getFileContent(getReleaseFileName()));
             } catch (IOException e) {
                 // TODO ignore
             }
         } else if (IS_MANDRIVA_LINUX) {
             try {
-                result = MANDRIVA + SP + LINUX + NL
-                        + StringTool.stringArrayListToString(FileUtil.getFileContent(getReleaseFileName()));
+                result = MANDRIVA + SP + LINUX + NL + StringTool.stringArrayListToString(FileUtil.getFileContent(getReleaseFileName()));
             } catch (IOException e) {
                 // TODO ignore
             }
         } else if (IS_DEBIAN_LINUX) {
             try {
-                result = DEBIAN + SP + LINUX + NL
-                        + StringTool.stringArrayListToString(FileUtil.getFileContent("/etc/debian_version"));
+                result = DEBIAN + SP + LINUX + NL + StringTool.stringArrayListToString(FileUtil.getFileContent("/etc/debian_version"));
             } catch (IOException e) {
                 // TODO ignore
             }
@@ -509,8 +490,7 @@ public final class OsVersion implements OsVersionConstants, StringConstants {
         }
 
         if (IS_WINDOWS) {
-            result.append(System.getProperty(OSNAME)).append(SP).append(System.getProperty("sun.os.patch.level", ""))
-                    .append(NL);
+            result.append(System.getProperty(OSNAME)).append(SP).append(System.getProperty("sun.os.patch.level", "")).append(NL);
         }
         return result.toString();
     }

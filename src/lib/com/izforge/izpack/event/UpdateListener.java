@@ -193,13 +193,14 @@ public class UpdateListener extends SimpleInstallerListener implements CleanupCl
 
             Debug.log("exitCode: "+ exitCode);
 
-            if (exitCode != 0)
-            {
-                // script doesn't return 0 = SUCCESS
-                // throw an exception
-                
-                throw new InstallerException(resource + " return code is " + exitCode + " !");
-            }
+			if (exitCode != 0) {
+				// script doesn't return 0 = SUCCESS
+				// throw an exception
+				// Debug.log("Command failed: "+ String.join(",", procBuilder.command()));
+				Debug.log("Command failed: " + procBuilder.command());
+
+				throw new InstallerException(resource + " return code is " + exitCode + " !");
+			}
         }
 
     }

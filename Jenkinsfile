@@ -22,10 +22,6 @@ node {
             def buildRandom = sh(script: 'echo $(cat /dev/urandom | tr -cd "a-f0-9" | head -c 10)', returnStdout: true).substring(0,9)
 			def stageTag = "stage_${BUILD_ID}_${buildRandom}"
             stage('Build docker image') {
-                sh('mkdir -p "${CI_DEST}/syracuse/shadow-modules/linux-x64-${SHADOW_MODULES_VERSION}"')
-                sh('cp -R "${WORKSPACE}/shadow-modules/linux-x64-${SHADOW_MODULES_VERSION}" "${CI_DEST}/syracuse/shadow-modules/"')
-                sh('cp -R "${WORKSPACE}/docker" "${CI_DEST}/syracuse"')
-                sh('cp "${WORKSPACE}/nodelocal"* "${CI_DEST}/syracuse"')
                 izPackImage = docker.build("${SYRACUSE_IMAGE}:${stageTag}", '-f docker/Dockerfile-izpack \
                     --build-arg "https_proxy=${HTTP_PROXY}" \
                     --build-arg "http_proxy=${HTTPS_PROXY}" \

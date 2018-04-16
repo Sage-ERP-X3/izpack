@@ -1,7 +1,7 @@
 #!groovy
 
 node {
-    withEnv(["CI_DEST=${WORKSPACE}/tmp/customer_image", "SYRACUSE_IMAGE=x3-syracuse-etna"]) {
+    withEnv(["CI_DEST=${WORKSPACE}/tmp/customer_image"]) {
         def tag
         if("${BRANCH_NAME}" == 'master') {
             tag = 'latest'
@@ -22,7 +22,7 @@ node {
             def buildRandom = sh(script: 'echo $(cat /dev/urandom | tr -cd "a-f0-9" | head -c 10)', returnStdout: true).substring(0,9)
 			def stageTag = "stage_${BUILD_ID}_${buildRandom}"
             stage('Build docker image') {
-                izPackImage = docker.build("${SYRACUSE_IMAGE}:${stageTag}", '-f docker/Dockerfile-izpack \
+                izPackImage = docker.build("izpack:${stageTag}", '-f docker/Dockerfile-izpack \
                     --build-arg "https_proxy=${HTTP_PROXY}" \
                     --build-arg "http_proxy=${HTTPS_PROXY}" \
 		            --pull \
@@ -33,7 +33,7 @@ node {
             if ((currentBuild.result == null) || (currentBuild.result == "SUCCESS")) {
                 if (tag) {
                     stage('Push image') {
-                        //izPackImage.push(tag)
+                        izPackImage.push(tag)
                     }
                 }   
             }

@@ -33,6 +33,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 
+
+class BrowserOpener implements HyperlinkListener {    
+        @Override
+        public void hyperlinkUpdate(HyperlinkEvent event) {
+            if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                try {
+                    Desktop.getDesktop().browse(event.getURL().toURI());
+                } catch (IOException | URISyntaxException ex) {
+                     
+                }
+            }
+        }
+    }
 /**
  * The IzPack HTML license panel.
  *
@@ -57,6 +70,7 @@ public class HTMLLicencePanel extends IzPanel implements HyperlinkListener, Acti
     private JRadioButton yesRadio;
     private JRadioButton noRadio;
 
+	
     /**
      * The constructor.
      *
@@ -77,7 +91,7 @@ public class HTMLLicencePanel extends IzPanel implements HyperlinkListener, Acti
         {
             textArea = new JEditorPane();
             textArea.setEditable(false);
-            textArea.addHyperlinkListener(this);
+            textArea.addHyperlinkListener(new BrowserOpener());
             JScrollPane scroller = new JScrollPane(textArea);
             textArea.setPage(loadLicence());
             add(scroller, NEXT_LINE);

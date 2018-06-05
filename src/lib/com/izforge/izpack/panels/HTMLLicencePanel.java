@@ -169,7 +169,7 @@ public class HTMLLicencePanel extends IzPanel implements HyperlinkListener, Acti
 				try {
                     Desktop.getDesktop().browse(e.getURL().toURI());
                 } catch (Exception err) {
-                     
+                    textArea.setPage(e.getURL()); 
                 }
             }
         }

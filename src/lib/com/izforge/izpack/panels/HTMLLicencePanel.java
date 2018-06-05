@@ -167,7 +167,7 @@ public class HTMLLicencePanel extends IzPanel implements HyperlinkListener, Acti
             {            
 				try {
                     Desktop.getDesktop().browse(e.getURL().toURI());
-                } catch (IOException | URISyntaxException ex) {
+                } catch (Exception err) {
                      
                 }
             }

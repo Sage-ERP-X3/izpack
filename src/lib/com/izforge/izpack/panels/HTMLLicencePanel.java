@@ -33,19 +33,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 
-
-class BrowserOpener implements HyperlinkListener {    
-        @Override
-        public void hyperlinkUpdate(HyperlinkEvent event) {
-            if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                try {
-                    Desktop.getDesktop().browse(event.getURL().toURI());
-                } catch (IOException | URISyntaxException ex) {
-                     
-                }
-            }
-        }
-    }
 /**
  * The IzPack HTML license panel.
  *
@@ -91,7 +78,7 @@ public class HTMLLicencePanel extends IzPanel implements HyperlinkListener, Acti
         {
             textArea = new JEditorPane();
             textArea.setEditable(false);
-            textArea.addHyperlinkListener(new BrowserOpener());
+            textArea.addHyperlinkListener(this);
             JScrollPane scroller = new JScrollPane(textArea);
             textArea.setPage(loadLicence());
             add(scroller, NEXT_LINE);
@@ -177,8 +164,12 @@ public class HTMLLicencePanel extends IzPanel implements HyperlinkListener, Acti
         try
         {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
-            {
-                textArea.setPage(e.getURL());
+            {            
+				try {
+                    Desktop.getDesktop().browse(e.getURL().toURI());
+                } catch (IOException | URISyntaxException ex) {
+                     
+                }
             }
         }
         catch (Exception err)

@@ -32,6 +32,7 @@ import javax.swing.event.HyperlinkListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.awt.Desktop;
 
 /**
  * The IzPack HTML license panel.

@@ -21,6 +21,8 @@ node {
             def izPackImage
             def buildRandom = sh(script: 'echo $(cat /dev/urandom | tr -cd "a-f0-9" | head -c 10)', returnStdout: true).substring(0,9)
 			def stageTag = "stage_${BUILD_ID}_${buildRandom}"
+            // Add ant composant
+            sh('cp -r /var/jenkins_home/userContent/binary/ant-lib .')
             stage('Build docker image') {
                 izPackImage = docker.build("izpack:${stageTag}", '-f docker/Dockerfile-izpack \
                     --build-arg "https_proxy=${HTTP_PROXY}" \

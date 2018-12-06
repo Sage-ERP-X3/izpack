@@ -1,7 +1,7 @@
 FROM openjdk:latest
 
 # install needed packages
-RUN apt-get update && apt-get install -y ant  && apt-get install -y zip
+RUN apt-get update && apt-get install -y ant  && apt-get install -y zip && apt-get install -y xmlstarlet
 RUN mkdir -p izpack
 
 COPY /ant-lib /usr/share/ant/lib/

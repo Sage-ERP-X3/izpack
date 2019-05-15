@@ -247,12 +247,14 @@ public class AdxCompInstallerListener extends SimpleInstallerListener implements
                 //runtime.odbc.dbhome
                 Node nodedbhome = module.getElementsByTagName("runtime.odbc.dbhome").item(0);
                 if (nodedbhome == null) nodedbhome = module.appendChild(xdoc.createElement("runtime.odbc.dbhome"));
+                // X3-134671 : In update mode, we have to let the console manage this node. We let the value retreived
+                //nodedbhome.setTextContent("");
 
-                nodedbhome.setTextContent("");
                 //runtime.odbc.forcedblink
                 Node nodedblink = module.getElementsByTagName("runtime.odbc.forcedblink").item(0);
                 if (nodedblink == null) nodedblink = module.appendChild(xdoc.createElement("runtime.odbc.forcedblink"));
-                nodedblink.setTextContent("False");
+                // X3-134671 : In update mode, we have to let the console manage this node. We let the value retreived
+                //nodedblink.setTextContent("False");
                 
             }
             

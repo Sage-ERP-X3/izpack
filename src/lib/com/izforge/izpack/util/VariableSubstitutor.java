@@ -604,6 +604,18 @@ public class VariableSubstitutor implements Serializable
                     if (varvalue == null)
                         varvalue = "";
                 }
+                // TODO: Add temporary this feature to Read Registy Value: 
+                // regkey[HKLM:SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full:Release]
+                // To be replaced in IZPack 5 by  
+                // <variable name="dotNetInstalledVersion" checkonce="true" regkey="HKLM:SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" regvalue="Release" ignorefailure="true"/> 
+                // check for Registry variables
+                if (braces && name.startsWith("regkey[")
+                        && (name.lastIndexOf(']') == name.length() - 1))
+                {
+                    varvalue = IoHelper.getRegistry(name.substring(7, name.length() - 1));
+                    if (varvalue == null)
+                        varvalue = "";
+                }
                 else
                 {
                     varvalue = variables.getProperty(name);

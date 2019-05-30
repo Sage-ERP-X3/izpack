@@ -485,30 +485,32 @@ public class InstallerFrame extends JFrame {
                 "Dialog", Font.PLAIN, 10))));
 
         // Add help Button to the navigation panel
-        this.helpButton = ButtonFactory.createButton(langpack.getString("installer.help"), icons
-                .getImageIcon("help"), installdata.buttonsHColor);
+        // this.helpButton = ButtonFactory.createButton(langpack.getString("installer.help"), icons.getImageIcon("help"), installdata.buttonsHColor);
+        this.helpButton = ButtonFactory.createButton(langpack.getString("installer.help"), installdata.buttonsHColor);
         navPanel.add(this.helpButton);
         this.helpButton.setName("HelpButton");
         this.helpButton.addActionListener(new HelpHandler());
 
         navPanel.add(Box.createHorizontalGlue());
 
-        prevButton = ButtonFactory.createButton(langpack.getString("installer.prev"), icons
-                .getImageIcon("stepback"), installdata.buttonsHColor);
+        // Remove the icon to get a modern look
+        // prevButton = ButtonFactory.createButton(langpack.getString("installer.prev"), icons.getImageIcon("stepback"), installdata.buttonsHColor);
+        prevButton = ButtonFactory.createButton(langpack.getString("installer.prev"), installdata.buttonsHColor);
         navPanel.add(prevButton);
         prevButton.addActionListener(navHandler);
 
         navPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
-        nextButton = ButtonFactory.createButton(langpack.getString("installer.next"), icons
-                .getImageIcon("stepforward"), installdata.buttonsHColor);
+        // Remove the icon to get a modern look
+        // nextButton = ButtonFactory.createButton(langpack.getString("installer.next"), icons.getImageIcon("stepforward"), installdata.buttonsHColor);
+        nextButton = ButtonFactory.createButton(langpack.getString("installer.next"), installdata.buttonsHColor);
         navPanel.add(nextButton);
         nextButton.addActionListener(navHandler);
 
         navPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
-        quitButton = ButtonFactory.createButton(langpack.getString("installer.quit"), icons
-                .getImageIcon("stop"), installdata.buttonsHColor);
+        // quitButton = ButtonFactory.createButton(langpack.getString("installer.quit"), icons.getImageIcon("stop"), installdata.buttonsHColor);
+        quitButton = ButtonFactory.createButton(langpack.getString("installer.quit"), installdata.buttonsHColor);
         navPanel.add(quitButton);
         quitButton.addActionListener(navHandler);
       

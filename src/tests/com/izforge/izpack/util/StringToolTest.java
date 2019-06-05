@@ -21,34 +21,33 @@ package com.izforge.izpack.util;
 
 import junit.framework.TestCase;
 
-public class StringToolTest extends TestCase
-{
+public class StringToolTest extends TestCase {
 
-    /*
-     * Class under test for String replace(String, String, String[, boolean])
-     */
-    public void testReplace()
-    {
-        String ref = "ABC-012-def";
 
-        TestCase.assertEquals(null, StringTool.replace(null, null, null));
-        TestCase.assertEquals("ABC-012-def", StringTool.replace(ref, null, null));
-        TestCase.assertEquals("ABC-012-def", StringTool.replace(ref, "something", null));
-        TestCase.assertEquals("ABC012def", StringTool.replace(ref, "-", null));
-        TestCase.assertEquals("abc-012-def", StringTool.replace(ref, "ABC", "abc"));
-        TestCase.assertEquals("ABC-012-def", StringTool.replace(ref, "abc", "abc", false));
-        TestCase.assertEquals("ABC-012-def", StringTool.replace(ref, "abc", "abc", true));
-    }
 
-    /*
-     * Class under test for String normalizePath(String[, String])
-     */
-    public void testNormalizePath()
-    {
-        TestCase.assertEquals("C:\\Foo\\Bar\\is\\so\\boring;plop;plop", StringTool.normalizePath(
-                "C:\\Foo/Bar/is\\so\\boring:plop;plop", "\\"));
-        TestCase.assertEquals("/some/where/that:matters:really", StringTool.normalizePath(
-                "/some/where\\that:matters;really", "/"));
-    }
+	/*
+	 * Class under test for String replace(String, String, String[, boolean])
+	 */
+	public void testReplace() {
+		String ref = "ABC-012-def";
+
+		TestCase.assertEquals(null, StringTool.replace(null, null, null));
+		TestCase.assertEquals("ABC-012-def", StringTool.replace(ref, null, null));
+		TestCase.assertEquals("ABC-012-def", StringTool.replace(ref, "something", null));
+		TestCase.assertEquals("ABC012def", StringTool.replace(ref, "-", null));
+		TestCase.assertEquals("abc-012-def", StringTool.replace(ref, "ABC", "abc"));
+		TestCase.assertEquals("ABC-012-def", StringTool.replace(ref, "abc", "abc", false));
+		TestCase.assertEquals("ABC-012-def", StringTool.replace(ref, "abc", "abc", true));
+	}
+
+	/*
+	 * Class under test for String normalizePath(String[, String])
+	 */
+	public void testNormalizePath() {
+		TestCase.assertEquals("C:\\Foo\\Bar\\is\\so\\boring;plop;plop",
+				StringTool.normalizePath("C:\\Foo/Bar/is\\so\\boring:plop;plop", "\\"));
+		TestCase.assertEquals("/some/where/that:matters:really",
+				StringTool.normalizePath("/some/where\\that:matters;really", "/"));
+	}
 
 }

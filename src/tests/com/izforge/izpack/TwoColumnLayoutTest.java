@@ -30,6 +30,8 @@ package com.izforge.izpack;
 
 import com.izforge.izpack.gui.TwoColumnConstraints;
 import com.izforge.izpack.gui.TwoColumnLayout;
+import com.izforge.izpack.util.IoHelper;
+import com.izforge.izpack.util.RegistryTest;
 
 import javax.swing.*;
 import java.awt.*;
@@ -128,6 +130,9 @@ public class TwoColumnLayoutTest implements ActionListener
             removed = false;
 
         }
+       
+        RegistryTest.readRegistryTest();
+       
         converterPanel.repaint();
 
     }

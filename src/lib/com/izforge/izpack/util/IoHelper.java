@@ -621,8 +621,8 @@ public class IoHelper {
 	}
 
 	/*
-	 * @param keyRegistryString
-     * HKLM:SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full:Release
+	 * @param keyRegistryString Ex: HKLM:SOFTWARE\Microsoft\NET Framework
+	 * Setup\NDP\v4\Full:Release
 	 */
 	public static String getRegistry(String keyRegistryString) {
 		if (OsVersion.IS_WINDOWS) {
@@ -635,11 +635,16 @@ public class IoHelper {
 				int hkey = WinRegistry.HKEY_LOCAL_MACHINE; // HKLM
 				if (regHKey.equals("HKCU")) {
 					hkey = WinRegistry.HKEY_CURRENT_USER;
+				} else if (regHKey.equals("HKCR")) {
+					hkey = WinRegistry.HKEY_CLASSES_ROOT;
 				}
-				return WinRegistry.readString(hkey, regKeyPath, regValueName);
-
+				String result = WinRegistry.valueForKey(hkey, regKeyPath, regValueName);
+				if (result != null && result.startsWith("0x")) {
+					int intValue = Integer.parseInt(result.substring(2), 16);
+					result = intValue + "";
+				}
+				return result;
 			} catch (Exception e) { // IllegalArgumentException | IllegalAccessException | InvocationTargetException
-									// e) {
 				e.printStackTrace();
 			}
 			// WinRegistry.HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows

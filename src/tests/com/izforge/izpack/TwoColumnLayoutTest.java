@@ -30,6 +30,7 @@ package com.izforge.izpack;
 
 import com.izforge.izpack.gui.TwoColumnConstraints;
 import com.izforge.izpack.gui.TwoColumnLayout;
+import com.izforge.izpack.util.ElasticSearchDataValidator;
 import com.izforge.izpack.util.IoHelper;
 import com.izforge.izpack.util.RegistryTest;
 
@@ -131,7 +132,10 @@ public class TwoColumnLayoutTest implements ActionListener
 
         }
        
-        RegistryTest.readRegistryTest();
+		// DEBUG FRDEPO
+        // ElasticSearchDataValidator vali =new ElasticSearchDataValidator();
+        // vali.validateData(null);
+        // RegistryTest.readRegistryTest();
        
         converterPanel.repaint();
 

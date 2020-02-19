@@ -644,11 +644,13 @@ public class IoHelper {
 					result = intValue + "";
 				}
 				return result;
+			} catch (java.lang.IllegalArgumentException e1) {
+				// Case Registry path doesn't exist.
+				Debug.log("Registry Key " + keyRegistryString + " not found.");
 			} catch (Exception e) { // IllegalArgumentException | IllegalAccessException | InvocationTargetException
 				e.printStackTrace();
 			}
-			// WinRegistry.HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows
-			// NT\\CurrentVersion", "ProductName");
+			// WinRegistry.HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", "ProductName");
 		}
 		return (null);
 	}

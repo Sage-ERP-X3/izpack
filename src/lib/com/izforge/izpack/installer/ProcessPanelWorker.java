@@ -133,16 +133,16 @@ public class ProcessPanelWorker implements Runnable
             String conditionid = job_el.hasAttribute("condition") ? job_el.getAttribute("condition") : job_el.hasAttribute("conditionid") ? job_el.getAttribute("conditionid") : null;
             if ((conditionid != null) && (conditionid.length() > 0))
             {
-                Debug.trace("Condition for job.");
+                Debug.trace("Condition '"+conditionid+"' for job '"+job_el.getName()+"'");
                 Condition cond = RulesEngine.getCondition(conditionid);
                 if ((cond != null) && !cond.isTrue())
                 {
-                    Debug.trace("condition is not fulfilled.");
+                    Debug.trace("condition '" + conditionid + "' is NOT fulfilled.");
                     // skip, if there is a condition and this condition isn't true
                     continue;
                 }
             }
-            Debug.trace("Condition is fulfilled or not existent.");
+            Debug.trace("Condition '"+conditionid+"' is fulfilled or not existent.");
             // ExecuteForPack Patch
             // Check if processing required for pack
             Vector<IXMLElement> forPacks = job_el.getChildrenNamed("executeForPack");
@@ -336,11 +336,11 @@ public class ProcessPanelWorker implements Runnable
             String conditionid = bc.getConditionid();
             if ((conditionid != null) && (conditionid.length() > 0))
             {
-                Debug.trace("Condition for job.");
+                Debug.trace("Condition '" + conditionid + "' for job ");
                 Condition cond = RulesEngine.getCondition(conditionid);
                 if ((cond != null) && !cond.isTrue())
                 {
-                    Debug.trace("condition is not fulfilled.");
+                    Debug.trace("condition '" + conditionid + "' is NOT fulfilled. Result : "+ cond);
                     // skip, if there is a condition and this condition isn't true
                     continue;
                 }

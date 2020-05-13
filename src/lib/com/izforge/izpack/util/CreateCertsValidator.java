@@ -97,6 +97,13 @@ public class CreateCertsValidator implements DataValidator
             pem.writeObject(servercert);
             pem.close();
             
+            KeyStore keyStore = KeyStore.getInstance("PKCS12", "BC");
+            keyStore.load(null, null);
+            keyStore.setKeyEntry("trust", pairServer.getPrivate(), null, new Certificate[] { servercert });
+            String exportPassword = "sage";
+            keyStore.store(new FileOutputStream( strCertPath + File.separator + hostname + ".p12"), exportPassword.toCharArray());
+
+            
             String serverpassphrase = adata.getVariable("mongodb.ssl.serverpassphrase");
             KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + hostname + ".key", pairServer, serverpassphrase.toCharArray());
            

@@ -1,16 +1,17 @@
 package com.izforge.izpack.util;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.KeyStore;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.SignatureException;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -95,12 +96,6 @@ public class CreateCertsValidator implements DataValidator
             pem = new PEMWriter(servercertfile);
             pem.writeObject(servercert);
             pem.close();
-            
-            KeyStore keyStore = KeyStore.getInstance("PKCS12", "BC");
-            keyStore.load(null, null);
-            keyStore.setKeyEntry("trust", pairServer.getPrivate(), null, new Certificate[] { servercert });
-            String exportPassword = "sage";
-            keyStore.store(new FileOutputStream( strCertPath + File.separator + hostname + ".p12"), exportPassword.toCharArray());
             
             String serverpassphrase = adata.getVariable("mongodb.ssl.serverpassphrase");
             KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + hostname + ".key", pairServer, serverpassphrase.toCharArray());

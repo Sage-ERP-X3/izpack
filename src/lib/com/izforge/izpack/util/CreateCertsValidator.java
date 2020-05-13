@@ -1,6 +1,7 @@
 package com.izforge.izpack.util;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
@@ -10,6 +11,7 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.SignatureException;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;

@@ -106,7 +106,7 @@ public class CreateCertsValidator implements DataValidator
 
             
             String serverpassphrase = adata.getVariable("mongodb.ssl.serverpassphrase");
-            if (serverpassphrase) {
+            if (serverpassphrase != null) {
               KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + hostname + ".key", pairServer, serverpassphrase.toCharArray());
             } else {
               KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + hostname + ".key", pairServer, null);

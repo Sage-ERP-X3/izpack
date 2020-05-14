@@ -106,8 +106,11 @@ public class CreateCertsValidator implements DataValidator
 
             
             String serverpassphrase = adata.getVariable("mongodb.ssl.serverpassphrase");
-            KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + hostname + ".key", pairServer, serverpassphrase.toCharArray());
-           
+            if (serverpassphrase) {
+              KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + hostname + ".key", pairServer, serverpassphrase.toCharArray());
+            } else {
+              KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + hostname + ".key", pairServer, null);
+            }
             adata.setVariable("mongodb.ssl.usecafile", "true");
             
             File pemKeyFile = new File(strCertPath + File.separator + hostname + ".pem");

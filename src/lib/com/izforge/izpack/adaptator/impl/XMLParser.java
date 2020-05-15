@@ -26,6 +26,8 @@ package com.izforge.izpack.adaptator.impl;
 import com.izforge.izpack.adaptator.IXMLElement;
 import com.izforge.izpack.adaptator.IXMLParser;
 import com.izforge.izpack.adaptator.XMLException;
+
+import org.apache.bsf.util.IOUtils;
 import org.w3c.dom.Node;
 import org.xml.sax.*;
 
@@ -35,11 +37,16 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.stream.Collectors;
 
 /**
  * @author Anthonin Bonnefoy
@@ -131,10 +138,11 @@ public class XMLParser implements IXMLParser
             filter.applyLN(result);
         } catch (TransformerException e)
         {
-            String extraInfos = null;
+        	String extraInfos = new BufferedReader(new InputStreamReader(inputSource.getByteStream())).lines().collect(Collectors.joining("\n"));
+   	         	
             if (this.parsedItem != null)
             {
-                extraInfos = " in " + parsedItem;
+                extraInfos+= " in " + parsedItem;
             }
             // we try to get the location of the error.
             // can't use an ErrorHander here !

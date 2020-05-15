@@ -87,7 +87,7 @@ public class CreateCertsValidator implements DataValidator
             
             
             // then create server cert
-            KeyPair pairServer = generateRSAKeyPair(2048);
+            KeyPair pairServer = generateRSAKeyPair(4096);
             
             String hostname = adata.getVariable("mongodb.ssl.certificate.hostname");
             X509Certificate servercert = generateServerV3Certificate(pairServer, countryCode, organization, organizationalUnit,
@@ -98,19 +98,15 @@ public class CreateCertsValidator implements DataValidator
             pem.writeObject(servercert);
             pem.close();
             
+            // Starting with mongo 4.0 on windows the certificate must be put in windows store
             KeyStore keyStore = KeyStore.getInstance("PKCS12", "BC");
             keyStore.load(null, null);
             keyStore.setKeyEntry("trust", pairServer.getPrivate(), null, new Certificate[] { servercert });
-            String exportPassword = "sage";
-            keyStore.store(new FileOutputStream( strCertPath + File.separator + hostname + ".p12"), exportPassword.toCharArray());
-
-            
             String serverpassphrase = adata.getVariable("mongodb.ssl.serverpassphrase");
-            if (serverpassphrase != null) {
-              KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + hostname + ".key", pairServer, serverpassphrase.toCharArray());
-            } else {
-              KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + hostname + ".key", pairServer, null);
-            }
+            keyStore.store(new FileOutputStream( strCertPath + File.separator + hostname + ".p12"), serverpassphrase.toCharArray());
+            
+            KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + hostname + ".key", pairServer, serverpassphrase.toCharArray());
+            
             adata.setVariable("mongodb.ssl.usecafile", "true");
             
             File pemKeyFile = new File(strCertPath + File.separator + hostname + ".pem");
@@ -120,7 +116,7 @@ public class CreateCertsValidator implements DataValidator
             KeyPairGeneratorDataValidator.mergeFiles(new File[]{certFile,privKeyFile}, pemKeyFile);
 
             // then  create a client cert
-            KeyPair pairClient = generateRSAKeyPair(2048);
+            KeyPair pairClient = generateRSAKeyPair(4096);
             X509Certificate clientcert = generateClientV3Certificate(pairClient, countryCode, organization, organizationalUnit,
                     state, city, name, email, validity, cacert , pairCA);
             

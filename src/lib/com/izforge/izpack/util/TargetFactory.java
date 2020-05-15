@@ -695,6 +695,7 @@ public class TargetFactory
 
     public static String getCurrentOSPrefix()
     {
+    	// os.name  =  Windows Server 2019
         String OSName = System.getProperty("os.name").toLowerCase();
         String OSArch = System.getProperty("os.arch").toLowerCase();
         int OS = 0;
@@ -707,7 +708,7 @@ public class TargetFactory
         {
             OS = WINDOWS;
             OSFlavor = STANDARD;
-            OSarchitecture = X86;
+            OSarchitecture = X86; // X86;
 
             if (OSName.indexOf("nt") > -1)
             {
@@ -718,6 +719,10 @@ public class TargetFactory
                 OSFlavor = NT;
             }
             else if (OSName.indexOf("xp") > -1)
+            {
+                OSFlavor = NT;
+            }
+            else if (OSName.indexOf("server") > -1)
             {
                 OSFlavor = NT;
             }

@@ -184,6 +184,16 @@ public interface OsVersionConstants
     public final static String WINDOWS_8_VERSION = "6.2";
     public final static String WINDOWS_8_NAME = "Windows 8";
 
+
+    /**
+     * Windows Server 2019
+     * Windows Server 2016 will always be 10.0.14393.### where ### increments as cumulative updates are installed.
+     * Windows Server 2019 will always be 10.0.17763.### where ### increments as cumulative updates are installed.
+     */
+    public final static String WINDOWS_2019_VERSION = "10.0";
+    public final static String WINDOWS_2019_NAME = "Windows Server 2019";
+
+    
     /**
      * REDHAT  = "RedHat"
      */

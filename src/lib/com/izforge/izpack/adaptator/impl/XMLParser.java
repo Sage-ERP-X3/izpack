@@ -27,7 +27,6 @@ import com.izforge.izpack.adaptator.IXMLElement;
 import com.izforge.izpack.adaptator.IXMLParser;
 import com.izforge.izpack.adaptator.XMLException;
 
-import org.apache.bsf.util.IOUtils;
 import org.w3c.dom.Node;
 import org.xml.sax.*;
 
@@ -42,7 +41,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;

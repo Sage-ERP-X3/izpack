@@ -61,14 +61,15 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         String certFile = strCertPath + File.separator + hostname + ".crt";
         String privKeyFile = strCertPath + File.separator + hostname + ".key";
         String p12File = strCertPath + File.separator + hostname + ".p12";
-
+        String serverpassphrase = adata.getVariable("mongodb.ssl.serverpassphrase");
+        
         if((new File(p12File)).exists())  return Status.OK; 
         try {
             InputStream inPemKeyFile = new FileInputStream(pemKeyFile);
             InputStream inPemCertFile = new FileInputStream(certFile);
 
             CertificateFactory factory = CertificateFactory.getInstance("X.509"); 
-            X509Certificate cert = (X509Certificate) factory.generateCertificate(inPemCertFile);
+            X509Certificate servercert = (X509Certificate) factory.generateCertificate(inPemCertFile);
 
             PEMParser pemParser = new PEMParser(new InputStreamReader(inPemKeyFile));
             Object object = pemParser.readObject();
@@ -78,7 +79,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
             {
                 // Encrypted key - we will use provided password
                 PEMEncryptedKeyPair ckp = (PEMEncryptedKeyPair) object;
-                PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(fieldPemKeyPassword.toCharArray());
+                PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(serverpassphrase.toCharArray());
                 pairServer = converter.getKeyPair(ckp.decryptKeyPair(decProv));
             }
             else
@@ -91,7 +92,6 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
             KeyStore keyStore = KeyStore.getInstance("PKCS12", "BC");
             keyStore.load(null, null);
             keyStore.setKeyEntry("trust", pairServer.getPrivate(), null, new Certificate[] { servercert });
-            String serverpassphrase = adata.getVariable("mongodb.ssl.serverpassphrase");
             keyStore.store(new FileOutputStream( strCertPath + File.separator + hostname + ".p12"), serverpassphrase.toCharArray());
         }  
         catch (Exception ex)

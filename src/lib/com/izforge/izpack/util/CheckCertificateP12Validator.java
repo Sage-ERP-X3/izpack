@@ -60,7 +60,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         String pemKeyFile = strCertPath + File.separator + hostname + ".pem";
         String certFile = strCertPath + File.separator + hostname + ".crt";
         String privKeyFile = strCertPath + File.separator + hostname + ".key";
-        String p12File = String privKeyFile = strCertPath + File.separator + hostname + ".p12";
+        String p12File = strCertPath + File.separator + hostname + ".p12";
 
         if((new File(p12File)).exists())  return Status.OK; 
         try {

@@ -65,7 +65,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         
         if((new File(p12File)).exists())  return Status.OK; 
         try {
-            InputStream inPemKeyFile = new FileInputStream(pemKeyFile);
+            InputStream inPemKeyFile = new FileInputStream(privKeyFile);
             InputStream inPemCertFile = new FileInputStream(certFile);
 
             CertificateFactory factory = CertificateFactory.getInstance("X.509"); 

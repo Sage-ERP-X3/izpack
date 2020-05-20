@@ -103,7 +103,10 @@ public class CreateCertsValidator implements DataValidator
             keyStore.load(null, null);
             keyStore.setKeyEntry("trust", pairServer.getPrivate(), null, new Certificate[] { servercert });
             String serverpassphrase = adata.getVariable("mongodb.ssl.serverpassphrase");
-            keyStore.store(new FileOutputStream( strCertPath + File.separator + hostname + ".p12"), serverpassphrase.toCharArray());
+            FileOutputStream foStream = new FileOutputStream( strCertPath + File.separator + hostname + ".p12");
+            keyStore.store(foStream, serverpassphrase.toCharArray());
+            foStream.close();
+            
             
             KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + hostname + ".key", pairServer, serverpassphrase.toCharArray());
             

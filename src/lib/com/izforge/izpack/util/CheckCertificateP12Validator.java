@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -66,7 +67,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         }
     }
 
-    static void writeP12File(String passphrase, AutomatedInstallData adata) {
+    static void writeP12File(String passphrase, AutomatedInstallData adata) throws IOException {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());        
         
         String strCertPath = adata.getVariable("mongodb.dir.certs");

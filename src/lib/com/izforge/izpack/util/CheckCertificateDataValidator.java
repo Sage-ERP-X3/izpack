@@ -159,6 +159,7 @@ public class CheckCertificateDataValidator implements com.izforge.izpack.install
                     Files.copy(caPath.toPath(), certCaPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
                 
+                CheckCertificateP12Validator.writeP12File(fieldPemKeyPassword,adata);
                 // we need to says that this step was done at least one time
                 adata.setVariable("mongodb.ssl.alreadydone", "true");
                 
@@ -177,7 +178,7 @@ public class CheckCertificateDataValidator implements com.izforge.izpack.install
             // RSAPrivateCrtKeySpec privateKey = keyFac.getKeySpec(kp.getPrivate(), RSAPrivateCrtKeySpec.class);
             // RSAPublicKeySpec publicKey = keyFac.getKeySpec(cert.getPublicKey(), RSAPublicKeySpec.class);
            
-            CheckCertificateP12Validator.writeP12File(fieldPemKeyPassword,adata);
+            
         }
         catch (Exception ex)
         {

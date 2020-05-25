@@ -143,7 +143,10 @@ public class CheckCertificateDataValidator implements com.izforge.izpack.install
                 File pemKeyFile = new File(strCertPath + File.separator + hostname + ".pem");
                 File certFile = new File(fieldPemCertFile);
                 File privKeyFile = new File(fieldPemKeyFile);
-                
+
+                File destKeyFile = new File(strCertPath + File.separator + hostname + ".key");
+                Files.copy(privKeyFile.toPath(), destKeyFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
                 KeyPairGeneratorDataValidator.mergeFiles(new File[]{certFile,privKeyFile}, pemKeyFile);
 
                 

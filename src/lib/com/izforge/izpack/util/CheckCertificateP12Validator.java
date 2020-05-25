@@ -55,7 +55,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
     {
      
         try {
-            CheckCertificateP12Validator.writeP12File(adata.getVariable("mongodb.ssl.serverpassphrase"));
+            CheckCertificateP12Validator.writeP12File(adata.getVariable("mongodb.ssl.serverpassphrase"),adata);
             return Status.OK; 
         }  
         catch (Exception ex)
@@ -66,7 +66,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         }
     }
 
-    static void writeP12File(String passphrase) throws IOException {
+    static void writeP12File(String passphrase, AutomatedInstallData adata) {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());        
         
         String strCertPath = adata.getVariable("mongodb.dir.certs");

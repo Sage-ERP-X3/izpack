@@ -132,7 +132,7 @@ public class CreateCertsValidator implements DataValidator
             KeyPairGeneratorDataValidator.mergeFiles(new File[]{certClientFile,privClientKeyFile}, pemClientKeyFile);
             
 
-            CheckCertificateP12Validator.writeP12File(serverpassphrase);
+            CheckCertificateP12Validator.writeP12File(serverpassphrase,adata);
             // we need to says that this step was done at least one time
             adata.setVariable("mongodb.ssl.alreadydone", "true");
             

@@ -177,7 +177,7 @@ public class CheckCertificateDataValidator implements com.izforge.izpack.install
             // RSAPrivateCrtKeySpec privateKey = keyFac.getKeySpec(kp.getPrivate(), RSAPrivateCrtKeySpec.class);
             // RSAPublicKeySpec publicKey = keyFac.getKeySpec(cert.getPublicKey(), RSAPublicKeySpec.class);
            
-            CheckCertificateP12Validator.writeP12File(fieldPemKeyPassword);
+            CheckCertificateP12Validator.writeP12File(fieldPemKeyPassword,adata);
         }
         catch (Exception ex)
         {

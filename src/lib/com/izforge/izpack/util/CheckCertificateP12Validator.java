@@ -53,6 +53,20 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
     
     public Status validateData(AutomatedInstallData adata)
     {
+        
+        try {
+            CheckCertificateP12Validator.writeP12File()
+            return Status.OK; 
+        }  
+        catch (Exception ex)
+        {
+            strMessage = ex.getMessage();
+            adata.setVariable(strMessageValue, strMessage);
+            return Status.ERROR;
+        }
+    }
+
+    static void writeP12File(String passphrase) throws IOException {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());        
         
         String strCertPath = adata.getVariable("mongodb.dir.certs");
@@ -61,14 +75,10 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         String certFile = strCertPath + File.separator + hostname + ".crt";
         String privKeyFile = strCertPath + File.separator + hostname + ".key";
         String p12File = strCertPath + File.separator + hostname + ".p12";
-        String serverpassphrase = adata.getVariable("mongodb.ssl.serverpassphrase");
-        if(serverpassphrase == "") {
-            // Use existing certificates
-            serverpassphrase = adata.getVariable("mongodb.ssl.pemkeypassword");
-        }
+        String serverpassphrase = passphrase;
+        
 
-        if((new File(p12File)).exists())  return Status.OK; 
-        try {
+        if(! (new File(p12File)).exists()) {
             InputStream inPemKeyFile = new FileInputStream(privKeyFile);
             InputStream inPemCertFile = new FileInputStream(certFile);
 
@@ -99,14 +109,8 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
             FileOutputStream foStream = new FileOutputStream( strCertPath + File.separator + hostname + ".p12");
             keyStore.store(foStream, serverpassphrase.toCharArray());
             foStream.close();
-            return Status.OK; 
         }  
-        catch (Exception ex)
-        {
-            strMessage = ex.getMessage();
-            adata.setVariable(strMessageValue, strMessage);
-            return Status.ERROR;
-        }
+        
     }
 
     public String getErrorMessageId()

@@ -98,15 +98,9 @@ public class CreateCertsValidator implements DataValidator
             pem.writeObject(servercert);
             pem.close();
             
-            // Starting with mongo 4.0 on windows the certificate must be put in windows store
-            KeyStore keyStore = KeyStore.getInstance("PKCS12", "BC");
-            keyStore.load(null, null);
-            keyStore.setKeyEntry("trust", pairServer.getPrivate(), null, new Certificate[] { servercert });
+       
             String serverpassphrase = adata.getVariable("mongodb.ssl.serverpassphrase");
-            FileOutputStream foStream = new FileOutputStream( strCertPath + File.separator + hostname + ".p12");
-            keyStore.store(foStream, serverpassphrase.toCharArray());
-            foStream.close();
-            
+           
             
             KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + hostname + ".key", pairServer, serverpassphrase.toCharArray());
             
@@ -137,6 +131,8 @@ public class CreateCertsValidator implements DataValidator
             
             KeyPairGeneratorDataValidator.mergeFiles(new File[]{certClientFile,privClientKeyFile}, pemClientKeyFile);
             
+
+            CheckCertificateP12Validator.writeP12File(serverpassphrase);
             // we need to says that this step was done at least one time
             adata.setVariable("mongodb.ssl.alreadydone", "true");
             

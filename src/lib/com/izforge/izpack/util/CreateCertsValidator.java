@@ -90,8 +90,9 @@ public class CreateCertsValidator implements DataValidator
             KeyPair pairServer = generateRSAKeyPair(4096);
             
             String hostname = adata.getVariable("mongodb.ssl.certificate.hostname");
+            String cname = 'mongodb.' + adata.getVariable('component.node.name').toLowerCase() + '.' + hostname;
             X509Certificate servercert = generateServerV3Certificate(pairServer, countryCode, organization, organizationalUnit,
-                    state, city, hostname, null, validity, cacert , pairCA);
+                    state, city, cname, hostname, null, validity, cacert , pairCA);
             
             FileWriter servercertfile = new FileWriter(strCertPath + File.separator + hostname + ".crt");
             pem = new PEMWriter(servercertfile);
@@ -216,7 +217,7 @@ public class CreateCertsValidator implements DataValidator
     }
 
     public static X509Certificate generateServerV3Certificate(KeyPair pair, String country, String organization, String organizationalUnit,
-            String state, String locality, String name, String email, int validity, X509Certificate certCA, KeyPair pairCA) throws Exception 
+            String state, String locality, String name, String dnsName, String email, int validity, X509Certificate certCA, KeyPair pairCA) throws Exception 
     {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         
@@ -262,7 +263,7 @@ public class CreateCertsValidator implements DataValidator
         certGen.addExtension(Extension.authorityKeyIdentifier, false, keyidCA);
         
         List<GeneralName> subjectNames = new ArrayList<>();
-        subjectNames.add(new GeneralName(GeneralName.dNSName,name));
+        subjectNames.add(new GeneralName(GeneralName.dNSName,dnsName));
         
         certGen.addExtension(Extension.subjectAlternativeName, false, new GeneralNames(
                 subjectNames.toArray(new GeneralName[0])));

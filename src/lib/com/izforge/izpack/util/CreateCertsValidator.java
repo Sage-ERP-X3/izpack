@@ -90,7 +90,7 @@ public class CreateCertsValidator implements DataValidator
             KeyPair pairServer = generateRSAKeyPair(4096);
             
             String hostname = adata.getVariable("mongodb.ssl.certificate.hostname");
-            String cname = "mongodb." + adata.getVariable("component.node.name").toLowerCase() + "." + hostname;
+            String cname = "Safe X3 MongoDB " + adata.getVariable("component.node.name") + " " + hostname;
             X509Certificate servercert = generateServerV3Certificate(pairServer, countryCode, organization, organizationalUnit,
                     state, city, cname, hostname, null, validity, cacert , pairCA);
             

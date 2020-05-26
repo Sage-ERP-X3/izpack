@@ -38,7 +38,7 @@ import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
 import org.bouncycastle.util.io.pem.PemHeader;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
-
+import sun.security.x509.X500Name;
 import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.DataValidator;
 import com.izforge.izpack.installer.DataValidator.Status;
@@ -79,38 +79,42 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         String serverpassphrase = passphrase;
         
 
-        if(! (new File(p12File)).exists()) {
-            InputStream inPemKeyFile = new FileInputStream(privKeyFile);
-            InputStream inPemCertFile = new FileInputStream(certFile);
+        //if(! (new File(p12File)).exists()) {
+        InputStream inPemKeyFile = new FileInputStream(privKeyFile);
+        InputStream inPemCertFile = new FileInputStream(certFile);
 
-            CertificateFactory factory = CertificateFactory.getInstance("X.509"); 
-            X509Certificate servercert = (X509Certificate) factory.generateCertificate(inPemCertFile);
+        CertificateFactory factory = CertificateFactory.getInstance("X.509"); 
+        X509Certificate servercert = (X509Certificate) factory.generateCertificate(inPemCertFile);
 
-            PEMParser pemParser = new PEMParser(new InputStreamReader(inPemKeyFile));
-            Object object = pemParser.readObject();
-            JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
-            KeyPair pairServer;
-            if (object instanceof PEMEncryptedKeyPair)
-            {
-                // Encrypted key - we will use provided password
-                PEMEncryptedKeyPair ckp = (PEMEncryptedKeyPair) object;
-                PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(serverpassphrase.toCharArray());
-                pairServer = converter.getKeyPair(ckp.decryptKeyPair(decProv));
-            }
-            else
-            {
-                // Unencrypted key - no password needed
-                PEMKeyPair ukp = (PEMKeyPair) object;
-                pairServer = converter.getKeyPair(ukp);
-            }
+        X500Name x500Name = new X500Name(servercert.getSubjectX500Principal().getName());
+        String cname = x500Name.getCommonName();
+        adata.setVariable("mongodb.ssl.certificate.cname",cname);
 
-            KeyStore keyStore = KeyStore.getInstance("PKCS12", "BC");
-            keyStore.load(null, null);
-            keyStore.setKeyEntry("trust", pairServer.getPrivate(), null, new Certificate[] { servercert });
-            FileOutputStream foStream = new FileOutputStream( strCertPath + File.separator + hostname + ".p12");
-            keyStore.store(foStream, serverpassphrase.toCharArray());
-            foStream.close();
-        }  
+        PEMParser pemParser = new PEMParser(new InputStreamReader(inPemKeyFile));
+        Object object = pemParser.readObject();
+        JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
+        KeyPair pairServer;
+        if (object instanceof PEMEncryptedKeyPair)
+        {
+            // Encrypted key - we will use provided password
+            PEMEncryptedKeyPair ckp = (PEMEncryptedKeyPair) object;
+            PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(serverpassphrase.toCharArray());
+            pairServer = converter.getKeyPair(ckp.decryptKeyPair(decProv));
+        }
+        else
+        {
+            // Unencrypted key - no password needed
+            PEMKeyPair ukp = (PEMKeyPair) object;
+            pairServer = converter.getKeyPair(ukp);
+        }
+
+        KeyStore keyStore = KeyStore.getInstance("PKCS12", "BC");
+        keyStore.load(null, null);
+        keyStore.setKeyEntry("trust", pairServer.getPrivate(), null, new Certificate[] { servercert });
+        FileOutputStream foStream = new FileOutputStream( strCertPath + File.separator + hostname + ".p12");
+        keyStore.store(foStream, serverpassphrase.toCharArray());
+        foStream.close();
+        //}  
         
     }
 

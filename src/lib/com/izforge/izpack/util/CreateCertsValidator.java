@@ -91,6 +91,7 @@ public class CreateCertsValidator implements DataValidator
             
             String hostname = adata.getVariable("mongodb.ssl.certificate.hostname");
             String cname = adata.info.getAppName() + " " + adata.getVariable("component.node.name") + " " + hostname;
+            adata.setVariable("mongodb.ssl.certificate.cname",cname);
             X509Certificate servercert = generateServerV3Certificate(pairServer, countryCode, organization, organizationalUnit,
                     state, city, cname, hostname, null, validity, cacert , pairCA);
             

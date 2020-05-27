@@ -18,6 +18,9 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.PKIXCertPathBuilderResult;
 import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
@@ -89,9 +92,12 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
 
         X500Name x500Name = new X500Name(servercert.getSubjectX500Principal().getName());
         String cname = x500Name.getCommonName();
-        adata.setVariable("mongodb.ssl.certificate.cname",cname);
-        Debug.log("Set certificate name " + cname);
+        adata.setVariable("mongodb.ssl.certificate.cname",cname);;
         Debug.trace("Set certificate cname " + cname);
+
+        String thumbPrint = getThumbprint(servercert);
+        adata.setVariable("mongodb.ssl.certificate.thumbprint",thumbPrint);
+        Debug.trace("Set certificate thumbPrint " + thumbPrint);
 
         PEMParser pemParser = new PEMParser(new InputStreamReader(inPemKeyFile));
         Object object = pemParser.readObject();
@@ -119,6 +125,16 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         foStream.close();
         //}  
         
+    }
+
+    private static String getThumbprint(X509Certificate cert)
+            throws NoSuchAlgorithmException, CertificateEncodingException {
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        byte[] der = cert.getEncoded();
+        md.update(der);
+        byte[] digest = md.digest();
+        String digestHex = DatatypeConverter.printHexBinary(digest);
+        return digestHex.toLowerCase();
     }
 
     public String getErrorMessageId()

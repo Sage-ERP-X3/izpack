@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import com.izforge.izpack.util.Debug;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -89,6 +90,8 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         X500Name x500Name = new X500Name(servercert.getSubjectX500Principal().getName());
         String cname = x500Name.getCommonName();
         adata.setVariable("mongodb.ssl.certificate.cname",cname);
+        Debug.log("Set certificate name " + cname);
+        Debug.trace("Set certificate cname " + cname);
 
         PEMParser pemParser = new PEMParser(new InputStreamReader(inPemKeyFile));
         Object object = pemParser.readObject();

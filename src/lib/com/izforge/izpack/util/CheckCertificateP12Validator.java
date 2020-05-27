@@ -110,7 +110,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
 
         KeyStore keyStore = KeyStore.getInstance("PKCS12", "BC");
         keyStore.load(null, null);
-        keyStore.setKeyEntry("trust", pairServer.getPrivate(), null, new Certificate[] { servercert });
+        keyStore.setKeyEntry(cname, pairServer.getPrivate(), null, new Certificate[] { servercert });
         FileOutputStream foStream = new FileOutputStream( strCertPath + File.separator + hostname + ".p12");
         keyStore.store(foStream, serverpassphrase.toCharArray());
         foStream.close();

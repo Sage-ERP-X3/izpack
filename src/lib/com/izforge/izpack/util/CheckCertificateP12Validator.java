@@ -20,6 +20,7 @@ import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import javax.xml.bind.DatatypeConverter;
 import java.security.cert.CertificateEncodingException;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;

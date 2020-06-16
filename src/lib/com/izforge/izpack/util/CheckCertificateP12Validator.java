@@ -61,7 +61,10 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
     {
      
         try {
-            CheckCertificateP12Validator.writeP12File(adata.getVariable("mongodb.ssl.serverpassphrase"),adata);
+            String serverpassphrase = adata.getVariable("mongodb.ssl.serverpassphrase")
+            if(serverpassphrase == null || serverpassphrase.isEmpty())
+               serverpassphrase = adata.getVariable("mongodb.ssl.pemkeypassword");
+            CheckCertificateP12Validator.writeP12File(serverpassphrase,adata);
             return Status.OK; 
         }  
         catch (Exception ex)

@@ -43,6 +43,7 @@ import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
 import org.bouncycastle.util.io.pem.PemHeader;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import sun.security.x509.X500Name;
 import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.DataValidator;
@@ -77,8 +78,10 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
     }
 
     static void writeP12File(String passphrase, AutomatedInstallData adata) throws Exception {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());        
         
+        BouncyCastleProvider bcprovider =  new BouncyCastleProvider();
+        Security.addProvider(bcprovider);    
+
         String strCertPath = adata.getVariable("mongodb.dir.certs");
         String hostname = adata.getVariable("HOST_NAME");
         String pemKeyFile = strCertPath + File.separator + hostname + ".pem";
@@ -106,7 +109,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
 
         PEMParser pemParser = new PEMParser(new InputStreamReader(inPemKeyFile));
         Object object = pemParser.readObject();
-        JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
+        JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(bcprovider);
         KeyPair pairServer;
         if (object instanceof PEMEncryptedKeyPair)
         {
@@ -122,7 +125,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
             pairServer = converter.getKeyPair(ukp);
         }
 
-        KeyStore keyStore = KeyStore.getInstance("PKCS12", new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        KeyStore keyStore = KeyStore.getInstance("PKCS12", bcprovider);
         keyStore.load(null, null);
         keyStore.setKeyEntry(cname, pairServer.getPrivate(), null, new Certificate[] { servercert });
         FileOutputStream foStream = new FileOutputStream( strCertPath + File.separator + hostname + ".p12");

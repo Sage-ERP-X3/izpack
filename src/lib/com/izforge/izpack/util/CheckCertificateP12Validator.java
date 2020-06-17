@@ -48,6 +48,8 @@ import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.DataValidator;
 import com.izforge.izpack.installer.DataValidator.Status;
 import com.izforge.izpack.util.ssl.CertificateVerifier;
+import sun.security.jca.Providers;
+import sun.security.jca.Provider;
 
 
 public class CheckCertificateP12Validator implements com.izforge.izpack.installer.DataValidator
@@ -78,7 +80,11 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
 
     static void writeP12File(String passphrase, AutomatedInstallData adata) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());        
-        
+        ProviderList list = Providers.getFullProviderList();
+        ProviderList.add(list, new BouncyCastleProvider());
+        Providers.beginThreadProviderList(list);
+
+
         String strCertPath = adata.getVariable("mongodb.dir.certs");
         String hostname = adata.getVariable("HOST_NAME");
         String pemKeyFile = strCertPath + File.separator + hostname + ".pem";
@@ -122,14 +128,14 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
             pairServer = converter.getKeyPair(ukp);
         }
 
-        KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        KeyStore keyStore = KeyStore.getInstance("PKCS12","BC");
         keyStore.load(null, null);
         keyStore.setKeyEntry(cname, pairServer.getPrivate(), null, new Certificate[] { servercert });
         FileOutputStream foStream = new FileOutputStream( strCertPath + File.separator + hostname + ".p12");
         keyStore.store(foStream, serverpassphrase.toCharArray());
         foStream.close();
         //}  
-        
+
     }
 
     private static String getThumbprint(X509Certificate cert)

@@ -122,7 +122,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
             pairServer = converter.getKeyPair(ukp);
         }
 
-        KeyStore keyStore = KeyStore.getInstance("PKCS12", "BC");
+        KeyStore keyStore = KeyStore.getInstance("PKCS12", new org.bouncycastle.jce.provider.BouncyCastleProvider());
         keyStore.load(null, null);
         keyStore.setKeyEntry(cname, pairServer.getPrivate(), null, new Certificate[] { servercert });
         FileOutputStream foStream = new FileOutputStream( strCertPath + File.separator + hostname + ".p12");

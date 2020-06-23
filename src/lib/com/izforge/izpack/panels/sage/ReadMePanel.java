@@ -48,7 +48,7 @@ public class ReadMePanel extends IzPanel implements HyperlinkListener, ActionLis
 
         // We put our components
 
-        add(LabelFactory.create(parent.langpack.getString("LicencePanel.info"),
+        add(LabelFactory.create(parent.langpack.getString("ReadMePanel.info"),
                 parent.icons.getImageIcon("history"), LEADING), NEXT_LINE);
         try
         {
@@ -82,7 +82,7 @@ public class ReadMePanel extends IzPanel implements HyperlinkListener, ActionLis
      */
     private URL loadReadMe()
     {
-        String resNamePrifix = "ReadMePanel.licence";
+        String resNamePrifix = "ReadMePanel.readme";
         try
         {
             return ResourceManager.getInstance().getURL(resNamePrifix);

@@ -65,7 +65,7 @@
 
    <!-- ReadMePanel strings -->
     <str id="ReadMePanel.info" txt="Veuillez lire attentivement les informations suivantes:"/>
-    <str id="ReadMePanel.agree" txt="J'ai lu."/>
+    <str id="ReadMePanel.agree" txt="J'ai lu ces informations."/>
 
     <!-- LicensePanel strings -->
     <str id="LicencePanel.info" txt="Veuillez lire attentivement l'accord de licence suivant :"/>

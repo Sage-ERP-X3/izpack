@@ -17,6 +17,7 @@
     <str id="InfoPanel.headline" txt="Information"/>
     <str id="InstallPanel.headline" txt="Installation"/>
     <str id="JDKPathPanel.headline" txt="JDK Path"/>
+    <str id="ReadMePanel.headline" txt="Read carefully"/>
     <str id="LicencePanel.headline" txt="Licensing Agreements"/>
     <str id="PacksPanel.headline" txt="Select Installation Packages"/>
     <str id="ProcessPanel.headline" txt="Perform External Processes"/>
@@ -61,6 +62,11 @@
     <str id="HelloPanel.welcome2" txt=" "/>
     <str id="HelloPanel.authors" txt="This software is developed by: "/>
     <str id="HelloPanel.url" txt="The homepage is at: "/>
+
+    <!-- ReadMePanel strings -->
+    <str id="ReadMePanel.info" txt="Please read the following text carefully:"/>
+    <str id="ReadMePanel.agree" txt="I read this."/>
+  
 
     <!-- LicensePanel strings -->
     <str id="LicencePanel.info" txt="Please read the following license agreement carefully:"/>

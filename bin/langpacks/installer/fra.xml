@@ -64,7 +64,7 @@
     <str id="HelloPanel.url" txt="La page d'accueil de ce logiciel est : "/>
 
    <!-- ReadMePanel strings -->
-    <str id="ReadMePanel.info" txt="Veuillez lire attentivement les informations suivant:"/>
+    <str id="ReadMePanel.info" txt="Veuillez lire attentivement les informations suivantes:"/>
     <str id="ReadMePanel.agree" txt="J'ai lu."/>
 
     <!-- LicensePanel strings -->

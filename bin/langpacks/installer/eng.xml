@@ -64,7 +64,7 @@
     <str id="HelloPanel.url" txt="The homepage is at: "/>
 
     <!-- ReadMePanel strings -->
-    <str id="ReadMePanel.info" txt="Please read the following text carefully:"/>
+    <str id="ReadMePanel.info" txt="Please read the following information carefully:"/>
     <str id="ReadMePanel.agree" txt="I read this."/>
   
 

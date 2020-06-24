@@ -596,7 +596,9 @@
     -->
     <target name="build.panels" depends="build.installer">
         <mkdir dir="${bin.dir}/panels"/>
-
+        <build-panel name="ReadMePanel">
+            <include name="com/izforge/izpack/panels/sage/ReadMePanel.java"/>
+        </build-panel>
         <build-panel name="FinishPanel">
             <include name="com/izforge/izpack/panels/FinishPanel.java"/>
         	<include name="com/izforge/izpack/panels/FinishPanelConsoleHelper.java" />

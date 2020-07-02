@@ -143,7 +143,12 @@ public class CheckCertificateDataValidator implements com.izforge.izpack.install
                 File pemKeyFile = new File(strCertPath + File.separator + hostname + ".pem");
                 File certFile = new File(fieldPemCertFile);
                 File privKeyFile = new File(fieldPemKeyFile);
-                
+
+                File destCertFile = new File(strCertPath + File.separator + hostname + ".crt");
+                Files.copy(certFile.toPath(), destCertFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                File destKeyFile = new File(strCertPath + File.separator + hostname + ".key");
+                Files.copy(privKeyFile.toPath(), destKeyFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
                 KeyPairGeneratorDataValidator.mergeFiles(new File[]{certFile,privKeyFile}, pemKeyFile);
 
                 
@@ -154,6 +159,7 @@ public class CheckCertificateDataValidator implements com.izforge.izpack.install
                     Files.copy(caPath.toPath(), certCaPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
                 
+                CheckCertificateP12Validator.writeP12File(fieldPemKeyPassword,adata);
                 // we need to says that this step was done at least one time
                 adata.setVariable("mongodb.ssl.alreadydone", "true");
                 
@@ -172,6 +178,7 @@ public class CheckCertificateDataValidator implements com.izforge.izpack.install
             // RSAPrivateCrtKeySpec privateKey = keyFac.getKeySpec(kp.getPrivate(), RSAPrivateCrtKeySpec.class);
             // RSAPublicKeySpec publicKey = keyFac.getKeySpec(cert.getPublicKey(), RSAPublicKeySpec.class);
            
+            
         }
         catch (Exception ex)
         {

@@ -432,7 +432,7 @@ public class CertManagerDataValidator implements DataValidator
         String hostname = adata.getVariable("syracuse.certificate.hostname").toLowerCase();
 
         X509Certificate servercert = CreateCertsValidator.generateServerV3Certificate(pairServer, countryCode, organization, organizationalUnit,
-                state, city, hostname, null, validity, cacert , pairCA);
+                state, city, hostname, hostname, null, validity, cacert , pairCA);
         
         // copy in certs directory
         File certsServerCRT = new File (strCertPath + File.separator + localHOST_NAME+".crt");

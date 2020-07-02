@@ -255,7 +255,7 @@
             <!-- older ant jar, which izpack distributes and uses for fileset behavior -->
             <include name="ant.jar"/>
             <include name="jakarta-regexp-1.3.jar"/>
-            <include name="mongo-java-driver-3.4.2.jar"/>
+            <include name="mongo-java-driver-3.12.5.jar"/>
             <include name="jna-4.0.0.jar"/>
             <include name="jna-platform-4.0.0.jar"/>
         </fileset>
@@ -596,7 +596,9 @@
     -->
     <target name="build.panels" depends="build.installer">
         <mkdir dir="${bin.dir}/panels"/>
-
+        <build-panel name="ReadMePanel">
+            <include name="com/izforge/izpack/panels/sage/ReadMePanel.java"/>
+        </build-panel>
         <build-panel name="FinishPanel">
             <include name="com/izforge/izpack/panels/FinishPanel.java"/>
         	<include name="com/izforge/izpack/panels/FinishPanelConsoleHelper.java" />

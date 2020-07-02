@@ -69,7 +69,7 @@ public class MongoDBDataValidator implements DataValidator
                 
                 String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1)).getString("version");
                 
-                if (!version.startsWith("3.")) 
+                if (!(version.startsWith("3.") || version.startsWith("4."))) 
             	{
             		bReturn = Status.ERROR;
             	}
@@ -170,7 +170,7 @@ public class MongoDBDataValidator implements DataValidator
                 
                 String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1)).getString("version");
                 
-                if (!version.startsWith("3.")) 
+                if (!(version.startsWith("3.") || version.startsWith("4."))) 
             	{
             		bReturn = Status.ERROR;
             	}

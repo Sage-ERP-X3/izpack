@@ -55,6 +55,9 @@
     <str id="uninstaller.warning" txt="Ceci va enlever l'(es) application(s) installée(s) !"/>
     <str id="uninstaller.destroytarget" txt=" Forcer la suppression de : "/>
     <str id="uninstaller.uninstall" txt="Désinstaller"/>
+    <str id="uninstaller.adxadmin.remainingmodules" txt="Désinstallation impossible : il reste des composants installés."/>
+    <str id="uninstaller.adxadmin.errparseadxinstall" txt="Désinstallation impossible : erreur de modification de l'adxinstall.xml"/>
+
 
 		<!-- The strings for the 'official' IzPack plugins -->
     <!-- HelloPanel strings -->

@@ -194,9 +194,13 @@
 	<str id="TargetPanel.summaryCaption" txt="Katalog docelowy"/>
 	<str id="TargetPanel.warn" txt="Katalog już istnieje! Czy jesteś pewien, że chcesz kontynuować instalację i nadpisać istniejące pliki?"/>
 	<str id="TreePacksPanel.summaryCaption" txt="Wybrane pakiety"/>
+
 	<str id="uninstaller.destroytarget" txt=" Wymuś usunięcie "/>
 	<str id="uninstaller.uninstall" txt="Odinstaluj"/>
 	<str id="uninstaller.warning" txt="Umożliwia usunięcie zainstalowanego oprogramowania!"/>
+    <str id="uninstaller.adxadmin.remainingmodules" txt="Nie można odinstalować – niektóre składniki są cały czas zainstalowane."/>
+    <str id="uninstaller.adxadmin.errparseadxinstall" txt="Nie można odinstalować – błąd parsowania w adxinstall.xml."/>
+
 	<str id="UserInputPanel.dir.nodirectory.caption" txt="Nie wybrano żadnego katalogu"/>
 	<str id="UserInputPanel.dir.nodirectory.message" txt="Musisz wybrać prawidłowy katalog."/>
 	<str id="UserInputPanel.dir.notdirectory.caption" txt="Nieprawidłowy katalog"/>

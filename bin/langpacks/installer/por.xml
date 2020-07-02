@@ -48,6 +48,8 @@
     <str id="uninstaller.warning" txt="Isto removerá o(s) aplicativo(s) instalado(s) !"/>
     <str id="uninstaller.destroytarget" txt=" Forçar a remoção de "/>
     <str id="uninstaller.uninstall" txt="Desinstalar"/>
+    <str id="uninstaller.adxadmin.remainingmodules" txt="Desinstalação impossivel : Alguns componentes ainda estão instalados"/>
+    <str id="uninstaller.adxadmin.errparseadxinstall" txt="Desinstalação impossivel : Erro de modificação no adxinstall.xml"/>
 
     <!-- The strings for the 'official' IzPack plugins -->
     <str id="HelloPanel.welcome1" txt="Bem vindo à instalação de "/>

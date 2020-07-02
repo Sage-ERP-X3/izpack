@@ -55,6 +55,9 @@
     <str id="uninstaller.warning" txt="This will remove the installed application!"/>
     <str id="uninstaller.destroytarget" txt=" Force the deletion of "/>
     <str id="uninstaller.uninstall" txt="Uninstall"/>
+    <str id="uninstaller.adxadmin.remainingmodules" txt="Uninstallation impossible : some composants are still installed."/>
+    <str id="uninstaller.adxadmin.errparseadxinstall" txt="Uninstallation impossible : parsing error on adxinstall.xml"/>
+
 
     <!-- The strings for the 'official' IzPack plugins -->
     <!-- HelloPanel strings -->
@@ -135,6 +138,7 @@
     <str id="InstallPanel.overwrite.title" txt="File already exists"/>
     <str id="InstallPanel.overwrite.question" txt="The following file already exists. Should it be overwritten?"/>
 
+					
 		<!-- InstallationGroupPanel strings -->
 		<str id="InstallationGroupPanel.colNameSelected" txt="Selected"/>
     <str id="InstallationGroupPanel.colNameInstallType" txt="InstallType"/>

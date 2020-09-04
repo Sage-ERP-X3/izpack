@@ -1142,6 +1142,9 @@ public class ShortcutPanel extends IzPanel implements ActionListener, ListSelect
             }
 
             Debug.log("Checked Condition for " + shortcutSpec.getAttribute(SPEC_ATTRIBUTE_NAME));
+
+            Debug.log("shortcutSpec.getAttribute(CREATE_FOR_ALL) = " + shortcutSpec.getAttribute(CREATE_FOR_ALL));
+
             data = new ShortcutData();
 
             data.name = shortcutSpec.getAttribute(SPEC_ATTRIBUTE_NAME);
@@ -1167,13 +1170,11 @@ public class ShortcutPanel extends IzPanel implements ActionListener, ListSelect
             data.deskTopEntryLinux_X_KDE_UserName = shortcutSpec.getAttribute(
                     SPEC_ATTRIBUTE_KDE_USERNAME, "root");
 
-            data.Categories = shortcutSpec.getAttribute(
-                    SPEC_CATEGORIES, "");
+            data.Categories = shortcutSpec.getAttribute( SPEC_CATEGORIES, "");
 
-            data.TryExec = shortcutSpec.getAttribute(
-                    SPEC_TRYEXEC, "");
+            data.TryExec = shortcutSpec.getAttribute( SPEC_TRYEXEC, "");
 
-            data.createForAll = Boolean.valueOf(shortcutSpec.getAttribute(CREATE_FOR_ALL, "false"));
+            data.createForAll = Boolean.valueOf(shortcutSpec.getAttribute(CREATE_FOR_ALL, "true"));
 
             // ** EndOf LINUX **//
             // temp =
@@ -1184,12 +1185,10 @@ public class ShortcutPanel extends IzPanel implements ActionListener, ListSelect
 
             // temp =
             data.iconFile = fixSeparatorChar(shortcutSpec.getAttribute(SPEC_ATTRIBUTE_ICON, ""));
-            data.iconIndex = Integer.parseInt(shortcutSpec.getAttribute(SPEC_ATTRIBUTE_ICON_INDEX,
-                    "0"));
+            data.iconIndex = Integer.parseInt(shortcutSpec.getAttribute(SPEC_ATTRIBUTE_ICON_INDEX, "0"));
 
             // temp =
-            data.workingDirectory = fixSeparatorChar(shortcutSpec.getAttribute(
-                    SPEC_ATTRIBUTE_WORKING_DIR, ""));
+            data.workingDirectory = fixSeparatorChar(shortcutSpec.getAttribute( SPEC_ATTRIBUTE_WORKING_DIR, ""));
 
             String initialState = shortcutSpec.getAttribute(SPEC_ATTRIBUTE_INITIAL_STATE, "");
 

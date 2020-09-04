@@ -190,8 +190,7 @@ public class ShortcutPanelAutomationHelper implements PanelAutomation
             data.deskTopEntryLinux_Type = dataElement.getAttribute(
                     ShortcutPanel.SPEC_ATTRIBUTE_TYPE, "");
 
-            data.deskTopEntryLinux_URL = dataElement.getAttribute(ShortcutPanel.SPEC_ATTRIBUTE_URL,
-                    "");
+            data.deskTopEntryLinux_URL = dataElement.getAttribute(ShortcutPanel.SPEC_ATTRIBUTE_URL, "");
 
             data.deskTopEntryLinux_X_KDE_SubstituteUID = dataElement.getAttribute(
                     ShortcutPanel.SPEC_ATTRIBUTE_KDE_SUBST_UID, "false");
@@ -204,12 +203,22 @@ public class ShortcutPanelAutomationHelper implements PanelAutomation
 
             data.TryExec = dataElement.getAttribute(ShortcutPanel.SPEC_TRYEXEC, "");
 
-            data.createForAll = Boolean.valueOf(dataElement.getAttribute(ShortcutPanel.CREATE_FOR_ALL,
-                    "false"));
+            data.createForAll = Boolean.valueOf(dataElement.getAttribute(ShortcutPanel.CREATE_FOR_ALL, "true"));
             data.userType = Integer.valueOf(
                     dataElement.getAttribute(ShortcutPanel.USER_TYPE, Integer
                             .toString(Shortcut.CURRENT_USER)));
             // END LINUX
+            
+            Debug.log("ShortcutData commandLine=" + data.commandLine 
+            		+ " description=" + data.description
+            		+ " iconFile=" + data.iconFile
+            		+ " iconIndex=" + data.iconIndex
+            		+ " initialState=" + data.initialState
+            		+ " target=" + data.target
+            		+ " workingDirectory=" + data.workingDirectory
+            		+ " createForAll=" + data.createForAll
+            		+ " userType=" + data.userType
+            		);
             shortcuts.add(data);
         }
 

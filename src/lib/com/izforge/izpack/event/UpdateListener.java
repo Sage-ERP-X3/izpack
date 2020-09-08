@@ -26,7 +26,9 @@ public class UpdateListener extends SimpleInstallerListener implements CleanupCl
 {
     
     public static final String BEFORE_UPDATE_SCRIPT = "BeforeUpdateScript"; 
+    public static final String BEFORE_INSTALL_SCRIPT = "BeforeInstallScript"; 
     public static final String AFTER_UPDATE_SCRIPT = "AfterUpdateScript"; 
+    public static final String AFTER_INSTALL_SCRIPT = "AfterInstallScript"; 
     public static final String PLATFORM = OsVersion.IS_UNIX ? "unix":"windows";
 
 
@@ -56,6 +58,8 @@ public class UpdateListener extends SimpleInstallerListener implements CleanupCl
             // we can call the update before/after script for each deleted packs
             // ???
             
+        } else {
+            fetchAndExcuteResource(AFTER_INSTALL_SCRIPT+"_"+PLATFORM, idata);
         }
     
     }
@@ -71,6 +75,8 @@ public class UpdateListener extends SimpleInstallerListener implements CleanupCl
         if (Boolean.valueOf(getInstalldata().getVariable(InstallData.MODIFY_INSTALLATION)))
         {
             fetchAndExcuteResource(pack.id+"_"+AFTER_UPDATE_SCRIPT+"_"+PLATFORM, getInstalldata());
+        } else {
+            fetchAndExcuteResource(pack.id+"_"+AFTER_INSTALL_SCRIPT+"_"+PLATFORM, getInstalldata());
         }
     }
 
@@ -94,6 +100,8 @@ public class UpdateListener extends SimpleInstallerListener implements CleanupCl
             // we can call the update before/after script for each deleted packs
             // ???
             
+        } else {
+            fetchAndExcuteResource(BEFORE_INSTALL_SCRIPT+"_"+PLATFORM, idata);
         }
         
     }
@@ -110,6 +118,8 @@ public class UpdateListener extends SimpleInstallerListener implements CleanupCl
         if (Boolean.valueOf(getInstalldata().getVariable(InstallData.MODIFY_INSTALLATION)))
         {
             fetchAndExcuteResource(pack.id+"_"+BEFORE_UPDATE_SCRIPT+"_"+PLATFORM, getInstalldata());
+        } else {
+            fetchAndExcuteResource(pack.id+"_"+BEFORE_INSTALL_SCRIPT+"_"+PLATFORM, getInstalldata());
         }
         
     }

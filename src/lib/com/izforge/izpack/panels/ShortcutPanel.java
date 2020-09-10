@@ -1143,7 +1143,14 @@ public class ShortcutPanel extends IzPanel implements ActionListener, ListSelect
 
             Debug.log("Checked Condition for " + shortcutSpec.getAttribute(SPEC_ATTRIBUTE_NAME));
 
-            Debug.log("shortcutSpec.getAttribute(CREATE_FOR_ALL) = " + shortcutSpec.getAttribute(CREATE_FOR_ALL));
+            Debug.log("shortcutSpec.getAttribute("+SPEC_CATEGORIES+") = " + shortcutSpec.getAttribute( SPEC_CATEGORIES ));
+            Debug.log("shortcutSpec.getAttribute("+CREATE_FOR_ALL+") = " + shortcutSpec.getAttribute(CREATE_FOR_ALL));
+            Debug.log("shortcutSpec.getAttribute("+SPEC_ATTRIBUTE_TARGET+") = " + shortcutSpec.getAttribute(SPEC_ATTRIBUTE_TARGET));
+            Debug.log("shortcutSpec.getAttribute("+SPEC_TRYEXEC+") = " + shortcutSpec.getAttribute(SPEC_TRYEXEC));
+            Debug.log("shortcutSpec.getAttribute("+SPEC_ATTRIBUTE_TARGET+") = " + shortcutSpec.getAttribute(SPEC_ATTRIBUTE_TARGET));
+            Debug.log("shortcutSpec.getAttribute("+SPEC_ATTRIBUTE_COMMAND+") = " + shortcutSpec.getAttribute(SPEC_ATTRIBUTE_COMMAND));
+            Debug.log("shortcutSpec.getAttribute("+SPEC_ATTRIBUTE_ICON_INDEX+") = " + shortcutSpec.getAttribute(SPEC_ATTRIBUTE_ICON_INDEX));
+            Debug.log("shortcutSpec.getAttribute("+SPEC_ATTRIBUTE_WORKING_DIR+") = " + shortcutSpec.getAttribute(SPEC_ATTRIBUTE_WORKING_DIR));
 
             data = new ShortcutData();
 
@@ -1152,28 +1159,16 @@ public class ShortcutPanel extends IzPanel implements ActionListener, ListSelect
             data.description = shortcutSpec.getAttribute(SPEC_ATTRIBUTE_DESCRIPTION, "");
 
             // ** Linux **//
-            data.deskTopEntryLinux_Encoding = shortcutSpec
-                    .getAttribute(SPEC_ATTRIBUTE_ENCODING, "");
-            data.deskTopEntryLinux_MimeType = shortcutSpec
-                    .getAttribute(SPEC_ATTRIBUTE_MIMETYPE, "");
-            data.deskTopEntryLinux_Terminal = shortcutSpec
-                    .getAttribute(SPEC_ATTRIBUTE_TERMINAL, "");
-            data.deskTopEntryLinux_TerminalOptions = shortcutSpec.getAttribute(
-                    SPEC_ATTRIBUTE_TERMINAL_OPTIONS, "");
+            data.deskTopEntryLinux_Encoding = shortcutSpec.getAttribute(SPEC_ATTRIBUTE_ENCODING, "");
+            data.deskTopEntryLinux_MimeType = shortcutSpec.getAttribute(SPEC_ATTRIBUTE_MIMETYPE, "");
+            data.deskTopEntryLinux_Terminal = shortcutSpec.getAttribute(SPEC_ATTRIBUTE_TERMINAL, "");
+            data.deskTopEntryLinux_TerminalOptions = shortcutSpec.getAttribute(SPEC_ATTRIBUTE_TERMINAL_OPTIONS, "");
             data.deskTopEntryLinux_Type = shortcutSpec.getAttribute(SPEC_ATTRIBUTE_TYPE, "");
-
             data.deskTopEntryLinux_URL = shortcutSpec.getAttribute(SPEC_ATTRIBUTE_URL, "");
-
-            data.deskTopEntryLinux_X_KDE_SubstituteUID = shortcutSpec.getAttribute(
-                    SPEC_ATTRIBUTE_KDE_SUBST_UID, "false");
-
-            data.deskTopEntryLinux_X_KDE_UserName = shortcutSpec.getAttribute(
-                    SPEC_ATTRIBUTE_KDE_USERNAME, "root");
-
+            data.deskTopEntryLinux_X_KDE_SubstituteUID = shortcutSpec.getAttribute(SPEC_ATTRIBUTE_KDE_SUBST_UID, "false");
+            data.deskTopEntryLinux_X_KDE_UserName = shortcutSpec.getAttribute(SPEC_ATTRIBUTE_KDE_USERNAME, "root");
             data.Categories = shortcutSpec.getAttribute( SPEC_CATEGORIES, "");
-
             data.TryExec = shortcutSpec.getAttribute( SPEC_TRYEXEC, "");
-
             data.createForAll = Boolean.valueOf(shortcutSpec.getAttribute(CREATE_FOR_ALL, "true"));
 
             // ** EndOf LINUX **//

@@ -43,18 +43,15 @@
     <!-- Define directories -->
     <property name="cwd" value="${basedir}"/>
 
-    <property file="src/ant.properties"/>
+    <property file="izPackCustomActions/src/ant.properties"/>
     <property name="ver" value="4.3"/>
     <property name="rel" value="5"/>
     <property name="build.number" value="${ver}.${rel}"/>
 
-    <property name="src.dir" value="${basedir}/src/lib"/>
+    <property name="src.dir" value="${basedir}/lib"/>
     <property name="img.dir" value="${basedir}/src/img"/>
     <property name="bin.dir" value="${basedir}/bin"/>
     <property name="doc.dir" value="${basedir}/doc"/>
-
-    <property name="langpacks.subdir" value="langpacks"/>
-    <property name="langpacks.dir" value="${basedir}/bin/${langpacks.subdir}"/>
 
     <property name="build.subdir" value="_build"/>
     <property name="build.dir" value="${basedir}/${build.subdir}"/>
@@ -140,12 +137,6 @@
             <include name="com/izforge/izpack/adaptator/**/*.java"/>
             <include name="com/izforge/izpack/adaptator/*.java"/> -->
         </javac>
-        <copy todir="${build.dir}/com/izforge/izpack/ant/langpacks">
-            <fileset dir="${src.dir}/com/izforge/izpack/ant/langpacks"/>
-        </copy>
-        <copy todir="${build.dir}/com/izforge/izpack/adaptator">
-            <fileset dir="${src.dir}/com/izforge/izpack/adaptator"/>
-        </copy>
     </target>
 
     <!-- Package compiler.jar -->
@@ -190,17 +181,15 @@
         <jar jarfile="${standalone-compiler.jar}" duplicate="preserve">
             <manifest>
                 <attribute name="Built-By" value="IzPack"/>
-                <attribute name="Class-Path" value="ant.jar"/>
+                <!-- <attribute name="Class-Path" value="ant.jar"/> -->
                 <attribute name="Main-Class" value="${compiler.class}"/>
             </manifest>
 			<fileset dir="${build.dir}">
                 <include name="**/*.class"/>
 			</fileset>
-            <zipfileset src="lib/ant.jar"/>
+            <!-- <zipfileset src="lib/ant.jar"/> -->
             <fileset dir="${basedir}">
                 <include name="bin/langpacks/flags/*"/>
-                <include name="bin/langpacks/installer/*"/>
-                <include name="bin/native/izpack/*"/>
                 <include name="bin/native/3rdparty/*"/>
                 <include name="bin/panels/*Panel.jar"/>
                 <include name="bin/customActions/*.jar"/>
@@ -613,12 +602,6 @@
                 <include name="sample/**"/>
                 <include name="*.txt"/>
                 <include name="*.html"/>
-            </fileset>
-        </copy>
-        <echo message="Copies the langpacks to the dist directory"/>
-        <copy todir="${dist.dir}/bin" includeEmptyDirs="yes" preservelastmodified="true">
-            <fileset dir="${basedir}">
-                <include name="langpacks/**"/>
             </fileset>
         </copy>
         <echo message="Copies the license images and specs to the dist directory"/>

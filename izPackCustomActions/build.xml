@@ -186,7 +186,7 @@
 
     <!-- Package standalone-compiler.jar -->
     <target name="build.standalone-compiler"
-            depends="compile.compiler, build.installer, build.uninstaller, build.panels, build.listeners">
+            depends="compile.compiler, build.panels, build.listeners">
         <jar jarfile="${standalone-compiler.jar}" duplicate="preserve">
             <manifest>
                 <attribute name="Built-By" value="IzPack"/>
@@ -211,144 +211,6 @@
                 <include name="**/*"/>
                 <exclude name="**/*.java"/>
             </fileset>
-        </jar>
-    </target>
-
-    <!-- Compiles the installer src files -->
-    <target name="compile.installer" depends="prepare">
-        <javac srcdir="${src.dir}"
-        	includeantruntime="yes"
-               classpath="${basedir}/lib/jakarta-regexp-1.3.jar:${basedir}/lib/mongo-java-driver-3.4.2.jar:${basedir}/lib/jna-4.0.0.jar:${basedir}/lib/jna-platform-4.0.0.jar:${basedir}/lib/bcpkix-jdk15on-150.jar:${basedir}/lib/bcprov-jdk15on-150.jar"
-               destdir="${build.dir}"
-               optimize="on"
-               source="${compat.source}"
-               target="${compat.target}"
-               deprecation="on"
-               debug="${debug}"
-               debuglevel="${debuglevel}"
-        	   encoding="utf-8">
-            <include name="com/izforge/izpack/panels/PathSelectionPanel.java"/>
-            <include name="com/izforge/izpack/*.java"/>
-            <include name="com/izforge/izpack/gui/*.java"/>
-            <include name="com/izforge/izpack/io/*.java"/>
-            <include name="com/izforge/izpack/installer/*.java"/>
-            <include name="com/izforge/izpack/panels/NextMedia*.java"/>
-            <include name="com/izforge/izpack/util/*.java"/>
-            <include name="com/izforge/izpack/util/os/*.java"/>
-            <include name="com/izforge/izpack/rules/*.java"/>
-            <include name="com/izforge/izpack/uninstaller/SelfModifier*.java"/>
-            <include name="com/izforge/izpack/rules/*.java"/>
-            <include name="com/izforge/izpack/compiler/DynamicVariable.java"/>
-            <include name="com/izforge/izpack/panels/HelpWindow.java" />
-            <include name="com/izforge/izpack/adaptator/**/*.java"/>
-            <include name="com/izforge/izpack/adaptator/*.java"/>
-        </javac>
-    </target>
-
-    <!-- Package installer.jar -->
-    <target name="build.installer" depends="compile.installer, build.listener-base">
-        <jar jarfile="${installer.jar}">
-            <manifest>
-                <attribute name="Built-By" value="IzPack"/>
-                <attribute name="Class-Path" value=""/>
-                <attribute name="Main-Class" value="${installer.class}"/>
-            </manifest>
-            <fileset dir="${build.dir}">
-                <include name="com/izforge/izpack/panels/PathSelectionPanel.class"/>
-                <include name="com/izforge/izpack/*.class"/>
-                <include name="com/izforge/izpack/gui/*.class"/>
-                <include name="com/izforge/izpack/io/*.class"/>
-                <include name="com/izforge/izpack/installer/*.class"/>
-                <include name="com/izforge/izpack/util/*.class"/>
-                <include name="com/izforge/izpack/util/**/*.class"/>
-                <include name="com/izforge/izpack/panels/NextMedia*.class"/>
-                <include name="com/izforge/izpack/rules/*.class"/>
-                <include name="com/izforge/izpack/uninstaller/SelfModifier*.class"/>
-                <include name="com/izforge/izpack/rules/*.class"/>
-                <include name="com/izforge/izpack/compiler/DynamicVariable.class"/>
-                <include name="com/izforge/izpack/compiler/CompilerException.class"/>
-                <include name="com/izforge/izpack/panels/Validator*.class"/>
-            	<include name="com/izforge/izpack/adaptator/**/*.class"/>
-            	<include name="com/izforge/izpack/adaptator/*.class"/>
-                <include name="com/izforge/izpack/panels/HelpWindow.class" />
-            </fileset>
-            <zipfileset src="${basedir}/lib/jakarta-regexp-1.3.jar">
-                <include name="org/apache/regexp/*.class"/>
-            </zipfileset>
-            <fileset dir="${src.dir}">
-                <include name="com/izforge/izpack/installer/*.xml"/>
-                <include name="com/izforge/izpack/installer/*.properties"/>
-                <include name="com/izforge/izpack/installer/run-with-privileges-on-osx"/>
-                <include name="com/izforge/izpack/installer/elevate.js"/>
-            	<include name="com/izforge/izpack/util/**/*.sh"/>
-            	<include name="com/izforge/izpack/adaptator/styleSheet.xsl"/>
-            </fileset>
-            <fileset dir="${img.dir}/installer"/>
-            <zipfileset src="${izevent.jar}">
-                <include name="com/izforge/izpack/event/*InstallerListener.class"/>
-            </zipfileset>
-        </jar>
-    </target>
-
-    <!-- Compiles the uninstaller src files -->
-    <target name="compile.uninstaller" depends="prepare">
-        <javac srcdir="${src.dir}"
-        	includeantruntime="yes"
-               destdir="${build.dir}"
-               optimize="on"
-               source="${compat.source}"
-               target="${compat.target}"
-               deprecation="on"
-               debug="${debug}"
-               debuglevel="${debuglevel}"
-        	   encoding="utf-8">
-            <include name="com/izforge/izpack/LocaleDatabase.java"/>
-            <include name="com/izforge/izpack/gui/*.java"/>
-
-            <include name="com/izforge/izpack/util/*.java"/>
-            <include name="com/izforge/izpack/util/os/*.java"/>
-            <include name="com/izforge/izpack/util/os/unix/*.java"/>
-
-            <include name="com/izforge/izpack/uninstaller/*.java"/>
-            <exclude name="com/izforge/izpack/gui/IzPackKMetalTheme.java"/>
-            <include name="com/izforge/izpack/adaptator/**/*.java"/>
-            <include name="com/izforge/izpack/adaptator/*.java"/>
-        </javac>
-    </target>
-
-    <!-- Package uninstaller.jar -->
-    <target name="build.uninstaller" depends="compile.uninstaller">
-        <jar jarfile="${uninstaller.jar}">
-            <manifest>
-                <attribute name="Built-By" value="IzPack"/>
-                <attribute name="Class-Path" value=""/>
-                <attribute name="Main-Class" value="${uninstaller.class}"/>
-            </manifest>
-            <fileset dir="${build.dir}">
-                <include name="com/izforge/izpack/LocaleDatabase.class"/>
-                <include name="com/izforge/izpack/gui/*.class"/>
-                <include name="com/izforge/izpack/uninstaller/*.class"/>
-                <include name="com/izforge/izpack/ExecutableFile.class"/>
-                <exclude name="com/izforge/izpack/gui/IzPackKMetalTheme.class"/>
-            	<include name="com/izforge/izpack/adaptator/**/*.class"/>
-            	<include name="com/izforge/izpack/adaptator/*.class"/>
-                <include name="com/izforge/izpack/installer/PrivilegedRunner.class"/>
-            </fileset>
-            <fileset dir="${src.dir}">
-                <include name="com/izforge/izpack/installer/run-with-privileges-on-osx"/>
-                <include name="com/izforge/izpack/installer/elevate.js"/>
-            	<include name="com/izforge/izpack/adaptator/styleSheet.xsl"/>
-                <include name="com/izforge/izpack/util/**/*.sh"/>
-            </fileset>
-            <fileset dir="${build.dir}">
-                <include name="com/izforge/izpack/util/**/*.class"/>
-            </fileset>
-            <fileset dir="${img.dir}/uninstaller">
-                <include name="**/*"/>
-            </fileset>
-            <zipfileset src="${izevent.jar}">
-                <include name="com/izforge/izpack/event/*UninstallerListener.class"/>
-            </zipfileset>
         </jar>
     </target>
 
@@ -395,7 +257,7 @@
          be sure to explicitly include the .java file in the nested fileset.
          This also acts as a check to help limit dependancies.
     -->
-    <target name="build.panels" depends="build.installer">
+    <target name="build.panels" depends="">
         <mkdir dir="${bin.dir}/panels"/>
        
 <!--        
@@ -440,41 +302,6 @@
            Create Listener Modules
          ======================================================================
     -->
-
-    <!-- Compiles the base custom action classes which should placed into
-         izevent.jar  -->
-    <target name="compile.listener-base">
-        <javac srcdir="${src.dir}"
-        	includeantruntime="yes"
-               destdir="${build.dir}"
-               optimize="on"
-               source="${compat.source}"
-               target="${compat.target}"
-               deprecation="on"
-               debug="${debug}"
-               debuglevel="${debuglevel}"
-               classpath="${installer.jar};${compiler.jar}"
-		 	   encoding="utf-8">
-            <include name="com/izforge/izpack/event/ActionBase.java"/>
-            <include name="com/izforge/izpack/event/Simple*nstallerListener.java"/>
-            <include name="com/izforge/izpack/event/SimpleCompilerListener.java"/>
-            <include name="com/izforge/izpack/event/InstallerListener.java"/>
-            <include name="com/izforge/izpack/event/ProgressBarInstallerListener.java"/>
-            <include name="com/izforge/izpack/event/CompilerListener.java"/>
-            <include name="com/izforge/izpack/event/UninstallerListener.java"/>
-            <include name="com/izforge/izpack/util/IoHelper.java"/>
-        </javac>
-    </target>
-    <!-- Package izevent.jar  -->
-    <target name="build.listener-base" depends="compile.listener-base">
-        <jar jarfile="${izevent.jar}">
-            <fileset dir="${build.dir}">
-                <include name="com/izforge/izpack/event/*.class"/>
-                <include name="com/izforge/izpack/util/IoHelper.class"/>
-            </fileset>
-        </jar>
-    </target>
-
 
     <!-- Macro to compile a listener's classes and create its jar file -->
     <macrodef name="build-listener">
@@ -572,7 +399,7 @@
          be sure to explicitly include the .java file in the nested fileset.
          This also acts as a check to help limit dependancies.
     -->
-    <target name="build.listeners" depends="build.compiler,build.installer,build.listener-base">
+    <target name="build.listeners" depends="build.compiler">
         <!-- This dependency is mandatory -->
         
 <!--         
@@ -697,7 +524,6 @@
                 <include name="frontend.jar"/>
                 <include name="installer.jar"/>
                 <include name="uninstaller.jar"/>
-                <!-- <include name="uninstaller-ext.jar"/> -->
             </fileset>
         </delete>
         <delete file="bin/native/3rdparty/COIOSHelper.dll"/>
@@ -710,7 +536,7 @@
 
     <!-- Builds all compilation targets -->
     <target name="all"
-            depends="clean, splashscreen, copy.dist.natives,build.compiler, build.compiler, build.installer, build.uninstaller, build.panels, build.listeners, build.standalone-compiler"
+            depends="clean, splashscreen,build.compiler, build.compiler, build.panels, build.listeners, build.standalone-compiler"
             description="base: compiles a developer version"/>
 
     <!-- Builds the Javadoc -->
@@ -769,34 +595,6 @@
     </target>
 
 
-    <!-- - - - - - - - - - - - - - - - - -
-          target: copy.natives
-         - - - - - - - - - - - - - - - - - -->
-    <target name="copy.dist.natives">
-        <echo message="Copies the recent changed native files to the ${basedir}/bin directory"/>
-
-        <mkdir dir="${basedir}/bin/native/izpack"/>
-        <copy todir="${basedir}/bin/native/izpack"
-              file="${basedir}/src/native/ShellLink/src/lib/ShellLink.dll"
-              verbose="true"
-              overwrite="yes"
-              preservelastmodified="true"/>
-        <copy todir="${basedir}/bin/native/izpack"
-              file="${basedir}/src/native/ShellLink/src/lib/ShellLink_x64.dll"
-              verbose="true"
-              overwrite="yes"
-              preservelastmodified="true"/>
-        <copy todir="${basedir}/bin/native/3rdparty"
-              file="${basedir}/src/native/COIOSHelper/src/lib/COIOSHelper.dll"
-              verbose="true"
-              overwrite="yes"
-              preservelastmodified="true"/>
-      	<copy todir="${basedir}/bin/native/3rdparty"
-        	    file="${basedir}/src/native/COIOSHelper/src/lib/COIOSHelper_x64.dll"
-          	  verbose="true"
-            	overwrite="yes"
-            	preservelastmodified="true"/>
-    </target>
 
 
     <!-- - - - - - - - - - - - - - - - - -
@@ -892,7 +690,7 @@
           target: prepare.install.dist
          - - - - - - - - - - - - - - - - - -->
     <target name="prepare.install.dist"
-            depends="taskdef.dist, copy.dist.natives, copy.dist.files, replace.dist.buildnumber, fix.crlf">
+            depends="taskdef.dist, copy.dist.files, replace.dist.buildnumber, fix.crlf">
 
     </target>
 
@@ -1011,18 +809,6 @@
         <echo message="${console_line}"/>
     </target>
 
-
-    <!-- =================================
-          target: ShellLink.Javah
-         ================================= -->
-    <target name="ShellLink.Javah"
-            depends="compile.installer"
-            description="--> rebuilds the shelllink jni *.h header file">
-        <javah class="com.izforge.izpack.util.os.ShellLink"
-               destdir="${basedir}/src/native/ShellLink">
-            <classpath path="${build.dir}"/>
-        </javah>
-    </target>
 
 
     <!-- =================================

@@ -7,5 +7,5 @@ RUN mkdir -p izpack
 COPY /ant-lib /usr/share/ant/lib/
 COPY . izpack
 WORKDIR /izpack
-RUN ant -file src/build.xml all
-  
+# RUN ant -file src/build.xml all
+RUN ant -file izPackCustomActions/build.xml all 

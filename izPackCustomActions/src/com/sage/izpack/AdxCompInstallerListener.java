@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -37,14 +35,18 @@ import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.substitutor.VariableSubstitutor;
 import com.izforge.izpack.core.data.DefaultVariables;
 import com.izforge.izpack.core.substitutor.VariableSubstitutorImpl;
-import com.izforge.izpack.event.AbstractProgressInstallerListener;
-import com.izforge.izpack.api.data.AutomatedInstallData;
-import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.util.CleanupClient;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.Platforms;
-import com.izforge.izpack.util.config.SingleConfigurableTask.Entry.LookupType;
+import com.izforge.izpack.api.data.AutomatedInstallData;
+import com.izforge.izpack.api.data.InstallData;
 import jline.internal.Log;
+
+// Eclipse is confused by imports (“accessible from more than one module”)
+// That's a restriction by the Java Platform Module System (JPMS), not by Eclipse (so don't shut the messenger). If you delete the file module-info.java in your default package (which disables JPMS) it should work with Java 9 or higher. – howlger Apr 8 '19 at 11:02
+// This happens when not creating the module-info.java
+// Solves moving the JRE System Library from the Modulepath to the Classpath your issue? 
+// Everything must be on the classpath, the JAR and the JRE System Library
 
 // public class AdxCompInstallerListener extends SimpleInstallerListener implements CleanupClient
 public class AdxCompInstallerListener extends AbstractInstallerListener implements CleanupClient {

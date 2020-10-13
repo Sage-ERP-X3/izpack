@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.InstallerException;
@@ -17,13 +18,11 @@ import com.izforge.izpack.api.substitutor.SubstitutionType;
 import com.izforge.izpack.core.resource.ResourceManager;
 import com.izforge.izpack.core.substitutor.VariableSubstitutorInputStream;
 import com.izforge.izpack.event.AbstractProgressInstallerListener;
-import com.izforge.izpack.installer.data.InstallData;
-import com.izforge.izpack.util.CleanupClient;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.helper.SpecHelper;
 
 // public class UpdateListener extends SimpleInstallerListener implements CleanupClient
-public class UpdateListener extends AbstractProgressInstallerListener implements CleanupClient {
+public class UpdateListener extends AbstractProgressInstallerListener { //  implements com.izforge.izpack.util.CleanupClient {
 
 	public UpdateListener(com.izforge.izpack.api.data.InstallData installData) {
 		super(installData);

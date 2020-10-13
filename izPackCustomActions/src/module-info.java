@@ -4,4 +4,7 @@ module izPackCustomAction {
 	requires izpack.core;
 	requires izpack.event;
 	requires izpack.util;
+	requires izpack.tools;
+	requires izpack.installer;
+	requires jline;
 }

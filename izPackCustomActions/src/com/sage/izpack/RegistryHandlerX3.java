@@ -43,7 +43,7 @@ public class RegistryHandlerX3 extends RegistryHandler//  implements MSWinConsta
         int oldVal = getRoot();
         setRoot(HKEY_LOCAL_MACHINE);
         boolean retval = keyExist(keyName);
-        keyName = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
+        keyName = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN"; // TODO: remove 32 bits
         retval = retval || keyExist(keyName);
         setRoot(oldVal);
         return (retval);        

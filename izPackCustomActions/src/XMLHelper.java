@@ -1,4 +1,4 @@
-package src.com.sage.izpack;
+package com.sage.izpack;
 
 import org.w3c.dom.Node;
 
@@ -11,7 +11,7 @@ import org.w3c.dom.Node;
  */
 public class XMLHelper
 {
-    //~ Static fields/initializers *********************************************************
+    // Static fields/initializers *********************************************************
 
     /**
      * YES   = "YES"

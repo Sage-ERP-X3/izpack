@@ -33,20 +33,17 @@ import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.event.AbstractInstallerListener;
 import com.izforge.izpack.api.event.ProgressListener;
+import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.substitutor.VariableSubstitutor;
 import com.izforge.izpack.core.data.DefaultVariables;
 import com.izforge.izpack.core.substitutor.VariableSubstitutorImpl;
 import com.izforge.izpack.event.AbstractProgressInstallerListener;
 import com.izforge.izpack.api.data.AutomatedInstallData;
-// import com.izforge.izpack.api.substitutor.VariableSubstitutor;
-import com.izforge.izpack.installer.data.InstallData;
+import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.util.CleanupClient;
-import com.izforge.izpack.util.Debug;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.Platforms;
 import com.izforge.izpack.util.config.SingleConfigurableTask.Entry.LookupType;
-import com.izforge.izpack.util.xml.XMLHelper;
-
 import jline.internal.Log;
 
 // public class AdxCompInstallerListener extends SimpleInstallerListener implements CleanupClient
@@ -108,6 +105,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	{
 		// here we need to update adxinstalls.xml
 
+		try {
 		// we need to find adxadmin path
 		String strAdxAdminPath = "";
 
@@ -119,29 +117,30 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			// rh.verify(idata);
 
 			// test adxadmin déjà installé avec registry
-			if (rh.adxadminProductRegistered()) {
+				if (rh.adxadminProductRegistered()) {
 
-				String keyName = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
-				int oldVal = rh.getRoot();
-				// rh.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
-				rh.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
-				if (!rh.valueExist(keyName, "ADXDIR"))
-					keyName = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
-				if (!rh.valueExist(keyName, "ADXDIR"))
-					// throw new Exception(langpack.getString("adxadminNoAdxDirReg"));
+					String keyName = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
+					int oldVal = rh.getRoot();
+					// rh.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+					rh.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
+					if (!rh.valueExist(keyName, "ADXDIR"))
+						keyName = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
+					if (!rh.valueExist(keyName, "ADXDIR"))
+						// throw new Exception(langpack.getString("adxadminNoAdxDirReg"));
+						throw new Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
+								.getString("adxadminNoAdxDirReg"));
+
+					// récup path
+					strAdxAdminPath = rh.getValue(keyName, "ADXDIR").getStringData();
+
+					// free RegistryHandler
+					rh.setRoot(oldVal);
+				} else {
+					// else throw new Exception(langpack.getString("adxadminNotRegistered"));
 					throw new Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
-							.getString("adxadminNoAdxDirReg"));
-
-				// récup path
-				strAdxAdminPath = rh.getValue(keyName, "ADXDIR").getStringData();
-
-				// free RegistryHandler
-				rh.setRoot(oldVal);
-			} else {
-				// else throw new Exception(langpack.getString("adxadminNotRegistered"));
-				throw new Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
-						.getString("adxadminNotRegistered"));
-			}
+							.getString("adxadminNotRegistered"));
+				}
+			
 
 		} else {
 			Log.debug("CheckedHelloPanel - Could not get RegistryHandler !");
@@ -227,7 +226,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			xdoc = dBuilder.parse(fileAdxinstalls);
 		}
 
-		src.com.sage.izpack.XMLHelper.cleanEmptyTextNodes((Node) xdoc);
+		com.sage.izpack.XMLHelper.cleanEmptyTextNodes((Node) xdoc);
 
 		// adxinstalls.xml lu ou crée
 		// il faut ajouter le module
@@ -241,7 +240,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 		// TODO: FRDEPO
 		// IXMLElement elemSpec = getSpecHelper().getSpec();
-		IXMLElement moduleSpec = elemSpec.getFirstChildNamed("module");
+		IXMLElement moduleSpec = null; //elemSpec.getFirstChildNamed("module");
 		// TODO: FRDEPO
 		// VariableSubstitutor substitutor = new VariableSubstitutor(idata.getVariables());	
         VariableSubstitutor substitutor = new VariableSubstitutorImpl(idata.getVariables());
@@ -358,7 +357,13 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 		// transformer.transform(source2, result2);
 		// idata.uninstallOutJar.closeEntry();
-
+		} catch (NativeLibException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

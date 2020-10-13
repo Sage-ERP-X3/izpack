@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-package src.com.sage.izpack;
+package com.sage.izpack;
 
 import com.izforge.izpack.core.os.RegistryHandler;
 // import com.izforge.izpack.util.OSClassHelper;

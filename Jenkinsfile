@@ -10,6 +10,10 @@ node {
             if ("${BRANCH_NAME}" =~ /^release\//) {
                 tag = "${BRANCH_NAME}".split('/')[1]
             }
+            // Temporary: to REMOVE
+            else if ("${BRANCH_NAME}" =~ /^feature\//) {
+                tag = "${BRANCH_NAME}".split('/')[1]
+            }
         }
         
         stage('Checkout SCM')  {

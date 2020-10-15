@@ -8,7 +8,7 @@ RUN mkdir -p izpack
 COPY /ant-lib /usr/share/ant/lib/
 COPY . izpack
 WORKDIR /izpack
-RUN chmod 755 bin/compile.sh
+# RUN chmod 755 bin/compile.sh ==> Doesnt work
 
 # No need to compile izpack.
 # RUN ant -file src/build.xml all

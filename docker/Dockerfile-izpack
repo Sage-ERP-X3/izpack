@@ -8,5 +8,10 @@ RUN mkdir -p izpack
 COPY /ant-lib /usr/share/ant/lib/
 COPY . izpack
 WORKDIR /izpack
+RUN chmod 755 bin/compile.sh
+
+# No need to compile izpack.
 # RUN ant -file src/build.xml all
+
+# We need to compile SAGE Custom actions
 # RUN ant -file izPackCustomActions/build.xml all 

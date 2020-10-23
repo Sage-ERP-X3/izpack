@@ -100,7 +100,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         PemReader reader;
 
         if(!(new File(privKeyFile)).exists()) {
-            byte[] certAndKey = Files.readAllBytes(pemKeyFile);
+            byte[] certAndKey = Files.readAllBytes(Paths.get(pemKeyFile));
             String delimiter = "-----END CERTIFICATE-----";
             String[] tokens = new String(certAndKey).split(delimiter);
 

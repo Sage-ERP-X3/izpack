@@ -6,8 +6,10 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.KeyFactory;
@@ -92,11 +94,32 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         
 
         //if(! (new File(p12File)).exists()) {
-        InputStream inPemKeyFile = new FileInputStream(privKeyFile);
-        InputStream inPemCertFile = new FileInputStream(certFile);
+        InputStream inPrivKeyFile;
+        InputStream inCertFile;
+        X509Certificate servercert;
+        InputStreamReader keyStreamReader;
+        PemReader reader;
+       
+
+        if(!(new File(privKeyFile)).exists()) {
+            byte[] certAndKey = Files.readAllBytes(Paths.get(pemKeyFile));
+            String delimiter = "-----END CERTIFICATE-----";
+            String[] tokens = new String(certAndKey).split(delimiter);
+
+            byte[] certBytes = tokens[0].concat(delimiter).getBytes();
+            byte[] keyBytes = tokens[1].getBytes();
+            
+            inCertFile = (InputStream) new ByteArrayInputStream(certBytes);
+            keyStreamReader = new InputStreamReader(new ByteArrayInputStream(keyBytes));
+
+        } else {
+            inPrivKeyFile = new FileInputStream(privKeyFile);
+            keyStreamReader = new InputStreamReader(inPrivKeyFile);
+            inCertFile = new FileInputStream(certFile); 
+        }
 
         CertificateFactory factory = CertificateFactory.getInstance("X.509"); 
-        X509Certificate servercert = (X509Certificate) factory.generateCertificate(inPemCertFile);
+        servercert = (X509Certificate) factory.generateCertificate(inCertFile);
 
         X500Name x500Name = new X500Name(servercert.getSubjectX500Principal().getName());
         String cname = x500Name.getCommonName();
@@ -107,7 +130,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         adata.setVariable("mongodb.ssl.certificate.thumbprint",thumbPrint);
         Debug.trace("Set certificate thumbPrint " + thumbPrint);
 
-        PEMParser pemParser = new PEMParser(new InputStreamReader(inPemKeyFile));
+        PEMParser pemParser = new PEMParser(keyStreamReader);
         Object object = pemParser.readObject();
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(bcprovider);
         KeyPair pairServer;

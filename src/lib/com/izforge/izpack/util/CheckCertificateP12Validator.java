@@ -92,11 +92,32 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         
 
         //if(! (new File(p12File)).exists()) {
-        InputStream inPemKeyFile = new FileInputStream(privKeyFile);
-        InputStream inPemCertFile = new FileInputStream(certFile);
+        InputStream inPrivKeyFile;
+        InputStream inCertFile;
+        X509Certificate servercert;
+        InputStreamReader keyStreamReader;
+        PEMReader reader;
 
-        CertificateFactory factory = CertificateFactory.getInstance("X.509"); 
-        X509Certificate servercert = (X509Certificate) factory.generateCertificate(inPemCertFile);
+        if(!(new File(privKeyFile)).exists()) {
+            byte[] certAndKey = fileToBytes(new File(pemPath));
+            String delimiter = "-----END CERTIFICATE-----";
+            String[] tokens = new String(certAndKey).split(delimiter);
+
+            byte[] certBytes = tokens[0].concat(delimiter).getBytes();
+            byte[] keyBytes = tokens[1].getBytes();
+            
+            reader = new PEMReader(new InputStreamReader(new ByteArrayInputStream(certBytes)));
+            servercert = (X509Certificate)reader.readObject();  
+            keyStreamReader = new InputStreamReader(new ByteArrayInputStream(keyBytes))
+
+        } else {
+            inPrivKeyFile = new FileInputStream(privKeyFile);
+            keyStreamReader = new InputStreamReader(inPrivKeyFile);
+            inCertFile = new FileInputStream(certFile);
+            CertificateFactory factory = CertificateFactory.getInstance("X.509"); 
+            servercert = (X509Certificate) factory.generateCertificate(inCertFile);
+        }
+       
 
         X500Name x500Name = new X500Name(servercert.getSubjectX500Principal().getName());
         String cname = x500Name.getCommonName();
@@ -107,7 +128,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         adata.setVariable("mongodb.ssl.certificate.thumbprint",thumbPrint);
         Debug.trace("Set certificate thumbPrint " + thumbPrint);
 
-        PEMParser pemParser = new PEMParser(new InputStreamReader(inPemKeyFile));
+        PEMParser pemParser = new PEMParser(keyStreamReader);
         Object object = pemParser.readObject();
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(bcprovider);
         KeyPair pairServer;

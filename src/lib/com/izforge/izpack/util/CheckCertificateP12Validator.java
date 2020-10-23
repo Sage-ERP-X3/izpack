@@ -39,7 +39,6 @@ import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.PEMReader;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
 import org.bouncycastle.util.io.pem.PemHeader;
@@ -98,17 +97,17 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         InputStream inCertFile;
         X509Certificate servercert;
         InputStreamReader keyStreamReader;
-        PEMReader reader;
+        PemReader reader;
 
         if(!(new File(privKeyFile)).exists()) {
-            byte[] certAndKey = Files.readAllBytes(pemPath);
+            byte[] certAndKey = Files.readAllBytes(pemKeyFile);
             String delimiter = "-----END CERTIFICATE-----";
             String[] tokens = new String(certAndKey).split(delimiter);
 
             byte[] certBytes = tokens[0].concat(delimiter).getBytes();
             byte[] keyBytes = tokens[1].getBytes();
             
-            reader = new PEMReader(new InputStreamReader(new ByteArrayInputStream(certBytes)));
+            reader = new PemReader(new InputStreamReader(new ByteArrayInputStream(certBytes)));
             servercert = (X509Certificate)reader.readObject();  
             keyStreamReader = new InputStreamReader(new ByteArrayInputStream(keyBytes));
 

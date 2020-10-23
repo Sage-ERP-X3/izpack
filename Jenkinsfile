@@ -12,6 +12,7 @@ node {
             }
         }
         
+        tag = "4.3.X"
         stage('Checkout SCM')  {
             checkout scm
         }

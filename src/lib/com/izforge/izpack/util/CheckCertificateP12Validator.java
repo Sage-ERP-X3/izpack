@@ -109,7 +109,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
             byte[] certBytes = tokens[0].concat(delimiter).getBytes();
             byte[] keyBytes = tokens[1].getBytes();
             
-            inCertFile = (InputStream) new ByteArrayInputStream(certBytes));
+            inCertFile = (InputStream) new ByteArrayInputStream(certBytes);
             keyStreamReader = new InputStreamReader(new ByteArrayInputStream(keyBytes));
 
         } else {

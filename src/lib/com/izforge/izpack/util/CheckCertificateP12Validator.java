@@ -86,13 +86,13 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         String hostname = adata.getVariable("HOST_NAME");
         String pemKeyFile = strCertPath + File.separator + hostname + ".pem";
         String certFile = strCertPath + File.separator + hostname + ".crt";
-        //String privKeyFile = strCertPath + File.separator + hostname + ".key";
+        String privKeyFile = strCertPath + File.separator + hostname + ".key";
         String p12File = strCertPath + File.separator + hostname + ".p12";
         String serverpassphrase = passphrase;
         
 
         //if(! (new File(p12File)).exists()) {
-        //InputStream inPemKeyFile = new FileInputStream(privKeyFile);
+        InputStream inPemKeyFile = new FileInputStream(privKeyFile);
         InputStream inPemCertFile = new FileInputStream(certFile);
 
         CertificateFactory factory = CertificateFactory.getInstance("X.509"); 

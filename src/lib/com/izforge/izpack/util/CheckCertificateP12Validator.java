@@ -108,7 +108,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
             
             reader = new PEMReader(new InputStreamReader(new ByteArrayInputStream(certBytes)));
             servercert = (X509Certificate)reader.readObject();  
-            keyStreamReader = new InputStreamReader(new ByteArrayInputStream(keyBytes))
+            keyStreamReader = new InputStreamReader(new ByteArrayInputStream(keyBytes));
 
         } else {
             inPrivKeyFile = new FileInputStream(privKeyFile);

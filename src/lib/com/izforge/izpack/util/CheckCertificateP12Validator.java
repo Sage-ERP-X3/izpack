@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,6 +39,7 @@ import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.PEMReader;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
 import org.bouncycastle.util.io.pem.PemHeader;
@@ -99,7 +101,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         PEMReader reader;
 
         if(!(new File(privKeyFile)).exists()) {
-            byte[] certAndKey = fileToBytes(new File(pemPath));
+            byte[] certAndKey = Files.readAllBytes(pemPath);
             String delimiter = "-----END CERTIFICATE-----";
             String[] tokens = new String(certAndKey).split(delimiter);
 

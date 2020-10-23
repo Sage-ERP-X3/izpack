@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.KeyFactory;
@@ -98,6 +99,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         X509Certificate servercert;
         InputStreamReader keyStreamReader;
         PemReader reader;
+        CertificateFactory factory = CertificateFactory.getInstance("X.509"); 
 
         if(!(new File(privKeyFile)).exists()) {
             byte[] certAndKey = Files.readAllBytes(Paths.get(pemKeyFile));
@@ -107,15 +109,14 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
             byte[] certBytes = tokens[0].concat(delimiter).getBytes();
             byte[] keyBytes = tokens[1].getBytes();
             
-            reader = new PemReader(new InputStreamReader(new ByteArrayInputStream(certBytes)));
-            servercert = (X509Certificate)reader.readObject();  
+            servercert = (X509Certificate) factory.generateCertificate(new InputStreamReader(new ByteArrayInputStream(certBytes)));
             keyStreamReader = new InputStreamReader(new ByteArrayInputStream(keyBytes));
 
         } else {
             inPrivKeyFile = new FileInputStream(privKeyFile);
             keyStreamReader = new InputStreamReader(inPrivKeyFile);
             inCertFile = new FileInputStream(certFile);
-            CertificateFactory factory = CertificateFactory.getInstance("X.509"); 
+            
             servercert = (X509Certificate) factory.generateCertificate(inCertFile);
         }
        

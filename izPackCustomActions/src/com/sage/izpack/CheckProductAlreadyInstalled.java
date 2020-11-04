@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.ResourceBundle;
 
 import com.coi.tools.os.win.RegDataContainer;
+import com.izforge.izpack.api.data.Info;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.LocaleDatabase;
 import com.izforge.izpack.api.installer.DataValidator;
@@ -43,19 +44,28 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 			// input = ResourceManager.getInstance().getInputStream(SPEC_FILE_NAME);
 			input = new ResourceManager().getInputStream(SPEC_FILE_NAME);
 
+			System.out.println("input:" + input);
+
 			if (input == null) {
 				// spec file is missing
 				errMessage = "specFileMissing";
+
+				System.out.println("input:" + errMessage);
+
 				return Status.ERROR;
 			} else {
 
 				RegistryHandlerX3 rh = new RegistryHandlerX3();
 				rh.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
 
+				System.out.println("rh:" + rh);
+
 				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 				StringBuilder out = new StringBuilder();
 				String line;
 				while ((line = reader.readLine()) != null) {
+
+					System.out.println("line:" + line);
 
 					line = line.trim(); //
 
@@ -63,21 +73,27 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 					// "SOFTWARE\\Wow6432Node\\Sage\\"+line)
 					// || Advapi32Util.registryKeyExists(RegistryHandler.HKEY_LOCAL_MACHINE,
 					// "SOFTWARE\\Sage\\"+line))
-					if (rh.keyExist("SOFTWARE\\Wow6432Node\\Sage\\" + line) || rh.keyExist("SOFTWARE\\Sage\\" + line)) {
-						// TODO: FRDEPO
-						// errMessage = String.format(adata.langpack.getString("errIsProductFound"),
-						// line);
-				        // InputStream customlangPack = getClass().getResourceAsStream("eng.xml");
-				        // installData.setMessages(new LocaleDatabase(langPack, Mockito.mock(Locales.class)));
-				        // LocaleDatabase localdb = new LocaleDatabase(customlangPack, null);
-				        // localdb.getString("errIsProductFound");
-						errMessage = String.format(ResourceBundle.getBundle("messages", adata.getLocale()).getString("errIsProductFound"), line);
-						return Status.ERROR;
-					} else if (rh.keyExist(RegistryHandler.UNINSTALL_ROOT + line)) {
+					// if (rh.keyExist("SOFTWARE\\Wow6432Node\\Sage\\" + line) ||
+					// rh.keyExist("SOFTWARE\\Sage\\" + line)) {
+					// TODO: FRDEPO
+					// errMessage = String.format(adata.langpack.getString("errIsProductFound"),
+					// line);
+					// InputStream customlangPack = getClass().getResourceAsStream("eng.xml");
+					// installData.setMessages(new LocaleDatabase(langPack,
+					// Mockito.mock(Locales.class)));
+					// LocaleDatabase localdb = new LocaleDatabase(customlangPack, null);
+					// localdb.getString("errIsProductFound");
+					// errMessage = String.format(ResourceBundle.getBundle("messages",
+					// adata.getLocale()).getString("errIsProductFound"), line);
+					// return Status.ERROR;
+					// } else
+					if (rh.keyExist(RegistryHandler.UNINSTALL_ROOT + line)) {
 						// TODO: FRDEPO
 						// warnMessage = String.format(adata.langpack.getString("compFoundAskUpdate"),
 						// line);
-						warnMessage = String.format(ResourceBundle.getBundle("messages", adata.getLocale()).getString("compFoundAskUpdate"), line);
+						warnMessage = String.format(
+								ResourceBundle.getBundle("messages", adata.getLocale()).getString("compFoundAskUpdate"),
+								line);
 						// String oldInstallPath =
 						// Advapi32Util.registryGetStringValue(RegistryHandler.HKEY_LOCAL_MACHINE,
 						// RegistryHandler.UNINSTALL_ROOT+line, "DisplayIcon");

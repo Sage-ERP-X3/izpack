@@ -37,7 +37,6 @@ public class UpdateListener extends AbstractProgressInstallerListener { //  impl
 	private static final Logger logger = Logger.getLogger(AdxCompInstallerListener.class.getName());
 
 	public void cleanUp() {
-		// TODO Auto-generated method stub
 
 	}
 

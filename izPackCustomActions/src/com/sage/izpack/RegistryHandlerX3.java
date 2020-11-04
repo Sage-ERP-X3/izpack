@@ -31,12 +31,11 @@ import com.izforge.izpack.api.exception.NativeLibException;
  * subclasses are used to implement the necessary mapping from this generic API to the classes that
  * reflect the system dependent AIP.
  *
- * @author Klaus Bartz
+ * @author Franck DEPOORTERE
  */
 public class RegistryHandlerX3 extends RegistryHandler//  implements MSWinConstants
 {
  
-    // public boolean adxadminProductRegistered() throws NativeLibException
     public boolean adxadminProductRegistered() throws NativeLibException
     {
         String keyName = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";

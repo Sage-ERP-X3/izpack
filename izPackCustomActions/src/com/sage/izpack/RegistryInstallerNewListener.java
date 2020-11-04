@@ -10,6 +10,9 @@ import com.izforge.izpack.installer.data.UninstallData;
 import com.izforge.izpack.installer.unpacker.IUnpacker;
 import com.izforge.izpack.util.Housekeeper;
 
+/*
+* @author Franck DEPOORTERE
+*/
 public class RegistryInstallerNewListener extends com.izforge.izpack.event.RegistryInstallerListener {
 
 	public RegistryInstallerNewListener(IUnpacker unpacker, VariableSubstitutor substitutor, InstallData installData,
@@ -17,13 +20,14 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 			RegistryDefaultHandler handler) {
 		super(unpacker, substitutor, installData, uninstallData, resources, rules, housekeeper, handler);
 	}
+
 	
-    @Override
-	protected String getUninstallName()
-    {
-        Variables variables = getInstallData().getVariables();
-        // return variables.get("APP_NAME") + " " + variables.get("APP_VER");
-        return variables.get("APP_NAME");
-    }
+	@Override
+	protected String getUninstallName() {
+		Variables variables = getInstallData().getVariables();
+		// We had to override this method to remove APP_VER
+		// return variables.get("APP_NAME") + " " + variables.get("APP_VER");
+		return variables.get("APP_NAME");
+	}
 
 }

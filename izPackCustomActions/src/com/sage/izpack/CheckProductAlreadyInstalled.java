@@ -34,10 +34,10 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 			RegistryHandlerX3 registryHandler = new RegistryHandlerX3();
 			registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
 
-			logger.log(Level.FINEST, "registryHandler:" + registryHandler);
+			logger.log(Level.FINE, "registryHandler:" + registryHandler);
 
 			if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT + installData.getVariable("APP_NAME"))) {
-				logger.log(Level.FINEST, "APP_NAME key " + RegistryHandler.UNINSTALL_ROOT + installData.getVariable("APP_NAME") + " found in registry. Set '"
+				logger.log(Level.FINE, "APP_NAME key " + RegistryHandler.UNINSTALL_ROOT + installData.getVariable("APP_NAME") + " found in registry. Set '"
 						+ InstallData.MODIFY_INSTALLATION + "': true");
 
 				installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
@@ -45,14 +45,14 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 
 			
 			input = new ResourceManager().getInputStream(SPEC_FILE_NAME);
-			logger.log(Level.FINEST, "input: " + input);
+			logger.log(Level.FINE, "input: " + input);
 
 			
 			if (input == null) {
 				// spec file is missing
 				errMessage = "specFileMissing";
 
-				logger.log(Level.FINEST, "input: " + errMessage);
+				logger.log(Level.FINE, "input: " + errMessage);
 
 				return Status.ERROR;
 			} else {
@@ -63,7 +63,7 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 				String line;
 				while ((line = reader.readLine()) != null) {
 
-					logger.log(Level.FINEST, "line:" + line);
+					logger.log(Level.FINE, "line:" + line);
 
 					line = line.trim(); //
 
@@ -94,8 +94,8 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 								oldInstallPath.getStringData().indexOf("Uninstaller") - 1));
 						installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 
-						logger.log(Level.FINEST, "old path applied: " + oldInstallPath);
-						logger.log(Level.FINEST, "set variable " + InstallData.MODIFY_INSTALLATION + ": true");
+						logger.log(Level.FINE, "old path applied: " + oldInstallPath);
+						logger.log(Level.FINE, "set variable " + InstallData.MODIFY_INSTALLATION + ": true");
 
 						
 						return Status.WARNING;

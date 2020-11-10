@@ -21,8 +21,6 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 	private static Logger logger = Logger.getLogger(CheckedHelloNewPanel.class.getName());
 
-	// private transient final RegistryHelper registryHelper;
-
 	/**
 	 * 
 	 */
@@ -36,8 +34,10 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		String path = registryHelper.getInstallationPath();
 		if (path != null) {
 			installData.setVariable("TargetPanel.dir.windows", path);
-			logger.log(Level.FINEST, "Set TargetPanel.dir.windows: " + path);
+			logger.log(Level.FINE, "Set TargetPanel.dir.windows: " + path);
 
+			installData.setVariable(InstallData.INSTALL_PATH, path);
+			logger.log(Level.FINE, "Set INSTALL_PATH", path);
 		}
 	}
 
@@ -53,10 +53,11 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		boolean result = super.isRegistered();
 
 		// registryHelper.getInstallationPath();
-		if (result) {			// Set variable "modify.izpack.install"
+		if (result) {			
+			// Set variable "modify.izpack.install"
 			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 		}
-		logger.log(Level.FINEST, "Set " + InstallData.MODIFY_INSTALLATION + ": true");
+		logger.log(Level.FINE, "Set " + InstallData.MODIFY_INSTALLATION + ": true");
 		return result;
 	}
 

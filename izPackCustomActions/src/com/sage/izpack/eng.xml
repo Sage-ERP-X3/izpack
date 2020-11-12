@@ -127,6 +127,7 @@
     <str id="PacksPanel.packselect" txt="input 1 to select, 0 to deselect :"/>
     <str id="PacksPanel.required" txt="required"/>
     <str id="PacksPanel.done" txt="...pack selection done."/>
+    <str id="PacksPanel.installedpacks.summarycaption" txt="Core files"/>
 
 		<!-- InstallPanel strings -->
 		<str id="InstallPanel.info" txt="Click 'Install!' to begin the installation process"/>

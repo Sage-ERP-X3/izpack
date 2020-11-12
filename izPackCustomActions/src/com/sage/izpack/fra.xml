@@ -125,6 +125,7 @@
     <str id="PacksPanel.packselect" txt="appuyez sur 1 pour sélectionner, 0 to déselectionner :"/>
     <str id="PacksPanel.required" txt="requis"/>
     <str id="PacksPanel.done" txt="...sélection des paquets terminée."/>
+    <str id="PacksPanel.installedpacks.summarycaption" txt="Core files"/>
 
 
     <!-- InstallPanel strings -->

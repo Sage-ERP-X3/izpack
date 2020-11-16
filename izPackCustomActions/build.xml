@@ -67,10 +67,9 @@
 
     <!-- Define file paths -->
     <property name="compiler.jar" value="${basedir}/izPackCustomActions/sagejar/compiler.jar"/>
-    <property name="standalone-compiler.jar" value="${basedir}/izPackCustomActions/sagejar/standalone-compiler.jar"/>
+    <property name="com.sage.izpack.jar" value="${basedir}/izPackCustomActions/com.sage.izpack.jar"/>
     <property name="installer.jar" value="${basedir}/izPackCustomActions/sagejar/installer.jar"/>
     <property name="uninstaller.jar" value="${basedir}/izPackCustomActions/sagejar/uninstaller.jar"/>
-    <property name="izevent.jar" value="${basedir}/izPackCustomActions/sagejar/izevent.jar"/>
 
     <!-- Compilation parameters -->
     <!--<property name="debug" value="off"/>
@@ -143,10 +142,10 @@
     </target>
 
   
-    <!-- Package standalone-compiler.jar -->
+    <!-- Package com.sage.izpack.jar -->
     <target name="build.standalone-compiler"
-            depends="compile.compiler, build.panels, build.listeners">
-        <jar jarfile="${standalone-compiler.jar}" duplicate="preserve">
+            depends="compile.compiler, build.listeners">
+        <jar jarfile="${com.sage.izpack.jar}" duplicate="preserve">
             <manifest>
                 <attribute name="Built-By" value="IzPack"/>
                 <!-- <attribute name="Class-Path" value="ant.jar"/> -->
@@ -162,96 +161,13 @@
                 <include name="bin/panels/*Panel.jar"/>
                 <include name="bin/customActions/*.jar"/>
                 <include name="lib/*.jar"/>
-				<exclude name="lib/standalone-compiler.jar"/>
+				<exclude name="lib/com.sage.izpack.jar"/>
             </fileset>
              <fileset dir="${src.dir}">
                 <include name="**/*"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </jar>
-    </target>
-
-    <!--
-         ======================================================================
-           Create Panel Modules
-         ======================================================================
-    -->
-
-    <!-- Macro to compile a panel's classes and create it's jar file -->
-    <macrodef name="build-panel">
-        <attribute name="name" description="The panels jar will get this name"/>
-        <attribute name="srcdir"
-                   default="${src.dir}"
-                   description="Source directory. Defaults to izpack src dir"/>
-        <element name="panel-fileset"
-                 implicit="yes"
-                 description="include and exclude elements indicating panel sources"/>
-        <sequential>
-            <echo message="build-panel: @{name}"/>
-            <mkdir dir="${bin.dir}/panels/@{name}"/>
-            <!-- sourcepath is cleared so there's no mistaking what goes into the Panel -->
-            <javac srcdir="@{srcdir}"
-            	includeantruntime="yes"
-                   destdir="${bin.dir}/panels/@{name}"
-                   classpath="${installer.jar}"
-                   sourcepath=""
-                   optimize="on"
-                   deprecation="on"
-                   debug="${debug}"
-                   source="${compat.source}"
-                   target="${compat.target}"
-                   debuglevel="${debuglevel}"
-            	   encoding="utf-8">
-                <panel-fileset/>
-            </javac>
-            <jar jarfile="${bin.dir}/panels/@{name}.jar" basedir="${bin.dir}/panels/@{name}"/>
-        </sequential>
-    </macrodef>
-
-    <!-- Compile all panels and put them at the right location -->
-    <!--
-         If you add a another, and the build fails because it can't find a class,
-         be sure to explicitly include the .java file in the nested fileset.
-         This also acts as a check to help limit dependancies.
-    -->
-    <target name="build.panels" depends="">
-        <mkdir dir="${bin.dir}/panels"/>
-       
-<!--        
-        <build-panel name="InstallationTypePanel">
-            <include name="com/izforge/izpack/panels/InstallationTypePanel.java"/>
-            <include name="com/izforge/izpack/panels/InstallationTypePanelConsoleHelper.java"/>
-            <include name="com/izforge/izpack/panels/InstallationTypePanelAutomationHelper.java"/>
-            <include name="com/izforge/izpack/util/os/*RegistryHandler.java"/>
-            <include name="com/izforge/izpack/util/OSClassHelper.java"/>
-            <include name="com/izforge/izpack/util/os/WrappedNativeLibException.java"/>
-            <include name="com/coi/tools/os/win/*.java"/>
-            <include name="com/coi/tools/os/win/resources/NativeLibErr*.java"/>
-            <include name="com/coi/tools/os/izpack/Registry.java"/>
-            <include name="com/coi/tools/os/izpack/COIOSHelper.java"/>
-        </build-panel>
-        <build-panel name="InstallTypePanel">
-            <include name="com/izforge/izpack/panels/PathInputPanel.java"/>
-            <include name="com/izforge/izpack/panels/PathSelectionPanel.java"/>
-            <include name="com/izforge/izpack/panels/TargetPanel.java"/>
-            <include name="com/izforge/izpack/panels/TargetPanelAutomationHelper.java"/>
-        	<include name="com/izforge/izpack/panels/TargetPanelConsoleHelper.java" />
-        	<include name="com/izforge/izpack/panels/InstallTypePanel.java" />
-            <include name="com/izforge/izpack/panels/InstallTypePanelConsoleHelper.java"/>
-            <include name="com/izforge/izpack/panels/InstallTypePanelAutomationHelper.java"/>
-            <include name="com/izforge/izpack/panels/InstallationTypePanelAutomationHelper.java"/>
-            <include name="com/izforge/izpack/util/os/*RegistryHandler.java"/>
-            <include name="com/izforge/izpack/util/OSClassHelper.java"/>
-            <include name="com/izforge/izpack/util/os/WrappedNativeLibException.java"/>
-            <include name="com/coi/tools/os/win/*.java"/>
-            <include name="com/coi/tools/os/win/resources/NativeLibErr*.java"/>
-            <include name="com/coi/tools/os/izpack/Registry.java"/>
-            <include name="com/coi/tools/os/izpack/COIOSHelper.java"/>
-        </build-panel>
-        <build-panel name="HTMLHelloPanel">
-            <include name="com/izforge/izpack/panels/HTMLHelloPanel.java"/>
-            <include name="com/izforge/izpack/panels/HTMLInfoPanel.java"/>
-        </build-panel> -->
     </target>
 
     <!--
@@ -268,8 +184,6 @@
         <attribute name="srcdir"
                    default="${src.dir}"
                    description="Source directory. Defaults to izpack src dir"/>
-        <attribute name="izeventExcludes"
-                   description="excludes patter for files in the ${izevent.jar} file"/>
         <element name="listener-fileset"
                  implicit="yes"
                  description="include and exclude elements indicating listener sources"/>
@@ -280,7 +194,7 @@
             <javac srcdir="@{srcdir}"
             	includeantruntime="yes"
                    destdir="${bin.dir}/customActions/@{name}"
-                   classpath="${installer.jar};${compiler.jar};${izevent.jar};@{classpath-ext}"
+                   classpath="${installer.jar};${compiler.jar};@{classpath-ext}"
                    sourcepath=""
                    optimize="on"
                    deprecation="on"
@@ -294,7 +208,7 @@
             <jar jarfile="${bin.dir}/customActions/@{name}.jar"
                  basedir="${bin.dir}/customActions/@{name}">
                 <!-- also include files from the previously built ${izevent.jar} -->
-                <zipfileset src="${izevent.jar}" excludes="@{izeventExcludes}"/>
+                <!-- <zipfileset src="${izevent.jar}" excludes="@{izeventExcludes}"/> -->
             </jar>
         </sequential>
     </macrodef>
@@ -326,8 +240,7 @@
                  implicit="yes"
                  description="include and exclude elements indicating listener sources"/>
         <sequential>
-            <build-listener name="@{name}" srcdir="@{srcdir}" izeventExcludes="**/*Uninstaller*,**/*Compiler*"
-                            classpath-ext="@{classpath-ext}">
+            <build-listener name="@{name}" srcdir="@{srcdir}" classpath-ext="@{classpath-ext}">
                 <installer-fileset/>
             </build-listener>
         </sequential>
@@ -343,8 +256,7 @@
                  implicit="yes"
                  description="include and exclude elements indicating listener sources"/>
         <sequential>
-            <build-listener name="@{name}" srcdir="@{srcdir}" izeventExcludes="**/*Installer*,**/*Compiler*"
-                            classpath-ext="@{classpath-ext}">
+            <build-listener name="@{name}" srcdir="@{srcdir}"  classpath-ext="@{classpath-ext}">
                 <uninstaller-fileset/>
             </build-listener>
         </sequential>
@@ -365,76 +277,6 @@
             <include name="AdxCompInstallerListener.java"/>
             <include name="XMLHelper.java"/>
         </build-installer-listener>
-
-<!--         
-        <build-installer-listener name="LateShortcutInstallListener"
-                                  classpath-ext="${bin.dir}/panels/ShortcutPanel.jar">
-            <include name="com/izforge/izpack/event/LateShortcutInstallListener.java"/>
-        </build-installer-listener>
-
-        <build-installer-listener name="AdxCompInstallerListener">
-            <include name="com/izforge/izpack/event/RegistryInstallerListener.java"/>
-            <include name="com/izforge/izpack/event/AdxCompInstallerListener.java"/>
-            <include name="com/izforge/izpack/event/NativeInstallerListener.java"/>
-            <include name="com/izforge/izpack/util/os/*RegistryHandler.java"/>
-            <include name="com/izforge/izpack/util/OSClassHelper.java"/>
-            <include name="com/izforge/izpack/util/os/WrappedNativeLibException.java"/>
-            <include name="com/coi/tools/os/win/*.java"/>
-            <include name="com/coi/tools/os/win/resources/NativeLibErr*.java"/>
-            <include name="com/coi/tools/os/izpack/Registry.java"/>
-            <include name="com/coi/tools/os/izpack/COIOSHelper.java"/>
-            <include name="com/izforge/izpack/util/xml/XMLHelper.java"/>
-        </build-installer-listener>
-
-        <build-installer-listener name="UpdateListener">
-            <include name="com/izforge/izpack/event/UpdateListener.java"/>
-        </build-installer-listener>
-
-        <build-uninstaller-listener name="RegistryUninstallerListener">
-            <include name="com/izforge/izpack/event/RegistryUninstallerListener.java"/>
-            <include name="com/izforge/izpack/event/NativeUninstallerListener.java"/>
-            <include name="com/izforge/izpack/util/os/*RegistryHandler.java"/>
-            <include name="com/izforge/izpack/util/OSClassHelper.java"/>
-            <include name="com/izforge/izpack/util/os/WrappedNativeLibException.java"/>
-            <include name="com/coi/tools/os/win/*.java"/>
-            <include name="com/coi/tools/os/win/resources/NativeLibErr*.java"/>
-            <include name="com/coi/tools/os/izpack/Registry.java"/>
-            <include name="com/coi/tools/os/izpack/COIOSHelper.java"/>
-        </build-uninstaller-listener>
-
-        <build-uninstaller-listener name="AdxCompUninstallerListener">
-            <include name="com/izforge/izpack/event/RegistryUninstallerListener.java"/>
-            <include name="com/izforge/izpack/event/AdxCompUninstallerListener.java"/>
-            <include name="com/izforge/izpack/event/NativeUninstallerListener.java"/>
-            <include name="com/izforge/izpack/util/os/*RegistryHandler.java"/>
-            <include name="com/izforge/izpack/util/OSClassHelper.java"/>
-            <include name="com/izforge/izpack/util/os/WrappedNativeLibException.java"/>
-            <include name="com/coi/tools/os/win/*.java"/>
-            <include name="com/coi/tools/os/win/resources/NativeLibErr*.java"/>
-            <include name="com/coi/tools/os/izpack/Registry.java"/>
-            <include name="com/coi/tools/os/izpack/COIOSHelper.java"/>
-            <include name="com/izforge/izpack/util/xml/XMLHelper.java"/>
-        </build-uninstaller-listener>
-
-        <build-installer-listener name="BSFInstallerListener" classpath-ext="$${basedir}/lib/bsf.jar">
-            <include name="com/izforge/izpack/event/BSFInstallerListener.java" />
-            <include name="com/izforge/izpack/event/BSFAction.java" />
-        </build-installer-listener>
-
-        <build-uninstaller-listener name="BSFUninstallerListener" classpath-ext="$${basedir}/lib/bsf.jar">
-            <include name="com/izforge/izpack/event/BSFUninstallerListener.java" />
-            <include name="com/izforge/izpack/event/BSFAction.java" />
-        </build-uninstaller-listener> -->
-
-        <!-- CUSTOM ACTION test START
-        <build-compiler-listener name="ChmodCompilerListener">
-            <include name="com/myCompany/tools/install/listener/ChmodCompilerListener.java"/>
-        </build-compiler-listener>
-
-        <build-installer-listener name="ChmodInstallerListener">
-            <include name="com/myCompany/tools/install/listener/ChmodInstallerListener.java"/>
-        </build-installer-listener>
-        COSTOM ACTION test END -->
     </target>
 
     <!-- ====================================================================== -->
@@ -453,8 +295,7 @@
             </fileset>
             <fileset dir="${basedir}/lib/">
                 <include name="compiler.jar"/>
-                <include name="izevent.jar"/>
-                <include name="standalone-compiler.jar"/>
+                <include name="com.sage.izpack.jar"/>
                 <include name="frontend.jar"/>
                 <include name="installer.jar"/>
                 <include name="uninstaller.jar"/>
@@ -470,7 +311,7 @@
 
     <!-- Builds all compilation targets -->
     <target name="all"
-            depends="clean, splashscreen, build.panels, build.listeners, build.standalone-compiler"
+            depends="clean, splashscreen, build.listeners, build.standalone-compiler"
             description="base: compiles a developer version"/>
 
     <!-- Builds the Javadoc -->
@@ -700,7 +541,7 @@
         <mkdir dir="${basedir}/_src${dist.subdir}"/>
         <property name="src.tar.gz" value="${basedir}/_src${dist.subdir}/${product}-src-${ver}.${rel}.tar.gz"/>
         <tar compression="gzip" destfile="${src.tar.gz}" basedir="${basedir}"
-             excludes="_src${dist.subdir}/**, _dist/**, _build/**, bin/panels/**, bin/customActions/**, doc/izpack/**, eclipse-bin/**, lib/standalone-compiler.jar, lib/izevent.jar, lib/uninstaller*, lib/installer.jar, lib/compiler.jar"/>
+             excludes="_src${dist.subdir}/**, _dist/**, _build/**, bin/panels/**, bin/customActions/**, doc/izpack/**, eclipse-bin/**, lib/com.sage.izpack.jar, lib/uninstaller*, lib/installer.jar, lib/compiler.jar"/>
     </target>
 
 

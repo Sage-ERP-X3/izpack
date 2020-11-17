@@ -50,11 +50,11 @@
 
     <property name="src.dir" value="${basedir}/izPackCustomActions/src"/>
     <property name="img.dir" value="${basedir}/src/img"/>
-    <property name="bin.dir" value="${basedir}/lib"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="bin.dir" value="${basedir}/izPackCustomActions/bin"/>
     <property name="doc.dir" value="${basedir}/doc"/>
 
-    <property name="build.subdir" value="_build"/>
-    <property name="build.dir" value="${basedir}/${build.subdir}"/>
+    <property name="build.dir" value="${basedir}/izPackCustomActions"/>
 
     <property name="dist.subdir" value="_dist"/>
     <property name="dist.dir" value="${basedir}/${dist.subdir}"/>
@@ -63,23 +63,21 @@
     <!-- Define Main-Classes -->
     <property name="compiler.class" value="com.izforge.izpack.compiler.Compiler"/>
     <property name="installer.class" value="com.izforge.izpack.installer.Installer"/>
-    <property name="uninstaller.class" value="com.izforge.izpack.uninstaller.Uninstaller"/>
 
     <!-- Define file paths -->
     <property name="compiler.jar" value="${basedir}/izPackCustomActions/sagejar/compiler.jar"/>
     <property name="com.sage.izpack.jar" value="${basedir}/izPackCustomActions/com.sage.izpack.jar"/>
     <property name="installer.jar" value="${basedir}/izPackCustomActions/sagejar/installer.jar"/>
-    <property name="uninstaller.jar" value="${basedir}/izPackCustomActions/sagejar/uninstaller.jar"/>
 
     <!-- Compilation parameters -->
     <!--<property name="debug" value="off"/>
     <property name="debuglevel" value=""/> -->
     <property name="debug" value="true"/>
     <property name="debuglevel" value="lines,vars,source"/>
-    <property name="compat.source" value="1.7"/>
-    <property name="compat.target" value="1.7"/>
-	<property name="ant.build.javac.source" value="1.7"/>
-	<property name="ant.build.javac.target" value="1.7"/>
+    <property name="compat.source" value="1.8"/>
+    <property name="compat.target" value="1.8"/>
+	<property name="ant.build.javac.source" value="1.8"/>
+	<property name="ant.build.javac.target" value="1.8"/>
 
     <!-- paths -->
     <path id="classpath">
@@ -115,16 +113,17 @@
         <javac srcdir="${src.dir}"
         	includeantruntime="yes"
             classpath="${basedir}/lib/jakarta-regexp-1.3.jar:${basedir}/lib/mongo-java-driver-3.4.2.jar:${basedir}/lib/jna-4.0.0.jar:${basedir}/lib/jna-platform-4.0.0.jar"
-               destdir="${build.dir}"
-               optimize="on"
-               source="${compat.source}"
-               target="${compat.target}"
-               deprecation="on"
+            destdir="${build.dir}"
+            optimize="on"
+            source="${compat.source}"
+            target="${compat.target}"
+            deprecation="on"
                debug="${debug}"
                debuglevel="${debuglevel}"
    		 	   encoding="utf-8">
 
-                <include name="izPackCustomActions/src/*.java"/>
+                <!-- <include name="izPackCustomActions/src/*.java"/> -->
+                <include name="com/sage/izpack/*.java"/>
 
             <!-- 
                 <include name="com/izforge/izpack/*.java"/>
@@ -142,33 +141,7 @@
     </target>
 
   
-    <!-- Package com.sage.izpack.jar -->
-    <target name="build.standalone-compiler"
-            depends="compile.compiler, build.listeners">
-        <jar jarfile="${com.sage.izpack.jar}" duplicate="preserve">
-            <manifest>
-                <attribute name="Built-By" value="IzPack"/>
-                <!-- <attribute name="Class-Path" value="ant.jar"/> -->
-                <attribute name="Main-Class" value="${compiler.class}"/>
-            </manifest>
-			<fileset dir="${build.dir}">
-                <include name="**/*.class"/>
-			</fileset>
-            <!-- <zipfileset src="lib/ant.jar"/> -->
-            <fileset dir="${basedir}">
-                <include name="bin/langpacks/flags/*"/>
-                <include name="bin/native/3rdparty/*"/>
-                <include name="bin/panels/*Panel.jar"/>
-                <include name="bin/customActions/*.jar"/>
-                <include name="lib/*.jar"/>
-				<exclude name="lib/com.sage.izpack.jar"/>
-            </fileset>
-             <fileset dir="${src.dir}">
-                <include name="**/*"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </jar>
-    </target>
+
 
     <!--
          ======================================================================
@@ -189,11 +162,11 @@
                  description="include and exclude elements indicating listener sources"/>
         <sequential>
             <echo message="build-listener: @{name}"/>
-            <mkdir dir="${bin.dir}/customActions/@{name}"/>
+            <mkdir dir="${bin.dir}/@{name}"/> 
             <!-- sourcepath is cleared so there's no mistaking what goes into the Listener -->
             <javac srcdir="@{srcdir}"
             	includeantruntime="yes"
-                   destdir="${bin.dir}/customActions/@{name}"
+                   destdir="${bin.dir}/@{name}"
                    classpath="${installer.jar};${compiler.jar};@{classpath-ext}"
                    sourcepath=""
                    optimize="on"
@@ -203,10 +176,11 @@
                    target="${compat.target}"
                    debuglevel="${debuglevel}"
     		 	   encoding="utf-8">
+                <include name="com/sage/izpack/*.java"/>
                 <listener-fileset/>
             </javac>
-            <jar jarfile="${bin.dir}/customActions/@{name}.jar"
-                 basedir="${bin.dir}/customActions/@{name}">
+            <jar jarfile="${bin.dir}/@{name}.jar"
+                 basedir="${bin.dir}/@{name}">
                 <!-- also include files from the previously built ${izevent.jar} -->
                 <!-- <zipfileset src="${izevent.jar}" excludes="@{izeventExcludes}"/> -->
             </jar>
@@ -231,21 +205,6 @@
         </sequential>
     </macrodef>
 
-    <!-- Convenience macro to call build-listener for uninstaller listeners -->
-    <macrodef name="build-uninstaller-listener">
-        <attribute name="name"/>
-        <attribute name="srcdir" default="${src.dir}"/>
-        <attribute name="classpath-ext" description="An extension of the classpath required to build the listener"
-                   default=""/>
-        <element name="uninstaller-fileset"
-                 implicit="yes"
-                 description="include and exclude elements indicating listener sources"/>
-        <sequential>
-            <build-listener name="@{name}" srcdir="@{srcdir}"  classpath-ext="@{classpath-ext}">
-                <uninstaller-fileset/>
-            </build-listener>
-        </sequential>
-    </macrodef>
     
     <!-- Compile all custom actions (listener) and put them at the right location -->
     <!--
@@ -253,11 +212,11 @@
          be sure to explicitly include the .java file in the nested fileset.
          This also acts as a check to help limit dependancies.
     -->
-    <target name="build.listeners">
-        <!-- This dependency is mandatory -->
+
+    <target name="build.com.sage.izpack">
         
-        <build-installer-listener name="AdxCompInstallerListener" 
-        classpath-ext="${basedir}/lib/izpack-core-5.1.3.jar;${basedir}/lib/izpack-util-5.1.3.jar;${basedir}/lib/izpack-api-5.1.3.jar;${basedir}/lib/izpack-tools-5.1.3.jar;${basedir}/lib/izpack-event-5.1.3.jar;${basedir}/lib/izpack-installer-5.1.3.jar;${basedir}/lib/jline-2.12.1.jar">
+        <build-installer-listener name="com.sage.izpack" 
+        classpath-ext="${basedir}/lib/izpack-core-5.1.3.jar;${basedir}/lib/izpack-uninstaller-5.1.3.jar;${basedir}/lib/izpack-util-5.1.3.jar;${basedir}/lib/izpack-api-5.1.3.jar;${basedir}/lib/izpack-tools-5.1.3.jar;${basedir}/lib/izpack-event-5.1.3.jar;${basedir}/lib/izpack-installer-5.1.3.jar;${basedir}/lib/izpack-panel-5.1.3.jar;${basedir}/lib/izpack-gui-5.1.3.jar;${basedir}/lib/jline-2.12.1.jar">
             <include name="AdxCompInstallerListener.java"/>
             <include name="AdxCompUninstallerListener.java"/>
             <include name="CheckedHelloNewConsolePanel.java"/>
@@ -278,33 +237,27 @@
     <target name="clean" description="cleans up the dist">
         <echo message="Cleaning-up"/>
         <delete includeEmptyDirs="true" quiet="true">
-            <fileset dir="${build.dir}"/>
-            <fileset dir="${dist.dir}"/>
-            <fileset dir="${basedir}/bin/panels/">
-                <include name="**/*"/>
-            </fileset>
-            <fileset dir="${basedir}/bin/customActions/">
+            <!-- <fileset dir="${build.dir}"/>
+            <fileset dir="${dist.dir}"/> -->
+            <fileset dir="${basedir}/izPackCustomActions/bin">
                 <include name="**/*"/>
             </fileset>
             <fileset dir="${basedir}/lib/">
                 <include name="compiler.jar"/>
                 <include name="com.sage.izpack.jar"/>
-                <include name="frontend.jar"/>
-                <include name="installer.jar"/>
-                <include name="uninstaller.jar"/>
             </fileset>
         </delete>
-        <delete file="bin/native/3rdparty/COIOSHelper.dll"/>
+        <!-- <delete file="bin/native/3rdparty/COIOSHelper.dll"/> -->
         <delete dir="${basedir}/bin/native/izpack"/>
-        <delete dir="${basedir}/src/doc-reST/html"/>
-        <delete dir="${basedir}/src/doc-reST/pdf"/>
+        <!-- <delete dir="${basedir}/src/doc-reST/html"/>
+        <delete dir="${basedir}/src/doc-reST/pdf"/> -->
         <delete includeEmptyDirs="true" dir="${basedir}/doc/izpack"/>
-        <delete dir="${basedir}/_src${dist.subdir}"/>
+        <!-- <delete dir="${basedir}/_src${dist.subdir}"/> -->
     </target>
 
     <!-- Builds all compilation targets -->
     <target name="all"
-            depends="clean, splashscreen, build.listeners, build.standalone-compiler"
+            depends="clean, splashscreen, build.com.sage.izpack"
             description="base: compiles a developer version"/>
 
     <!-- Builds the Javadoc -->
@@ -351,16 +304,6 @@
 
     </target>
 
-
-    <!-- - - - - - - - - - - - - - - - - -
-          target: taskdef
-         - - - - - - - - - - - - - - - - - -->
-    <target name="taskdef.dist">
-        <!-- Allows us to use the IzPack Ant task -->
-        <taskdef name="izpack"
-                 classpath="${basedir}/lib/compiler.jar"
-                 classname="com.izforge.izpack.ant.IzPackTask"/>
-    </target>
 
 
 
@@ -409,25 +352,6 @@
     </target>
 
 
-    <!-- - - - - - - - - - - - - - - - - -
-          target: replace.dist.buildnumber
-         - - - - - - - - - - - - - - - - - -->
-    <target name="replace.dist.buildnumber">
-        <replace file="${dist.dir}/shortcutSpec.xml"
-                 token="@build.number@"
-                 value="${build.number}"
-                 summary="yes"/>
-        <replace file="${dist.dir}/shortcutSpec.xml" token="@ver@" value="${ver}" summary="yes"/>
-
-        <replace file="${dist.dir}/Unix_shortcutSpec.xml"
-                 token="@build.number@"
-                 value="${build.number}"
-                 summary="yes"/>
-        <replace file="${dist.dir}/Unix_shortcutSpec.xml"
-                 token="@ver@"
-                 value="${ver}"
-                 summary="yes"/>
-    </target>
 
     <!-- Creates an installer for IzPack -->
     <target name="exec.izpack.compiler">
@@ -448,23 +372,7 @@
     </target>
 
 
-    <!-- - - - - - - - - - - - - - - - - -
-          target: prepare.install.dist
-         - - - - - - - - - - - - - - - - - -->
-    <target name="prepare.install.dist"
-            depends="taskdef.dist, copy.dist.files, replace.dist.buildnumber, fix.crlf">
 
-    </target>
-
-    <!-- =================================
-	   Creates a normal installer for IzPack
-	  ================================= -->
-    <target name="generate.installer" depends="prepare.install.dist">
-        <antcall target="exec.izpack.compiler">
-            <param name="installer.xmlfile" value="IzPack-install.xml"/>
-            <param name="installer.name" value="${product}-install-"/>
-        </antcall>
-    </target>
 
     <!--
         Fixes CR/LF by applying the Unix convention (\n for endlines).
@@ -472,12 +380,12 @@
     -->
     <target name="fix.crlf">
         <property name="dist.src.dir" location="${dist.dir}/src"/>
-        <property name="dist.bin.dir" location="${dist.dir}/bin"/>
+        <property name="dist.lib.dir" location="${dist.dir}/bin"/>
         <echo>
             Fixing linefeeds for several files in:
             "${dist.src.dir}"
             and
-            "${dist.bin.dir}"
+            "${dist.lib.dir}"
         </echo>
         <fixcrlf srcDir="${dist.src.dir}" eol="lf" eof="remove" encoding="UTF-8">
             <include name="**/*.java"/>
@@ -488,14 +396,14 @@
             <include name="**/*.sh"/>
             <include name="dist-files/compile"/>
         </fixcrlf>
-        <fixcrlf srcdir="${dist.bin.dir}" eol="unix" eof="remove">
+        <fixcrlf srcdir="${dist.lib.dir}" eol="unix" eof="remove">
             <include name="**/*.sh"/>
             <include name="compile"/>
         </fixcrlf>
         <fixcrlf srcdir="${dist.dir}" eol="dos" eof="add">
             <include name="**/*.bat"/>
         </fixcrlf>
-        <fixcrlf srcdir="${dist.bin.dir}" eol="dos" eof="add">
+        <fixcrlf srcdir="${dist.lib.dir}" eol="dos" eof="add">
             <include name="**/*.bat"/>
         </fixcrlf>
     </target>
@@ -507,17 +415,17 @@
 
     <!-- Makes everything, from compilation to generating an installer. -->
     <target name="quickdist"
-            depends="all, generate.installer"
+            depends="all"
             description="makes a installer without docu"/>
 
     <!-- Makes everything, from compilation, customer and javadoc to generating an installer. -->
     <target name="dist"
-            depends="src.tar.gz, all, create.docu, generate.installer"
+            depends="src.tar.gz, all, create.docu"
             description="makes a complete installer"/>
 
     <!-- Makes everything, from Cleaning to generating both installers: normal and reg support. -->
     <target name="cleandistreg"
-            depends="clean, splashscreen, dist, generate.installer"
+            depends="clean, splashscreen, dist"
             description="creates a full dist with Win32 uninstall registry support"/>
 
     <!-- =================================

@@ -42,8 +42,9 @@ import com.izforge.izpack.api.data.AutomatedInstallData;
 import com.izforge.izpack.api.data.InstallData;
 import jline.internal.Log;
 
-// Eclipse is confused by imports (ìaccessible from more than one moduleî)
-// That's a restriction by the Java Platform Module System (JPMS), not by Eclipse (so don't shut the messenger). If you delete the file module-info.java in your default package (which disables JPMS) it should work with Java 9 or higher. ñ howlger Apr 8 '19 at 11:02
+import com.sage.izpack.XMLHelper;
+
+
 // This happens when not creating the module-info.java
 // Solves moving the JRE System Library from the Modulepath to the Classpath your issue? 
 // Everything must be on the classpath, the JAR and the JRE System Library
@@ -228,7 +229,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			xdoc = dBuilder.parse(fileAdxinstalls);
 		}
 
-		com.sage.izpack.XMLHelper.cleanEmptyTextNodes((Node) xdoc);
+		XMLHelper.cleanEmptyTextNodes((Node) xdoc);
 
 		// adxinstalls.xml lu ou cr√©e
 		// il faut ajouter le module

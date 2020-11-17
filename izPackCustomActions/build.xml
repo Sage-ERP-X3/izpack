@@ -9,14 +9,8 @@
 
   Mini-HowTo:
 
-  To compile and package the compiler.jar jar file, type:
-    ant build.compiler
-
   To compile and package the installer.jar jar file, type:
     ant build.installer
-
-  To compile and package the uninstaller.jar jar file, type:
-    ant build.uninstaller
 
   To compile the panels and put them in the bin/panels directory, type:
     ant build.panels
@@ -65,7 +59,6 @@
     <property name="installer.class" value="com.izforge.izpack.installer.Installer"/>
 
     <!-- Define file paths -->
-    <property name="compiler.jar" value="${basedir}/izPackCustomActions/sagejar/compiler.jar"/>
     <property name="com.sage.izpack.jar" value="${basedir}/izPackCustomActions/com.sage.izpack.jar"/>
     <property name="installer.jar" value="${basedir}/izPackCustomActions/sagejar/installer.jar"/>
 
@@ -108,40 +101,6 @@
         <mkdir dir="${dist.dir}"/>
     </target>
 
-    <!-- Compiles the compiler src files -->
-    <target name="compile.compiler" depends="prepare">
-        <javac srcdir="${src.dir}"
-        	includeantruntime="yes"
-            classpath="${basedir}/lib/jakarta-regexp-1.3.jar:${basedir}/lib/mongo-java-driver-3.4.2.jar:${basedir}/lib/jna-4.0.0.jar:${basedir}/lib/jna-platform-4.0.0.jar"
-            destdir="${build.dir}"
-            optimize="on"
-            source="${compat.source}"
-            target="${compat.target}"
-            deprecation="on"
-               debug="${debug}"
-               debuglevel="${debuglevel}"
-   		 	   encoding="utf-8">
-
-                <!-- <include name="izPackCustomActions/src/*.java"/> -->
-                <include name="com/sage/izpack/*.java"/>
-
-            <!-- 
-                <include name="com/izforge/izpack/*.java"/>
-            <include name="com/izforge/izpack/io/*.java"/>
-            <include name="com/izforge/izpack/compiler/*.java"/>
-            <include name="com/izforge/izpack/compressor/*.java"/>
-            <include name="com/izforge/izpack/ant/*.java"/>
-            <include name="com/izforge/izpack/util/Debug.java"/>
-            <include name="com/izforge/izpack/util/OsConstraint.java"/>
-            <include name="com/izforge/izpack/util/JarOutputStream.java"/>
-            <include name="com/izforge/izpack/rules/*.java"/>
-            <include name="com/izforge/izpack/adaptator/**/*.java"/>
-            <include name="com/izforge/izpack/adaptator/*.java"/> -->
-        </javac>
-    </target>
-
-  
-
 
     <!--
          ======================================================================
@@ -167,7 +126,7 @@
             <javac srcdir="@{srcdir}"
             	includeantruntime="yes"
                    destdir="${bin.dir}/@{name}"
-                   classpath="${installer.jar};${compiler.jar};@{classpath-ext}"
+                   classpath="${installer.jar};@{classpath-ext}"
                    sourcepath=""
                    optimize="on"
                    deprecation="on"
@@ -177,11 +136,21 @@
                    debuglevel="${debuglevel}"
     		 	   encoding="utf-8">
                 <include name="com/sage/izpack/*.java"/>
+                <include name="com/sage/izpack/*.xml"/>
+                <include name="com/sage/izpack/*.properties"/>
                 <listener-fileset/>
             </javac>
             <jar jarfile="${bin.dir}/@{name}.jar"
                  basedir="${bin.dir}/@{name}">
-                <!-- also include files from the previously built ${izevent.jar} -->
+
+<fileset dir="${bin.dir}">
+      <include name="**/*.class"/>
+    </fileset>
+<fileset dir="${src.dir}">
+      <include name="**/*.properties"/>
+      <include name="**/*.xml"/>
+    </fileset>
+                    <!-- also include files from the previously built ${izevent.jar} -->
                 <!-- <zipfileset src="${izevent.jar}" excludes="@{izeventExcludes}"/> -->
             </jar>
         </sequential>
@@ -212,7 +181,6 @@
          be sure to explicitly include the .java file in the nested fileset.
          This also acts as a check to help limit dependancies.
     -->
-
     <target name="build.com.sage.izpack">
         
         <build-installer-listener name="com.sage.izpack" 
@@ -228,6 +196,10 @@
             <include name="RegistryInstallerNewListener.java"/>
             <include name="UpdateListener.java"/>
             <include name="XMLHelper.java"/>
+            <include name="eng.xml"/>
+            <include name="fra.xml"/>
+            <include name="messages_en.properties"/>
+            <include name="messages_fr.properties"/>
         </build-installer-listener>
     </target>
 
@@ -243,7 +215,6 @@
                 <include name="**/*"/>
             </fileset>
             <fileset dir="${basedir}/lib/">
-                <include name="compiler.jar"/>
                 <include name="com.sage.izpack.jar"/>
             </fileset>
         </delete>
@@ -442,7 +413,7 @@
         <mkdir dir="${basedir}/_src${dist.subdir}"/>
         <property name="src.tar.gz" value="${basedir}/_src${dist.subdir}/${product}-src-${ver}.${rel}.tar.gz"/>
         <tar compression="gzip" destfile="${src.tar.gz}" basedir="${basedir}"
-             excludes="_src${dist.subdir}/**, _dist/**, _build/**, bin/panels/**, bin/customActions/**, doc/izpack/**, eclipse-bin/**, lib/com.sage.izpack.jar, lib/uninstaller*, lib/installer.jar, lib/compiler.jar"/>
+             excludes="_src${dist.subdir}/**, _dist/**, _build/**, bin/panels/**, bin/customActions/**, doc/izpack/**, eclipse-bin/**, lib/com.sage.izpack.jar, lib/uninstaller*, lib/installer.jar"/>
     </target>
 
 

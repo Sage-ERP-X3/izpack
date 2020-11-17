@@ -213,21 +213,6 @@
         </sequential>
     </macrodef>
 
-    <!-- Convenience macro to call build-listener for compiler listeners -->
-    <macrodef name="build-compiler-listener">
-        <attribute name="name"/>
-        <attribute name="srcdir" default="${src.dir}"/>
-        <element name="compiler-fileset"
-                 implicit="yes"
-                 description="include and exclude elements indicating listener sources"/>
-        <sequential>
-            <build-listener name="@{name}"
-                            srcdir="@{srcdir}"
-                            izeventExcludes="**/*Installer*,**/*Uninstaller*">
-                <compiler-fileset/>
-            </build-listener>
-        </sequential>
-    </macrodef>
     
     
     <!-- Convenience macro to call build-listener for installer listeners -->
@@ -273,8 +258,16 @@
         
         <build-installer-listener name="AdxCompInstallerListener" 
         classpath-ext="${basedir}/lib/izpack-core-5.1.3.jar;${basedir}/lib/izpack-util-5.1.3.jar;${basedir}/lib/izpack-api-5.1.3.jar;${basedir}/lib/izpack-tools-5.1.3.jar;${basedir}/lib/izpack-event-5.1.3.jar;${basedir}/lib/izpack-installer-5.1.3.jar;${basedir}/lib/jline-2.12.1.jar">
-            <include name="RegistryHandlerX3.java"/>
             <include name="AdxCompInstallerListener.java"/>
+            <include name="AdxCompUninstallerListener.java"/>
+            <include name="CheckedHelloNewConsolePanel.java"/>
+            <include name="CheckedHelloNewPanel.java"/>
+            <include name="CheckedHelloNewPanelAutomationHelper.java"/>
+            <include name="CheckProductAlreadyInstalled.java"/>
+            <include name="PacksNewPanel.java"/>
+            <include name="RegistryHandlerX3.java"/>
+            <include name="RegistryInstallerNewListener.java"/>
+            <include name="UpdateListener.java"/>
             <include name="XMLHelper.java"/>
         </build-installer-listener>
     </target>

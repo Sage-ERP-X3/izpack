@@ -196,6 +196,7 @@
             <include name="RegistryInstallerNewListener.java"/>
             <include name="UpdateListener.java"/>
             <include name="XMLHelper.java"/>
+            <include name="PrintMessage.java"/>
             <include name="eng.xml"/>
             <include name="fra.xml"/>
             <include name="messages_en.properties"/>

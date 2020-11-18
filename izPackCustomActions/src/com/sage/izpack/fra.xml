@@ -127,6 +127,8 @@
     <str id="PacksPanel.done" txt="...sélection des paquets terminée."/>
     <str id="PacksPanel.installedpacks.summarycaption" txt="Core files"/>
 
+    <str id="ProcessPanel.dotNet461OrHigherInstalled" txt="dotnet framework 4.6.1 already installed"/>
+
 
     <!-- InstallPanel strings -->
     <str id="InstallPanel.info" txt="Vous pouvez lancer le processus d'installation ici :"/>

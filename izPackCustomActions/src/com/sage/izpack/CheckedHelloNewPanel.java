@@ -26,11 +26,14 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 	 */
 	private static final long serialVersionUID = 1737042770727953387L; // 1737042770727953387L
 
+	private RegistryHelper _registryHelper;
+	
 	public CheckedHelloNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			RegistryDefaultHandler handler, Log log) throws Exception {
 		super(panel, parent, installData, resources, handler, log);
 
 		RegistryHelper registryHelper = new RegistryHelper(handler, installData);
+		_registryHelper = registryHelper;
 		String path = registryHelper.getInstallationPath();
 		if (path != null) {
 			installData.setVariable("TargetPanel.dir.windows", path);
@@ -41,6 +44,44 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		}
 	}
 
+	@Override
+	public void panelActivate()
+    {
+        if (abortInstallation)
+        {
+            parent.lockNextButton();
+            try
+            {
+                if (multipleInstall())
+                {
+                    // setUniqueUninstallKey();
+                    abortInstallation = false;
+                    parent.unlockNextButton();
+                }
+                else
+                {
+                    installData.getInfo().setUninstallerPath(null);
+                    installData.getInfo().setUninstallerName(null);
+                    installData.getInfo().setUninstallerCondition("uninstaller.nowrite");
+                }
+            }
+            catch (Exception exception)
+            {
+                logger.log(Level.WARNING, exception.getMessage(), exception);
+            }
+        }
+        installData.setVariable("UNINSTALL_NAME", _registryHelper.getUninstallName());
+    }
+
+	/*
+	private void setUniqueUninstallKey() throws NativeLibException
+    {
+        String newUninstallName = registryHelper.updateUninstallName();
+        emitNotification(getString("CheckedHelloPanel.infoOverUninstallKey")
+                                 + newUninstallName);
+    }
+	*/
+	
 	/**
 	 * Returns whether the handled application is already registered or not. The
 	 * validation will be made only on systems which contains a registry (Windows).

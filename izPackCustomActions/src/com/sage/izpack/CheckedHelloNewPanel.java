@@ -44,6 +44,11 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		}
 	}
 
+	
+	/*
+	 * We override this method to avoid the alert message sent by 
+	 * setUniqueUninstallKey()
+	 */
 	@Override
 	public void panelActivate()
     {
@@ -58,12 +63,13 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
                     abortInstallation = false;
                     parent.unlockNextButton();
                 }
-                else
-                {
+// if we let the "else", izpack create a unique Key after each installation, and the registry is not uninstalled 
+                // else
+                // {
                     installData.getInfo().setUninstallerPath(null);
                     installData.getInfo().setUninstallerName(null);
                     installData.getInfo().setUninstallerCondition("uninstaller.nowrite");
-                }
+                //}
             }
             catch (Exception exception)
             {

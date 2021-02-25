@@ -85,7 +85,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         Security.addProvider(bcprovider);    
 
         String strCertPath = adata.getVariable("mongodb.dir.certs");
-        String hostname = adata.getVariable("HOST_NAME");
+        String hostname = adata.getVariable("mongodb.ssl.certificate.hostname");
         String pemKeyFile = strCertPath + File.separator + hostname + ".pem";
         String certFile = strCertPath + File.separator + hostname + ".crt";
         String privKeyFile = strCertPath + File.separator + hostname + ".key";

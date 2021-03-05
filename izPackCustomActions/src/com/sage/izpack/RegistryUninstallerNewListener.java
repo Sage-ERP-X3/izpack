@@ -62,8 +62,6 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	@Override
 	public void afterDelete(List<File> files, ProgressListener listener) {
 
-		// deleteRegistry();
-
 		super.afterDelete(files, listener);
 
 	}
@@ -79,7 +77,8 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		String keyName = RegistryHandler.UNINSTALL_ROOT + unInstallName;
 		if (unInstallName == null) {
 			logger.log(Level.FINE, "Error in deleteRegistry: getUninstallName() is empty");
-			myHandlerInstance.setUninstallName("Sage X3 Management Console");
+			// myHandlerInstance.setUninstallName("Sage X3 Management Console");
+			return;
 		}
 
 		logger.log(Level.ALL, "UninstallName Registry key " + keyName);

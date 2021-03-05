@@ -10,10 +10,11 @@ import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
+import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.event.RegistryUninstallerListener;
 
 /*
- * This class fix the bug when uninstalling a product, sometimes, the Registry is not cleaned (Ex: X3-237732)
+ * This class fix the bug when un-installing a product, sometimes, the Registry is not cleaned (Ex: X3-237732)
  *  
  *  Ex: Delete HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + getUninstallName();
  *  
@@ -24,9 +25,10 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	private static final Logger logger = Logger.getLogger(RegistryUninstallerNewListener.class.getName());
 
 	private RegistryDefaultHandler myhandler;
+
 	public RegistryUninstallerNewListener(RegistryDefaultHandler handler, Resources resources, Messages messages) {
 		super(handler, resources, messages);
-		
+
 		myhandler = handler;
 	}
 
@@ -39,6 +41,15 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	@Override
 	public void afterDelete(File file) {
 
+		super.afterDelete(file);
+	}
+
+	@Override
+	public void beforeDelete(List<File> files, ProgressListener listener) {
+
+		deleteRegistry();
+
+		super.beforeDelete(files, listener);
 	}
 
 	/**
@@ -51,23 +62,40 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	@Override
 	public void afterDelete(List<File> files, ProgressListener listener) {
 
-		String unInstallName = this.myhandler.getInstance().getUninstallName();
-		// String keyName = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Sage X3 Management Console";
-		String keyName = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + unInstallName;
+		// deleteRegistry();
 
-		logger.log(Level.ALL, "unInstallName Registry key " + unInstallName);
-		
-		RegistryHandlerX3 rh = new RegistryHandlerX3();
-		if (rh != null) {
-			try {
-				if (!rh.keyExist(keyName)) {
-					rh.deleteKey(keyName);
-					logger.log(Level.FINE, "Registry key " + keyName + "deleted");
-				}
-			} catch (NativeLibException e) {
-				e.printStackTrace();
-				logger.log(Level.FINE, "Error, registry key " + keyName + " NOT deleted");
+		super.afterDelete(files, listener);
+
+	}
+
+	private void deleteRegistry() {
+
+		RegistryHandler myHandlerInstance = myhandler.getInstance();
+		String unInstallName = myHandlerInstance.getUninstallName();
+		// String keyName =
+		// "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Sage X3 Management Console";
+		// RegistryHandler.UNINSTALL_ROOT =
+		// "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
+		String keyName = RegistryHandler.UNINSTALL_ROOT + unInstallName;
+		if (unInstallName == null) {
+			logger.log(Level.FINE, "Error in deleteRegistry: getUninstallName() is empty");
+			myHandlerInstance.setUninstallName("Sage X3 Management Console");
+		}
+
+		logger.log(Level.ALL, "UninstallName Registry key " + keyName);
+
+		try {
+			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+
+			if (myHandlerInstance.keyExist(keyName)) {
+				myHandlerInstance.deleteValue(keyName, "DisplayVersion");
+				// myHandlerInstance.deleteKey(keyName + "\\DisplayVersion");
+				myHandlerInstance.deleteKey(keyName);
+				logger.log(Level.FINE, "Registry key " + keyName + " deleted");
 			}
+		} catch (NativeLibException e) {
+			e.printStackTrace();
+			logger.log(Level.FINE, "Error, registry key " + keyName + " NOT deleted");
 		}
 	}
 

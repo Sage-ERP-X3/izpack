@@ -213,17 +213,21 @@ public class InstallerBase
 
         if (OsVersion.IS_UNIX) {
             // if hostname could not be read
-            if ("".equals(hostname)) {
+            // Issue on Redhat8 - The addr.getHostName() retrun localhost
+            if ("".equals(hostname) || "localhost".equals(hostname)) {
                 Debug.log("hostname not set, reading $HOSTNAME");
                 // read from $HOSTNAME
-                hostname=System.getenv("HOSTNAME");
-                
+                String newHostName = System.getenv("HOSTNAME");
+                if(newHostname != null) {
+                    hostname = newHostName;
+                }
+                /*
                 // hostname can be null if not exported
                 if (hostname == null)
                 {
                     InetAddress addr = InetAddress.getLocalHost();
                     
-                }
+                } */
                 
                
             }

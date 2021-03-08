@@ -218,7 +218,7 @@ public class InstallerBase
                 Debug.log("hostname not set, reading $HOSTNAME");
                 // read from $HOSTNAME
                 String newHostName = System.getenv("HOSTNAME");
-                if(newHostname != null) {
+                if(newHostName != null) {
                     hostname = newHostName;
                 }
                 /*

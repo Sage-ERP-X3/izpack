@@ -47,7 +47,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	@Override
 	public void beforeDelete(List<File> files, ProgressListener listener) {
 
-		deleteRegistry();
+		// deleteRegistry();
 
 		super.beforeDelete(files, listener);
 	}

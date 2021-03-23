@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Panel;
+import com.izforge.izpack.api.exception.NativeLibException;
+import com.izforge.izpack.api.handler.AbstractUIHandler;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.gui.log.Log;
@@ -107,6 +109,30 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		logger.log(Level.FINE, "Set " + InstallData.MODIFY_INSTALLATION + ": true");
 		return result;
 	}
+
+
+    /**
+     * X3-240420 : Wrong message when updating the console 
+     * This method should only be called if this product was already installed. It resolves the
+     * install path of the first already installed product and asks the user whether to install
+     * twice or not.
+     *
+     * @return whether a multiple Install should be performed or not.
+     * @throws NativeLibException for any native library error
+     */
+	@Override
+    protected boolean multipleInstall() throws NativeLibException
+    {
+        String path = _registryHelper.getInstallationPath();
+        if (path == null)
+        {
+            path = "<not found>";
+        }
+        String noLuck = getString("CheckedHelloPanel.productAlreadyExist0") + path + " . "
+                + getString("CheckedHelloPanel.productAlreadyExist1");
+        return (askQuestion(getString("installer.warning"), noLuck,
+                            AbstractUIHandler.CHOICES_YES_NO) == AbstractUIHandler.ANSWER_YES);
+    }
 
 	/*
 	 * public void panelActivate() { if (abortInstallation) {

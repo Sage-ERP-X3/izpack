@@ -2,7 +2,12 @@
 
 <!-- The French langpack -->
 
-<langpack>
+<izpack:langpack version="5.0"
+                 xmlns:izpack="http://izpack.org/schema/langpack"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://izpack.org/schema/langpack http://izpack.org/schema/5.0/izpack-langpack-5.0.xsd">
+
+
 
     <!-- Heading messages START -->
     <str id="CheckedHelloPanel.headline" txt="Bienvenue"/>
@@ -58,6 +63,10 @@
     <str id="uninstaller.adxadmin.remainingmodules" txt="Désinstallation impossible : il reste des composants installés."/>
     <str id="uninstaller.adxadmin.errparseadxinstall" txt="Désinstallation impossible : erreur de modification de l'adxinstall.xml"/>
 
+
+    <!-- CheckedHelloPanel strings -->
+    <str id="CheckedHelloPanel.productAlreadyExist0"  txt="Ce logiciel a déjà été installé sur cet ordinateur depuis le chemin "/>
+	<str id="CheckedHelloPanel.productAlreadyExist1" txt=" Voulez-vous mettre à jour cette installation ?"/>
 
 		<!-- The strings for the 'official' IzPack plugins -->
     <!-- HelloPanel strings -->
@@ -351,4 +360,4 @@
 	
 	<str id="X3NodeIdentifierValidator" txt="Cet identifiant est déjà utilisé !"/>
 
-</langpack>
+</izpack:langpack>

@@ -2,7 +2,13 @@
 
 <!-- The English langpack -->
 
-<langpack>
+<!-- The English langpack -->
+
+<izpack:langpack version="5.0"
+                 xmlns:izpack="http://izpack.org/schema/langpack"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://izpack.org/schema/langpack http://izpack.org/schema/5.0/izpack-langpack-5.0.xsd">
+
 
     <!-- Heading messages START -->
     <str id="CheckedHelloPanel.headline" txt="Welcome"/>
@@ -276,9 +282,7 @@
 
 		<!-- CheckedHelloPanel strings -->
     <str id="CheckedHelloPanel.productAlreadyExist0" txt="This product is already installed on this computer under the path "/>
-    <str id="CheckedHelloPanel.productAlreadyExist1" txt=" . Are you sure you want to install another entity?"/>
-    <str id="CheckedHelloPanel.infoOverUninstallKey" txt="The uninstall key will be named: "/>
-	<str id="CheckedHelloPanel.infoMultipleInstallNotAllowed" txt="This software is already installed. Installation of another instance of this product is not allowed."/>
+    <str id="CheckedHelloPanel.productAlreadyExist1" txt=" Do you want to update this installation ?"/>
 
     <!-- Next Media Strings -->
     <str id="nextmedia.title" txt="Next install media"/>
@@ -355,4 +359,4 @@
 	
 	<str id="X3NodeIdentifierValidator" txt="This node identifier is already used !"/>
 
-</langpack>
+</izpack:langpack>

@@ -4,17 +4,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.izforge.izpack.api.data.InstallData;
+import com.izforge.izpack.api.data.LocaleDatabase;
 import com.izforge.izpack.api.data.Panel;
 import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.handler.AbstractUIHandler;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
+import com.izforge.izpack.core.resource.DefaultLocales;
 import com.izforge.izpack.gui.log.Log;
 import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.installer.gui.InstallerFrame;
 import com.izforge.izpack.panels.checkedhello.CheckedHelloPanel;
 import com.izforge.izpack.panels.checkedhello.RegistryHelper;
-
+import com.izforge.izpack.api.resource.Locales;
 /*
 * @author Franck DEPOORTERE
 */
@@ -29,10 +31,17 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 	private static final long serialVersionUID = 1737042770727953387L; // 1737042770727953387L
 
 	private RegistryHelper _registryHelper;
-	
+
+	private LocaleDatabase customResources;
+	private String customResourcesPath;
+
 	public CheckedHelloNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			RegistryDefaultHandler handler, Log log) throws Exception {
 		super(panel, parent, installData, resources, handler, log);
+
+		customResourcesPath = "/com/sage/izpack/langpacks/" + installData.getLocaleISO3() + ".xml";
+		Locales locales = new DefaultLocales(resources, installData.getLocale());
+		customResources = new LocaleDatabase(getClass().getResourceAsStream(customResourcesPath), locales);
 
 		RegistryHelper registryHelper = new RegistryHelper(handler, installData);
 		_registryHelper = registryHelper;
@@ -46,50 +55,41 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		}
 	}
 
-	
 	/*
-	 * We override this method to avoid the alert message sent by 
+	 * We override this method to avoid the alert message sent by
 	 * setUniqueUninstallKey()
 	 */
 	@Override
-	public void panelActivate()
-    {
-        if (abortInstallation)
-        {
-            parent.lockNextButton();
-            try
-            {
-                if (multipleInstall())
-                {
-                    // setUniqueUninstallKey();
-                    abortInstallation = false;
-                    parent.unlockNextButton();
-                }
+	public void panelActivate() {
+		if (abortInstallation) {
+			parent.lockNextButton();
+			try {
+				if (multipleInstall()) {
+					// setUniqueUninstallKey();
+					abortInstallation = false;
+					parent.unlockNextButton();
+				}
 // if we let the "else", izpack create a unique Key after each installation, and the registry is not uninstalled 
-                // else
-                // {
-                    installData.getInfo().setUninstallerPath(null);
-                    installData.getInfo().setUninstallerName(null);
-                    installData.getInfo().setUninstallerCondition("uninstaller.nowrite");
-                //}
-            }
-            catch (Exception exception)
-            {
-                logger.log(Level.WARNING, exception.getMessage(), exception);
-            }
-        }
-        installData.setVariable("UNINSTALL_NAME", _registryHelper.getUninstallName());
-    }
+				// else
+				// {
+				installData.getInfo().setUninstallerPath(null);
+				installData.getInfo().setUninstallerName(null);
+				installData.getInfo().setUninstallerCondition("uninstaller.nowrite");
+				// }
+			} catch (Exception exception) {
+				logger.log(Level.WARNING, exception.getMessage(), exception);
+			}
+		}
+		installData.setVariable("UNINSTALL_NAME", _registryHelper.getUninstallName());
+	}
 
 	/*
-	private void setUniqueUninstallKey() throws NativeLibException
-    {
-        String newUninstallName = registryHelper.updateUninstallName();
-        emitNotification(getString("CheckedHelloPanel.infoOverUninstallKey")
-                                 + newUninstallName);
-    }
-	*/
-	
+	 * private void setUniqueUninstallKey() throws NativeLibException { String
+	 * newUninstallName = registryHelper.updateUninstallName();
+	 * emitNotification(getString("CheckedHelloPanel.infoOverUninstallKey") +
+	 * newUninstallName); }
+	 */
+
 	/**
 	 * Returns whether the handled application is already registered or not. The
 	 * validation will be made only on systems which contains a registry (Windows).
@@ -102,7 +102,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		boolean result = super.isRegistered();
 
 		// registryHelper.getInstallationPath();
-		if (result) {			
+		if (result) {
 			// Set variable "modify.izpack.install"
 			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 		}
@@ -111,28 +111,46 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 	}
 
 
-    /**
-     * X3-240420 : Wrong message when updating the console 
-     * This method should only be called if this product was already installed. It resolves the
-     * install path of the first already installed product and asks the user whether to install
-     * twice or not.
-     *
-     * @return whether a multiple Install should be performed or not.
-     * @throws NativeLibException for any native library error
-     */
+	/*
+	 * X3-240420 : Wrong message when updating the console This method should only
+	 */
 	@Override
-    protected boolean multipleInstall() throws NativeLibException
-    {
-        String path = _registryHelper.getInstallationPath();
-        if (path == null)
-        {
-            path = "<not found>";
-        }
-        String noLuck = getString("CheckedHelloPanel.productAlreadyExist0") + path + " . "
-                + getString("CheckedHelloPanel.productAlreadyExist1");
-        return (askQuestion(getString("installer.warning"), noLuck,
-                            AbstractUIHandler.CHOICES_YES_NO) == AbstractUIHandler.ANSWER_YES);
-    }
+	public String getString(String key) {
+		String result = null;
+		try {
+			result = customResources.get(key);
+		} catch (Exception ex) {
+			logger.log(Level.FINE, "Cannot get resource " + key + " " + customResourcesPath);
+
+		}
+		if (result == null) {
+			result = super.getString(key);
+		}
+		return result;
+	}
+
+	/**
+	 * X3-240420 : Wrong message when updating the console This method should only
+	 * be called if this product was already installed. It resolves the install path
+	 * of the first already installed product and asks the user whether to install
+	 * twice or not.
+	 *
+	 * @return whether a multiple Install should be performed or not.
+	 * @throws NativeLibException for any native library error
+	 */
+	@Override
+	protected boolean multipleInstall() throws NativeLibException {
+		String path = _registryHelper.getInstallationPath();
+		if (path == null) {
+			path = "<not found>";
+		}
+
+		String noLuck = getString("CheckedHelloPanel.productAlreadyExist0") + path + ". "
+				+ getString("CheckedHelloPanel.productAlreadyExist1");
+
+		return (askQuestion(getString("installer.warning"), noLuck,
+				AbstractUIHandler.CHOICES_YES_NO) == AbstractUIHandler.ANSWER_YES);
+	}
 
 	/*
 	 * public void panelActivate() { if (abortInstallation) {

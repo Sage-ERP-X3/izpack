@@ -3,9 +3,9 @@
 <!-- The French langpack -->
 
 <izpack:langpack version="5.0"
-                 xmlns:izpack="http://izpack.org/schema/langpack"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://izpack.org/schema/langpack http://izpack.org/schema/5.0/izpack-langpack-5.0.xsd">
+                  xmlns:izpack="http://izpack.org/schema/langpack"  
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                   xsi:schemaLocation="http://izpack.org/schema/langpack http://izpack.org/schema/5.0/izpack-langpack-5.0.xsd">
 
 
 
@@ -64,9 +64,6 @@
     <str id="uninstaller.adxadmin.errparseadxinstall" txt="Désinstallation impossible : erreur de modification de l'adxinstall.xml"/>
 
 
-    <!-- CheckedHelloPanel strings -->
-    <str id="CheckedHelloPanel.productAlreadyExist0"  txt="Ce logiciel a déjà été installé sur cet ordinateur depuis le chemin "/>
-	<str id="CheckedHelloPanel.productAlreadyExist1" txt=" Voulez-vous mettre à jour cette installation ?"/>
 
 		<!-- The strings for the 'official' IzPack plugins -->
     <!-- HelloPanel strings -->
@@ -280,8 +277,9 @@
     <str id="functionFailed.RegOpenKeyEx" txt="Impossible d'ouvrir la clé de registre {0}\\{1}."/>
 
     <!-- CheckedHelloPanel strings -->
-    <str id="CheckedHelloPanel.productAlreadyExist0" txt="Ce logiciel est déjà installé depuis le chemin "/>
-    <str id="CheckedHelloPanel.productAlreadyExist1" txt=" . Etes-vous certain de vouloir installer une autre entité ?"/>
+    <str id="CheckedHelloPanel.productAlreadyExist0"  txt="Ce logiciel a déjà été installé sur cet ordinateur depuis le chemin "/>
+	<str id="CheckedHelloPanel.productAlreadyExist1" txt=" Voulez-vous mettre à jour cette installation ?"/>
+
     <str id="CheckedHelloPanel.infoOverUninstallKey" txt="La clé de désinstallation sera : "/>
 	<str id="CheckedHelloPanel.infoMultipleInstallNotAllowed" txt="Ce produit est déjà installé. L'installation d'une autre instance de ce produit n'est pas autorisé."/>
 
@@ -359,5 +357,6 @@
 	<str id="errIsProductFound" txt="Un composant %1$s est déjà présent sur ce système ! Vous devez désinstaller ce composant avant de continuer cette installation." />
 	
 	<str id="X3NodeIdentifierValidator" txt="Cet identifiant est déjà utilisé !"/>
+
 
 </izpack:langpack>

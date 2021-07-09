@@ -2,7 +2,9 @@ package com.sage.izpack;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
@@ -12,8 +14,10 @@ import java.util.Set;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -24,9 +28,12 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.coi.tools.os.win.MSWinConstants;
 import com.izforge.izpack.api.adaptator.IXMLElement;
+import com.izforge.izpack.api.adaptator.impl.XMLElementImpl;
 import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.event.AbstractInstallerListener;
@@ -34,16 +41,14 @@ import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.substitutor.VariableSubstitutor;
 import com.izforge.izpack.core.data.DefaultVariables;
+import com.izforge.izpack.core.os.RegistryDefaultHandler;
+import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.core.substitutor.VariableSubstitutorImpl;
 import com.izforge.izpack.util.CleanupClient;
 import com.izforge.izpack.util.OsVersion;
-import com.izforge.izpack.util.Platforms;
-import com.izforge.izpack.api.data.AutomatedInstallData;
 import com.izforge.izpack.api.data.InstallData;
-import jline.internal.Log;
 
 import com.sage.izpack.XMLHelper;
-
 
 // This happens when not creating the module-info.java
 // Solves moving the JRE System Library from the Modulepath to the Classpath your issue? 
@@ -56,11 +61,18 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
 
-	private AutomatedInstallData idata = null;
-	
-	public AdxCompInstallerListener() {
-		// super(true);
+	// private AutomatedInstallData idata = null;
+
+	private com.izforge.izpack.api.data.InstallData installData;
+	// private RegistryDefaultHandler handler;
+	private RegistryHandler registryHandler;
+
+	public AdxCompInstallerListener(com.izforge.izpack.api.data.InstallData installData,
+			RegistryDefaultHandler handler) {
+
 		super();
+		this.installData = installData;
+		this.registryHandler = handler.getInstance();
 	}
 
 	/**
@@ -80,9 +92,9 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		// super.beforePacks(idata, npacks, handler);
 		super.beforePacks(packs);
 
-		Variables variables = new DefaultVariables();
-		this.idata = new AutomatedInstallData(variables,
-				OsVersion.IS_UNIX ? Platforms.LINUX : Platforms.WINDOWS);
+		// Variables variables = new DefaultVariables();
+		// this.idata = new AutomatedInstallData(variables, OsVersion.IS_UNIX ?
+		// Platforms.LINUX : Platforms.WINDOWS);
 
 		// TODO : FRDEPO
 		// SimpleInstallerListener.langpack = idata.langpack;
@@ -90,11 +102,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		// TODO : FRDEPO
 		// getSpecHelper().readSpec(SPEC_FILE_NAME);
 
-		// RegistryHandler rh = RegistryDefaultHandler.getInstance();
-		RegistryHandlerX3 rh = new RegistryHandlerX3();
-		if (rh == null) {
-			return;
-		}
 		// TODO : FRDEPO
 		// rh.verify(idata);
 
@@ -109,96 +116,219 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		// here we need to update adxinstalls.xml
 
 		try {
-		// we need to find adxadmin path
-		String strAdxAdminPath = "";
+			String strAdxAdminPath = getAdxAdminPath();
+			// check strAdxAdminPath
+			if (strAdxAdminPath == null || "".equals(strAdxAdminPath))
+				throw new Exception(
+						ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
 
-		// RegistryHandler rh = RegistryDefaultHandler.getInstance();
-		RegistryHandlerX3 rh = new RegistryHandlerX3();
-		if (rh != null) {
+			java.io.File dirAdxDir = new java.io.File(strAdxAdminPath);
+			if (!dirAdxDir.exists() || !dirAdxDir.isDirectory())
+				// throw new Exception(langpack.getString("adxadminParseError"));
+				throw new Exception(
+						ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
+
+			java.io.File fileAdxinstalls = getAdxInstallFile(dirAdxDir);
+			logger.info("Reading XML file fileAdxinstalls: " + fileAdxinstalls.getAbsolutePath());
+
+			Document xdoc = getXml(fileAdxinstalls);
+
+			// adxinstalls.xml lu ou crée
+			// il faut ajouter le module
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			transformerFactory.setAttribute("indent-number", 4);
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
 			// TODO: FRDEPO
-			// rh.verify(idata);
+			// IXMLElement elemSpec = getSpecHelper().getSpec();
+			// IXMLElement moduleSpec = null; // elemSpec.getFirstChildNamed("module");
+			// NodeList nodelist= xdoc.getElementsByTagName("module");
+			// TODO: FRDEPO
+			// VariableSubstitutor substitutor = new
+			// VariableSubstitutor(idata.getVariables());
+			// VariableSubstitutor substitutor = new
+			// VariableSubstitutorImpl(idata.getVariables());
+			// String name = substitutor.substitute(moduleSpec.getAttribute("name"),
+			// VariableSubstitutor.PLAIN);
+			// String family = substitutor.substitute(moduleSpec.getAttribute("family"),
+			// VariableSubstitutor.PLAIN);
+			// String type = substitutor.substitute(moduleSpec.getAttribute("type"),
+			// VariableSubstitutor.PLAIN);
+			// String name = substitutor.substitute(moduleSpec.getAttribute("name"));
+			// String family = substitutor.substitute(moduleSpec.getAttribute("family"));
+			// String type = substitutor.substitute(moduleSpec.getAttribute("type"));
+			// String version = substitutor.substitute(
+			// moduleSpec.getFirstChildNamed("component." + family.toLowerCase() +
+			// ".version").getContent(), VariableSubstitutor.PLAIN);
+			// moduleSpec.getFirstChildNamed("component." + family.toLowerCase() +
+			// ".version").getContent());
 
-			// test adxadmin déjà installé avec registry
-				if (rh.adxadminProductRegistered()) {
+			String moduleName = this.installData.getVariable("component.node.name");
+			String moduleFamily = this.installData.getVariable("component.node.family"); // REPORT
+			String moduleType = "";
 
-					String keyName = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
-					int oldVal = rh.getRoot();
-					// rh.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
-					rh.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
-					if (!rh.valueExist(keyName, "ADXDIR"))
-						keyName = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
-					if (!rh.valueExist(keyName, "ADXDIR"))
-						// throw new Exception(langpack.getString("adxadminNoAdxDirReg"));
-						throw new Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
-								.getString("adxadminNoAdxDirReg"));
+			Element module = null;
+			boolean modifyinstallation = Boolean.valueOf(installData.getVariable(InstallData.MODIFY_INSTALLATION));
 
-					// récup path
-					strAdxAdminPath = rh.getValue(keyName, "ADXDIR").getStringData();
+			logger.info("moduleName: " + moduleName + " moduleFamily: " + moduleFamily + " modifyinstallation: "
+					+ modifyinstallation);
 
-					// free RegistryHandler
-					rh.setRoot(oldVal);
-				} else {
-					// else throw new Exception(langpack.getString("adxadminNotRegistered"));
-					throw new Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
-							.getString("adxadminNotRegistered"));
-				}
-			
+			if (modifyinstallation) {
 
-		} else {
-			Log.debug("CheckedHelloPanel - Could not get RegistryHandler !");
-			// Debug.log("CheckedHelloPanel - Could not get RegistryHandler !");
+				module = modifyReportModule(xdoc, moduleName, moduleFamily, moduleType);
 
-			// else we are on a os which has no registry or the
-			// needed dll was not bound to this installation. In
-			// both cases we forget the "already exist" check.
+			} else {
 
-			// test adxadmin sous unix avec /adonix/adxadm ?
-			if (OsVersion.IS_UNIX) {
-				java.io.File adxadmFile = new java.io.File("/sage/adxadm");
-				if (!adxadmFile.exists()) {
-					adxadmFile = new java.io.File("/adonix/adxadm");
-					if (!adxadmFile.exists()) {
-						// throw new Exception(langpack.getString("adxadminNotRegistered"));
-						throw new Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
-								.getString("adxadminNotRegistered"));
-					}
-				}
-
-				FileReader readerAdxAdmFile = new FileReader(adxadmFile);
-				BufferedReader buffread = new BufferedReader(readerAdxAdmFile);
-				strAdxAdminPath = buffread.readLine();
+				module = createReportModule(xdoc, moduleName, moduleFamily, moduleType);
 			}
 
+			logger.info("saveXML xdoc:" + xdoc);
+			saveXml(fileAdxinstalls, xdoc, transformer, module);
+
+		} catch (NativeLibException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	}
 
-		// check strAdxAdminPath
+	private void saveXml(java.io.File fileAdxinstalls, Document xdoc, Transformer transformer, Element module)
+			throws TransformerException, ParserConfigurationException {
+		// en principe c'est bon, le module est ajouté, recreate the XML
 
-		// if (strAdxAdminPath == null || "".equals(strAdxAdminPath)) throw new
-		// Exception(langpack.getString("adxadminParseError"));
-		if (strAdxAdminPath == null || "".equals(strAdxAdminPath))
-			throw new Exception(ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
+		// write the content into xml file
+		DOMSource source = new DOMSource(xdoc);
+		StreamResult result = new StreamResult(fileAdxinstalls);
 
-		java.io.File dirAdxDir = new java.io.File(strAdxAdminPath);
+		// Output to console for testing
+		// StreamResult result = new StreamResult(System.out);
+		transformer.transform(source, result);
 
-		if (!dirAdxDir.exists() || !dirAdxDir.isDirectory())
-			// throw new Exception(langpack.getString("adxadminParseError"));
-			throw new Exception(ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
+		// create resource for uninstall
+		// create a new DocumentBuilderFactory
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
 
-		StringBuilder strBuilder = new StringBuilder();
-		strBuilder.append(dirAdxDir.getAbsolutePath());
-		strBuilder.append(File.separator);
-		strBuilder.append("inst");
-		strBuilder.append(File.separator);
-		strBuilder.append("adxinstalls.xml");
+		Document xdoc2 = builder.newDocument();
 
-		java.io.File fileAdxinstalls = new java.io.File(strBuilder.toString());
+		// Properties DOM
+		xdoc2.setXmlVersion("1.0");
+		xdoc2.setXmlStandalone(true);
+
+		// create arborescence du DOM
+		Element racine2 = xdoc2.createElement("install");
+		xdoc2.appendChild(racine2);
+		xdoc2.getDocumentElement().appendChild(xdoc2.importNode(module, true));
+
+		// TODO: FRDEPO
+		// idata.uninstallOutJar.putNextEntry(new ZipEntry(SPEC_FILE_NAME));
+
+		// DOMSource source2 = new DOMSource(xdoc2);
+		// StreamResult result2 = new StreamResult(idata.uninstallOutJar);
+
+		// transformer.transform(source2, result2);
+		// idata.uninstallOutJar.closeEntry();
+	}
+
+	// <module name="EDTSRV" family="REPORT" type="">
+	// <component.report.installstatus>update</component.report.installstatus>
+	// <component.report.path>c:\Sage\SafeX3\EDTV2\EDTSRVFRDEP</component.report.path>
+	// <component.report.platform>WIN64</component.report.platform>
+	// <component.report.servername>po027493.sagefr.adinternal.com</component.report.servername>
+	// <component.report.version>R092.003</component.report.version>
+	// <report.adxd.adxlan>FRA</report.adxd.adxlan>
+	// <report.service.printport>1890</report.service.printport>
+	// </module>
+	private Element createReportModule(Document xdoc, String moduleName, String moduleFamily, String moduleType) {
+
+		// create module
+		Element module = xdoc.createElement("module");
+		module.setAttribute("name", moduleName);
+		module.setAttribute("family", moduleFamily);
+		module.setAttribute("type", moduleType);
+
+		/*
+		 * for (IXMLElement param : moduleSpec.getChildren()) { Element xmlParam =
+		 * xdoc.createElement(param.getName());
+		 * xmlParam.setTextContent(substitutor.substitute(param.getContent()));
+		 * module.appendChild(xmlParam); }
+		 * 
+		 * xdoc.getDocumentElement().appendChild(module);
+		 */
+		return module;
+	}
+
+	private Element modifyReportModule(Document xdoc, String moduleName, String moduleFamily, String moduleType) {
+
+		Element xmlinstall = xdoc.getDocumentElement();
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		Element module = null;
+
+		/*
+		 * module = (Element) xPath.compile( "/install/module[@name='" + name +
+		 * "' and @type='" + type + "' and @family='" + family + "']") .evaluate(xdoc,
+		 * XPathConstants.NODE); // if (module == null) throw new //
+		 * Exception(String.format(langpack.getString("sectionNotFound"), name)); if
+		 * (module == null) throw new Exception( String.format(ResourceBundle.getBundle(
+		 * "com/izforge/izpack/ant/langpacks/messages") .getString("sectionNotFound"),
+		 * name));
+		 * 
+		 * Node status = module.getElementsByTagName("component." + family.toLowerCase()
+		 * + ".installstatus") .item(0); if (status == null) { status = module
+		 * .appendChild(xdoc.createElement("component." + family.toLowerCase() +
+		 * ".installstatus")); status.setTextContent("update"); }
+		 * 
+		 * // module = (Element) status.getParentNode(); if
+		 * (status.getTextContent().equalsIgnoreCase("active")) {
+		 * status.setTextContent("update"); }
+		 * 
+		 * Node nodeVersion = module.getElementsByTagName("component." +
+		 * family.toLowerCase() + ".version") .item(0); if (nodeVersion == null)
+		 * nodeVersion = module .appendChild(xdoc.createElement("component." +
+		 * family.toLowerCase() + ".version")); nodeVersion.setTextContent(version);
+		 * 
+		 * if (family.equalsIgnoreCase("RUNTIME")) { // SAM (Syracuse) 99562 New Bug
+		 * 'Performance issue with Oracle Instant Client' // do not use instant client
+		 * by default but only when n-tiers
+		 * 
+		 * // runtime.odbc.dbhome Node nodedbhome =
+		 * module.getElementsByTagName("runtime.odbc.dbhome").item(0); if (nodedbhome ==
+		 * null) nodedbhome =
+		 * module.appendChild(xdoc.createElement("runtime.odbc.dbhome")); // X3-134671 :
+		 * In update mode, we have to let the console manage this node. We // let the
+		 * value retreived // nodedbhome.setTextContent("");
+		 * 
+		 * // runtime.odbc.forcedblink Node nodedblink =
+		 * module.getElementsByTagName("runtime.odbc.forcedblink").item(0); if
+		 * (nodedblink == null) nodedblink =
+		 * module.appendChild(xdoc.createElement("runtime.odbc.forcedblink")); //
+		 * X3-134671 : In update mode, we have to let the console manage this node. We
+		 * // let the value retreived // nodedblink.setTextContent("False");
+		 * 
+		 * }
+		 */
+
+		return module;
+	}
+
+	private Document getXml(java.io.File fileAdxinstalls)
+			throws ParserConfigurationException, IOException, SAXException {
+
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document xdoc = null;
-		Document xmodule = null;
+		// Document xmodule = null;
 
 		if (!fileAdxinstalls.exists()) {
+
+			logger.info("Creating file " + fileAdxinstalls.getAbsolutePath());
+
 			fileAdxinstalls.createNewFile();
 
 			if (OsVersion.IS_UNIX) {
@@ -226,147 +356,112 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			Element racine = xdoc.createElement("install");
 			xdoc.appendChild(racine);
 		} else {
+
+			logger.info("Parsing file " + fileAdxinstalls.getAbsolutePath());
 			xdoc = dBuilder.parse(fileAdxinstalls);
 		}
 
 		XMLHelper.cleanEmptyTextNodes((Node) xdoc);
 
-		// adxinstalls.xml lu ou crée
-		// il faut ajouter le module
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		transformerFactory.setAttribute("indent-number", 4);
-		Transformer transformer = transformerFactory.newTransformer();
-		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+		logger.info("Xml file " + fileAdxinstalls.getPath() + " : " + xdoc.toString());
+		return xdoc;
+	}
 
-		// TODO: FRDEPO
-		// IXMLElement elemSpec = getSpecHelper().getSpec();
-		IXMLElement moduleSpec = null; //elemSpec.getFirstChildNamed("module");
-		// TODO: FRDEPO
-		// VariableSubstitutor substitutor = new VariableSubstitutor(idata.getVariables());	
-        VariableSubstitutor substitutor = new VariableSubstitutorImpl(idata.getVariables());
-		// String name = substitutor.substitute(moduleSpec.getAttribute("name"), VariableSubstitutor.PLAIN);
-		// String family = substitutor.substitute(moduleSpec.getAttribute("family"), VariableSubstitutor.PLAIN);
-		// String type = substitutor.substitute(moduleSpec.getAttribute("type"), VariableSubstitutor.PLAIN);
-		String name = substitutor.substitute(moduleSpec.getAttribute("name"));
-		String family = substitutor.substitute(moduleSpec.getAttribute("family"));
-		String type = substitutor.substitute(moduleSpec.getAttribute("type"));
-		String version = substitutor.substitute(
-				// moduleSpec.getFirstChildNamed("component." + family.toLowerCase() + ".version").getContent(),  VariableSubstitutor.PLAIN);
-				moduleSpec.getFirstChildNamed("component." + family.toLowerCase() + ".version").getContent());
+	private java.io.File getAdxInstallFile(java.io.File dirAdxDir) {
+		StringBuilder adxInstallBuilder = new StringBuilder();
+		adxInstallBuilder.append(dirAdxDir.getAbsolutePath());
+		adxInstallBuilder.append(File.separator);
+		adxInstallBuilder.append("inst");
+		adxInstallBuilder.append(File.separator);
+		adxInstallBuilder.append("adxinstalls.xml");
 
-		Element module = null;
+		java.io.File fileAdxinstalls = new java.io.File(adxInstallBuilder.toString());
+		return fileAdxinstalls;
+	}
 
-		boolean modifyinstallation = Boolean.valueOf(idata.getVariable(InstallData.MODIFY_INSTALLATION));
-		if (modifyinstallation) {
-			Element xmlinstall = xdoc.getDocumentElement();
-			XPath xPath = XPathFactory.newInstance().newXPath();
+	private String getAdxAdminPath() throws NativeLibException, Exception, FileNotFoundException, IOException {
+		// we need to find adxadmin path
+		String strAdxAdminPath = "";
 
-			module = (Element) xPath.compile(
-					"/install/module[@name='" + name + "' and @type='" + type + "' and @family='" + family + "']")
-					.evaluate(xdoc, XPathConstants.NODE);
-			// if (module == null) throw new
-			// Exception(String.format(langpack.getString("sectionNotFound"), name));
-			if (module == null)
-				throw new Exception(String.format(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
-						.getString("sectionNotFound"), name));
+		logger.info("Init dregistry handler: " + handler);
+		logger.info("Init dregistry handler instance: " + handler.getInstance());
+		logger.info("Init dregistry installData Locale: " + this.installData.getLocaleISO2());
+		logger.info("Init dregistry getInstallPath: " + this.installData.getInstallPath());
 
-			Node status = module.getElementsByTagName("component." + family.toLowerCase() + ".installstatus").item(0);
-			if (status == null) {
-				status = module.appendChild(xdoc.createElement("component." + family.toLowerCase() + ".installstatus"));
-				status.setTextContent("update");
-			}
+		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler);
+		if (this.registryHandler != null && rh != null) {
 
-			// module = (Element) status.getParentNode();
-			if (status.getTextContent().equalsIgnoreCase("active")) {
-				status.setTextContent("update");
-			}
+			// TODO: FRDEPO
+			// rh.verify(idata);
+			boolean adxAdminRegistered = rh.adxadminProductRegistered();
+			logger.info("Init RegistryHandlerX3. adxadminProductRegistered: " + adxAdminRegistered);
 
-			Node nodeVersion = module.getElementsByTagName("component." + family.toLowerCase() + ".version").item(0);
-			if (nodeVersion == null)
-				nodeVersion = module.appendChild(xdoc.createElement("component." + family.toLowerCase() + ".version"));
-			nodeVersion.setTextContent(version);
+			// test adxadmin déjà installé avec registry
+			if (adxAdminRegistered) {
 
-			if (family.equalsIgnoreCase("RUNTIME")) {
-				// SAM (Syracuse) 99562 New Bug 'Performance issue with Oracle Instant Client'
-				// do not use instant client by default but only when n-tiers
+				String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
+				String keyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
+				int oldVal = this.registryHandler.getRoot();
+				// rh.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+				this.registryHandler.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
 
-				// runtime.odbc.dbhome
-				Node nodedbhome = module.getElementsByTagName("runtime.odbc.dbhome").item(0);
-				if (nodedbhome == null)
-					nodedbhome = module.appendChild(xdoc.createElement("runtime.odbc.dbhome"));
-				// X3-134671 : In update mode, we have to let the console manage this node. We
-				// let the value retreived
-				// nodedbhome.setTextContent("");
+				String keyName = keyName64Bits;
+				if (!this.registryHandler.valueExist(keyName, "ADXDIR"))
+					keyName = keyName32Bits;
+				if (!this.registryHandler.valueExist(keyName, "ADXDIR"))
+					// <str id="adxadminNoAdxDirReg" txt="A previous installation of the adxadmin
+					// administration runtime was detected in the registry but the setup is unable
+					// to find the installation path, some registry keys are missing !"/>
+					// throw new
+					// Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages").getString("adxadminNoAdxDirReg"));
+					throw new Exception(
+							"A previous installation of the adxadmin administration runtime was detected in the registry but the setup is unable to find the installation path, some registry keys are missing.");
 
-				// runtime.odbc.forcedblink
-				Node nodedblink = module.getElementsByTagName("runtime.odbc.forcedblink").item(0);
-				if (nodedblink == null)
-					nodedblink = module.appendChild(xdoc.createElement("runtime.odbc.forcedblink"));
-				// X3-134671 : In update mode, we have to let the console manage this node. We
-				// let the value retreived
-				// nodedblink.setTextContent("False");
+				// récup path
+				strAdxAdminPath = this.registryHandler.getValue(keyName, "ADXDIR").getStringData();
 
+				logger.info("ADXDIR path: " + strAdxAdminPath + "  Key: " + keyName);
+
+				// free RegistryHandler
+				this.registryHandler.setRoot(oldVal);
+			} else {
+				// else throw new Exception(langpack.getString("adxadminNotRegistered"));
+				// <str id="adxadminNotRegistered" txt="You must install an adxadmin
+				// administration runtime first. Exiting now."/>
+				// String warnMessage = String.format(ResourceBundle.getBundle("messages",
+				// installData.getLocale()).getString("adxadminNotRegistered"), line);
+				// throw new
+				// Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages").getString("adxadminNotRegistered"));
+				throw new Exception("You must install an adxadmin administration runtime first. Exiting now.");
 			}
 
 		} else {
+			logger.info("CheckedHelloPanel - Could not get RegistryHandler !");
+			// Debug.log("CheckedHelloPanel - Could not get RegistryHandler !");
 
-			// create module
-			module = xdoc.createElement("module");
-			module.setAttribute("name", name);
-			module.setAttribute("family", family);
-			module.setAttribute("type", type);
+			// else we are on a os which has no registry or the needed dll was not bound to
+			// this installation.
+			// In both cases we forget the "already exist" check.
 
-			for (IXMLElement param : moduleSpec.getChildren()) {
-				Element xmlParam = xdoc.createElement(param.getName());
-				// xmlParam.setTextContent(substitutor.substitute(param.getContent(), VariableSubstitutor.PLAIN));
-				xmlParam.setTextContent(substitutor.substitute(param.getContent()));
-				module.appendChild(xmlParam);
+			// test adxadmin sous unix avec /adonix/adxadm ?
+			if (OsVersion.IS_UNIX) {
+				java.io.File adxadmFile = new java.io.File("/sage/adxadm");
+				if (!adxadmFile.exists()) {
+					adxadmFile = new java.io.File("/adonix/adxadm");
+					if (!adxadmFile.exists()) {
+						// throw new Exception(langpack.getString("adxadminNotRegistered"));
+						throw new Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
+								.getString("adxadminNotRegistered"));
+					}
+				}
+
+				FileReader readerAdxAdmFile = new FileReader(adxadmFile);
+				BufferedReader buffread = new BufferedReader(readerAdxAdmFile);
+				strAdxAdminPath = buffread.readLine();
 			}
 
-			xdoc.getDocumentElement().appendChild(module);
-
 		}
-
-		// en principe c'est bon, le module est ajouté, réécriture du XML
-
-		// write the content into xml file
-		DOMSource source = new DOMSource(xdoc);
-		StreamResult result = new StreamResult(fileAdxinstalls);
-
-		// Output to console for testing
-		// StreamResult result = new StreamResult(System.out);
-		transformer.transform(source, result);
-
-		// create resource for uninstall
-		Document xdoc2 = dBuilder.newDocument();
-
-		// Propriétés du DOM
-		xdoc2.setXmlVersion("1.0");
-		xdoc2.setXmlStandalone(true);
-
-		// create arborescence du DOM
-		Element racine2 = xdoc2.createElement("install");
-		xdoc2.appendChild(racine2);
-		xdoc2.getDocumentElement().appendChild(xdoc2.importNode(module, true));
-
-		// TODO: FRDEPO
-		// idata.uninstallOutJar.putNextEntry(new ZipEntry(SPEC_FILE_NAME));
-
-		// DOMSource source2 = new DOMSource(xdoc2);
-		// StreamResult result2 = new StreamResult(idata.uninstallOutJar);
-
-		// transformer.transform(source2, result2);
-		// idata.uninstallOutJar.closeEntry();
-		} catch (NativeLibException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return strAdxAdminPath;
 	}
 
 }

@@ -134,7 +134,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 			Document xdoc = getXml(fileAdxinstalls);
 
-			// adxinstalls.xml lu ou crée
+			// adxinstalls.xml read or created
 			// il faut ajouter le module
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			transformerFactory.setAttribute("indent-number", 4);
@@ -201,7 +201,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 	private void saveXml(java.io.File fileAdxinstalls, Document xdoc, Transformer transformer, Element module)
 			throws TransformerException, ParserConfigurationException {
-		// en principe c'est bon, le module est ajouté, recreate the XML
+		// It's ok normally, the module is added, recreate the XML
 
 		// write the content into xml file
 		DOMSource source = new DOMSource(xdoc);
@@ -375,7 +375,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 			xdoc = dBuilder.newDocument();
 
-			// Propriétés du DOM
+			// Properties  DOM
 			xdoc.setXmlVersion("1.0");
 			xdoc.setXmlStandalone(true);
 
@@ -426,7 +426,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			boolean adxAdminRegistered = rh.adxadminProductRegistered();
 			logger.info("Init RegistryHandlerX3. adxadminProductRegistered: " + adxAdminRegistered);
 
-			// test adxadmin already�installed. Read registry
+			// Test adxadmin is already installed. Read registry "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN"
 			if (adxAdminRegistered) {
 
 				String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";

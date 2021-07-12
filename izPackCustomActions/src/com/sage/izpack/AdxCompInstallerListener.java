@@ -23,6 +23,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
@@ -186,16 +187,16 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 				module = createReportModule(xdoc, moduleName, moduleFamily, moduleType);
 			}
 
-			logger.info("saveXML xdoc:" + xdoc);
+			logger.info("saving XML xdoc:" + xdoc.getDocumentElement().getNodeName());
 			saveXml(fileAdxinstalls, xdoc, transformer, module);
 
-		} catch (NativeLibException e) {
-			// TODO Auto-generated catch block
+		} catch ( Exception e) {
 			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		 }
+		// catch (Exception e) {
+		//	e.printStackTrace();
+			// throw new Exception(e.getMessage());
+		//}
 	}
 
 	private void saveXml(java.io.File fileAdxinstalls, Document xdoc, Transformer transformer, Element module)
@@ -264,34 +265,60 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		return module;
 	}
 
-	private Element modifyReportModule(Document xdoc, String moduleName, String moduleFamily, String moduleType) {
+	/*
+	 * Update module from adxInstall.xml, 
+	 * component.[report}.version and component.[report].installstatus
+	 * component.[report].installstatus: "update"
+	 */
+	private Element modifyReportModule(Document xdoc, String moduleName, String moduleFamily, String moduleType)
+			throws Exception {
 
-		Element xmlinstall = xdoc.getDocumentElement();
 		XPath xPath = XPathFactory.newInstance().newXPath();
-		Element module = null;
+		String filter = "/install/module[@name='" + moduleName + "' and @type='" + moduleType + "' and @family='"+ moduleFamily + "']";
+		Element module = (Element) xPath.compile(filter).evaluate(xdoc, XPathConstants.NODE);
 
+		// if (module == null) throw new Exception(String.format(langpack.getString("sectionNotFound"), moduleName));
+		if (module == null) {
+			logger.info("name: " + moduleName + " type: " + moduleType + " family: " + moduleFamily
+					+ " not found in xdoc " + xdoc);
+			throw new Exception(String.format(
+					ResourceBundle.getBundle("com/sage/izpack/messages").getString("sectionNotFound"), moduleName));
+		}
+		
+		Node status = module.getElementsByTagName("component." + moduleFamily.toLowerCase() + ".installstatus") .item(0); 
+		if (status == null) { 
+			 status = module.appendChild(xdoc.createElement("component." + moduleFamily.toLowerCase() + ".installstatus")); 
+		}
+		 status.setTextContent("update"); 			
+		
+		String version =  this.installData.getVariable("component.version");		
+		 Node nodeVersion = module.getElementsByTagName("component." + moduleFamily.toLowerCase() + ".version") .item(0); 
+		 if (nodeVersion == null) {
+			 nodeVersion = module .appendChild(xdoc.createElement("component." + moduleFamily.toLowerCase() + ".version")); 
+		 }
+		 nodeVersion.setTextContent(version);			 
+		 
 		/*
 		 * module = (Element) xPath.compile( "/install/module[@name='" + name +
 		 * "' and @type='" + type + "' and @family='" + family + "']") .evaluate(xdoc,
-		 * XPathConstants.NODE); // if (module == null) throw new //
+		 * XPathConstants.NODE); if (module == null) throw new //
 		 * Exception(String.format(langpack.getString("sectionNotFound"), name)); if
 		 * (module == null) throw new Exception( String.format(ResourceBundle.getBundle(
 		 * "com/izforge/izpack/ant/langpacks/messages") .getString("sectionNotFound"),
 		 * name));
 		 * 
 		 * Node status = module.getElementsByTagName("component." + family.toLowerCase()
-		 * + ".installstatus") .item(0); if (status == null) { status = module
-		 * .appendChild(xdoc.createElement("component." + family.toLowerCase() +
-		 * ".installstatus")); status.setTextContent("update"); }
+		 * + ".installstatus") .item(0); 
+		 * if (status == null) { status = module.appendChild(xdoc.createElement("component." + family.toLowerCase() + ".installstatus")); status.setTextContent("update"); }
 		 * 
 		 * // module = (Element) status.getParentNode(); if
 		 * (status.getTextContent().equalsIgnoreCase("active")) {
 		 * status.setTextContent("update"); }
 		 * 
-		 * Node nodeVersion = module.getElementsByTagName("component." +
-		 * family.toLowerCase() + ".version") .item(0); if (nodeVersion == null)
-		 * nodeVersion = module .appendChild(xdoc.createElement("component." +
-		 * family.toLowerCase() + ".version")); nodeVersion.setTextContent(version);
+		 * Node nodeVersion = module.getElementsByTagName("component." + family.toLowerCase() + ".version") .item(0); 
+		 * if (nodeVersion == null)
+		 * nodeVersion = module .appendChild(xdoc.createElement("component." + family.toLowerCase() + ".version")); 
+		 * nodeVersion.setTextContent(version);
 		 * 
 		 * if (family.equalsIgnoreCase("RUNTIME")) { // SAM (Syracuse) 99562 New Bug
 		 * 'Performance issue with Oracle Instant Client' // do not use instant client
@@ -355,15 +382,18 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			// create arborescence du DOM
 			Element racine = xdoc.createElement("install");
 			xdoc.appendChild(racine);
+
 		} else {
 
 			logger.info("Parsing file " + fileAdxinstalls.getAbsolutePath());
 			xdoc = dBuilder.parse(fileAdxinstalls);
+			xdoc.getDocumentElement().normalize();
 		}
 
 		XMLHelper.cleanEmptyTextNodes((Node) xdoc);
 
-		logger.info("Xml file " + fileAdxinstalls.getPath() + " : " + xdoc.toString());
+		logger.info("Xml file: " + fileAdxinstalls.getPath() + ". Root element: "
+				+ xdoc.getDocumentElement().getNodeName());
 		return xdoc;
 	}
 
@@ -375,16 +405,16 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		adxInstallBuilder.append(File.separator);
 		adxInstallBuilder.append("adxinstalls.xml");
 
-		java.io.File fileAdxinstalls = new java.io.File(adxInstallBuilder.toString());
-		return fileAdxinstalls;
+		return new java.io.File(adxInstallBuilder.toString());
 	}
 
+	/*
+	 * we need to find adxadmin path
+	 */
 	private String getAdxAdminPath() throws NativeLibException, Exception, FileNotFoundException, IOException {
-		// we need to find adxadmin path
+
 		String strAdxAdminPath = "";
 
-		logger.info("Init dregistry handler: " + handler);
-		logger.info("Init dregistry handler instance: " + handler.getInstance());
 		logger.info("Init dregistry installData Locale: " + this.installData.getLocaleISO2());
 		logger.info("Init dregistry getInstallPath: " + this.installData.getInstallPath());
 
@@ -396,7 +426,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			boolean adxAdminRegistered = rh.adxadminProductRegistered();
 			logger.info("Init RegistryHandlerX3. adxadminProductRegistered: " + adxAdminRegistered);
 
-			// test adxadmin déjà installé avec registry
+			// test adxadmin already�installed. Read registry
 			if (adxAdminRegistered) {
 
 				String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";

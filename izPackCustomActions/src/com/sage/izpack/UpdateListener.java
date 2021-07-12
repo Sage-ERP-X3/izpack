@@ -34,7 +34,7 @@ public class UpdateListener extends AbstractProgressInstallerListener { //  impl
 	public static final String AFTER_INSTALL_SCRIPT = "AfterInstallScript";
 	public static final String PLATFORM = OsVersion.IS_UNIX ? "unix" : "windows";
 
-	private static final Logger logger = Logger.getLogger(AdxCompInstallerListener.class.getName());
+	private static final Logger logger = Logger.getLogger(UpdateListener.class.getName());
 
 	public void cleanUp() {
 

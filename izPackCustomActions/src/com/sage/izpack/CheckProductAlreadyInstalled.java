@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import com.coi.tools.os.win.RegDataContainer;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.installer.DataValidator;
+import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.core.resource.ResourceManager;
 
@@ -24,35 +25,48 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 
 	protected String errMessage = "";
 	protected String warnMessage = "";
+	
+	// private com.izforge.izpack.api.data.InstallData installData;
+	// private RegistryHandler registryHandler;
+
+	
+	/*
+	public CheckProductAlreadyInstalled( RegistryDefaultHandler handler) {
+		super();
+		this.registryHandler = handler.getInstance();
+	}
+	*/
 
 	@Override
 	public Status validateData(InstallData installData) {
 		// open an input stream
 		InputStream input = null;
-
+	
 		try {
-			RegistryHandlerX3 registryHandler = new RegistryHandlerX3();
-			registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+			// this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
 
-			logger.log(Level.FINE, "registryHandler:" + registryHandler);
+			// logger.log(Level.FINE, "registryHandler:" + registryHandler);
+			// logger.info("registryHandler:" + registryHandler);
 
-			if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT + installData.getVariable("APP_NAME"))) {
-				logger.log(Level.FINE, "APP_NAME key " + RegistryHandler.UNINSTALL_ROOT + installData.getVariable("APP_NAME") + " found in registry. Set '"
-						+ InstallData.MODIFY_INSTALLATION + "': true");
+			//if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT + installData.getVariable("APP_NAME"))) {
+				// logger.log(Level.FINE, "APP_NAME key " + RegistryHandler.UNINSTALL_ROOT + installData.getVariable("APP_NAME") + " found in registry. Set '" + InstallData.MODIFY_INSTALLATION + "': true");
+			//	logger.info("APP_NAME key " + RegistryHandler.UNINSTALL_ROOT + installData.getVariable("APP_NAME") + " found in registry. Set '" + InstallData.MODIFY_INSTALLATION + "': true");
 
-				installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-			}
+			//	installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+			//}
 
 			
 			input = new ResourceManager().getInputStream(SPEC_FILE_NAME);
-			logger.log(Level.FINE, "input: " + input);
+			// logger.log(Level.FINE, "input: " + input);
+			logger.info("input: " + input);
 
 			
 			if (input == null) {
 				// spec file is missing
 				errMessage = "specFileMissing";
 
-				logger.log(Level.FINE, "input: " + errMessage);
+				// logger.log(Level.FINE, "input: " + errMessage);
+				logger.info("input: " + errMessage);
 
 				return Status.ERROR;
 			} else {
@@ -63,27 +77,12 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 				String line;
 				while ((line = reader.readLine()) != null) {
 
-					logger.log(Level.FINE, "line:" + line);
+					// logger.log(Level.FINE, "line:" + line);
+					logger.info("line:" + line);
 
 					line = line.trim(); //
 
-					// if (Advapi32Util.registryKeyExists(RegistryHandler.HKEY_LOCAL_MACHINE,
-					// "SOFTWARE\\Wow6432Node\\Sage\\"+line)
-					// || Advapi32Util.registryKeyExists(RegistryHandler.HKEY_LOCAL_MACHINE,
-					// "SOFTWARE\\Sage\\"+line))
-					// if (rh.keyExist("SOFTWARE\\Wow6432Node\\Sage\\" + line) ||
-					// rh.keyExist("SOFTWARE\\Sage\\" + line)) {
-					// errMessage = String.format(adata.langpack.getString("errIsProductFound"),
-					// line);
-					// InputStream customlangPack = getClass().getResourceAsStream("eng.xml");
-					// installData.setMessages(new LocaleDatabase(langPack,
-					// Mockito.mock(Locales.class)));
-					// LocaleDatabase localdb = new LocaleDatabase(customlangPack, null);
-					// localdb.getString("errIsProductFound");
-					// errMessage = String.format(ResourceBundle.getBundle("messages",
-					// adata.getLocale()).getString("errIsProductFound"), line);
-					// return Status.ERROR;
-					// } else
+/*
 					if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT + line)) {
 						warnMessage = String.format(ResourceBundle.getBundle("messages", installData.getLocale())
 								.getString("compFoundAskUpdate"), line);
@@ -100,6 +99,7 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 						
 						return Status.WARNING;
 					}
+					*/
 				}
 				reader.close();
 			}

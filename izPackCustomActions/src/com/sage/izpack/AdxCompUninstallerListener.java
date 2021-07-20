@@ -28,16 +28,9 @@ import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 
-// import com.izforge.izpack.LocaleDatabase;
-// import com.izforge.izpack.util.AbstractUIProgressHandler;
-// import com.izforge.izpack.util.Debug;
-// import com.izforge.izpack.util.OsVersion;
-// import com.izforge.izpack.util.os.RegistryDefaultHandler;
-// import com.izforge.izpack.util.os.RegistryHandler;
-// import com.izforge.izpack.util.os.WrappedNativeLibException;
-// import com.izforge.izpack.util.xml.XMLHelper;
-
-// public class AdxCompUninstallerListener extends SimpleUninstallerListener
+/*
+ * @author Franck DEPOORTERE
+ */
 public class AdxCompUninstallerListener extends UninstallerListeners {
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
 	protected static LocaleDatabase langpack = null;
@@ -90,12 +83,12 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 				// test adxadmin déja installé avec registry
 				if (rh.adxadminProductRegistered()) {
 
-					String keyName = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
+					String keyName = AdxCompInstallerListener.ADXADMIN_REG_KeyName64Bits; // "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
 					int oldVal = this.registryHandler.getRoot();
 					// rh.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
 					this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
 					if (!this.registryHandler.valueExist(keyName, "ADXDIR"))
-						keyName = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
+						keyName = AdxCompInstallerListener.ADXADMIN_REG_KeyName32Bits; // "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
 					if (!this.registryHandler.valueExist(keyName, "ADXDIR"))
 						return;
 

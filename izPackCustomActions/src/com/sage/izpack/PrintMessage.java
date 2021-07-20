@@ -6,12 +6,24 @@ import com.izforge.izpack.core.resource.ResourceManager;
 import com.izforge.izpack.panels.process.AbstractUIProcessHandler;
 import com.izforge.izpack.util.Debug;
 
+/*
+  Display message in a process panel
+  
+  Ex: ProcessPanelSpec.xml
+  	<job name="Microsoft .NET framework 4.7.2 already installed" condition="dotNet472OrHigherInstalled">
+		<os family="windows" />
+		<executeclass name="com.sage.izpack.PrintMessage">
+			<arg>Microsoft .Net framework 4.7.2 is already installed</arg>
+		</executeclass>
+	</job>
+	<onFail previous="false" next="false"/>
+	<onSuccess previous="false" next="true"/>
+
+  @author Franck DEPOORTERE
+*/
 public class PrintMessage {
 
-	// public static boolean ConditionBoolean;
-
 	public void run(AbstractUIProcessHandler handler, String[] args) {
-		// ConditionBoolean = false;
 
 		String message = "-";
 		try {

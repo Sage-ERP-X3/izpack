@@ -21,7 +21,21 @@ import com.izforge.izpack.event.AbstractProgressInstallerListener;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.helper.SpecHelper;
 
-// public class UpdateListener extends SimpleInstallerListener implements CleanupClient
+/*
+    Execute UPDATE SCRIPTS
+    <res id="BeforeUpdateScript_unix" src="updatescripts/beforepacks.sh" />
+    <res id="BeforeUpdateScript_windows" src="updatescripts/beforepacks.cmd" />
+    <res id="AfterUpdateScript_unix" src="updatescripts/afterpacks.sh" />
+    <res id="AfterUpdateScript_windows" src="updatescripts/afterpacks.cmd" />
+
+    <res id="base_BeforeUpdateScript_unix" src="updatescripts/beforebase.sh"/>
+    <res id="base_BeforeUpdateScript_windows" src="updatescripts/beforebase.cmd"/>
+    <res id="base_AfterUpdateScript_unix" src="updatescripts/afterbase.sh"/>
+    <res id="base_AfterUpdateScript_windows" src="updatescripts/afterbase.cmd"/>
+    <res id="productsSpec.txt" src="config/oldversions.txt"/>
+
+  @author Franck DEPOORTERE
+*/
 public class UpdateListener extends AbstractProgressInstallerListener { //  implements com.izforge.izpack.util.CleanupClient {
 
 	public UpdateListener(com.izforge.izpack.api.data.InstallData installData) {
@@ -48,8 +62,6 @@ public class UpdateListener extends AbstractProgressInstallerListener { //  impl
 	 * com.izforge.izpack.util.AbstractUIProgressHandler)
 	 */
 	@Override
-	// public void afterPacks(AutomatedInstallData idata, AbstractUIProgressHandler
-	// handler) throws Exception
 	public void afterPacks(List<Pack> packs, ProgressListener listener) {
 		// super.afterPacks(idata, handler);
 		try {
@@ -100,7 +112,6 @@ public class UpdateListener extends AbstractProgressInstallerListener { //  impl
 						getInstallData());
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new InstallerException(e.getMessage());
 		}

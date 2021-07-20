@@ -48,22 +48,33 @@ import com.izforge.izpack.util.helper.SpecHelper;
 import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.data.InstallData;
 
-// This happens when not creating the module-info.java
-// Solves moving the JRE System Library from the Modulepath to the Classpath your issue? 
-// Everything must be on the classpath, the JAR and the JRE System Library
-
-// public class AdxCompInstallerListener extends SimpleInstallerListener implements CleanupClient
+/*
+ * Manage XML file adxinstalls.xml
+ * 
+ * @author Franck DEPOORTERE
+ */
 public class AdxCompInstallerListener extends AbstractInstallerListener implements CleanupClient {
 
 	private static final Logger logger = Logger.getLogger(AdxCompInstallerListener.class.getName());
 
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
+	private static final String ADX_INSTALL_FILENAME = "adxinstalls.xml";
+	/*
+	 * SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN
+	 */
+	public static final String ADXADMIN_REG_KeyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
+	/*
+	 * SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN
+	 */
+	public static final String ADXADMIN_REG_KeyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
+
+	
+	
 	private SpecHelper specHelper = null;
 	private Resources resources = null;
 	private VariableSubstitutor variableSubstitutor;
 
 	private com.izforge.izpack.api.data.InstallData installData;
-	// private RegistryDefaultHandler handler;
 	private RegistryHandler registryHandler;
 
 	public AdxCompInstallerListener(com.izforge.izpack.api.data.InstallData installData,
@@ -80,17 +91,14 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	 * Remove all registry entries on failed installation
 	 */
 	public void cleanUp() {
-		// installation was not successful now rewind aedxinstalls.xml changes
+		// installation was not successful now rewind adxinstalls.xml changes
 	}
 
-	public void beforePacks(List<Pack> packs) // , ProgressListener listener);
-
+	public void beforePacks(List<Pack> packs)
 	// TODO: FRDEPO
 	// public void beforePacks(AutomatedInstallData idata, Integer npacks,
 	// AbstractUIProgressHandler handler) throws Exception
 	{
-		// TODO : FRDEPO
-		// super.beforePacks(idata, npacks, handler);
 		super.beforePacks(packs);
 
 		// Variables variables = new DefaultVariables();
@@ -100,8 +108,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		// TODO : FRDEPO
 		// SimpleInstallerListener.langpack = idata.langpack;
 
-		// TODO : FRDEPO
-		// getSpecHelper().readSpec(SPEC_FILE_NAME);
 		this.specHelper = new SpecHelper(this.resources);
 		try {
 			this.specHelper.readSpec(SPEC_FILE_NAME);
@@ -109,18 +115,24 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// getSpecHelper().readSpec(SPEC_FILE_NAME);
 
+		
 		// TODO : FRDEPO
-		// rh.verify(idata);
+		if (this.installData.getInfo().isReadInstallationInformation()) {
 
+			logger.info("Reading file " + InstallData.INSTALLATION_INFORMATION);
+
+			// Read .installationinformation
+			// If old version 4.3.8, ... ?
+
+			logger.info("File " + InstallData.INSTALLATION_INFORMATION + " read.");
+
+		}
+		
 	}
 
 	@Override
 	public void afterPacks(List<Pack> packs, ProgressListener listener)
-	// public void afterPacks(AutomatedInstallData idata, AbstractUIProgressHandler
-	// handler)
-	// throws Exception
 	{
 		// here we need to update adxinstalls.xml
 
@@ -154,7 +166,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 			IXMLElement elemSpec = this.specHelper.getSpec();
 			IXMLElement moduleSpec = elemSpec.getFirstChildNamed("module");
-			// NodeList nodelist = xdoc.getElementsByTagName("module");
 			 VariableSubstitutor substitutor =  new VariableSubstitutorImpl(this.installData.getVariables());
 			 String moduleName = substitutor.substitute(moduleSpec.getAttribute("name"), SubstitutionType.TYPE_PLAIN);
 			 String moduleFamily = substitutor.substitute(moduleSpec.getAttribute("family"), SubstitutionType.TYPE_PLAIN);
@@ -212,17 +223,14 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// catch (Exception e) {
-		// e.printStackTrace();
 		// throw new Exception(e.getMessage());
-		// }
 	}
 
 	private void saveXml(java.io.File fileAdxinstalls, Document xdoc, Transformer transformer, Element module)
 			throws TransformerException, ParserConfigurationException {
 		// It's ok normally, the module is added, recreate the XML
 
-		// write the content into xml file
+		// write the content into xml filed
 		DOMSource source = new DOMSource(xdoc);
 		StreamResult result = new StreamResult(fileAdxinstalls);
 
@@ -436,7 +444,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		adxInstallBuilder.append(File.separator);
 		adxInstallBuilder.append("inst");
 		adxInstallBuilder.append(File.separator);
-		adxInstallBuilder.append("adxinstalls.xml");
+		adxInstallBuilder.append(ADX_INSTALL_FILENAME);
 
 		return new java.io.File(adxInstallBuilder.toString());
 	}
@@ -448,14 +456,12 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 		String strAdxAdminPath = "";
 
-		logger.info("Init dregistry installData Locale: " + this.installData.getLocaleISO2());
-		logger.info("Init dregistry getInstallPath: " + this.installData.getInstallPath());
+		logger.info("Init registry installData Locale: " + this.installData.getLocaleISO2());
+		logger.info("Init registry getInstallPath: " + this.installData.getInstallPath());
 
 		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler);
 		if (this.registryHandler != null && rh != null) {
 
-			// TODO: FRDEPO
-			// rh.verify(idata);
 			boolean adxAdminRegistered = rh.adxadminProductRegistered();
 			logger.info("Init RegistryHandlerX3. adxadminProductRegistered: " + adxAdminRegistered);
 
@@ -463,15 +469,14 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			// "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN"
 			if (adxAdminRegistered) {
 
-				String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
-				String keyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
+				// String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
+				// String keyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
 				int oldVal = this.registryHandler.getRoot();
-				// rh.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
 				this.registryHandler.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
 
-				String keyName = keyName64Bits;
+				String keyName = ADXADMIN_REG_KeyName64Bits;
 				if (!this.registryHandler.valueExist(keyName, "ADXDIR"))
-					keyName = keyName32Bits;
+					keyName = ADXADMIN_REG_KeyName32Bits;
 				if (!this.registryHandler.valueExist(keyName, "ADXDIR"))
 					// <str id="adxadminNoAdxDirReg" txt="A previous installation of the adxadmin
 					// administration runtime was detected in the registry but the setup is unable

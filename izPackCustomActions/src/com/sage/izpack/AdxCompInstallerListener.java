@@ -42,11 +42,13 @@ import com.izforge.izpack.api.substitutor.VariableSubstitutor;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.core.substitutor.VariableSubstitutorImpl;
+import com.izforge.izpack.panels.packs.PacksModel;
 import com.izforge.izpack.util.CleanupClient;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.helper.SpecHelper;
 import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.data.InstallData;
+import com.sage.izpack.XMLHelper;
 
 /*
  * Manage XML file adxinstalls.xml
@@ -68,8 +70,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	 */
 	public static final String ADXADMIN_REG_KeyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
 
-	
-	
 	private SpecHelper specHelper = null;
 	private Resources resources = null;
 	private VariableSubstitutor variableSubstitutor;
@@ -94,16 +94,8 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		// installation was not successful now rewind adxinstalls.xml changes
 	}
 
-	public void beforePacks(List<Pack> packs)
-	// TODO: FRDEPO
-	// public void beforePacks(AutomatedInstallData idata, Integer npacks,
-	// AbstractUIProgressHandler handler) throws Exception
-	{
+	public void beforePacks(List<Pack> packs) {
 		super.beforePacks(packs);
-
-		// Variables variables = new DefaultVariables();
-		// this.idata = new AutomatedInstallData(variables, OsVersion.IS_UNIX ?
-		// Platforms.LINUX : Platforms.WINDOWS);
 
 		// TODO : FRDEPO
 		// SimpleInstallerListener.langpack = idata.langpack;
@@ -116,24 +108,19 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			e.printStackTrace();
 		}
 
-		
 		// TODO : FRDEPO
 		if (this.installData.getInfo().isReadInstallationInformation()) {
 
-			logger.info("Reading file " + InstallData.INSTALLATION_INFORMATION);
-
-			// Read .installationinformation
-			// If old version 4.3.8, ... ?
-
-			logger.info("File " + InstallData.INSTALLATION_INFORMATION + " read.");
-
+			InstallationInformationHelper.readInformation(this.installData);
+			
+		} else {
+			logger.info("ReadInstallationInformation: " + this.installData.getInfo().isReadInstallationInformation());
 		}
-		
+
 	}
 
 	@Override
-	public void afterPacks(List<Pack> packs, ProgressListener listener)
-	{
+	public void afterPacks(List<Pack> packs, ProgressListener listener) {
 		// here we need to update adxinstalls.xml
 
 		try {
@@ -166,14 +153,16 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 			IXMLElement elemSpec = this.specHelper.getSpec();
 			IXMLElement moduleSpec = elemSpec.getFirstChildNamed("module");
-			 VariableSubstitutor substitutor =  new VariableSubstitutorImpl(this.installData.getVariables());
-			 String moduleName = substitutor.substitute(moduleSpec.getAttribute("name"), SubstitutionType.TYPE_PLAIN);
-			 String moduleFamily = substitutor.substitute(moduleSpec.getAttribute("family"), SubstitutionType.TYPE_PLAIN);
-			 String moduleType = substitutor.substitute(moduleSpec.getAttribute("type"), SubstitutionType.TYPE_PLAIN);
-				if (moduleType == null)
-					moduleType = "";
-			 String version = moduleSpec.getFirstChildNamed("component." + moduleFamily.toLowerCase() + ".version").getContent();
-			 
+			VariableSubstitutor substitutor = new VariableSubstitutorImpl(this.installData.getVariables());
+			String moduleName = substitutor.substitute(moduleSpec.getAttribute("name"), SubstitutionType.TYPE_PLAIN);
+			String moduleFamily = substitutor.substitute(moduleSpec.getAttribute("family"),
+					SubstitutionType.TYPE_PLAIN);
+			String moduleType = substitutor.substitute(moduleSpec.getAttribute("type"), SubstitutionType.TYPE_PLAIN);
+			if (moduleType == null)
+				moduleType = "";
+			String version = moduleSpec.getFirstChildNamed("component." + moduleFamily.toLowerCase() + ".version")
+					.getContent();
+
 			// TODO: FRDEPO
 			// IXMLElement elemSpec = getSpecHelper().getSpec();
 			// IXMLElement moduleSpec = null; // elemSpec.getFirstChildNamed("module");
@@ -199,7 +188,8 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			// ".version").getContent());
 
 			// String moduleName = this.installData.getVariable("component.node.name");
-			// String moduleFamily = this.installData.getVariable("component.node.family"); // REPORT
+			// String moduleFamily = this.installData.getVariable("component.node.family");
+			// // REPORT
 			// String moduleType = this.installData.getVariable("component.node.type");
 
 			Element module = null;

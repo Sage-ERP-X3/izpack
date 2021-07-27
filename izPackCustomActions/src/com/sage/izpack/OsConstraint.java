@@ -8,6 +8,11 @@ import java.util.logging.Logger;
 import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.util.OsVersion;
 
+/*
+ * Former OsConstraint class, from IzPack 4.3, legacy version
+ * to be able to read file .installationinformation from former version
+ */
+
 public class OsConstraint   implements java.io.Serializable {
 	   //~ Static variables/initializers 
 

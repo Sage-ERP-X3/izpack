@@ -1,7 +1,9 @@
 package com.sage.izpack;
 
-// import com.izforge.izpack.compiler.PackInfo;
-// import com.izforge.izpack.util.OsConstraint;
+/*
+ * Former Pack class, from IzPack 4.3, legacy version
+ * to be able to read and deserialize file .installationinformation from former version
+ */
 
 import java.io.Serializable;
 import java.text.DecimalFormat;

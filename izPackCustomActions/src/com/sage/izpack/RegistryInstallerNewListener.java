@@ -40,13 +40,13 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 	public void afterPacks(List<Pack> packs, ProgressListener listener) {
 		super.afterPacks(packs, listener);
 
-
-		 // Fix the bug when un-installing a product, sometimes, the Registry
-		 // is not cleaned and on old file .installationinformation from a former setup
-		 //  can disturb the process. (Ex: X3-237732)
+		// Fix the bug when un-installing a product, sometimes, the Registry
+		// is not cleaned and on old file .installationinformation from a former setup
+		// can disturb the process. (Ex: X3-237732)
 		// readinstallationinformation
 		// writeinstallationinformation
-		if (! this.getInstallData().getInfo().isWriteInstallationInformation()) {
+		if (!this.getInstallData().getInfo().isReadInstallationInformation()
+				&& !this.getInstallData().getInfo().isWriteInstallationInformation()) {
 			deleteInstallInformation();
 		}
 		updateRegistry();
@@ -78,7 +78,7 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 				if (cont != null) {
 					String displayVersionVal = cont.getStringData();
 					if (displayVersionVal != null && displayVersionVal != version) {
-						 myHandlerInstance.setValue(keyName, "DisplayVersion", version);
+						myHandlerInstance.setValue(keyName, "DisplayVersion", version);
 					}
 				}
 			}

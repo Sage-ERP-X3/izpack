@@ -108,7 +108,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			e.printStackTrace();
 		}
 
-		// TODO : FRDEPO
 		if (this.installData.getInfo().isReadInstallationInformation()) {
 
 			InstallationInformationHelper.readInformation(this.installData);

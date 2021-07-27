@@ -55,6 +55,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			logger.log(Level.FINE, "Set INSTALL_PATH: " + path);
 		}
 
+		// Update case : read .installationinformation
 		if (path != null && installData.getInfo().isReadInstallationInformation()) {
 
 			InstallationInformationHelper.readInformation(installData);
@@ -88,12 +89,6 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		installData.setVariable("UNINSTALL_NAME", _registryHelper.getUninstallName());
 	}
 
-	/*
-	 * private void setUniqueUninstallKey() throws NativeLibException { String
-	 * newUninstallName = registryHelper.updateUninstallName();
-	 * emitNotification(getString("CheckedHelloPanel.infoOverUninstallKey") +
-	 * newUninstallName); }
-	 */
 
 	/**
 	 * Returns whether the handled application is already registered or not. The

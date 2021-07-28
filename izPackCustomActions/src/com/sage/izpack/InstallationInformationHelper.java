@@ -226,7 +226,7 @@ public final class InstallationInformationHelper {
 		ObjectOutputStream oout = new ObjectOutputStream(fout);
 		oout.writeObject(selectedPacks);
 		// oout.writeObject(variables.getProperties());
-		oout.writeObject(variables);
+		oout.writeObject(variables.getProperties());
 		fout.close();
 		
 		logger.fine("Installation information saved: "+ installationInfo.getAbsolutePath());

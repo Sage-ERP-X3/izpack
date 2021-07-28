@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -113,7 +114,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			InstallationInformationHelper.readInformation(this.installData);
 			
 		} else {
-			logger.info("ReadInstallationInformation: " + this.installData.getInfo().isReadInstallationInformation());
+			logger.log(Level.FINE, "AdxCompInstallerListener.beforePacks  ReadInstallationInformation: " + this.installData.getInfo().isReadInstallationInformation());
 		}
 
 	}
@@ -136,7 +137,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 						ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
 
 			java.io.File fileAdxinstalls = getAdxInstallFile(dirAdxDir);
-			logger.info("Reading XML file fileAdxinstalls: " + fileAdxinstalls.getAbsolutePath());
+			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  Reading XML file fileAdxinstalls: " + fileAdxinstalls.getAbsolutePath());
 
 			Document xdoc = getXml(fileAdxinstalls);
 
@@ -194,7 +195,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			Element module = null;
 			boolean modifyinstallation = Boolean.valueOf(installData.getVariable(InstallData.MODIFY_INSTALLATION));
 
-			logger.info("moduleName: " + moduleName + " moduleFamily: " + moduleFamily + " modifyinstallation: "
+			logger.log(Level.FINE,"AdxCompInstallerListener.afterPacks  moduleName: " + moduleName + " moduleFamily: " + moduleFamily + " modifyinstallation: "
 					+ modifyinstallation);
 
 			if (modifyinstallation) {
@@ -206,7 +207,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 				module = createReportModule(xdoc, moduleName, moduleFamily, moduleType);
 			}
 
-			logger.info("saving XML xdoc:" + xdoc.getDocumentElement().getNodeName());
+			logger.log(Level.FINE,"AdxCompInstallerListener.afterPacks  saving XML xdoc:" + xdoc.getDocumentElement().getNodeName());
 			saveXml(fileAdxinstalls, xdoc, transformer, module);
 
 		} catch (Exception e) {
@@ -252,6 +253,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		// idata.uninstallOutJar.closeEntry();
 	}
 
+	
 	// <module name="EDTSRV" family="REPORT" type="">
 	// <component.report.installstatus>update</component.report.installstatus>
 	// <component.report.path>c:\Sage\SafeX3\EDTV2\EDTSRVFRDEP</component.report.path>
@@ -306,7 +308,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		// if (module == null) throw new
 		// Exception(String.format(langpack.getString("sectionNotFound"), moduleName));
 		if (module == null) {
-			logger.info("name: " + moduleName + " type: " + moduleType + " family: " + moduleFamily
+			logger.log(Level.FINE,"AdxCompInstallerListener.modifyReportModule  name: " + moduleName + " type: " + moduleType + " family: " + moduleFamily
 					+ " not found in xmlDocument " + xdoc);
 			throw new Exception(String.format(
 					ResourceBundle.getBundle("com/sage/izpack/messages").getString("sectionNotFound"), moduleName));
@@ -384,7 +386,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 		if (!fileAdxinstalls.exists()) {
 
-			logger.info("Creating file " + fileAdxinstalls.getAbsolutePath());
+			logger.log(Level.FINE, "AdxCompInstallerListener.getXml  Creating file " + fileAdxinstalls.getAbsolutePath());
 
 			fileAdxinstalls.createNewFile();
 
@@ -415,14 +417,14 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 		} else {
 
-			logger.info("Parsing file " + fileAdxinstalls.getAbsolutePath());
+			logger.log(Level.FINE, "AdxCompInstallerListener.getXml  Parsing file " + fileAdxinstalls.getAbsolutePath());
 			xdoc = dBuilder.parse(fileAdxinstalls);
 			xdoc.getDocumentElement().normalize();
 		}
 
 		XMLHelper.cleanEmptyTextNodes((Node) xdoc);
 
-		logger.info("Xml file: " + fileAdxinstalls.getPath() + ". Root element: "
+		logger.log(Level.FINE, "AdxCompInstallerListener.getXml  Xml file: " + fileAdxinstalls.getPath() + ". Root element: "
 				+ xdoc.getDocumentElement().getNodeName());
 		return xdoc;
 	}
@@ -445,14 +447,14 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 		String strAdxAdminPath = "";
 
-		logger.info("Init registry installData Locale: " + this.installData.getLocaleISO2());
-		logger.info("Init registry getInstallPath: " + this.installData.getInstallPath());
+		logger.log(Level.FINE, "AdxCompInstallerListener  Init registry installData Locale: " + this.installData.getLocaleISO2());
+		logger.log(Level.FINE, "AdxCompInstallerListener  Init registry getInstallPath: " + this.installData.getInstallPath());
 
 		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler);
 		if (this.registryHandler != null && rh != null) {
 
 			boolean adxAdminRegistered = rh.adxadminProductRegistered();
-			logger.info("Init RegistryHandlerX3. adxadminProductRegistered: " + adxAdminRegistered);
+			logger.log(Level.FINE, "AdxCompInstallerListener  Init RegistryHandlerX3. adxadminProductRegistered: " + adxAdminRegistered);
 
 			// Test adxadmin is already installed. Read registry
 			// "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN"
@@ -478,7 +480,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 				// fetch ADXDIR path
 				strAdxAdminPath = this.registryHandler.getValue(keyName, "ADXDIR").getStringData();
 
-				logger.info("ADXDIR path: " + strAdxAdminPath + "  Key: " + keyName);
+				logger.log(Level.FINE, "AdxCompInstallerListener  ADXDIR path: " + strAdxAdminPath + "  Key: " + keyName);
 
 				// free RegistryHandler
 				this.registryHandler.setRoot(oldVal);
@@ -494,7 +496,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			}
 
 		} else {
-			logger.info("AdxCompInstallerListener - Could not get RegistryHandler !");
+			logger.log(Level.FINE, "AdxCompInstallerListener - Could not get RegistryHandler !");
 			// Debug.log("CheckedHelloPanel - Could not get RegistryHandler !");
 
 			// else we are on a os which has no registry or the needed dll was not bound to

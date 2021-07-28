@@ -49,10 +49,10 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		// Update case :
 		if (path != null) {
 			installData.setVariable("TargetPanel.dir.windows", path);
-			logger.log(Level.FINE, "Set TargetPanel.dir.windows: " + path);
+			logger.log(Level.FINE, "CheckedHelloNewPanel Set TargetPanel.dir.windows: " + path);
 
 			installData.setVariable(InstallData.INSTALL_PATH, path);
-			logger.log(Level.FINE, "Set INSTALL_PATH: " + path);
+			logger.log(Level.FINE, "CheckedHelloNewPanel Set INSTALL_PATH: " + path);
 		}
 
 		// Update case : read .installationinformation
@@ -106,7 +106,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			// Set variable "modify.izpack.install"
 			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 		}
-		logger.log(Level.FINE, "Set " + InstallData.MODIFY_INSTALLATION + ": true");
+		logger.log(Level.FINE, "CheckedHelloNewPanel Set " + InstallData.MODIFY_INSTALLATION + ": true");
 		return result;
 	}
 
@@ -119,7 +119,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		try {
 			result = customResources.get(key);
 		} catch (Exception ex) {
-			logger.log(Level.FINE, "Cannot get resource " + key + " " + customResourcesPath);
+			logger.log(Level.FINE, "CheckedHelloNewPanel Cannot get resource " + key + " " + customResourcesPath);
 
 		}
 		if (result == null) {

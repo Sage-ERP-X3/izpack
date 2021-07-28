@@ -36,25 +36,24 @@ public class PacksNewPanel extends PacksPanel {
 		super(arg0, arg1, installData, resources, factory, rules);
 	}
 
-
-    /**
-     * Creates the table for the packs. All parameters are required. The table will be returned.
-     *
-     * @param width       of the table
-     * @param scroller    the scroller to be used
-     * @param layout      layout to be used
-     * @param constraints constraints to be used
-     * @return the created table
-     */
+	/**
+	 * Creates the table for the packs. All parameters are required. The table will
+	 * be returned.
+	 *
+	 * @param width       of the table
+	 * @param scroller    the scroller to be used
+	 * @param layout      layout to be used
+	 * @param constraints constraints to be used
+	 * @return the created table
+	 */
 	@Override
-    protected JTable createPacksTable(int width, JScrollPane scroller, GridBagLayout layout,
-                                      GridBagConstraints constraints)
-    {    	
+	protected JTable createPacksTable(int width, JScrollPane scroller, GridBagLayout layout,
+			GridBagConstraints constraints) {
 		logger.info("PacksNewPanel.createPacksTable");
-		
-		return super.createPacksTable(width, scroller, layout, constraints);    	
-    }
-	
+
+		return super.createPacksTable(width, scroller, layout, constraints);
+	}
+
 	/**
 	 * Called when the panel becomes active. If a derived class implements this
 	 * method also, it is recommended to call this method with the super operator
@@ -66,14 +65,29 @@ public class PacksNewPanel extends PacksPanel {
 
 		for (Pack p : this.installData.getAvailablePacks()) {
 
-			logger.info("panelActivate - Pack " + p.getName() + " Required: " + p.isRequired() + " Preselected: "
-					+ p.isPreselected());
+			logger.info("PacksNewPanel.panelActivate - Pack " + p.getName() + " Required: " + p.isRequired()
+					+ " Preselected: " + p.isPreselected());
 
-			if (p.isRequired())
+			if (p.isRequired()) {
 				p.setPreselected(true);
+			}
 		}
-
 		super.panelActivate();
+	}
+
+	/**
+	 * Indicates whether the panel has been validated or not.
+	 *
+	 * @return true if the needed space is less than the free space, else false
+	 */
+	@Override
+	public boolean isValidated() {
+		logger.info("PacksNewPanel.isValidated : ");
+
+		boolean isValidated = super.isValidated();
+		logger.info("PacksNewPanel.isValidated : " + isValidated);
+
+		return isValidated;
 	}
 
 	@Override

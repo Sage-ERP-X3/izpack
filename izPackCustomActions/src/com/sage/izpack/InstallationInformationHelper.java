@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
+// import org.apache.commons.io.IOUtils;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.data.Variables;
@@ -227,10 +227,11 @@ public final class InstallationInformationHelper {
 		oout.writeObject(selectedPacks);
 		// oout.writeObject(variables.getProperties());
 		oout.writeObject(variables);
-
+		fout.close();
+		
 		logger.fine("Installation information saved: "+ installationInfo.getAbsolutePath());
-		IOUtils.closeQuietly(oout);
-		IOUtils.closeQuietly(fout);
+		// IOUtils.closeQuietly(oout);
+		// IOUtils.closeQuietly(fout);
 
 		// uninstallData.addFile(installationInfo.getAbsolutePath(), true);
 	}

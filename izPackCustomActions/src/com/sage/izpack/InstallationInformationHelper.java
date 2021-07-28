@@ -30,6 +30,7 @@ public final class InstallationInformationHelper {
 		// Read .installationinformation
 		// If old version 4.3.8, ... ?
 
+		/*
 		PacksModel model = new PacksModel(installData);
 		Map<String, Pack> installedPacks = model.getInstalledPacks();
 		logger.info("Installed Packs : " + installedPacks);
@@ -39,6 +40,7 @@ public final class InstallationInformationHelper {
 			logger.info("installedPacks: " + entry.getKey() + " - required: " + pack.isRequired() + "  Preselected: "
 					+ pack.isPreselected());
 		}
+		*/
 		Boolean informationloaded = false;
 		try {
 			logger.info("Loading installation information");

@@ -3,18 +3,21 @@ package com.sage.izpack;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Pack;
-import com.izforge.izpack.panels.packs.PacksModel;
+import com.izforge.izpack.api.data.Variables;
+import com.izforge.izpack.api.exception.InstallerException;
 
 public final class InstallationInformationHelper {
 
@@ -31,16 +34,15 @@ public final class InstallationInformationHelper {
 		// If old version 4.3.8, ... ?
 
 		/*
-		PacksModel model = new PacksModel(installData);
-		Map<String, Pack> installedPacks = model.getInstalledPacks();
-		logger.info("Installed Packs : " + installedPacks);
-
-		for (Entry<String, Pack> entry : installedPacks.entrySet()) {
-			Pack pack = entry.getValue();
-			logger.info("installedPacks: " + entry.getKey() + " - required: " + pack.isRequired() + "  Preselected: "
-					+ pack.isPreselected());
-		}
-		*/
+		 * PacksModel model = new PacksModel(installData); Map<String, Pack>
+		 * installedPacks = model.getInstalledPacks(); logger.info("Installed Packs : "
+		 * + installedPacks);
+		 * 
+		 * for (Entry<String, Pack> entry : installedPacks.entrySet()) { Pack pack =
+		 * entry.getValue(); logger.info("installedPacks: " + entry.getKey() +
+		 * " - required: " + pack.isRequired() + "  Preselected: " +
+		 * pack.isPreselected()); }
+		 */
 		Boolean informationloaded = false;
 		try {
 			logger.info("Loading installation information");
@@ -57,6 +59,7 @@ public final class InstallationInformationHelper {
 			try {
 				loadLegacyInstallationInformation(installData);
 				logger.info("Legacy installation information loaded");
+
 			} catch (Exception e) {
 				logger.info("Installation legacy information loading failed: " + e.getMessage());
 				informationloaded = false;
@@ -118,10 +121,9 @@ public final class InstallationInformationHelper {
 		return readPacks;
 	}
 
-	
-/*
- * 
- */
+	/*
+	 * 
+	 */
 	private static void loadLegacyInstallationInformation(com.izforge.izpack.api.data.InstallData installData) {
 
 		Map<String, com.sage.izpack.Pack> readPacks = new HashMap<String, com.sage.izpack.Pack>();
@@ -169,10 +171,68 @@ public final class InstallationInformationHelper {
 					installData.setVariable((String) key, (String) variables.get(key));
 					logger.info("Set Legacy variable : " + key + ": " + variables.get(key));
 				}
+
+				logger.info("writeInstallationInformation to fix legacy issue");
+				writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables());
+				
 			} catch (Exception e) {
 				logger.warning("Could not read Legacy 'Properties' installation information: " + e.getMessage());
 			}
 		}
+	}
+
+	private static void writeInstallationInformation(com.izforge.izpack.api.data.InstallData installData,
+			List<Pack> selectedPacks, Variables variables) throws IOException {
+		
+		if (!installData.getInfo().isWriteInstallationInformation()) {
+			logger.fine("Skip writing installation information");
+			return;
+		}
+		logger.fine("Writing installation information to fix legacy issue");
+		String installDir = installData.getInstallPath();
+
+		// List<Pack> installedPacks = new ArrayList<Pack>(selectedPacks);
+
+		File installationInfo = new File(installDir + File.separator + InstallData.INSTALLATION_INFORMATION);
+		if (!installationInfo.exists()) {
+			logger.fine("Creating info file " + installationInfo.getAbsolutePath());
+			File dir = new File(installData.getInstallPath());
+			if (!dir.exists()) {
+				// if no packs have been installed, then the installation directory won't exist
+				if (!dir.mkdirs()) {
+					throw new InstallerException("Failed to create directory: " + dir);
+				}
+			}
+			if (!installationInfo.createNewFile()) {
+				throw new InstallerException("Failed to create file: " + installationInfo);
+			}
+		} else {
+			logger.fine("Previous installation information found: " + installationInfo.getAbsolutePath());
+			// read in old information and update
+			// FileInputStream fin = new FileInputStream(installationInfo);
+			// ObjectInputStream oin = new ObjectInputStream(fin);
+
+			/*
+			 * List<Pack> packs; try { //noinspection unchecked packs = (List<Pack>)
+			 * oin.readObject(); } catch (Exception exception) { throw new
+			 * InstallerException("Failed to read previous installation information",
+			 * exception); } finally { IOUtils.closeQuietly(oin); IOUtils.closeQuietly(fin);
+			 * }
+			 */
+			// installedPacks.addAll(packs);
+		}
+
+		FileOutputStream fout = new FileOutputStream(installationInfo);
+		ObjectOutputStream oout = new ObjectOutputStream(fout);
+		oout.writeObject(selectedPacks);
+		// oout.writeObject(variables.getProperties());
+		oout.writeObject(variables);
+
+		logger.fine("Installation information saved: "+ installationInfo.getAbsolutePath());
+		IOUtils.closeQuietly(oout);
+		IOUtils.closeQuietly(fout);
+
+		// uninstallData.addFile(installationInfo.getAbsolutePath(), true);
 	}
 
 }

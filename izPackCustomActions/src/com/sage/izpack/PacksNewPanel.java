@@ -1,7 +1,12 @@
 package com.sage.izpack;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.data.Panel;
@@ -31,12 +36,52 @@ public class PacksNewPanel extends PacksPanel {
 		super(arg0, arg1, installData, resources, factory, rules);
 	}
 
+
+    /**
+     * Creates the table for the packs. All parameters are required. The table will be returned.
+     *
+     * @param width       of the table
+     * @param scroller    the scroller to be used
+     * @param layout      layout to be used
+     * @param constraints constraints to be used
+     * @return the created table
+     */
+	@Override
+    protected JTable createPacksTable(int width, JScrollPane scroller, GridBagLayout layout,
+                                      GridBagConstraints constraints)
+    {    	
+		logger.info("PacksNewPanel.createPacksTable");
+		
+		return super.createPacksTable(width, scroller, layout, constraints);    	
+    }
+	
+	/**
+	 * Called when the panel becomes active. If a derived class implements this
+	 * method also, it is recommended to call this method with the super operator
+	 * first.
+	 */
+	@Override
+	public void panelActivate() {
+		logger.info("PacksNewPanel.panelActivate : installData.getAvailablePacks()");
+
+		for (Pack p : this.installData.getAvailablePacks()) {
+
+			logger.info("panelActivate - Pack " + p.getName() + " Required: " + p.isRequired() + " Preselected: "
+					+ p.isPreselected());
+
+			if (p.isRequired())
+				p.setPreselected(true);
+		}
+
+		super.panelActivate();
+	}
+
 	@Override
 	public String getSummaryBody() {
 		StringBuilder retval = new StringBuilder(256);
 		boolean first = true;
 
-		logger.info("getSummaryBody : installData.getSelectedPacks()");
+		logger.info("PacksNewPanel.getSummaryBody : installData.getSelectedPacks()");
 
 		for (com.izforge.izpack.api.data.Pack pack : installData.getSelectedPacks()) {
 			if (!first) {
@@ -46,7 +91,7 @@ public class PacksNewPanel extends PacksPanel {
 			retval.append(getI18NPackName(pack));
 		}
 
-		logger.info("getSummaryBody : packsModel.isModifyInstallation()");
+		logger.info("PacksNewPanel.getSummaryBody : packsModel.isModifyInstallation()");
 
 		if (packsModel.isModifyInstallation()) {
 			Map<String, com.izforge.izpack.api.data.Pack> installedpacks = packsModel.getInstalledPacks();
@@ -62,7 +107,7 @@ public class PacksNewPanel extends PacksPanel {
 				}
 		}
 
-		logger.info("getSummaryBody : " + retval.toString());
+		logger.info("PacksNewPanel.getSummaryBody : " + retval.toString());
 
 		return (retval.toString());
 	}

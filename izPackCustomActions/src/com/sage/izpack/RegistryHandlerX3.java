@@ -1,7 +1,25 @@
 package com.sage.izpack;
 
 import com.izforge.izpack.core.os.RegistryHandler;
+import com.izforge.izpack.util.OsVersion;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import com.izforge.izpack.api.exception.NativeLibException;
 
 /**
@@ -22,17 +40,85 @@ public class RegistryHandlerX3 {
 		return this.registryHandler;
 	}
 
+	/**
+	 * Check if AdxAdmin is installed Check the Registry if Windows
+	 * 
+	 * @return
+	 * @throws NativeLibException
+	 */
 	public boolean adxadminProductRegistered() throws NativeLibException {
 
-		// String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
-		// String keyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
-		// // TODO: remove 32 bits
+		String adxAdminPath = getAdxAdminDirPath();
+		logger.log(Level.FINE, "RegistryHandlerX3.adxadminProductRegistered. adxAdminPath: " + adxAdminPath + "  result: " + (adxAdminPath != null));
+		return (adxAdminPath != null);
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws NativeLibException
+	 */
+	public String getAdxAdminDirPath() throws NativeLibException {
+		if (OsVersion.IS_UNIX) {
+			return getAdxAdminPathUnix();
+		}
+		return getAdxAdminPathWin();
+	}
+	
+
+	/**
+	 * String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
+	 * String keyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
+	 * @return  C:\Sage\SafeX3\ADXADMIN
+	 * @throws NativeLibException
+	 */
+	private String getAdxAdminPathWin() throws NativeLibException {
+		String adxAdminPath = null;
 		int oldVal = this.registryHandler.getRoot();
 		this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
-		boolean retval = this.registryHandler.keyExist(AdxCompInstallerListener.ADXADMIN_REG_KeyName64Bits)
-				|| this.registryHandler.keyExist(AdxCompInstallerListener.ADXADMIN_REG_KeyName32Bits);
+		boolean exists64bits = this.registryHandler.keyExist(AdxCompInstallerListener.ADXADMIN_REG_KeyName64Bits);
+		boolean exists32bits = this.registryHandler.keyExist(AdxCompInstallerListener.ADXADMIN_REG_KeyName32Bits);
+
+		if (exists64bits) {
+			adxAdminPath = this.registryHandler
+					.getValue(AdxCompInstallerListener.ADXADMIN_REG_KeyName64Bits, "ADXDIR").getStringData();
+		} else if (exists32bits){
+			adxAdminPath = this.registryHandler
+					.getValue(AdxCompInstallerListener.ADXADMIN_REG_KeyName32Bits, "ADXDIR").getStringData();
+		}
 		this.registryHandler.setRoot(oldVal);
-		return (retval);
+
+		logger.log(Level.FINE, "RegistryHandlerX3.getAdxAdminPathWin. adxAdminPath: " + adxAdminPath);
+		return adxAdminPath;
+	}
+
+	
+	private String getAdxAdminPathUnix() {
+		String adxAdminPath = null;
+
+		java.io.File adxadmFile = new java.io.File("/sage/adxadm");
+		if (!adxadmFile.exists()) {
+			adxadmFile = new java.io.File("/adonix/adxadm");
+			if (!adxadmFile.exists()) {
+				return null;
+			}
+		}
+
+		FileReader readerAdxAdmFile;
+		try {
+			readerAdxAdmFile = new FileReader(adxadmFile);
+			BufferedReader buffread = new BufferedReader(readerAdxAdmFile);
+			adxAdminPath = buffread.readLine();
+			buffread.close();
+
+			logger.log(Level.FINE, "RegistryHandlerX3.getAdxAdminPathUnix. adxAdminPath: " + adxAdminPath);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return adxAdminPath;
+
 	}
 
 }

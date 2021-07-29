@@ -61,7 +61,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	private static final Logger logger = Logger.getLogger(AdxCompInstallerListener.class.getName());
 
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
-	private static final String ADX_INSTALL_FILENAME = "adxinstalls.xml";
+	public static final String ADX_INSTALL_FILENAME = "adxinstalls.xml";
 	/*
 	 * SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN
 	 */
@@ -465,11 +465,10 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 					+ adxAdminRegistered);
 
 			// Test adxadmin is already installed. Read registry
-			// "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN"
+			// String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
+			// String keyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
 			if (adxAdminRegistered) {
 
-				// String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
-				// String keyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
 				int oldVal = this.registryHandler.getRoot();
 				this.registryHandler.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
 

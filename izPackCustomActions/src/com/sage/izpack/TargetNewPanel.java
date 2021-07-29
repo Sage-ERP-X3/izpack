@@ -39,7 +39,7 @@ public class TargetNewPanel extends TargetPanel {
 		logger.log(Level.FINE, "TargetNewPanel.saveData");
 
 		// <ComponentName>c:\Sage\SafeX3\${component.node.name}</ComponentName>
-		String platformSep = "\\\\"; // "\"[\\/]+\"";
+		String platformSep = "[\\\\\\/]";// "\\\\"; 
 		int positionFromEnd = 0;
 		String variableNameRaw = getMetadata().getConfigurationOptionValue("SetVariableName", installData.getRules());
 		String variableName = null;

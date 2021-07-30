@@ -29,9 +29,6 @@ public class TargetNewPanel extends TargetPanel {
 		logger.log(Level.FINE, "TargetNewPanel.panelActivate  Path: " + pathSelectionPanel.getPath());
 	}
 
-	// TODO: FRDEPO => How to set variable ${component.node.name} in a generic way ?
-	// <variable name="TargetPanel.dir.windows"
-	// value="c:\Sage\SafeX3\${component.node.name}" condition="!updatemode"/>
 
 	@Override
 	public void saveData() {
@@ -70,8 +67,7 @@ public class TargetNewPanel extends TargetPanel {
 			String variableValue = pathElements[(pathElements.length - 1 - positionFromEnd)];
 			installData.setVariable(variableName, variableValue);
 			logger.log(Level.FINE, "TargetNewPanel.saveData path: " + path + "  setVariable  '" + variableName + "': "
-					+ variableValue);
-			
+					+ variableValue);		
 			}				
 		
 	}

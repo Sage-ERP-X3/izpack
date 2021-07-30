@@ -62,14 +62,13 @@ public class X3NodeIdentifierValidator
 
 		boolean result = false;
 		String moduleName = client.getText();
-		logger.log(Level.FINE, "X3NodeIdentifierValidator.validate  moduleName: " + moduleName);
+		logger.log(Level.FINE, "X3NodeIdentifierValidator.validate  ModuleName: " + moduleName);
 		String x3Family = client.getConfigurationOptionValue(X3FAMILY);
 		String x3Type = client.getConfigurationOptionValue(X3TYPE);
 		try {
 			result = checkData(moduleName, x3Family, x3Type);
 
 		} catch (ParserConfigurationException e) {
-
 			e.printStackTrace();
 		} catch (SAXException e) {
 			e.printStackTrace();
@@ -87,13 +86,25 @@ public class X3NodeIdentifierValidator
 		return DataValidator.Status.OK; // checkData();
 	}
 
+	/**
+	 * Check in registry if X3 AdxAdmin has been installed : 
+	 * OK if installed. NOOK otherwise.
+	 * 
+	 * @param nodeName
+	 * @param x3Family
+	 * @param x3Type
+	 * @return
+	 * @throws Exception
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
 	private boolean checkData(String nodeName, String x3Family, String x3Type)
 			throws Exception, ParserConfigurationException, SAXException, IOException {
 
 		logger.log(Level.FINE, "X3NodeIdentifierValidator.validateData");
 
-		boolean validateResult = false; // DataValidator.Status.ERROR; // super.validateData(idata);
-
+		boolean validateResult = false;
 		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler);
 		if (this.registryHandler != null && rh != null) {
 
@@ -102,7 +113,6 @@ public class X3NodeIdentifierValidator
 				adxAdminRegistered = rh.adxadminProductRegistered();
 
 				if (adxAdminRegistered) {
-					// validateResult = true; // DataValidator.Status.OK;
 					logger.log(Level.FINE,
 							"X3NodeIdentifierValidator  check adxadminProductRegistered: " + adxAdminRegistered);
 				} else {
@@ -110,7 +120,7 @@ public class X3NodeIdentifierValidator
 							"X3NodeIdentifierValidator : X3 AdxAdmin not installed or not found in registry.");
 				}
 
-				validateResult = CheckXmlInstallNode(rh, nodeName, x3Family, x3Type);
+				validateResult = checkXmlInstallNode(rh, nodeName, x3Family, x3Type);
 
 			} catch (NativeLibException e) {
 				e.printStackTrace();
@@ -121,14 +131,29 @@ public class X3NodeIdentifierValidator
 	}
 
 	
-	
-	private boolean CheckXmlInstallNode(RegistryHandlerX3 rh, String nodename, String strX3Family, String strX3Type)
+	/**
+	 * Check file "adxinstalls.xml"
+	 * If "adxinstalls.xml" doesn't exist yet : OK
+	 * 
+	 * 
+	 * @param rh
+	 * @param nodename
+	 * @param x3Family
+	 * @param x3Type
+	 * @return
+	 * @throws NativeLibException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws XPathExpressionException
+	 */
+	private boolean checkXmlInstallNode(RegistryHandlerX3 rh, String nodename, String x3Family, String x3Type)
 			throws NativeLibException, ParserConfigurationException, SAXException, IOException,
 			XPathExpressionException {
 
 		String dir = rh.getAdxAdminDirPath();
-		logger.log(Level.FINE, "X3NodeIdentifierValidator  CheckXmlInstallNode: Check directory " + dir + " nodename: "
-				+ nodename + " strX3Family: " + strX3Family + " strX3Type: " + strX3Type);
+		logger.log(Level.FINE, "X3NodeIdentifierValidator.checkXmlInstallNode  Check directory " + dir + " nodename: "
+				+ nodename + " strX3Family: " + x3Family + " strX3Type: " + x3Type);
 
 		java.io.File dirAdxDir = new java.io.File(dir);
 
@@ -150,34 +175,34 @@ public class X3NodeIdentifierValidator
 		fileAdxinstalls = new java.io.File(fullpathBuilder.toString());
 		if (!fileAdxinstalls.exists()) {
 			logger.log(Level.FINE,
-					"X3NodeIdentifierValidator  CheckXmlInstallNode: " + fileAdxinstalls + " doesn't exist yet. OK");
+					"X3NodeIdentifierValidator.checkXmlInstallNode  " + fileAdxinstalls + " doesn't exist yet. OK");
 			return true;
 		}
 
-		logger.log(Level.FINE, "X3NodeIdentifierValidator.CheckXmlInstallNode   Opening " + fileAdxinstalls
-				+ "   nodename: " + nodename + " X3Family: " + strX3Family + " X3Type: " + strX3Type);
+		logger.log(Level.FINE, "X3NodeIdentifierValidator.checkXmlInstallNode  Opening " + fileAdxinstalls
+				+ "   nodename: " + nodename + " X3Family: " + x3Family + " X3Type: " + x3Type);
 
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document xdoc = dBuilder.parse(fileAdxinstalls);
 		// Element xmlinstall = xdoc.getDocumentElement();
 		XPath xPath = XPathFactory.newInstance().newXPath();
-		String strPath = "/install/module[@name='" + nodename + "' and @family='" + strX3Family + "'";
-		if (strX3Type != null && !"".equals(strX3Type))
-			strPath += " and @type='" + strX3Type + "'";
+		String strPath = "/install/module[@name='" + nodename + "' and @family='" + x3Family + "'";
+		if (x3Type != null && !"".equals(x3Type))
+			strPath += " and @type='" + x3Type + "'";
 		strPath += "]";
 
 		Node module = (Node) xPath.compile(strPath).evaluate(xdoc, XPathConstants.NODE);
 
 		if (module == null) {
 			logger.log(Level.FINE,
-					"X3NodeIdentifierValidator.CheckXmlInstallNode  nodename: " + nodename + " X3Family: " + strX3Family
-							+ " X3Type: " + strX3Type + " NOT found in " + fileAdxinstalls + ": OK");
+					"X3NodeIdentifierValidator.checkXmlInstallNode  NodeName: " + nodename + " X3Family: " + x3Family
+							+ " X3Type: " + x3Type + " NOT found in " + fileAdxinstalls + ": OK");
 			return true;
 		}
 
-		logger.log(Level.FINE, "X3NodeIdentifierValidator.CheckXmlInstallNode  nodename: " + nodename + " X3Family: "
-				+ strX3Family + " X3Type: " + strX3Type + " FOUND in " + fileAdxinstalls + ": OK");
+		logger.log(Level.FINE, "X3NodeIdentifierValidator.checkXmlInstallNode  NodeName: " + nodename + " X3Family: "
+				+ x3Family + " X3Type: " + x3Type + " FOUND in " + fileAdxinstalls + ": OK");
 		return false;
 	}
 

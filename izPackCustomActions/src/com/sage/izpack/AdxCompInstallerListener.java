@@ -61,6 +61,9 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	private static final Logger logger = Logger.getLogger(AdxCompInstallerListener.class.getName());
 
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
+	/**
+	 * adxinstalls.xml
+	 */
 	public static final String ADX_INSTALL_FILENAME = "adxinstalls.xml";
 	/*
 	 * SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN

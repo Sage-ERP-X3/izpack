@@ -7,6 +7,11 @@ Note that we have NOT modified any source in this version. <br/>
 Personnalization has exclusively been made in the library named `"com.sage.izpack.jar"` placed in directory ".\izPackCustomActions". <br/>
 <br/>
 
+Official documentation izPack 5:<br/>
+https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5<br/>
+
+<br/>
+
 ## Version 5.1.3: 2021-01
 
 - update to IZPACK 5.1.3 <br/>

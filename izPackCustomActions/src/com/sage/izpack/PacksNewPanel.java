@@ -31,9 +31,9 @@ public class PacksNewPanel extends PacksPanel {
 	 */
 	private Messages messages = null;
 
-	public PacksNewPanel(Panel arg0, InstallerFrame arg1, GUIInstallData installData, Resources resources,
+	public PacksNewPanel(Panel panel, InstallerFrame frame, GUIInstallData installData, Resources resources,
 			ObjectFactory factory, RulesEngine rules) {
-		super(arg0, arg1, installData, resources, factory, rules);
+		super(panel, frame, installData, resources, factory, rules);
 	}
 
 	/**
@@ -59,6 +59,7 @@ public class PacksNewPanel extends PacksPanel {
 	 * method also, it is recommended to call this method with the super operator
 	 * first.
 	 */
+	/*
 	@Override
 	public void panelActivate() {
 		logger.info("PacksNewPanel.panelActivate : installData.getAvailablePacks()");
@@ -74,7 +75,7 @@ public class PacksNewPanel extends PacksPanel {
 		}
 		super.panelActivate();
 	}
-
+*/
 	/**
 	 * Indicates whether the panel has been validated or not.
 	 *
@@ -90,6 +91,7 @@ public class PacksNewPanel extends PacksPanel {
 		return isValidated;
 	}
 
+	/*
 	@Override
 	public String getSummaryBody() {
 		StringBuilder retval = new StringBuilder(256);
@@ -125,7 +127,8 @@ public class PacksNewPanel extends PacksPanel {
 
 		return (retval.toString());
 	}
-
+*/
+	
 	/**
 	 * This method tries to resolve the localized name of the given pack. If this is
 	 * not possible, the name given in the installation description file in ELEMENT

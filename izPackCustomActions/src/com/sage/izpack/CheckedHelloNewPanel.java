@@ -151,18 +151,4 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 				AbstractUIHandler.CHOICES_YES_NO) == AbstractUIHandler.ANSWER_YES);
 	}
 
-	/*
-	 * public void panelActivate() { if (abortInstallation) {
-	 * parent.lockNextButton(); try { if (multipleInstall()) { //
-	 * setUniqueUninstallKey(); abortInstallation = false;
-	 * parent.unlockNextButton(); } else {
-	 * installData.getInfo().setUninstallerPath(null);
-	 * installData.getInfo().setUninstallerName(null);
-	 * installData.getInfo().setUninstallerCondition("uninstaller.nowrite"); } }
-	 * catch (Exception exception) { logger.log(Level.WARNING,
-	 * exception.getMessage(), exception); } }
-	 * 
-	 * installData.setVariable("UNINSTALL_NAME", registryHelper.getUninstallName());
-	 * }
-	 */
 }

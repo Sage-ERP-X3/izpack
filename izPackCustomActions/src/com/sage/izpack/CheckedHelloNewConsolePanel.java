@@ -22,6 +22,9 @@ import com.izforge.izpack.panels.checkedhello.CheckedHelloConsolePanel;
 import com.izforge.izpack.panels.checkedhello.RegistryHelper;
 import com.izforge.izpack.util.Console;
 
+/*
+* @author Franck DEPOORTERE
+*/
 public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 
 	private static Logger logger = Logger.getLogger(CheckedHelloNewConsolePanel.class.getName());
@@ -45,7 +48,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		super(handler, installData, prompt, panel);
 		_registryHelper = new RegistryHelper(handler, installData);
 		this.prompt = prompt;
-		registered = _registryHelper.isRegistered();
+		// registered = _registryHelper.isRegistered();
 		this.installData = installData;
 
 		customResourcesPath = "/com/sage/izpack/langpacks/" + installData.getLocaleISO3() + ".xml";
@@ -57,14 +60,16 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		String path = registryHelper.getInstallationPath();
 		// Update case :
 		if (path != null) {
+			registered = true; //_registryHelper.isRegistered();
+			
 			installData.setVariable("TargetPanel.dir.windows", path);
-			logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set TargetPanel.dir.windows: " + path);
+			logger.log(Level.FINE, "CheckedHelloNewConsolePanel  Set TargetPanel.dir.windows: " + path);
 
 			installData.setVariable(InstallData.INSTALL_PATH, path);
 			logger.log(Level.FINE, "CheckedHelloNewConsolePanel  Set INSTALL_PATH: " + path);
 
 			// Set variable "modify.izpack.install"
-			if (registered)
+			// if (registered)
 				installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 			logger.log(Level.FINE, "CheckedHelloNewConsolePanel  Registered: " + registered);
 		}

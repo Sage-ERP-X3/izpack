@@ -25,42 +25,39 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 
 	protected String errMessage = "";
 	protected String warnMessage = "";
-	
-	// private com.izforge.izpack.api.data.InstallData installData;
-	// private RegistryHandler registryHandler;
 
-	
-	/*
-	public CheckProductAlreadyInstalled( RegistryDefaultHandler handler) {
+	public CheckProductAlreadyInstalled() {
 		super();
-		this.registryHandler = handler.getInstance();
+		// this.registryHandler = handler.getInstance();
 	}
-	*/
 
 	@Override
 	public Status validateData(InstallData installData) {
 		// open an input stream
 		InputStream input = null;
-	
+
 		try {
 			// this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
 
 			// logger.log(Level.FINE, "registryHandler:" + registryHandler);
 			// logger.info("registryHandler:" + registryHandler);
 
-			//if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT + installData.getVariable("APP_NAME"))) {
-				// logger.log(Level.FINE, "APP_NAME key " + RegistryHandler.UNINSTALL_ROOT + installData.getVariable("APP_NAME") + " found in registry. Set '" + InstallData.MODIFY_INSTALLATION + "': true");
-			//	logger.info("APP_NAME key " + RegistryHandler.UNINSTALL_ROOT + installData.getVariable("APP_NAME") + " found in registry. Set '" + InstallData.MODIFY_INSTALLATION + "': true");
+			// if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT +
+			// installData.getVariable("APP_NAME"))) {
+			// logger.log(Level.FINE, "APP_NAME key " + RegistryHandler.UNINSTALL_ROOT +
+			// installData.getVariable("APP_NAME") + " found in registry. Set '" +
+			// InstallData.MODIFY_INSTALLATION + "': true");
+			// logger.info("APP_NAME key " + RegistryHandler.UNINSTALL_ROOT +
+			// installData.getVariable("APP_NAME") + " found in registry. Set '" +
+			// InstallData.MODIFY_INSTALLATION + "': true");
 
-			//	installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-			//}
+			// installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+			// }
 
-			
 			input = new ResourceManager().getInputStream(SPEC_FILE_NAME);
 			// logger.log(Level.FINE, "input: " + input);
 			logger.info("input: " + input);
 
-			
 			if (input == null) {
 				// spec file is missing
 				errMessage = "specFileMissing";
@@ -70,7 +67,6 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 
 				return Status.ERROR;
 			} else {
-
 
 				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 				StringBuilder out = new StringBuilder();
@@ -82,24 +78,25 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 
 					line = line.trim(); //
 
-/*
-					if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT + line)) {
-						warnMessage = String.format(ResourceBundle.getBundle("messages", installData.getLocale())
-								.getString("compFoundAskUpdate"), line);
-
-						RegDataContainer oldInstallPath = registryHandler.getValue(RegistryHandler.UNINSTALL_ROOT + line,
-								"DisplayIcon");
-						installData.setInstallPath(oldInstallPath.getStringData().substring(0,
-								oldInstallPath.getStringData().indexOf("Uninstaller") - 1));
-						installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-
-						logger.log(Level.FINE, "old path applied: " + oldInstallPath);
-						logger.log(Level.FINE, "set variable " + InstallData.MODIFY_INSTALLATION + ": true");
-
-						
-						return Status.WARNING;
-					}
-					*/
+					/*
+					 * if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT + line)) {
+					 * warnMessage = String.format(ResourceBundle.getBundle("messages",
+					 * installData.getLocale()) .getString("compFoundAskUpdate"), line);
+					 * 
+					 * RegDataContainer oldInstallPath =
+					 * registryHandler.getValue(RegistryHandler.UNINSTALL_ROOT + line,
+					 * "DisplayIcon");
+					 * installData.setInstallPath(oldInstallPath.getStringData().substring(0,
+					 * oldInstallPath.getStringData().indexOf("Uninstaller") - 1));
+					 * installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+					 * 
+					 * logger.log(Level.FINE, "old path applied: " + oldInstallPath);
+					 * logger.log(Level.FINE, "set variable " + InstallData.MODIFY_INSTALLATION +
+					 * ": true");
+					 * 
+					 * 
+					 * return Status.WARNING; }
+					 */
 				}
 				reader.close();
 			}

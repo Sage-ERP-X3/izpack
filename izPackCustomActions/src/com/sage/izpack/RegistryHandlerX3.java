@@ -76,15 +76,15 @@ public class RegistryHandlerX3 {
 		String adxAdminPath = null;
 		int oldVal = this.registryHandler.getRoot();
 		this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
-		boolean exists64bits = this.registryHandler.keyExist(AdxCompInstallerListener.ADXADMIN_REG_KeyName64Bits);
-		boolean exists32bits = this.registryHandler.keyExist(AdxCompInstallerListener.ADXADMIN_REG_KeyName32Bits);
+		boolean exists64bits = this.registryHandler.keyExist(AdxCompHelper.ADXADMIN_REG_KeyName64Bits);
+		boolean exists32bits = this.registryHandler.keyExist(AdxCompHelper.ADXADMIN_REG_KeyName32Bits);
 
 		if (exists64bits) {
 			adxAdminPath = this.registryHandler
-					.getValue(AdxCompInstallerListener.ADXADMIN_REG_KeyName64Bits, "ADXDIR").getStringData();
+					.getValue(AdxCompHelper.ADXADMIN_REG_KeyName64Bits, "ADXDIR").getStringData();
 		} else if (exists32bits){
 			adxAdminPath = this.registryHandler
-					.getValue(AdxCompInstallerListener.ADXADMIN_REG_KeyName32Bits, "ADXDIR").getStringData();
+					.getValue(AdxCompHelper.ADXADMIN_REG_KeyName32Bits, "ADXDIR").getStringData();
 		}
 		this.registryHandler.setRoot(oldVal);
 

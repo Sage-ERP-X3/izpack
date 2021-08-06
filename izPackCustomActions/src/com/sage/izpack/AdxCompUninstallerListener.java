@@ -6,6 +6,9 @@ import java.io.FileReader;
 import java.io.InputStream;
 // import java.rmi.registry.RegistryHandler;
 import java.util.List;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,6 +22,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.data.LocaleDatabase;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.IzPackException;
@@ -32,6 +36,9 @@ import com.izforge.izpack.core.os.RegistryHandler;
  * @author Franck DEPOORTERE
  */
 public class AdxCompUninstallerListener extends UninstallerListeners {
+
+	private static final Logger logger = Logger.getLogger(AdxCompUninstallerListener.class.getName());
+
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
 	protected static LocaleDatabase langpack = null;
 	private com.izforge.izpack.api.data.InstallData installData;
@@ -58,9 +65,7 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 
 	}
 
-	public void beforeDeletion(List<File> files, ProgressListener listener)
-//    public void beforeDeletion(List files, AbstractUIProgressHandler handler) throws Exception
-	{
+	public void beforeDeletion(List<File> files, ProgressListener listener) {
 		try {
 
 			// Load the defined adx module to be deleted.
@@ -69,118 +74,77 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 				return;
 			}
 
-			// récupérer le fichier adxinstalls
+			// get file adxinstalls
 
 			// here we need to update adxinstalls.xml
 
 			// we need to find adxadmin path
-			String strAdxAdminPath = "";
-
-			RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler);
-			if (rh != null) {
-				// rh.verify(idata);
-
-				// test adxadmin déja installé avec registry
-				if (rh.adxadminProductRegistered()) {
-
-					String keyName = AdxCompInstallerListener.ADXADMIN_REG_KeyName64Bits; // "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
-					int oldVal = this.registryHandler.getRoot();
-					// rh.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
-					this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
-					if (!this.registryHandler.valueExist(keyName, "ADXDIR"))
-						keyName = AdxCompInstallerListener.ADXADMIN_REG_KeyName32Bits; // "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
-					if (!this.registryHandler.valueExist(keyName, "ADXDIR"))
-						return;
-
-					// récup path
-					strAdxAdminPath = this.registryHandler.getValue(keyName, "ADXDIR").getStringData();
-
-					// free RegistryHandler
-					this.registryHandler.setRoot(oldVal);
-				} else
-					return;
-			} else {
-				// TODO : FRDEPO
-				// Debug.log("CheckedHelloPanel - Could not get RegistryHandler !");
-
-				// else we are on a os which has no registry or the
-				// needed dll was not bound to this installation. In
-				// both cases we forget the "already exist" check.
-
-				// test adxadmin sous unix avec /adonix/adxadm ?
-				if (OsVersion.IS_UNIX) {
-					java.io.File adxadmFile = new java.io.File("/sage/adxadm");
-					if (!adxadmFile.exists()) {
-						adxadmFile = new java.io.File("/adonix/adxadm");
-						if (!adxadmFile.exists()) {
-							return;
-						}
-					}
-
-					FileReader readerAdxAdmFile = new FileReader(adxadmFile);
-					BufferedReader buffread = new BufferedReader(readerAdxAdmFile);
-					strAdxAdminPath = buffread.readLine();
-				}
-
-			}
 
 			// vérification strAdxAdminPath
-
-			if (strAdxAdminPath == null || "".equals(strAdxAdminPath))
+			AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, this.installData);
+			String adxAdminPath = adxCompHelper.getAdxAdminPath();
+			if (adxAdminPath == null || "".equals(adxAdminPath)) {
+				logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  OK => AdxAdmin not found.");
 				return;
+			}
 
-			java.io.File dirAdxDir = new java.io.File(strAdxAdminPath);
-
+			java.io.File dirAdxDir = new java.io.File(adxAdminPath);
 			if (!dirAdxDir.exists() || !dirAdxDir.isDirectory())
-				return;
+				// throw new Exception(langpack.getString("adxadminParseError"));
+				throw new Exception(
+						ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
 
-			StringBuilder strBuilder = new StringBuilder();
-			strBuilder.append(dirAdxDir.getAbsolutePath());
-			strBuilder.append(dirAdxDir.separator);
-			strBuilder.append("inst");
-			strBuilder.append(dirAdxDir.separator);
-			strBuilder.append("adxinstalls.xml");
+			java.io.File fileAdxinstalls = adxCompHelper.getAdxInstallFile(dirAdxDir);
+			logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  Reading XML file fileAdxinstalls: "
+					+ fileAdxinstalls.getAbsolutePath());
 
-			java.io.File fileAdxinstalls = new java.io.File(strBuilder.toString());
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document xdoc = null;
-			Element xmodule = null;
-			Document xdoc2 = null;
-			Element xmodule2 = null;
+			Document adxInstallXmlDoc = null;
+			Element reportModule = null;
 
 			if (!fileAdxinstalls.exists()) {
+				logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  " + fileAdxinstalls.getAbsolutePath()
+						+ " doesn't exist.");
 				return;
 			} else {
-				xdoc = dBuilder.parse(fileAdxinstalls);
+				adxInstallXmlDoc = dBuilder.parse(fileAdxinstalls);
 			}
 
 			// TODO : FRDEPO
 			// XMLHelper.cleanEmptyTextNodes((Node)xdoc);
 
-			xdoc2 = dBuilder.parse(in);
-			xmodule2 = (Element) xdoc2.getDocumentElement().getElementsByTagName("module").item(0);
+			Document elemSpecDoc = dBuilder.parse(in);
+			Element moduleSpec = (Element) elemSpecDoc.getDocumentElement().getElementsByTagName("module").item(0);
+			String moduleName = moduleSpec.getAttribute("name");
+			String moduleFamily = moduleSpec.getAttribute("family");
+			// IXMLElement moduleSpec = elemSpecDoc.getFirstChildNamed("module");
 
-			NodeList listAdxInstallsNodes = xdoc.getDocumentElement().getElementsByTagName("module");
+			NodeList listAdxInstallsNodes = adxInstallXmlDoc.getDocumentElement().getElementsByTagName("module");
 			for (int i = 0; i < listAdxInstallsNodes.getLength(); i++) {
 				Element aNode = (Element) listAdxInstallsNodes.item(i);
 
-				if (aNode.getAttribute("name").equals(xmodule2.getAttribute("name"))
-						&& aNode.getAttribute("type").equals(xmodule2.getAttribute("type"))
-						&& aNode.getAttribute("family").equals(xmodule2.getAttribute("family"))) {
-					xmodule = aNode;
+				if (aNode.getAttribute("name").equals(moduleName)
+						&& aNode.getAttribute("type").equals(moduleSpec.getAttribute("type"))
+						&& aNode.getAttribute("family").equals(moduleFamily)) {
+					reportModule = aNode;
 					break;
 				}
 
 			}
 
 			// module non trouvé :(
-			if (xmodule == null)
+			if (reportModule == null) {
+				logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  OK => module " + moduleName + "/"
+						+ moduleFamily + " not in " + fileAdxinstalls.getAbsolutePath());
 				return;
+			}
 
-			NodeList lstChilds = xmodule.getElementsByTagName("*");
+			// Report module found
+			logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  module " + moduleName + "/"
+					+ moduleFamily + " has been found in " + fileAdxinstalls.getAbsolutePath());
 
-			//
+			NodeList lstChilds = reportModule.getElementsByTagName("*");
 			for (int i = 0; i < lstChilds.getLength(); i++) {
 				Element elem = (Element) lstChilds.item(i);
 
@@ -189,6 +153,11 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 
 					if (!"idle".equalsIgnoreCase(modstatus)) {
 						// TODO : FRDEPO
+						String errorMsg = ResourceBundle.getBundle("com/sage/izpack/messages")
+								.getString("installer.error");
+						logger.log(Level.SEVERE, "AdxCompUninstallerListener.beforeDeletion  " + errorMsg
+								+ " module not idle : " + modstatus);
+
 						// handler.emitError(langpack.getString("installer.error", null),
 						// langpack.getString("notidle", null));
 						// this..emitError(langpack.getString("installer.error", null),
@@ -198,14 +167,14 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 				}
 			}
 
-			xmodule.getParentNode().removeChild(xmodule);
+			reportModule.getParentNode().removeChild(reportModule);
 
 			// write the content into xml file
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			DOMSource source = new DOMSource(xdoc);
+			DOMSource source = new DOMSource(adxInstallXmlDoc);
 			StreamResult result = new StreamResult(fileAdxinstalls);
 
 			// Output to console for testing
@@ -218,5 +187,6 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 		} catch (Exception exception) {
 			throw new IzPackException(exception);
 		}
+
 	}
 }

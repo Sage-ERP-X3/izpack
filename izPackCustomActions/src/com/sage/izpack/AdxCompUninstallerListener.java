@@ -1,10 +1,7 @@
 package com.sage.izpack;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.InputStream;
-// import java.rmi.registry.RegistryHandler;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -22,13 +19,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.izforge.izpack.api.adaptator.IXMLElement;
-import com.izforge.izpack.api.data.LocaleDatabase;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.IzPackException;
-import com.izforge.izpack.api.resource.Locales;
+import com.izforge.izpack.api.handler.AbstractUIHandler;
+import com.izforge.izpack.api.handler.Prompt;
+import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.uninstaller.event.*;
-import com.izforge.izpack.util.OsVersion;
+import com.izforge.izpack.core.handler.PromptUIHandler;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 
@@ -40,29 +37,28 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 	private static final Logger logger = Logger.getLogger(AdxCompUninstallerListener.class.getName());
 
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
-	protected static LocaleDatabase langpack = null;
+
 	private com.izforge.izpack.api.data.InstallData installData;
 	private RegistryDefaultHandler handler;
 	private RegistryHandler registryHandler;
+	private Prompt prompt;
+	private Resources resources;
 
 	public AdxCompUninstallerListener(com.izforge.izpack.api.data.InstallData installData,
-			RegistryDefaultHandler handler) {
+			RegistryDefaultHandler handler, Prompt prompt, Resources resources) {
 		super(null); // Prompt
 
 		this.installData = installData;
 		this.handler = handler;
 		this.registryHandler = handler.getInstance();
+		this.prompt = prompt;
+		this.resources = resources;
+	}
 
-		if (langpack == null) {
-			// Load langpack. Do not stop uninstall if not found.
-			try {
-				Locales locales = null; // TODO
-				AdxCompUninstallerListener.langpack = new LocaleDatabase(
-						AdxCompUninstallerListener.class.getResourceAsStream("/langpack.xml"), locales);
-			} catch (Throwable exception) {
-			}
-		}
+	private AbstractUIHandler GetPromptUIHandler() {
 
+		AbstractUIHandler handler = new PromptUIHandler(this.prompt);
+		return handler;
 	}
 
 	public void beforeDeletion(List<File> files, ProgressListener listener) {
@@ -92,7 +88,8 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 			if (!dirAdxDir.exists() || !dirAdxDir.isDirectory())
 				// throw new Exception(langpack.getString("adxadminParseError"));
 				throw new Exception(
-						ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
+						ResourcesHelper.getCustomPropString("adxadminParseError"));
+						// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
 
 			java.io.File fileAdxinstalls = adxCompHelper.getAdxInstallFile(dirAdxDir);
 			logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  Reading XML file fileAdxinstalls: "
@@ -152,16 +149,16 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 					String modstatus = elem.getTextContent();
 
 					if (!"idle".equalsIgnoreCase(modstatus)) {
-						// TODO : FRDEPO
-						String errorMsg = ResourceBundle.getBundle("com/sage/izpack/messages")
-								.getString("installer.error");
-						logger.log(Level.SEVERE, "AdxCompUninstallerListener.beforeDeletion  " + errorMsg
-								+ " module not idle : " + modstatus);
 
-						// handler.emitError(langpack.getString("installer.error", null),
-						// langpack.getString("notidle", null));
-						// this..emitError(langpack.getString("installer.error", null),
-						// langpack.getString("notidle", null));
+						ResourcesHelper helper = new ResourcesHelper(installData, resources);
+						String errorMsg = ResourcesHelper.getCustomPropString("installer.error"); //  ResourceBundle.getBundle("com/sage/izpack/messages").getString("installer.error");
+						String notidleMsg = helper.getCustomString("notidle");
+
+						String friendlyMsg = errorMsg + ": module not idle (Status: " + modstatus + ") " + notidleMsg;
+						logger.log(Level.SEVERE, "AdxCompUninstallerListener.beforeDeletion  " + friendlyMsg);
+
+						GetPromptUIHandler().emitError(errorMsg, friendlyMsg);
+
 						System.exit(1);
 					}
 				}

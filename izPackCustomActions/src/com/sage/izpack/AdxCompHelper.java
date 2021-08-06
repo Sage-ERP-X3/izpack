@@ -118,7 +118,8 @@ public class AdxCompHelper {
 				// installData.getLocale()).getString("adxadminNotRegistered"), line);
 				// throw new
 				// Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages").getString("adxadminNotRegistered"));
-				throw new Exception("You must install an adxadmin administration runtime first. Exiting now.");
+				throw new Exception(ResourcesHelper.getCustomPropString("adxadminNotRegistered"));
+				// throw new Exception("You must install an adxadmin administration runtime first. Exiting now.");
 			}
 
 		} else {
@@ -135,8 +136,9 @@ public class AdxCompHelper {
 					adxadmFile = new java.io.File("/adonix/adxadm");
 					if (!adxadmFile.exists()) {
 						// throw new Exception(langpack.getString("adxadminNotRegistered"));
-						throw new Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
-								.getString("adxadminNotRegistered"));
+						throw new Exception(ResourcesHelper.getCustomPropString("adxadminNotRegistered"));
+								// ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
+								//.getString("adxadminNotRegistered"));
 					}
 				}
 

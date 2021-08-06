@@ -118,13 +118,16 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			// check strAdxAdminPath
 			if (adxAdminPath == null || "".equals(adxAdminPath))
 				throw new Exception(
-						ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
+						ResourcesHelper.getCustomPropString("adxadminParseError"));
+
+						// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
 
 			java.io.File dirAdxDir = new java.io.File(adxAdminPath);
 			if (!dirAdxDir.exists() || !dirAdxDir.isDirectory())
 				// throw new Exception(langpack.getString("adxadminParseError"));
 				throw new Exception(
-						ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
+						ResourcesHelper.getCustomPropString("adxadminParseError"));
+						// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
 
 			java.io.File fileAdxinstalls = adxCompHelper.getAdxInstallFile(dirAdxDir);
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  Reading XML file fileAdxinstalls: "
@@ -300,8 +303,9 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		if (module == null) {
 			logger.log(Level.FINE, "AdxCompInstallerListener.modifyReportModule  name: " + moduleName + " type: "
 					+ moduleType + " family: " + moduleFamily + " not found in xmlDocument " + xdoc);
-			throw new Exception(String.format(
-					ResourceBundle.getBundle("com/sage/izpack/messages").getString("sectionNotFound"), moduleName));
+			throw new Exception(ResourcesHelper.getCustomPropString("sectionNotFound", moduleName));
+					// String.format(
+					// ResourceBundle.getBundle("com/sage/izpack/messages").getString("sectionNotFound"), moduleName));
 		}
 
 		Node status = module.getElementsByTagName("component." + moduleFamily.toLowerCase() + ".installstatus").item(0);

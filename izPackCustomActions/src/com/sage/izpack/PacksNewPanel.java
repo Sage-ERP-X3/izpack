@@ -2,6 +2,8 @@ package com.sage.izpack;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -29,7 +31,7 @@ public class PacksNewPanel extends PacksPanel {
 	/**
 	 * The packs messages.
 	 */
-	private Messages messages = null;
+	// private Messages messages = null;
 
 	public PacksNewPanel(Panel panel, InstallerFrame frame, GUIInstallData installData, Resources resources,
 			ObjectFactory factory, RulesEngine rules) {
@@ -51,7 +53,34 @@ public class PacksNewPanel extends PacksPanel {
 			GridBagConstraints constraints) {
 		logger.info("PacksNewPanel.createPacksTable");
 
-		return super.createPacksTable(width, scroller, layout, constraints);
+		
+		/*
+		List<Pack> selectedPacks = new LinkedList<Pack>();
+		for (Pack p : this.installData.getAvailablePacks()) {
+
+			logger.info("PacksNewPanel.createPacksTable - Pack " + p.getName() + " Required: " + p.isRequired()
+					+ " Preselected: " + p.isPreselected());
+
+			if (p.isRequired()) {
+				selectedPacks.add(p);
+				p.setHidden(false);
+				p.setPreselected(true);
+			}
+		}
+
+		this.installData.setSelectedPacks(selectedPacks);
+*/
+		JTable table = super.createPacksTable(width, scroller, layout, constraints);
+
+		/*
+		Pack pack = this.packsModel.getPackAtRow(0);
+		if (pack != null && !pack.isPreselected())
+			pack.setPreselected(true);
+
+		this.packsModel.updateTable();
+		*/
+		return table;
+
 	}
 
 	/**
@@ -59,23 +88,17 @@ public class PacksNewPanel extends PacksPanel {
 	 * method also, it is recommended to call this method with the super operator
 	 * first.
 	 */
-	/*
+
 	@Override
 	public void panelActivate() {
-		logger.info("PacksNewPanel.panelActivate : installData.getAvailablePacks()");
+		logger.info("PacksNewPanel.panelActivate");
+		// this.packsModel.updateTable();
 
-		for (Pack p : this.installData.getAvailablePacks()) {
-
-			logger.info("PacksNewPanel.panelActivate - Pack " + p.getName() + " Required: " + p.isRequired()
-					+ " Preselected: " + p.isPreselected());
-
-			if (p.isRequired()) {
-				p.setPreselected(true);
-			}
-		}
 		super.panelActivate();
+
+		// this.packsModel.updateTable();
 	}
-*/
+
 	/**
 	 * Indicates whether the panel has been validated or not.
 	 *
@@ -92,43 +115,31 @@ public class PacksNewPanel extends PacksPanel {
 	}
 
 	/*
-	@Override
-	public String getSummaryBody() {
-		StringBuilder retval = new StringBuilder(256);
-		boolean first = true;
+	 * @Override public String getSummaryBody() { StringBuilder retval = new
+	 * StringBuilder(256); boolean first = true;
+	 * 
+	 * logger.info("PacksNewPanel.getSummaryBody : installData.getSelectedPacks()");
+	 * 
+	 * for (com.izforge.izpack.api.data.Pack pack : installData.getSelectedPacks())
+	 * { if (!first) { retval.append("<br>"); } first = false;
+	 * retval.append(getI18NPackName(pack)); }
+	 * 
+	 * logger.
+	 * info("PacksNewPanel.getSummaryBody : packsModel.isModifyInstallation()");
+	 * 
+	 * if (packsModel.isModifyInstallation()) { Map<String,
+	 * com.izforge.izpack.api.data.Pack> installedpacks =
+	 * packsModel.getInstalledPacks(); retval.append("<br><b>");
+	 * retval.append(messages.get("PacksPanel.installedpacks.summarycaption"));
+	 * retval.append("</b>"); retval.append("<br>"); if (installedpacks != null) for
+	 * (String key : installedpacks.keySet()) { Pack pack = installedpacks.get(key);
+	 * retval.append(getI18NPackName(pack)); retval.append("<br>"); } }
+	 * 
+	 * logger.info("PacksNewPanel.getSummaryBody : " + retval.toString());
+	 * 
+	 * return (retval.toString()); }
+	 */
 
-		logger.info("PacksNewPanel.getSummaryBody : installData.getSelectedPacks()");
-
-		for (com.izforge.izpack.api.data.Pack pack : installData.getSelectedPacks()) {
-			if (!first) {
-				retval.append("<br>");
-			}
-			first = false;
-			retval.append(getI18NPackName(pack));
-		}
-
-		logger.info("PacksNewPanel.getSummaryBody : packsModel.isModifyInstallation()");
-
-		if (packsModel.isModifyInstallation()) {
-			Map<String, com.izforge.izpack.api.data.Pack> installedpacks = packsModel.getInstalledPacks();
-			retval.append("<br><b>");
-			retval.append(messages.get("PacksPanel.installedpacks.summarycaption"));
-			retval.append("</b>");
-			retval.append("<br>");
-			if (installedpacks != null)
-				for (String key : installedpacks.keySet()) {
-					Pack pack = installedpacks.get(key);
-					retval.append(getI18NPackName(pack));
-					retval.append("<br>");
-				}
-		}
-
-		logger.info("PacksNewPanel.getSummaryBody : " + retval.toString());
-
-		return (retval.toString());
-	}
-*/
-	
 	/**
 	 * This method tries to resolve the localized name of the given pack. If this is
 	 * not possible, the name given in the installation description file in ELEMENT
@@ -137,18 +148,16 @@ public class PacksNewPanel extends PacksPanel {
 	 * @param pack for which the name should be resolved
 	 * @return localized name of the pack
 	 */
-	private String getI18NPackName(com.izforge.izpack.api.data.Pack pack) {
-		if (messages == null) {
-			try {
-				messages = installData.getMessages().newMessages(Resources.PACK_TRANSLATIONS_RESOURCE_NAME);
-			} catch (ResourceNotFoundException exception) {
-				// no packs messages resource, so fall back to the default
-				logger.info(exception.getMessage());
-				messages = installData.getMessages();
-			}
-		}
-
-		return PackHelper.getPackName(pack, messages);
-	}
+	/*
+	 * private String getI18NPackName(com.izforge.izpack.api.data.Pack pack) { if
+	 * (messages == null) { try { messages =
+	 * installData.getMessages().newMessages(Resources.
+	 * PACK_TRANSLATIONS_RESOURCE_NAME); } catch (ResourceNotFoundException
+	 * exception) { // no packs messages resource, so fall back to the default
+	 * logger.info(exception.getMessage()); messages = installData.getMessages(); }
+	 * }
+	 * 
+	 * return PackHelper.getPackName(pack, messages); }
+	 */
 
 }

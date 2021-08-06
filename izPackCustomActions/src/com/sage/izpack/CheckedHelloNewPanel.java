@@ -33,20 +33,12 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 	private RegistryHelper _registryHelper;
 
-	private LocaleDatabase customResources;
-	private String customResourcesPath;
-
 	public CheckedHelloNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			RegistryDefaultHandler handler, Log log) throws Exception {
 		super(panel, parent, installData, resources, handler, log);
 
-		customResourcesPath = "/com/sage/izpack/langpacks/" + installData.getLocaleISO3() + ".xml";
-		Locales locales = new DefaultLocales(resources, installData.getLocale());
-		customResources = new LocaleDatabase(getClass().getResourceAsStream(customResourcesPath), locales);
-
-		RegistryHelper registryHelper = new RegistryHelper(handler, installData);
-		_registryHelper = registryHelper;
-		String path = registryHelper.getInstallationPath();
+		_registryHelper = new RegistryHelper(handler, installData);
+		String path = _registryHelper.getInstallationPath();
 		// Update case :
 		if (path != null) {
 			installData.setVariable("TargetPanel.dir.windows", path);
@@ -87,12 +79,12 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 				logger.log(Level.WARNING, exception.getMessage(), exception);
 			}
 		}
-		
+
 		Variables variables = this.installData.getVariables();
 		installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
-		// installData.setVariable("UNINSTALL_NAME", _registryHelper.getUninstallName());
+		// installData.setVariable("UNINSTALL_NAME",
+		// _registryHelper.getUninstallName());
 	}
-
 
 	/**
 	 * Returns whether the handled application is already registered or not. The
@@ -116,20 +108,27 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 	/*
 	 * X3-240420 : Wrong message when updating the console This method should only
-	 */	
+	 */
 	@Override
 	public String getString(String key) {
-		String result = null;
-		try {
-			result = customResources.get(key);
-		} catch (Exception ex) {
-			logger.log(Level.FINE, "CheckedHelloNewPanel Cannot get resource " + key + " " + customResourcesPath);
 
-		}
+		ResourcesHelper helper = new ResourcesHelper(this.installData, this.getResources());
+		String result = helper.getCustomString(key);
+
 		if (result == null) {
 			result = super.getString(key);
 		}
 		return result;
+
+		/*
+		 * customResourcesPath = "/com/sage/izpack/langpacks/" +
+		 * installData.getLocaleISO3() + ".xml"; String result = null; try { result =
+		 * customResources.get(key); } catch (Exception ex) { logger.log(Level.FINE,
+		 * "CheckedHelloNewPanel Cannot get resource " + key + " " +
+		 * customResourcesPath);
+		 * 
+		 * } if (result == null) { result = super.getString(key); } return result;
+		 */
 	}
 
 	/**

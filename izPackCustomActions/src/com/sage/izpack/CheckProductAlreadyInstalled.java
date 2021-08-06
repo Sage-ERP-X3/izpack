@@ -28,7 +28,6 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 
 	public CheckProductAlreadyInstalled() {
 		super();
-		// this.registryHandler = handler.getInstance();
 	}
 
 	@Override
@@ -55,7 +54,6 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 			// }
 
 			input = new ResourceManager().getInputStream(SPEC_FILE_NAME);
-			// logger.log(Level.FINE, "input: " + input);
 			logger.info("input: " + input);
 
 			if (input == null) {

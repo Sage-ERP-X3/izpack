@@ -28,8 +28,7 @@ import com.izforge.izpack.util.Console;
 public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 
 	private static Logger logger = Logger.getLogger(CheckedHelloNewConsolePanel.class.getName());
-	private LocaleDatabase customResources;
-	private String customResourcesPath;
+	private Resources resources;
 
 	/**
 	 * The prompt.
@@ -48,20 +47,16 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		super(handler, installData, prompt, panel);
 		_registryHelper = new RegistryHelper(handler, installData);
 		this.prompt = prompt;
-		// registered = _registryHelper.isRegistered();
 		this.installData = installData;
-
-		customResourcesPath = "/com/sage/izpack/langpacks/" + installData.getLocaleISO3() + ".xml";
-		Locales locales = new DefaultLocales(resources, installData.getLocale());
-		customResources = new LocaleDatabase(getClass().getResourceAsStream(customResourcesPath), locales);
+		this.resources = resources;
 
 		RegistryHelper registryHelper = new RegistryHelper(handler, installData);
 		_registryHelper = registryHelper;
 		String path = registryHelper.getInstallationPath();
 		// Update case :
 		if (path != null) {
-			registered = true; //_registryHelper.isRegistered();
-			
+			registered = true; // _registryHelper.isRegistered();
+
 			installData.setVariable("TargetPanel.dir.windows", path);
 			logger.log(Level.FINE, "CheckedHelloNewConsolePanel  Set TargetPanel.dir.windows: " + path);
 
@@ -70,7 +65,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 
 			// Set variable "modify.izpack.install"
 			// if (registered)
-				installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 			logger.log(Level.FINE, "CheckedHelloNewConsolePanel  Registered: " + registered);
 		}
 
@@ -80,24 +75,6 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 			InstallationInformationHelper.readInformation(installData);
 
 		}
-	}
-
-	/*
-	 * X3-240420 : Wrong message when updating the console This method should only
-	 */
-	// @Override
-	private String getString(String key) {
-		String result = null;
-		try {
-			result = customResources.get(key);
-		} catch (Exception ex) {
-			logger.log(Level.FINE, "CheckedHelloNewPanel Cannot get resource " + key + " " + customResourcesPath);
-
-		}
-		/*
-		 * if (result == null) { result = super.getString(key); }
-		 */
-		return result;
 	}
 
 	/**
@@ -118,9 +95,10 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 			if (path == null) {
 				path = "<not found>";
 			}
-
-			String noLuck = getString("CheckedHelloPanel.productAlreadyExist0") + path + ". "
-					+ getString("CheckedHelloPanel.productAlreadyExist1");
+			// 	X3-240420 : Wrong message when updating the console This method should only
+			ResourcesHelper resourcesHelper = new ResourcesHelper(this.installData, this.resources);
+			String noLuck = resourcesHelper.getCustomString("CheckedHelloPanel.productAlreadyExist0") + path + ". "
+					+ resourcesHelper.getCustomString("CheckedHelloPanel.productAlreadyExist1");
 
 			result = prompt.confirm(ERROR, noLuck, YES_NO) == YES;
 

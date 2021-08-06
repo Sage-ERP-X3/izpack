@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.LocaleDatabase;
 import com.izforge.izpack.api.data.Panel;
+import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.handler.AbstractUIHandler;
 import com.izforge.izpack.api.resource.Resources;
@@ -17,10 +18,10 @@ import com.izforge.izpack.installer.gui.InstallerFrame;
 import com.izforge.izpack.panels.checkedhello.CheckedHelloPanel;
 import com.izforge.izpack.panels.checkedhello.RegistryHelper;
 import com.izforge.izpack.api.resource.Locales;
+
 /*
 * @author Franck DEPOORTERE
 */
-
 public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 	private static Logger logger = Logger.getLogger(CheckedHelloNewPanel.class.getName());
@@ -86,7 +87,10 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 				logger.log(Level.WARNING, exception.getMessage(), exception);
 			}
 		}
-		installData.setVariable("UNINSTALL_NAME", _registryHelper.getUninstallName());
+		
+		Variables variables = this.installData.getVariables();
+		installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
+		// installData.setVariable("UNINSTALL_NAME", _registryHelper.getUninstallName());
 	}
 
 
@@ -112,7 +116,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 	/*
 	 * X3-240420 : Wrong message when updating the console This method should only
-	 */
+	 */	
 	@Override
 	public String getString(String key) {
 		String result = null;

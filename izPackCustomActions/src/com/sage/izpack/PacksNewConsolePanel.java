@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.izforge.izpack.api.data.InstallData;
+import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.handler.Prompt;
 import com.izforge.izpack.installer.console.ConsolePanel;
 import com.izforge.izpack.installer.panel.PanelView;
@@ -30,7 +31,17 @@ public class PacksNewConsolePanel extends PacksConsolePanel {
     public boolean run(InstallData installData, Console console)
     {
 		logger.log(Level.FINE, "PacksNewConsolePanel.run  console: "+ console);
-    	return super.run(installData, console);
+    
+		for (Pack p : installData.getAvailablePacks()) {
+
+			logger.info("PacksNewConsolePanel.createPacksTable - Pack " + p.getName() + " Required: " + p.isRequired()
+					+ " Preselected: " + p.isPreselected());
+
+			if (p.isRequired()) {
+				p.setPreselected(true);
+			}
+		}
+		return super.run(installData, console);
     }
 
 }

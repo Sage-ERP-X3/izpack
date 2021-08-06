@@ -170,7 +170,7 @@ public class X3NodeIdentifierValidator
 			throw new NativeLibException(fileAdxinstalls + " is not found or not a directory");
 		}
 		fullpathBuilder.append(File.separator);
-		fullpathBuilder.append(AdxCompInstallerListener.ADX_INSTALL_FILENAME);
+		fullpathBuilder.append(AdxCompHelper.ADX_INSTALL_FILENAME);
 
 		fileAdxinstalls = new java.io.File(fullpathBuilder.toString());
 		if (!fileAdxinstalls.exists()) {

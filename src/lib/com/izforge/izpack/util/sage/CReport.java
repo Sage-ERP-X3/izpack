@@ -1,5 +1,10 @@
 package com.izforge.izpack.util.sage;
 
+import static com.izforge.izpack.util.sage.CTextLineUtils.CHAR_SPACE_INSECABLE;
+import static com.izforge.izpack.util.sage.CTextLineUtils.generateLineBeginEnd;
+import static com.izforge.izpack.util.sage.CTextLineUtils.generateLineFull;
+import static com.izforge.izpack.util.sage.CTextLineUtils.toInsecable;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -11,10 +16,18 @@ import java.util.Date;
  */
 public class CReport {
 
+	/**
+	 * 
+	 */
+	public enum EKindOfBanner {
+		//
+		BANNER_STEP,
+		//
+		BANNER_TITLE;
+	}
+
 	public static final char CHAR_NEWLINE = '\n';
 	public static final char CHAR_PIPE = '|';
-	public static final char CHAR_SPACE = ' ';
-	public static final char CHAR_SPACE_INSECABLE = '\u00A0';
 	public static final char CHAR_STEP = '+';
 	public static final char CHAR_TITRE = '#';
 
@@ -29,7 +42,7 @@ public class CReport {
 
 	private final static String PATTERN_ISO_8601 = "yyyy-MM-dd HH:mm:ss.SSS";
 
-	private static final String REGEX_SPLIT_LINES = "\n";
+	public static final String REGEX_SPLIT_LINES = "\n";
 
 	private static final String REPORT_NAME = "report";
 
@@ -42,67 +55,6 @@ public class CReport {
 
 	public static final String SUFFIX_ON_ERROR = "_onError";
 
-	/**
-	 * @param aChar
-	 * @param aLen
-	 * @return
-	 */
-	public static String generateLineBeginEnd(final char aChar,
-			final int aLen) {
-
-		return aChar + String.valueOf(new char[aLen - 2]).replace((char) 0x00,
-				CHAR_SPACE_INSECABLE) + aChar;
-	}
-
-	/**
-	 * @param aChar
-	 * @param aLen
-	 * @param aText
-	 * @return
-	 */
-	public static String generateLineBeginEnd(final char aChar, final int aLen,
-			final String aText) {
-
-		String wLine = generateLineBeginEnd(aChar, aLen);
-
-		String wText = truncate(aText, aLen - 4);
-
-		if (wText != null && !wText.isEmpty()) {
-			int wLen = aLen - (aLen - (2 + wText.length()));
-			wLine = wLine.substring(0, 2) + wText + wLine.substring(wLen);
-		}
-		return toInsecable(wLine);
-	}
-
-	/**
-	 * @param aChar
-	 * @param aLen
-	 * @return
-	 */
-	public static String generateLineFull(final char aChar, final int aLen) {
-
-		return String.valueOf(new char[aLen]).replace((char) 0x00, aChar);
-	}
-
-	/**
-	 * @param aLine
-	 * @return
-	 */
-	public static String toInsecable(final String aLine) {
-		return aLine.replace(CHAR_SPACE, CHAR_SPACE_INSECABLE);
-	}
-
-	/**
-	 * @param aText
-	 * @param aLen
-	 * @return
-	 */
-	public static String truncate(final String aText, final int aLen) {
-		return (aText != null && aText.length() > aLen)
-				? aText.substring(0, aLen)
-				: aText;
-	}
-
 	private final StringBuilder pBuffer = new StringBuilder();
 
 	private boolean pConsoleLogOn = false;
@@ -110,6 +62,10 @@ public class CReport {
 	private final String pCreatedAt;
 
 	private final String pName;
+
+	private int pStepIdx = 0;
+
+	private int pTitleIdx = 0;
 
 	private final int pWidth;
 
@@ -183,10 +139,19 @@ public class CReport {
 	 * @param aArgs
 	 * @return
 	 */
-	private String appendBanner(final char aBannerChar, final String aFormat,
+	private String appendBanner(final EKindOfBanner aKindOfBanner,
+			final char aBannerChar, final String aFormat,
 			final Object... aArgs) {
 
 		String wTitle = String.format(aFormat, aArgs);
+
+		if (EKindOfBanner.BANNER_STEP == aKindOfBanner) {
+			wTitle = String.format("Step  [%2d] : %s", pStepIdx, wTitle);
+		}
+		//
+		else if (EKindOfBanner.BANNER_TITLE == aKindOfBanner) {
+			wTitle = String.format("Title [%2d] : %s", pTitleIdx, wTitle);
+		}
 
 		String wLineFull = generateLineFull(aBannerChar, getWidth());
 		appendEmpty();
@@ -216,11 +181,29 @@ public class CReport {
 	}
 
 	/**
+	 * @param aText
+	 * @return
+	 */
+	public String appendError(final String aText) {
+		return append(CHAR_NEWLINE + "ERROR  : " + aText);
+	}
+
+	/**
+	 * @param aFormat
+	 * @param aArgs
+	 * @return
+	 */
+	public String appendError(String aFormat, final Object... aArgs) {
+		return appendError(String.format(aFormat, aArgs));
+
+	}
+
+	/**
 	 * @param e
 	 * @return the logged text
 	 */
 	public String appendError(Throwable e) {
-		return append(CHAR_NEWLINE + CLoggerUtils.dumpStackTrace(e));
+		return appendError(CLoggerUtils.dumpStackTrace(e));
 	}
 
 	/**
@@ -228,7 +211,73 @@ public class CReport {
 	 * @return the logged text
 	 */
 	public String appendLineFull(final char aChar) {
-		return append(generateLineFull(aChar, getWidth()));
+		return appendLineFull(aChar, getWidth(), null);
+	}
+
+	/**
+	 * @param aChar
+	 * @param aWidth
+	 * @return
+	 */
+	public String appendLineFull(final char aChar, final int aWidth,
+			final String aText) {
+		return append(generateLineFull(aChar, aWidth, aText));
+	}
+
+	/**
+	 * @param aChar
+	 * @param aText
+	 * @return
+	 */
+	public String appendLineFull(final char aChar, final String aText) {
+		return appendLineFull(aChar, getWidth(), aText);
+	}
+
+	/**
+	 * @param aLines
+	 * @return
+	 */
+	public int appendNumberedLines(String[] aLines) {
+
+		int wIdx = 0;
+		for (String wScriptLine : aLines) {
+			wIdx++;
+			append("(%3d) %s", wIdx, wScriptLine);
+		}
+
+		return wIdx;
+	}
+
+	/**
+	 * <pre>
+	 * 
+	 * </pre>
+	 * 
+	 * @param aOutPut
+	 * @return
+	 */
+	public String appendOutput(String aOutPut) {
+
+		appendLineFull('-', "Output begin");
+		int wNbAppentLines = appendNumberedLines(
+				aOutPut.split(REGEX_SPLIT_LINES));
+		appendLineFull('-', "Output end");
+		return String.format(" [%d] output lines appent", wNbAppentLines);
+
+	}
+
+	/**
+	 * @param aScript
+	 * @return
+	 */
+	public String appendScript(String aScript) {
+
+		appendLineFull('.', "Script begin");
+		int wNbAppentLines = appendNumberedLines(
+				aScript.split(REGEX_SPLIT_LINES));
+		appendLineFull('.', "Script end");
+
+		return String.format(" [%d] script lines appent", wNbAppentLines);
 	}
 
 	/**
@@ -238,7 +287,28 @@ public class CReport {
 	 */
 	public String appendStep(String aFormat, final Object... aArgs) {
 
-		return appendBanner(CHAR_STEP, aFormat, aArgs);
+		pStepIdx++;
+
+		return appendBanner(EKindOfBanner.BANNER_STEP, CHAR_STEP, aFormat,
+				aArgs);
+	}
+
+	/**
+	 * @param aText
+	 * @return
+	 */
+	public String appendSuccess(final String aText) {
+		return append(CHAR_NEWLINE + "SUCCESS: " + aText);
+	}
+
+	/**
+	 * @param aFormat
+	 * @param aArgs
+	 * @return
+	 */
+	public String appendSuccess(String aFormat, final Object... aArgs) {
+		return appendSuccess(String.format(aFormat, aArgs));
+
 	}
 
 	/**
@@ -248,7 +318,10 @@ public class CReport {
 	 */
 	public String appendTitle(String aFormat, final Object... aArgs) {
 
-		return appendBanner(CHAR_TITRE, aFormat, aArgs);
+		pTitleIdx++;
+
+		return appendBanner(EKindOfBanner.BANNER_TITLE, CHAR_TITRE, aFormat,
+				aArgs);
 
 	}
 

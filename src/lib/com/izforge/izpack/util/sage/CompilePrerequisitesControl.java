@@ -1,17 +1,17 @@
 package com.izforge.izpack.util.sage;
 
-import static com.izforge.izpack.util.sage.CReport.toInsecable;
+import static com.izforge.izpack.util.sage.CTextLineUtils.toInsecable;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.logging.Level;
 
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
@@ -20,6 +20,8 @@ import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.DataValidator;
 import com.izforge.izpack.installer.IzPanel;
 import com.izforge.izpack.panels.UserInputPanel;
+import com.izforge.izpack.util.OsVersion;
+import com.izforge.izpack.util.sage.CWordList.EKindOfFinding;
 
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
@@ -42,48 +44,45 @@ public class CompilePrerequisitesControl implements DataValidator {
 	}
 
 	/**
-	 * @param aStrings
-	 * @param aLabel
-	 * @return
-	 */
-	private String dumpAsNumberedList(String[] aStrings, final String aLabel) {
-		StringBuilder wDump = new StringBuilder();
-		int wIdx = 0;
-		for (String wString : aStrings) {
-			wIdx++;
-			wDump.append(toInsecable(
-					String.format("\n- %s(%2d)=[%s]", aLabel, wIdx, wString)));
-		}
-		return wDump.toString();
-	}
-
-	/**
 	 * @param aPanel
 	 * @param aContainer
 	 */
 	private String dumpComponents(final Container aContainer) {
-		StringBuilder wDump = new StringBuilder();
+		return dumpComponents(aContainer, new StringBuilder()).toString();
+	}
+
+	/**
+	 * @param aContainer
+	 * @param aSB
+	 * @return
+	 */
+	private StringBuilder dumpComponents(final Container aContainer,
+			StringBuilder aSB) {
 
 		for (Component wComponent : aContainer.getComponents()) {
 
 			boolean wIsTextPane = wComponent instanceof JTextPane;
 
-			String wText = getText(wComponent);
+			String wText = "";
 
-			wDump.append(toInsecable(String.format(
-					"\n- isTextPane=[%-5s] Component=[%-12s][%-50s]",
-					wIsTextPane,
+			if (wIsTextPane) {
+				wText = ((JTextPane) wComponent).getText();
+			} else if (wComponent instanceof JLabel) {
+				wText = ((JLabel) wComponent).getText();
+			}
+
+			aSB.append(toInsecable(String.format(
+					"\n- isTextPane=[%-5s] Component=[%-12s][%s]", wIsTextPane,
 					//
 					wComponent.getClass().getSimpleName(),
 					//
 					wText)));
 
 			if (wComponent instanceof java.awt.Container) {
-				dumpComponents((java.awt.Container) wComponent);
+				dumpComponents((java.awt.Container) wComponent, aSB);
 			}
-
 		}
-		return wDump.toString();
+		return aSB;
 
 	}
 
@@ -131,15 +130,23 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 	}
 
-	private String getText(Component aComponent) {
+	/**
+	 * <pre>
+	 * -  56[SYSTEM_os_arch                                              ]=[x86_64]
+	 * -  57[SYSTEM_os_name                                              ]=[Mac OS X]
+	 * -  58[SYSTEM_os_version                                           ]=[10.15.7]
+	 * </pre>
+	 * 
+	 * @return
+	 */
+	private String getOsDetails(AutomatedInstallData aData) {
 
-		if (aComponent instanceof JLabel) {
-			return ((JLabel) aComponent).getText();
-		}
-		if (aComponent instanceof JTextPane) {
-			return ((JTextPane) aComponent).getText();
-		}
-		return null;
+		return String
+				.format("%s - %s - %s", aData.getVariable("SYSTEM_os_name"),
+						aData.getVariable("SYSTEM_os_version"),
+						aData.getVariable("SYSTEM_os_arch"))
+				.replace('\n', ' ');
+
 	}
 
 	/*
@@ -155,9 +162,9 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 	/**
 	 * <pre>
-	 * -   9[INSTALLER                                                   ]=[console]
+	 * -   9[INSTALLER                ]=[console]
 	 * ...
-	 * -  67[SYSTEM_sun_java_command                                     ]=[com.izforge.izpack.installer.Installer -console -language eng]
+	 * -  67[SYSTEM_sun_java_command  ]=[com.izforge.izpack.installer.Installer -console -language eng]
 	 * </pre>
 	 * 
 	 * @return
@@ -182,17 +189,25 @@ public class CompilePrerequisitesControl implements DataValidator {
 	/**
 	 * @param aData
 	 * @return
+	 */
+	private boolean isGuiMode(AutomatedInstallData aData) {
+		return !isConsoleMode(aData);
+	}
+
+	/**
+	 * @param aData
+	 * @return
 	 * @throws Exception
 	 */
 	private IzPanel retrieveCurrentPanel(AutomatedInstallData aData)
 			throws Exception {
-		List<IzPanel> wPanels = aData.panels;
 
-		for (IzPanel wPanel : wPanels) {
+		// test each panel of the installer
+		for (IzPanel wPanel : aData.panels) {
 			if (wPanel instanceof UserInputPanel) {
 
-				// is the validation service ofthat panel is this instance of
-				// CompilePrerequisitesControl
+				// its the current panel if the validation service of the panel
+				// is this instance of CompilePrerequisitesControl
 				boolean wIsCurrentPanel = (wPanel
 						.getValidationService() == this);
 
@@ -202,6 +217,18 @@ public class CompilePrerequisitesControl implements DataValidator {
 			}
 		}
 		throw new Exception("Unable to retrieve the current panel");
+	}
+
+	/**
+	 * @param aPanel
+	 * @return the 3th JTextPane of the panel
+	 * @throws Exception
+	 */
+	private JTextPane searchJTextPaneProgress(Container aContainer)
+			throws Exception {
+
+		return new GUIComponentSearcher<>(JTextPane.class, aContainer, 3)
+				.search();
 	}
 
 	/**
@@ -217,39 +244,60 @@ public class CompilePrerequisitesControl implements DataValidator {
 	}
 
 	/**
-	 * @param wReport
 	 * @param aData
-	 * @return
+	 * @param aInfos
+	 * @throws Exception
 	 */
-	private boolean searchPrerequisites(CReport aReport,
-			AutomatedInstallData aData) {
+	private void setProgress(final AutomatedInstallData aData,
+			final String aInfos) throws Exception {
 
-		aReport.appendStep("searchPrerequisites");
+		// if not in console mode,
+		if (!isConsoleMode(aData)) {
 
-		/**
-		 * <pre>
-		<variable name="compile.prerequisites.controle.packages.tools" value=
-		"gcc,make" />
-		 * </pre>
-		 */
-		String wTools = aData
-				.getVariable("compile.prerequisites.controle.packages.tools");
+			JTextPane wTextPaneResultLabel = searchJTextPaneProgress(
+					retrieveCurrentPanel(aData));
 
-		aReport.append(dumpAsNumberedList(wTools.split(","), "tool"));
+			String wText = wTextPaneResultLabel.getText();
+			if (wText != null) {
+				int wPos = wText.indexOf(':');
+				if (wPos > -1) {
+					wText = wText.substring(0, wPos);
+				}
+			} else {
+				wText = "Result";
+			}
+			wTextPaneResultLabel
+					.setText(String.format("%s: %s", wText, aInfos));
+		}
+		// else, if in console mode
+		else {
+			CLoggerUtils.logInfo("Progress: %s", aInfos);
+		}
+	}
 
-		/**
-		 * <pre>
-		<variable name=
-		"compile.prerequisites.controle.packages.libs" value=
-		"pcre-devel.x86_64,apr-devel.x86_64,apr-util-devel.x86_64,httpd-devel,libxml2.x86_64,libxml2-devel.x86_64"/>
-		 * </pre>
-		 */
-		String wLibs = aData
-				.getVariable("compile.prerequisites.controle.packages.libs");
+	/**
+	 * @param aData
+	 * @param aIsOK
+	 * @param aReport
+	 * @throws Exception
+	 */
+	private void setResult(AutomatedInstallData aData, final boolean aIsOK,
+			final CReport aReport) throws Exception {
 
-		aReport.append(dumpAsNumberedList(wLibs.split(","), "library"));
+		IzPanel wPanel = retrieveCurrentPanel(aData);
 
-		return false;
+		CLoggerUtils.logInfo("Components of the panel:%s",
+				dumpComponents(wPanel));
+
+		JTextPane wJTextPaneResult = searchJTextPaneResult(wPanel);
+
+		wJTextPaneResult.setForeground(aIsOK ? Color.BLUE : Color.RED);
+
+		wJTextPaneResult.setFont(
+				new Font(Font.MONOSPACED, Font.PLAIN, RESULT_FONT_SIZE_9));
+
+		wJTextPaneResult.setText(aReport.toStringWithoutNow());
+
 	}
 
 	/*
@@ -261,41 +309,53 @@ public class CompilePrerequisitesControl implements DataValidator {
 	@Override
 	public Status validateData(AutomatedInstallData aData) {
 
-		// hypothesis
-		Status wValidatorStatus = Status.ERROR;
+		CLoggerUtils.logInfo("Validatator begin.");
 
+		// hypothesis
 		boolean wIsOK = false;
+		Status wValidatorStatus = Status.ERROR;
 
 		CReportWritter wReportWritter = null;
 
+		// create the report (name of the validator & width 200)
 		CReport wReport = new CReport(getClass().getSimpleName(),
 				REPORT_WIDTH_200);
 
+		// tels the report to log each line in the root jul logger
 		wReport.setConsoleLogOn(CReport.CONSOLE_LOG_ON);
 
 		wReport.appendTitle("%s:validateData", getClass().getSimpleName());
 
-		wReport.appendStep("AutomatedInstallData variables");
+		boolean wIsRedHatOrOracleLinux = OsVersion.IS_REDHAT_LINUX
+				|| OsVersion.IS_ORACLE_LINUX;
+
+		if (!wIsRedHatOrOracleLinux) {
+
+			wReport.appendStep(
+					"WARNING NOT 'REDHAT_LINUX' OR 'ORACLE_LINUX' : [%s]",
+					getOsDetails(aData));
+		}
+
+		wReport.appendStep("Current variables");
 
 		wReport.append("Variables:%s", dumpVariables(aData));
 
 		try {
-
-			boolean wPrerequisitesFound = searchPrerequisites(wReport, aData);
+			// the validation itself: serching of the prerequisites
+			wIsOK = validPrerequisites(wReport, aData);
 
 			// according the result of the seraching of the prerequisites
-			wValidatorStatus = (wPrerequisitesFound) ? Status.OK : Status.ERROR;
-
-			wIsOK = Status.OK.equals(wValidatorStatus);
+			wValidatorStatus = (wIsOK) ? Status.OK : Status.ERROR;
 
 			wReport.appendStep("Validator status");
 
 			wReport.append("ValidatorStatus=[%s]", wValidatorStatus.name());
 
-			// if the status is not OK, store the report
+			// if the status is not OK, prepare the storage of the report
 			if (!wIsOK) {
-				wReport.appendStep("Writing on error report");
+				wReport.appendStep("Writing the '_onError' report");
 
+				// new Report writter
 				wReportWritter = new CReportWritter(wReport,
 						CReport.SUFFIX_ON_ERROR);
 
@@ -310,7 +370,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 			wReport.appendEof();
 		}
 
-		// if the status is not OK, store the report
+		// if the status is not OK, store the "_onError" report
 		if (wReportWritter != null) {
 
 			try {
@@ -323,34 +383,99 @@ public class CompilePrerequisitesControl implements DataValidator {
 			}
 		}
 
-		// if not in console mode, try to set the 4th textField with the report
-		if (!isConsoleMode(aData)) {
+		// if GUI mode (not console)
+		if (isGuiMode(aData)) {
 
 			try {
-				IzPanel wPanel = retrieveCurrentPanel(aData);
-
-				CLoggerUtils.logInfo("Components of the panel:%s",
-						dumpComponents(wPanel));
-
-				JTextPane wJTextPaneResult = searchJTextPaneResult(wPanel);
-
-				wJTextPaneResult.setForeground(wIsOK ? Color.BLUE : Color.RED);
-
-				wJTextPaneResult.setFont(new Font(Font.MONOSPACED, Font.PLAIN,
-						RESULT_FONT_SIZE_9));
-
-				wJTextPaneResult.setText(wReport.toStringWithoutNow());
+				// put the report in the 4th textField of the panel
+				setResult(aData, wIsOK, wReport);
 
 			} catch (Exception e) {
 				CLoggerUtils.logSevere(e);
 			}
 		}
+		// else, if in console mode
+		else {
 
-		// if in console mode, write a title banner
-		if (isConsoleMode(aData) && !wIsOK) {
-			wReport.appendTitle("INSTALLATION CANCELLED");
+			// if the status is not OK
+			if (!wIsOK) {
+				// write a title banner
+				CLoggerUtils.logBanner(Level.SEVERE, "INSTALLATION STOPPED");
+			}
 		}
 
+		CLoggerUtils.logInfo("Validatator end.");
+
 		return wValidatorStatus;
+	}
+
+	/**
+	 * @param wReport
+	 * @param aData
+	 * @return
+	 * @throws Exception
+	 */
+	private boolean validPrerequisites(CReport aReport,
+			AutomatedInstallData aData) throws Exception {
+
+		/**
+		 * <pre>
+		<variable name="compile.prerequisites.controle.packages.tools" value=
+		"gcc,make" />
+		 * </pre>
+		 */
+		aReport.appendStep("validPrerequisites searching tools");
+
+		String wToolsDef = aData
+				.getVariable("compile.prerequisites.controle.packages.tools");
+
+		CWordList wToolList = new CWordList(aReport, "tool",
+				wToolsDef.split(","));
+
+		setProgress(aData,
+				String.format("Searching %d tools.", wToolList.size()));
+
+		aReport.append(wToolList.dumpAsNumberedList());
+
+		String wDevToolsInfos = new CDevToolsInfosFinder(aReport).execute();
+
+		boolean wToolsFound = wToolList.isAllWordsIn(wDevToolsInfos,
+				EKindOfFinding.AT_THE_BEGINING_OF_A_LINE);
+
+		setProgress(aData, String.format("All tools found=[%b]", wToolsFound));
+
+		/**
+		 * <pre>
+		<variable name=
+		"compile.prerequisites.controle.packages.libs" value=
+		"pcre-devel.x86_64,apr-devel.x86_64,apr-util-devel.x86_64,httpd-devel,libxml2.x86_64,libxml2-devel.x86_64"/>
+		 * </pre>
+		 */
+
+		aReport.appendStep("validPrerequisites searching libraries");
+
+		String wLibsDef = aData
+				.getVariable("compile.prerequisites.controle.packages.libs");
+
+		CWordList wLibraryList = new CWordList(aReport, "library",
+				wLibsDef.split(","));
+
+		setProgress(aData,
+				String.format("Searching %d libraries.", wLibraryList.size()));
+
+		aReport.append(wLibraryList.dumpAsNumberedList());
+
+		String wDevLibrariesInfos = new CDevLibrariesInfosfinder(aReport)
+				.execute();
+
+		boolean wLibraryFound = wLibraryList.isAllWordsIn(wDevLibrariesInfos,
+				EKindOfFinding.AT_THE_BEGINING_OF_A_LINE);
+
+		setProgress(aData,
+				String.format("All libraries found=[%b]", wLibraryFound));
+
+		setProgress(aData, "");
+
+		return wToolsFound && wLibraryFound;
 	}
 }

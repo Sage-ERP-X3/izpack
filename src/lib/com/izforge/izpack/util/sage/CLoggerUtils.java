@@ -1,5 +1,8 @@
 package com.izforge.izpack.util.sage;
 
+import static com.izforge.izpack.util.sage.CTextLineUtils.generateLineBeginEnd;
+import static com.izforge.izpack.util.sage.CTextLineUtils.generateLineFull;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
@@ -76,6 +79,31 @@ public class CLoggerUtils {
 		sLoggerRoot.log(aLevel, aText);
 
 		return aText;
+	}
+
+	/**
+	 * @param aLevel
+	 * @param aText
+	 * @return
+	 */
+	public static String logBanner(final Level aLevel, final String aText) {
+		log(aLevel, generateLineFull('#', 80));
+		log(aLevel, generateLineBeginEnd('#', 80));
+		log(aLevel, generateLineBeginEnd('#', 80, aText));
+		log(aLevel, generateLineBeginEnd('#', 80));
+		log(aLevel, generateLineFull('#', 80));
+		return aText;
+	}
+
+	/**
+	 * @param aLevel
+	 * @param aFormat
+	 * @param aArgs
+	 * @return
+	 */
+	public static String logBanner(final Level aLevel, final String aFormat,
+			final Object... aArgs) {
+		return logBanner(aLevel, String.format(aFormat, aArgs));
 	}
 
 	/**

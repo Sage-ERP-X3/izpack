@@ -93,7 +93,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		try {
 			this.specHelper.readSpec(SPEC_FILE_NAME);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

@@ -41,6 +41,8 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	@Override
 	public void afterDelete(File file) {
 
+		logger.log(Level.FINE, "RegistryUninstallerNewListener.afterDelete. File : " + file);
+
 		super.afterDelete(file);
 	}
 
@@ -48,6 +50,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	public void beforeDelete(List<File> files, ProgressListener listener) {
 
 		// deleteRegistry();
+		logger.log(Level.FINE, "RegistryUninstallerNewListener.beforeDelete.  ");
 
 		super.beforeDelete(files, listener);
 	}
@@ -61,6 +64,8 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	 */
 	@Override
 	public void afterDelete(List<File> files, ProgressListener listener) {
+
+		logger.log(Level.FINE, "RegistryUninstallerNewListener.afterDelete.  ");
 
 		super.afterDelete(files, listener);
 

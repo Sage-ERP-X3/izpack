@@ -32,7 +32,8 @@ import com.izforge.izpack.core.os.RegistryHandler;
 /*
  * @author Franck DEPOORTERE
  */
-public class AdxCompUninstallerListener extends UninstallerListeners {
+public class AdxCompUninstallerListener extends UninstallerListeners
+		implements com.izforge.izpack.api.event.UninstallerListener {
 
 	private static final Logger logger = Logger.getLogger(AdxCompUninstallerListener.class.getName());
 
@@ -61,7 +62,27 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 		return handler;
 	}
 
-	public void beforeDeletion(List<File> files, ProgressListener listener) {
+	@Override
+	public void beforeDelete(List<File> arg0) {
+
+		beforeDeletion();
+
+	}
+
+	@Override
+	public void beforeDelete(File arg0) {
+		
+		beforeDeletion();
+
+	}
+
+	@Override
+	public void beforeDelete(List<File> arg0, ProgressListener arg1) {
+
+		beforeDeletion();
+	}
+
+	private void beforeDeletion() {
 		try {
 
 			// Load the defined adx module to be deleted.
@@ -87,9 +108,8 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 			java.io.File dirAdxDir = new java.io.File(adxAdminPath);
 			if (!dirAdxDir.exists() || !dirAdxDir.isDirectory())
 				// throw new Exception(langpack.getString("adxadminParseError"));
-				throw new Exception(
-						ResourcesHelper.getCustomPropString("adxadminParseError"));
-						// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
+				throw new Exception(ResourcesHelper.getCustomPropString("adxadminParseError"));
+			// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
 
 			java.io.File fileAdxinstalls = adxCompHelper.getAdxInstallFile(dirAdxDir);
 			logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  Reading XML file fileAdxinstalls: "
@@ -151,8 +171,8 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 					if (!"idle".equalsIgnoreCase(modstatus)) {
 
 						ResourcesHelper helper = new ResourcesHelper(installData, resources);
-						String errorMsg = ResourcesHelper.getCustomPropString("installer.error"); //  ResourceBundle.getBundle("com/sage/izpack/messages").getString("installer.error");
-						String notidleMsg = helper.getCustomString("notidle");
+						String errorMsg = ResourcesHelper.getCustomPropString("installer.error"); // ResourceBundle.getBundle("com/sage/izpack/messages").getString("installer.error");
+						String notidleMsg = helper.getCustomString("notidle", false);
 
 						String friendlyMsg = errorMsg + ": module not idle (Status: " + modstatus + ") " + notidleMsg;
 						logger.log(Level.SEVERE, "AdxCompUninstallerListener.beforeDeletion  " + friendlyMsg);
@@ -186,4 +206,23 @@ public class AdxCompUninstallerListener extends UninstallerListeners {
 		}
 
 	}
+
+	@Override
+	public boolean isFileListener() {
+
+		return false;
+	}
+
+	@Override
+	public void afterDelete(File arg0) {
+
+
+	}
+
+	@Override
+	public void afterDelete(List<File> arg0, ProgressListener arg1) {
+
+
+	}
+
 }

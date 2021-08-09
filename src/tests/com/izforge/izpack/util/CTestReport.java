@@ -5,11 +5,14 @@ import java.nio.file.Files;
 
 import org.junit.Test;
 
+import com.izforge.izpack.util.sage.CDevToolsInfosFinder;
 import com.izforge.izpack.util.sage.CLoggerUtils;
 import com.izforge.izpack.util.sage.CReport;
 import com.izforge.izpack.util.sage.CReportWritter;
 
 /**
+ * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
+ * 
  * @author ogattaz
  *
  */
@@ -159,4 +162,28 @@ public class CTestReport {
 		CLoggerUtils.logInfo("NbWritedBytes=[%s]",
 				Files.size(wOutputFile.toPath()));
 	}
+
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void testReportD() throws Exception {
+
+		CReport wReport = new CReport("testReportD");
+
+		wReport.setConsoleLogOn(CReport.CONSOLE_LOG_OFF);
+
+		wReport.appendTitle(generateText());
+
+		wReport.appendEmpty();
+
+		CDevToolsInfosFinder wDevToolsInfosFinder = new CDevToolsInfosFinder(
+				wReport);
+
+		wDevToolsInfosFinder.execute();
+
+		System.out.println(wReport.toString());
+
+	}
+
 }

@@ -16,7 +16,6 @@
     <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
     <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.izforge.izpack.installer.Installer"/>
-    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-console"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="IzPack"/>
     <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-DSTRACKTRACE=false&#10;-DTRACE=false&#10;-DLOG=true&#10;-DDEBUG=false&#10;-Djava.util.logging.ConsoleHandler=ON&#10;-Dcom.izforge.izpack.level=FINE"/>
     <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:IzPack}"/>

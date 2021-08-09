@@ -68,14 +68,12 @@ public class CTextLineUtils {
 
 		if (aText != null && !aText.isEmpty()) {
 
-			String wLabel = truncate(
-					CHAR_SPACE_INSECABLE + aText + CHAR_SPACE_INSECABLE,
-					aLen - 8);
+			String wLabel = truncate(CHAR_SPACE_INSECABLE + toInsecable(aText)
+					+ CHAR_SPACE_INSECABLE, aLen - 8);
 
 			int wLen = aLen - (aLen - (4 + wLabel.length()));
 
 			wLine = wLine.substring(0, 4) + wLabel + wLine.substring(wLen);
-
 		}
 
 		return wLine;

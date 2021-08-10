@@ -47,7 +47,7 @@ public class AdxCompUninstallerListener extends UninstallerListeners
 
 	public AdxCompUninstallerListener(com.izforge.izpack.api.data.InstallData installData,
 			RegistryDefaultHandler handler, Prompt prompt, Resources resources) {
-		super(null); // Prompt
+		super(prompt); // Prompt
 
 		this.installData = installData;
 		this.handler = handler;
@@ -65,14 +65,14 @@ public class AdxCompUninstallerListener extends UninstallerListeners
 	@Override
 	public void beforeDelete(List<File> arg0) {
 
-		beforeDeletion();
+		// beforeDeletion();
 
 	}
 
 	@Override
 	public void beforeDelete(File arg0) {
 		
-		beforeDeletion();
+		// beforeDeletion();
 
 	}
 
@@ -171,7 +171,7 @@ public class AdxCompUninstallerListener extends UninstallerListeners
 					if (!"idle".equalsIgnoreCase(modstatus)) {
 
 						ResourcesHelper helper = new ResourcesHelper(installData, resources);
-						String errorMsg = ResourcesHelper.getCustomPropString("installer.error"); // ResourceBundle.getBundle("com/sage/izpack/messages").getString("installer.error");
+						String errorMsg = "Error"; //  ResourcesHelper.getCustomPropString("installer.error"); // ResourceBundle.getBundle("com/sage/izpack/messages").getString("installer.error");
 						String notidleMsg = helper.getCustomString("notidle", false);
 
 						String friendlyMsg = errorMsg + ": module not idle (Status: " + modstatus + ") " + notidleMsg;
@@ -210,7 +210,7 @@ public class AdxCompUninstallerListener extends UninstallerListeners
 	@Override
 	public boolean isFileListener() {
 
-		return false;
+		return true;
 	}
 
 	@Override

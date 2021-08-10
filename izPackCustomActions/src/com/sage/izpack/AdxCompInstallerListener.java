@@ -104,7 +104,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			logger.log(Level.FINE, "AdxCompInstallerListener.beforePacks  ReadInstallationInformation: "
 					+ this.installData.getInfo().isReadInstallationInformation());
 		}
-
 	}
 
 	@Override
@@ -118,7 +117,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			if (adxAdminPath == null || "".equals(adxAdminPath))
 				throw new Exception(
 						ResourcesHelper.getCustomPropString("adxadminParseError"));
-
 						// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
 
 			java.io.File dirAdxDir = new java.io.File(adxAdminPath);
@@ -220,31 +218,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		StreamResult result = new StreamResult(fileAdxinstalls);
 
 		transformer.transform(source, result);
-
-		// Output to console for testing
-		// StreamResult resultOutput = new StreamResult(System.out);
-
-		/*
-		 * // create resource for uninstall DocumentBuilderFactory factory =
-		 * DocumentBuilderFactory.newInstance(); DocumentBuilder builder =
-		 * factory.newDocumentBuilder();
-		 * 
-		 * Document xdoc2 = builder.newDocument();
-		 * 
-		 * // Properties DOM xdoc2.setXmlVersion("1.0"); xdoc2.setXmlStandalone(true);
-		 * 
-		 * // create arborescence du DOM Element racine2 =
-		 * xdoc2.createElement("install"); xdoc2.appendChild(racine2);
-		 * xdoc2.getDocumentElement().appendChild(xdoc2.importNode(module, true));
-		 */
-		// TODO: FRDEPO
-		// idata.uninstallOutJar.putNextEntry(new ZipEntry(SPEC_FILE_NAME));
-
-		// DOMSource source2 = new DOMSource(xdoc2);
-		// StreamResult result2 = new StreamResult(idata.uninstallOutJar);
-
-		// transformer.transform(source2, result2);
-		// idata.uninstallOutJar.closeEntry();
 	}
 
 	/***

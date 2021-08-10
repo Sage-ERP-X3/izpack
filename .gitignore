@@ -2,3 +2,6 @@
 /_dist
 /eclipse-bin
 /bin/
+/target/
+/test/
+*_onError.txt

@@ -31,12 +31,16 @@ case "`uname`" in
   CYGWIN*) cygwin=true ;;
   Darwin*) darwin=true
            if [ -z "$JAVA_VERSION" ] ; then
-             JAVA_VERSION="CurrentJDK"
+             #catalina
+             JAVA_VERSION="Current"
            else
-             echo "Using Java version: $JAVA_VERSION"
+             echo "Using Java version  : $JAVA_VERSION"
            fi
            if [ -z "$JAVA_HOME" ] ; then
-             JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/${JAVA_VERSION}/Home
+             #catalina
+             JAVA_HOME=/Library/Java/JavaVirtualMachines/${JAVA_VERSION}/Contents/Home
+           else
+             echo "Using Java home     : $JAVA_HOME"
            fi
            ;;
 esac
@@ -133,11 +137,19 @@ if $darwin; then
   TOOLS_JAR="/System/Library/Frameworks/JavaVM.framework/Versions/${JAVA_VERSION}/Classes/classes.jar"
 fi
 
+IZPACK_COMPILE_JAR="${IZPACK_HOME}/lib/standalone-compiler.jar"
+
+echo "Using Java tools    : $TOOLS_JAR"
+echo "Using Java cmd      : $JAVACMD"
+echo "Using izpack home   : $IZPACK_HOME"
+echo "Using izpack opts   : $IZPACK_OPTS"
+echo "Using izpack compil : $IZPACK_COMPILE_JAR"
+
 MAIN_CLASS=com.izforge.izpack.compiler.Compiler
 
 "$JAVACMD" -Xmx512m \
   $IZPACK_OPTS \
-  -classpath "${IZPACK_HOME}/lib/standalone-compiler.jar" \
+  -classpath "${IZPACK_COMPILE_JAR}" \
   "-Dtools.jar=$TOOLS_JAR" \
   "-Dizpack.home=${IZPACK_HOME}" \
   $MAIN_CLASS "$@"

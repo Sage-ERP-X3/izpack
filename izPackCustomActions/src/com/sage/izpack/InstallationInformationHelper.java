@@ -93,9 +93,9 @@ public final class InstallationInformationHelper {
 			try {
 				for (Pack installedpack : packsinstalled) {
 					if (!readPacks.containsKey(installedpack.getName())) {
-					readPacks.put(installedpack.getName(), installedpack);
-					logger.log(Level.FINE,
-							"InstallationInformationHelper Add pack " + installedpack.getName() + "");
+						readPacks.put(installedpack.getName(), installedpack);
+						logger.log(Level.FINE,
+								"InstallationInformationHelper Add pack " + installedpack.getName() + "");
 					}
 				}
 				installData.setSelectedPacks(packsinstalled);
@@ -111,11 +111,10 @@ public final class InstallationInformationHelper {
 			try {
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
-					if (key == "component.node.name") {
+					// if (key == "component.node.name") {
 					installData.setVariable((String) key, (String) variables.get(key));
 					logger.log(Level.FINE,
 							"InstallationInformationHelper Set variable : " + key + ": " + variables.get(key));
-					}
 				}
 			} catch (Exception e) {
 				logger.warning("InstallationInformationHelper Could not read Properties installation information: "
@@ -154,7 +153,6 @@ public final class InstallationInformationHelper {
 			try {
 				oin = new ObjectInputStream(fin);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				return;
 			}
@@ -177,15 +175,13 @@ public final class InstallationInformationHelper {
 				}
 				// removeAlreadyInstalledPacks(installData.getSelectedPacks(), readPacks);
 
-				// installData.setSelectedPacks(s);
-				installData.setSelectedPacks(new ArrayList<Pack>());
+				installData.setSelectedPacks(s);
+				// installData.setSelectedPacks(new ArrayList<Pack>());
 				logger.log(Level.FINE, "InstallationInformationHelper.loadLegacyInstallationInformation - Found Legacy "
 						+ packsinstalled.size() + " installed packs");
 			} catch (ClassNotFoundException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (Exception e) {
 				logger.warning(

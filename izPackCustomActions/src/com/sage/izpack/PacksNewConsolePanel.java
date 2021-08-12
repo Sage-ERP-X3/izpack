@@ -34,7 +34,7 @@ public class PacksNewConsolePanel extends PacksConsolePanel {
     
 		for (Pack p : installData.getAvailablePacks()) {
 
-			logger.info("PacksNewConsolePanel.createPacksTable - Pack " + p.getName() + " Required: " + p.isRequired()
+			logger.log(Level.FINE, "PacksNewConsolePanel.createPacksTable - Pack " + p.getName() + " Required: " + p.isRequired()
 					+ " Preselected: " + p.isPreselected());
 
 			if (p.isRequired()) {

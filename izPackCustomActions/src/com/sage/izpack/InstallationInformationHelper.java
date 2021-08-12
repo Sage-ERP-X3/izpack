@@ -92,9 +92,15 @@ public final class InstallationInformationHelper {
 			List<Pack> packsinstalled = (List<Pack>) oin.readObject();
 			try {
 				for (Pack installedpack : packsinstalled) {
+					if (!readPacks.containsKey(installedpack.getName())) {
 					readPacks.put(installedpack.getName(), installedpack);
+					logger.log(Level.FINE,
+							"InstallationInformationHelper Add pack " + installedpack.getName() + "");
+					}
 				}
+				installData.setSelectedPacks(packsinstalled);
 				// removeAlreadyInstalledPacks(installData.getSelectedPacks(), readPacks);
+				// installData.setSelectedPacks(new ArrayList<Pack>());
 				logger.log(Level.FINE,
 						"InstallationInformationHelper Found " + packsinstalled.size() + " installed packs");
 			} catch (Exception e) {
@@ -105,9 +111,11 @@ public final class InstallationInformationHelper {
 			try {
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
+					if (key == "component.node.name") {
 					installData.setVariable((String) key, (String) variables.get(key));
 					logger.log(Level.FINE,
 							"InstallationInformationHelper Set variable : " + key + ": " + variables.get(key));
+					}
 				}
 			} catch (Exception e) {
 				logger.warning("InstallationInformationHelper Could not read Properties installation information: "

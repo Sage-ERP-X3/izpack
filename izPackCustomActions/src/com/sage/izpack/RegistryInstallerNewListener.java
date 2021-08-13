@@ -38,6 +38,9 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 
 	@Override
 	public void afterPacks(List<Pack> packs, ProgressListener listener) {
+
+		logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks start");
+
 		super.afterPacks(packs, listener);
 
 		// Fix the bug when un-installing a product, sometimes, the Registry
@@ -50,6 +53,8 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 			deleteInstallInformation();
 		}
 		updateRegistry();
+		
+		logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks end");
 	}
 
 	/*
@@ -67,8 +72,8 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		// + appName;
 		String keyName = RegistryHandler.UNINSTALL_ROOT + appName;
 
-		logger.log(Level.ALL,
-				"Update DisplayVersion, Registry path " + keyName + " key: " + "DisplayVersion" + " value: " + version);
+		logger.log(Level.FINE, "RegistryInstallerNewListener.updateRegistry   Updating DisplayVersion, Registry path "
+				+ keyName + " key: " + "DisplayVersion" + " value: " + version);
 
 		RegistryHandler myHandlerInstance = myhandler.getInstance();
 		try {
@@ -79,13 +84,17 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 					String displayVersionVal = cont.getStringData();
 					if (displayVersionVal != null && displayVersionVal != version) {
 						myHandlerInstance.setValue(keyName, "DisplayVersion", version);
+
+						logger.log(Level.FINE,
+								"RegistryInstallerNewListener.updateRegistry   DisplayVersion updated, Registry path "
+										+ keyName + " key: " + "DisplayVersion" + " value: " + version);
 					}
 				}
 			}
 		} catch (NativeLibException e) {
 			e.printStackTrace();
-			logger.log(Level.FINE,
-					"Error while update registry path " + keyName + " Key: DisplayVersion, value: " + version);
+			logger.log(Level.WARNING, "RegistryInstallerNewListener.updateRegistry   Error while update registry path "
+					+ keyName + " Key: DisplayVersion, value: " + version);
 		}
 	}
 

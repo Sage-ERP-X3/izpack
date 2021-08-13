@@ -161,11 +161,11 @@ public final class InstallationInformationHelper {
 			try {
 				packsinstalled = (List<com.sage.izpack.Pack>) oin.readObject();
 
-				ArrayList<Pack> s = new ArrayList<Pack>();
+				ArrayList<Pack> packLists = new ArrayList<Pack>();
 
 				for (com.sage.izpack.Pack installedpack : packsinstalled) {
 					readPacks.put(installedpack.name, installedpack);
-					s.add(new Pack(installedpack.name, installedpack.id, installedpack.description, null,
+					packLists.add(new Pack(installedpack.name, installedpack.id, installedpack.description, null,
 							installedpack.dependencies, installedpack.required, installedpack.preselected,
 							installedpack.loose, installedpack.excludeGroup, installedpack.uninstall, 0));
 
@@ -175,7 +175,7 @@ public final class InstallationInformationHelper {
 				}
 				// removeAlreadyInstalledPacks(installData.getSelectedPacks(), readPacks);
 
-				installData.setSelectedPacks(s);
+				installData.setSelectedPacks(packLists);
 				// installData.setSelectedPacks(new ArrayList<Pack>());
 				logger.log(Level.FINE, "InstallationInformationHelper.loadLegacyInstallationInformation - Found Legacy "
 						+ packsinstalled.size() + " installed packs");

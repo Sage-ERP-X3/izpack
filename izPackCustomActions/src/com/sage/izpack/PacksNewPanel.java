@@ -146,7 +146,7 @@ public class PacksNewPanel extends PacksPanel {
 		}
 
 		Map<String, Pack> installedpacks = packsModel.getInstalledPacks();
-		CheckBoxRenderer2 packSelectedRenderer = new CheckBoxRenderer2();
+		CheckBoxNewRenderer packSelectedRenderer = new CheckBoxNewRenderer();
 		packsTable.getColumnModel().getColumn(0).setCellRenderer(packSelectedRenderer);
 
 		logger.log(Level.FINE, "PacksNewPanel.panelActivate2 : installedpacks : " + installedpacks);
@@ -168,10 +168,10 @@ public class PacksNewPanel extends PacksPanel {
 		return isValidated;
 	}
 
-	static class CheckBoxRenderer2 implements TableCellRenderer {
+	static class CheckBoxNewRenderer implements TableCellRenderer {
 		JCheckBox checkbox = new JCheckBox();
 
-		CheckBoxRenderer2() {
+		CheckBoxNewRenderer() {
 			if (com.izforge.izpack.util.OsVersion.IS_UNIX && !com.izforge.izpack.util.OsVersion.IS_OSX) {
 				checkbox.setIcon(new LFIndependentIcon());
 				checkbox.setDisabledIcon(new LFIndependentIcon());
@@ -184,7 +184,7 @@ public class PacksNewPanel extends PacksPanel {
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
-			logger.log(Level.FINE, "PacksNewPanel.CheckBoxRenderer2 : isSelected: " + isSelected);
+			logger.log(Level.FINE, "PacksNewPanel.CheckBoxNewRenderer : isSelected: " + isSelected);
 
 			if (isSelected) {
 				checkbox.setForeground(table.getSelectionForeground());
@@ -197,24 +197,24 @@ public class PacksNewPanel extends PacksPanel {
 			PacksModel.CbSelectionState state = (PacksModel.CbSelectionState) value;
 
 			logger.log(Level.FINE,
-					"PacksNewPanel.CheckBoxRenderer2 : state: " + state + " state.isSelectedOrRequiredSelected() : "
+					"PacksNewPanel.CheckBoxNewRenderer : state: " + state + " state.isSelectedOrRequiredSelected() : "
 							+ state.isSelectedOrRequiredSelected() + "  state.isChecked() : " + state.isChecked()
 							+ "  value: " + value);
 
 			if (state == PacksModel.CbSelectionState.DEPENDENT_DESELECTED) {
 				// condition not fulfilled
 				checkbox.setForeground(Color.GRAY);
-				logger.log(Level.FINE, "PacksNewPanel.CheckBoxRenderer2 :  condition not fulfilled");
+				logger.log(Level.FINE, "PacksNewPanel.CheckBoxNewRenderer :  condition not fulfilled");
 			}
 			if (state == PacksModel.CbSelectionState.REQUIRED_PARTIAL_SELECTED) {
-				logger.log(Level.FINE, "PacksNewPanel.CheckBoxRenderer2 :  setSelected");
+				logger.log(Level.FINE, "PacksNewPanel.CheckBoxNewRenderer :  setSelected");
 				checkbox.setForeground(Color.RED);
 				checkbox.setSelected(true);
 			}
 
 			if (state != null) {
 				logger.log(Level.FINE,
-						"PacksNewPanel.CheckBoxRenderer2 :  setSelected? : " + (value != null && state.isChecked())); // isSelectedOrRequiredSelected()));
+						"PacksNewPanel.CheckBoxNewRenderer :  setSelected? : " + (value != null && state.isChecked())); // isSelectedOrRequiredSelected()));
 
 				checkbox.setEnabled(state.isSelectable());
 				checkbox.setSelected((value != null && state.isChecked())); // isSelectedOrRequiredSelected()));

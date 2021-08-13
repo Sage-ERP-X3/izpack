@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.resource.Messages;
@@ -12,6 +13,7 @@ import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.event.RegistryUninstallerListener;
+import com.izforge.izpack.installer.data.UninstallData;
 
 /*
  * This class fix the bug when un-installing a product, sometimes, the Registry is not cleaned (Ex: X3-237732)
@@ -76,7 +78,8 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		RegistryHandler myHandlerInstance = myhandler.getInstance();
 		String unInstallName = myHandlerInstance.getUninstallName();
 		// String keyName =
-		// "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Sage X3 Management Console";
+		// "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Sage
+		// X3 Management Console";
 		// RegistryHandler.UNINSTALL_ROOT =
 		// "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
 		String keyName = RegistryHandler.UNINSTALL_ROOT + unInstallName;

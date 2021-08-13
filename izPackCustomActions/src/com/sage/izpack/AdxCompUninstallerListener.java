@@ -22,6 +22,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.event.AbstractUninstallerListener;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.IzPackException;
@@ -34,36 +35,30 @@ import com.izforge.izpack.util.CleanupClient;
 import com.izforge.izpack.core.handler.PromptUIHandler;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
+import com.izforge.izpack.installer.data.UninstallData;
 
 /*
  * @author Franck DEPOORTERE
  */
 public class AdxCompUninstallerListener extends AbstractUninstallerListener {
-	//	implements CleanupClient {
+	// implements CleanupClient {
 
 	// private static final Logger logger = Logger.getLogger(AdxCompUninstallerListener.class.getName());
 
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
 
 	private com.izforge.izpack.api.data.InstallData installData;
-	// private RegistryDefaultHandler handler;
 	private RegistryHandler registryHandler;
 	private Prompt prompt;
-	// private Resources resources;
+	private Resources resources;
 
-	public AdxCompUninstallerListener(RegistryDefaultHandler handler, Resources resources, Messages messages) {
+	public AdxCompUninstallerListener(InstallData installData,
+			RegistryDefaultHandler handler, Resources resources, Messages messages) {
 
-	//com.izforge.izpack.api.data.InstallData installData) {
-			// RegistryDefaultHandler handler, Prompt prompt, Resources resources) {
-		//	RegistryDefaultHandler handler, Resources resources) {
-		// RegistryDefaultHandler handler) {
-		// super(); // Prompt
-
-		// this.installData = installData;
-		// this.handler = handler;
-		// this.registryHandler = handler.getInstance();
+		this.installData = installData;
+		this.registryHandler = handler.getInstance();
 		// this.prompt = prompt;
-		// this.resources = resources;
+		this.resources = resources;
 	}
 
 	@Override
@@ -81,16 +76,16 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	@Override
 	public void beforeDelete(List<File> arg0) {
 
-		// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDelete(List<File> arg0)");
+		// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDelete(List<File> arg0: " + arg0 + ")");
 
-		beforeDeletion();
+		// beforeDeletion();
 
 	}
 
 	@Override
 	public void beforeDelete(File arg0) {
 
-		// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDelete(File arg0)");
+		// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDelete(File arg0: " + arg0 + ")");
 
 	}
 
@@ -120,7 +115,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, this.installData);
 			String adxAdminPath = adxCompHelper.getAdxAdminPath();
 			if (adxAdminPath == null || "".equals(adxAdminPath)) {
-				// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  OK => AdxAdmin not found.");
+				// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion OK => AdxAdmin not found.");
 				return;
 			}
 
@@ -158,7 +153,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 			// module non trouvé :(
 			if (reportModule == null) {
-				//logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  OK => module " + moduleName + "/"
+				// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  OK => module " + moduleName + "/"
 				//		+ moduleFamily + " not in " + fileAdxinstalls.getAbsolutePath());
 				return;
 			}
@@ -177,8 +172,9 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			String moduleFamily, Element reportModule)
 			throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 		// Report module found
-		// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  module " + moduleName + "/" + moduleFamily
-		//		+ " has been found in " + fileAdxinstalls.getAbsolutePath());
+		// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion module " +
+		// moduleName + "/" + moduleFamily
+		// + " has been found in " + fileAdxinstalls.getAbsolutePath());
 
 		NodeList lstChilds = reportModule.getElementsByTagName("*");
 		for (int i = 0; i < lstChilds.getLength(); i++) {
@@ -195,7 +191,8 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 					// String notidleMsg = helper.getCustomString("notidle", false);
 					String notidleMsg = "notidle";
 					String friendlyMsg = errorMsg + ": module not idle (Status: " + modstatus + ") " + notidleMsg;
-					// logger.log(Level.SEVERE, "AdxCompUninstallerListener.beforeDeletion  " + friendlyMsg);
+					// logger.log(Level.SEVERE, "AdxCompUninstallerListener.beforeDeletion " +
+					// friendlyMsg);
 
 					GetPromptUIHandler().emitError(errorMsg, friendlyMsg);
 
@@ -256,7 +253,5 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	public void afterDelete(List<File> arg0, ProgressListener arg1) {
 
 	}
-
-	
 
 }

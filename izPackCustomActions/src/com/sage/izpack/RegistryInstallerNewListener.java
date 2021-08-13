@@ -39,7 +39,7 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 	@Override
 	public void afterPacks(List<Pack> packs, ProgressListener listener) {
 
-		logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks start");
+		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks start");
 
 		super.afterPacks(packs, listener);
 
@@ -54,7 +54,7 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		}
 		updateRegistry();
 		
-		logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks end");
+		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks end");
 	}
 
 	/*

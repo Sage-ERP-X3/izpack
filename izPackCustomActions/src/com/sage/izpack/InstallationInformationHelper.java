@@ -111,11 +111,12 @@ public final class InstallationInformationHelper {
 			try {
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
-					// if (key == "component.node.name") {
+				 if (key == "component.node.name") {
 					installData.setVariable((String) key, (String) variables.get(key));
 					logger.log(Level.FINE,
 							"InstallationInformationHelper Set variable : " + key + ": " + variables.get(key));
-				}
+				 }
+				 }
 			} catch (Exception e) {
 				logger.warning("InstallationInformationHelper Could not read Properties installation information: "
 						+ e.getMessage());
@@ -158,10 +159,9 @@ public final class InstallationInformationHelper {
 			}
 
 			List<com.sage.izpack.Pack> packsinstalled;
+			ArrayList<Pack> packLists = new ArrayList<Pack>();
 			try {
 				packsinstalled = (List<com.sage.izpack.Pack>) oin.readObject();
-
-				ArrayList<Pack> packLists = new ArrayList<Pack>();
 
 				for (com.sage.izpack.Pack installedpack : packsinstalled) {
 					readPacks.put(installedpack.name, installedpack);
@@ -175,18 +175,28 @@ public final class InstallationInformationHelper {
 				}
 				// removeAlreadyInstalledPacks(installData.getSelectedPacks(), readPacks);
 
-				installData.setSelectedPacks(packLists);
 				// installData.setSelectedPacks(new ArrayList<Pack>());
 				logger.log(Level.FINE, "InstallationInformationHelper.loadLegacyInstallationInformation - Found Legacy "
 						+ packsinstalled.size() + " installed packs");
 			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
+				logger.warning(
+						"InstallationInformationHelper.loadLegacyInstallationInformation  Could not read Legacy 'Pack' installation information: "
+								+ e1.getMessage());
 			} catch (IOException e1) {
 				e1.printStackTrace();
+				logger.warning(
+						"InstallationInformationHelper.loadLegacyInstallationInformation  Could not read Legacy 'Pack' installation information: "
+								+ e1.getMessage());
 			} catch (Exception e) {
 				logger.warning(
 						"InstallationInformationHelper.loadLegacyInstallationInformation  Could not read Legacy 'Pack' installation information: "
 								+ e.getMessage());
+			}finally {
+				installData.setSelectedPacks(packLists);
+				logger.log(Level.FINE,
+						"InstallationInformationHelper.loadLegacyInstallationInformation - setSelectedPacks: "
+								+ packLists);
 			}
 
 			try {
@@ -202,7 +212,7 @@ public final class InstallationInformationHelper {
 						"InstallationInformationHelper.loadLegacyInstallationInformation  writeInstallationInformation to fix legacy issue");
 				// writeInstallationInformation(installData, installData.getSelectedPacks(),
 				// installData.getVariables());
-				writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables());
+				writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(), true);
 
 			} catch (Exception e) {
 				logger.warning(
@@ -213,9 +223,9 @@ public final class InstallationInformationHelper {
 	}
 
 	private static void writeInstallationInformation(com.izforge.izpack.api.data.InstallData installData,
-			List<Pack> selectedPacks, Variables variables) throws IOException {
+			List<Pack> selectedPacks, Variables variables, boolean forceWrite) throws IOException {
 
-		if (!installData.getInfo().isWriteInstallationInformation()) {
+		if (!installData.getInfo().isWriteInstallationInformation() && !forceWrite) {
 			logger.log(Level.FINE, "InstallationInformationHelper  Skip writing installation information");
 			return;
 		}
@@ -239,6 +249,8 @@ public final class InstallationInformationHelper {
 				throw new InstallerException("Failed to create file: " + installationInfo);
 			}
 		} else {
+			
+			
 			logger.log(Level.FINE, "InstallationInformationHelper  Previous installation information found: "
 					+ installationInfo.getAbsolutePath());
 			// read in old information and update

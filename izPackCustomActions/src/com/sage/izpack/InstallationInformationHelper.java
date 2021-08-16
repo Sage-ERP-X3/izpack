@@ -111,11 +111,11 @@ public final class InstallationInformationHelper {
 			try {
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
-				 if (key == "component.node.name") {
+				 // if (key == "component.node.name") {
 					installData.setVariable((String) key, (String) variables.get(key));
 					logger.log(Level.FINE,
 							"InstallationInformationHelper Set variable : " + key + ": " + variables.get(key));
-				 }
+				 // }
 				 }
 			} catch (Exception e) {
 				logger.warning("InstallationInformationHelper Could not read Properties installation information: "

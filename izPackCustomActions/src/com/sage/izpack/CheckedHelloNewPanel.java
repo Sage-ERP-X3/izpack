@@ -83,7 +83,6 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		Variables variables = this.installData.getVariables();
 		installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
 		// installData.setVariable("UNINSTALL_NAME",
-		// _registryHelper.getUninstallName());
 	}
 
 	/**

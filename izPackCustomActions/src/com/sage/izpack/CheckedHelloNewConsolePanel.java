@@ -63,8 +63,10 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 			installData.setVariable(InstallData.INSTALL_PATH, path);
 			logger.log(Level.FINE, "CheckedHelloNewConsolePanel  Set INSTALL_PATH: " + path);
 
+			Variables variables = this.installData.getVariables();
+			installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
+
 			// Set variable "modify.izpack.install"
-			// if (registered)
 			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 			logger.log(Level.FINE, "CheckedHelloNewConsolePanel  Registered: " + registered);
 		}
@@ -88,6 +90,9 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 	 */
 	@Override
 	protected boolean multipleInstall(InstallData installData) {
+
+		logger.log(Level.FINE, "CheckedHelloNewConsolePanel.multipleInstall()");
+
 		boolean result;
 		String path;
 		try {
@@ -95,10 +100,10 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 			if (path == null) {
 				path = "<not found>";
 			}
-			// 	X3-240420 : Wrong message when updating the console This method should only
+			// X3-240420 : Wrong message when updating the console This method should only
 			ResourcesHelper resourcesHelper = new ResourcesHelper(this.installData, this.resources);
-			String noLuck = resourcesHelper.getCustomString("CheckedHelloPanel.productAlreadyExist0", true) + path + ". "
-					+ resourcesHelper.getCustomString("CheckedHelloPanel.productAlreadyExist1", true);
+			String noLuck = resourcesHelper.getCustomString("CheckedHelloPanel.productAlreadyExist0", true) + path
+					+ ". " + resourcesHelper.getCustomString("CheckedHelloPanel.productAlreadyExist1", true);
 
 			result = prompt.confirm(ERROR, noLuck, YES_NO) == YES;
 
@@ -120,6 +125,9 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 	 */
 	@Override
 	public boolean run(InstallData installData, Console console) {
+
+		logger.log(Level.FINE, "CheckedHelloNewConsolePanel.run()");
+
 		printHeadLine(installData, console);
 
 		boolean result = true;
@@ -135,11 +143,9 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 				}
 			}
 
-			if (registered) {
-				// Set variable "modify.izpack.install"
-				installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-				logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set " + InstallData.MODIFY_INSTALLATION + ": true");
-			}
+			// Set variable "modify.izpack.install"
+			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+			logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set " + InstallData.MODIFY_INSTALLATION + ": true");
 
 			// We had to override this method to remove APP_VER
 			// return variables.get("APP_NAME") + " " + variables.get("APP_VER");

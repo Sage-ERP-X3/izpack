@@ -134,13 +134,13 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		if (registered) {
 			result = multipleInstall(installData);
 			if (result) {
-				try {
-					_registryHelper.updateUninstallName();
-					registered = false;
-				} catch (NativeLibException exception) {
-					result = false;
-					logger.log(Level.SEVERE, "CheckedHelloNewConsolePanel " + exception.getMessage(), exception);
-				}
+				// try {
+					// _registryHelper.updateUninstallName();
+					// registered = false;
+				//} catch (NativeLibException exception) {
+				// 	result = false;
+				//	logger.log(Level.SEVERE, "CheckedHelloNewConsolePanel " + exception.getMessage(), exception);
+				// }
 			}
 
 			// Set variable "modify.izpack.install"
@@ -151,6 +151,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 			// return variables.get("APP_NAME") + " " + variables.get("APP_VER");
 			Variables variables = this.installData.getVariables();
 			installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
+			logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set UNINSTALL_NAME: " + variables.get("APP_NAME"));
 			// installData.setVariable("UNINSTALL_NAME", registryHelper.getUninstallName());
 			if (result) {
 				display(installData, console);

@@ -111,12 +111,18 @@ public final class InstallationInformationHelper {
 			try {
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
-				 // if (key == "component.node.name") {
+					// if (key == "component.node.name") {
+					if (key == "app-version") {
+						installData.setVariable((String) key + "-old", (String) variables.get(key));
+						logger.log(Level.FINE,
+								"InstallationInformationHelper Skip variable : " + key + ": " + variables.get(key));						
+					}
+					else {
 					installData.setVariable((String) key, (String) variables.get(key));
 					logger.log(Level.FINE,
 							"InstallationInformationHelper Set variable : " + key + ": " + variables.get(key));
-				 // }
-				 }
+					}
+				}
 			} catch (Exception e) {
 				logger.warning("InstallationInformationHelper Could not read Properties installation information: "
 						+ e.getMessage());
@@ -192,7 +198,7 @@ public final class InstallationInformationHelper {
 				logger.warning(
 						"InstallationInformationHelper.loadLegacyInstallationInformation  Could not read Legacy 'Pack' installation information: "
 								+ e.getMessage());
-			}finally {
+			} finally {
 				installData.setSelectedPacks(packLists);
 				logger.log(Level.FINE,
 						"InstallationInformationHelper.loadLegacyInstallationInformation - setSelectedPacks: "
@@ -202,17 +208,26 @@ public final class InstallationInformationHelper {
 			try {
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
-					installData.setVariable((String) key, (String) variables.get(key));
+					
+					if (key == "app-version") {
+						installData.setVariable((String) key + "-old", (String) variables.get(key));
+						logger.log(Level.FINE,
+								"InstallationInformationHelper.loadLegacyInstallationInformation  Skip variable : " + key + ": " + variables.get(key));						
+					}
+					else {
+											installData.setVariable((String) key, (String) variables.get(key));
 					logger.log(Level.FINE,
 							"InstallationInformationHelper.loadLegacyInstallationInformation  Set Legacy variable : "
 									+ key + ": " + variables.get(key));
+					}
 				}
 
 				logger.log(Level.FINE,
 						"InstallationInformationHelper.loadLegacyInstallationInformation  writeInstallationInformation to fix legacy issue");
 				// writeInstallationInformation(installData, installData.getSelectedPacks(),
 				// installData.getVariables());
-				writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(), true);
+				writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
+						true);
 
 			} catch (Exception e) {
 				logger.warning(
@@ -249,8 +264,7 @@ public final class InstallationInformationHelper {
 				throw new InstallerException("Failed to create file: " + installationInfo);
 			}
 		} else {
-			
-			
+
 			logger.log(Level.FINE, "InstallationInformationHelper  Previous installation information found: "
 					+ installationInfo.getAbsolutePath());
 			// read in old information and update

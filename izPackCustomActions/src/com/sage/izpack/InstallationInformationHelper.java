@@ -112,7 +112,7 @@ public final class InstallationInformationHelper {
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
 					// if (key == "component.node.name") {
-					if (key == "app-version") {
+					if (key == "app-version" || key == "APP_VER") {
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE,
 								"InstallationInformationHelper Skip variable : " + key + ": " + variables.get(key));						

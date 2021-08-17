@@ -69,11 +69,13 @@ public class AdxCompHelper {
 
 		String strAdxAdminPath = "";
 
+		if (this.installData != null) {
 		logger.log(Level.FINE,
 				"AdxCompHelper  Init registry installData Locale: " + this.installData.getLocaleISO2());
 		logger.log(Level.FINE,
 				"AdxCompHelper  Init registry getInstallPath: " + this.installData.getInstallPath());
-
+		}
+		
 		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler);
 		if (this.registryHandler != null && rh != null) {
 

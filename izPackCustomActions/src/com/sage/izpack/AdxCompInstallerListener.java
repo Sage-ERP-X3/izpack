@@ -1,10 +1,14 @@
 package com.sage.izpack;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
@@ -17,6 +21,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -43,11 +48,14 @@ import com.izforge.izpack.api.substitutor.VariableSubstitutor;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.core.substitutor.VariableSubstitutorImpl;
+import com.izforge.izpack.installer.data.UninstallData;
 import com.izforge.izpack.panels.packs.PacksModel;
 import com.izforge.izpack.util.CleanupClient;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.helper.SpecHelper;
 import com.izforge.izpack.api.adaptator.IXMLElement;
+import com.izforge.izpack.api.adaptator.IXMLWriter;
+import com.izforge.izpack.api.adaptator.impl.XMLWriter;
 import com.izforge.izpack.api.data.InstallData;
 import com.sage.izpack.XMLHelper;
 
@@ -67,13 +75,15 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	private VariableSubstitutor variableSubstitutor;
 
 	private com.izforge.izpack.api.data.InstallData installData;
+	private com.izforge.izpack.installer.data.UninstallData uninstallData;
 	private RegistryHandler registryHandler;
 
-	public AdxCompInstallerListener(com.izforge.izpack.api.data.InstallData installData,
+	public AdxCompInstallerListener(com.izforge.izpack.api.data.InstallData installData, UninstallData uninstallData,
 			VariableSubstitutor variableSubstitutor, Resources resources, RegistryDefaultHandler handler) {
 
 		super();
 		this.installData = installData;
+		this.uninstallData = uninstallData;
 		this.variableSubstitutor = variableSubstitutor;
 		this.resources = resources;
 		this.registryHandler = handler.getInstance();
@@ -115,16 +125,14 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			String adxAdminPath = adxCompHelper.getAdxAdminPath();
 			// check strAdxAdminPath
 			if (adxAdminPath == null || "".equals(adxAdminPath))
-				throw new Exception(
-						ResourcesHelper.getCustomPropString("adxadminParseError"));
-						// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
+				throw new Exception(ResourcesHelper.getCustomPropString("adxadminParseError"));
+			// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
 
 			java.io.File dirAdxDir = new java.io.File(adxAdminPath);
 			if (!dirAdxDir.exists() || !dirAdxDir.isDirectory())
 				// throw new Exception(langpack.getString("adxadminParseError"));
-				throw new Exception(
-						ResourcesHelper.getCustomPropString("adxadminParseError"));
-						// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
+				throw new Exception(ResourcesHelper.getCustomPropString("adxadminParseError"));
+			// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
 
 			java.io.File fileAdxinstalls = adxCompHelper.getAdxInstallFile(dirAdxDir);
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  Reading XML file fileAdxinstalls: "
@@ -164,13 +172,14 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  moduleName: " + moduleName + " moduleFamily: "
 					+ moduleFamily + " modifyinstallation: " + modifyinstallation);
 
+			Element module = null;
 			if (modifyinstallation) {
 
-				modifyReportModule(adxInstallXmlDoc, moduleName, moduleFamily, moduleType);
+				module = modifyReportModule(adxInstallXmlDoc, moduleName, moduleFamily, moduleType);
 
 			} else {
 
-				createModule(adxInstallXmlDoc, moduleSpec, substitutor, moduleName, moduleFamily, moduleType);
+				module = createModule(adxInstallXmlDoc, moduleSpec, substitutor, moduleName, moduleFamily, moduleType);
 			}
 
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  saving XML xdoc:"
@@ -178,10 +187,102 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			saveXml(fileAdxinstalls, adxInstallXmlDoc, transformer);
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  XML doc saved");
 
+			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  Add data to uninstaller");
+			addDataToUninstaller(transformer, adxCompHelper, module);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		// throw new Exception(e.getMessage());
+	}
+
+	private void addDataToUninstaller(Transformer transformer, AdxCompHelper adxCompHelper, Element module)
+			throws FileNotFoundException, NativeLibException, IOException, Exception {
+		// Add "AdxCompSpec.xml" within uninstaller, to fetch module name while
+		// uninstalling
+		// idata.uninstallOutJar.putNextEntry(new ZipEntry(SPEC_FILE_NAME));
+		// DOMSource source2 = new DOMSource(xdoc2);
+		// StreamResult result2 = new StreamResult (idata.uninstallOutJar);
+		// transformer.transform(source2, result2);
+		// idata.uninstallOutJar.closeEntry();
+
+		// this.uninstallData.addAdditionalData("moduleName", moduleName);
+		// this.uninstallData.addAdditionalData("moduleFamily", moduleFamily);
+		// this.uninstallData.addAdditionalData("moduleType", moduleType);
+
+		byte[] byteArray;
+		try {
+
+			logger.log(Level.FINE, "AdxCompInstallerListener  Add data " + SPEC_FILE_NAME + ": " + module);
+			byteArray = asByteArray(module, "utf-8");
+			this.uninstallData.addAdditionalData(SPEC_FILE_NAME, byteArray);
+
+			String fileName = adxCompHelper.getAdxAdminPath() + File.separator + "tmp" + File.separator + "TMP"
+					+ SPEC_FILE_NAME;
+			java.io.File file = new java.io.File(fileName);
+			saveElementToFile(module, file, transformer);
+
+			logger.log(Level.FINE, "AdxCompInstallerListener  Add file " + fileName);
+			this.uninstallData.addFile(fileName, true);
+			
+			logger.log(Level.FINE, "AdxCompInstallerListener  Add file addBuildResourceToUninstallerData " + fileName);
+			addBuildResourceToUninstallerData("TMP2" + SPEC_FILE_NAME,  file);
+
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		}
+	}
+	
+
+    private void addBuildResourceToUninstallerData(String dataName, File buildFile) throws IOException 
+    {
+        byte[] content;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream((int) buildFile.length());
+        BufferedInputStream bis = null;
+
+            bis = new BufferedInputStream(new FileInputStream(buildFile));
+            int aByte;
+            while (-1 != (aByte = bis.read()))
+            {
+                bos.write(aByte);
+            }
+            content = bos.toByteArray();
+            uninstallData.addAdditionalData(dataName, content);
+    }
+    
+
+	private void saveElementToFile(Element module, java.io.File file, Transformer transformer)
+			throws ParserConfigurationException, IOException, SAXException, TransformerException {
+
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document xdoc = dBuilder.newDocument();
+		// Properties DOM
+		xdoc.setXmlVersion("1.0");
+		xdoc.setXmlStandalone(true);
+
+		Node newnode = xdoc.importNode(module, true);
+		xdoc.appendChild(newnode);
+
+		if (!file.exists()) {
+			file.createNewFile();
+		}
+		DOMSource source = new DOMSource(module);
+		StreamResult result = new StreamResult(file);
+		transformer.transform(source, result);
+	}
+
+	private static byte[] asByteArray(Element elementdoc, String encoding) throws TransformerException {
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+
+		StringWriter writer = new StringWriter();
+		Result result = new StreamResult(writer);
+		DOMSource source = new DOMSource(elementdoc);
+		transformer.transform(source, result);
+		return writer.getBuffer().toString().getBytes();
 	}
 
 	// <module name="EDTSRV" family="REPORT" type="">
@@ -193,7 +294,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	// <report.adxd.adxlan>FRA</report.adxd.adxlan>
 	// <report.service.printport>1890</report.service.printport>
 	// </module>
-	private void createModule(Document adxInstallXmlDoc, IXMLElement moduleSpec, VariableSubstitutor substitutor,
+	private Element createModule(Document adxInstallXmlDoc, IXMLElement moduleSpec, VariableSubstitutor substitutor,
 			String moduleName, String moduleFamily, String moduleType) {
 
 		Element moduleToAddOrUpdate = adxInstallXmlDoc.createElement("module");
@@ -207,6 +308,8 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			moduleToAddOrUpdate.appendChild(xmlParam);
 		}
 		adxInstallXmlDoc.getDocumentElement().appendChild(moduleToAddOrUpdate);
+
+		return moduleToAddOrUpdate;
 	}
 
 	private void saveXml(java.io.File fileAdxinstalls, Document adxInstallXmlDoc, Transformer transformer)
@@ -216,8 +319,8 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		// write the content into xml filed
 		DOMSource source = new DOMSource(adxInstallXmlDoc);
 		StreamResult result = new StreamResult(fileAdxinstalls);
-
 		transformer.transform(source, result);
+
 	}
 
 	/***
@@ -276,8 +379,9 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			logger.log(Level.FINE, "AdxCompInstallerListener.modifyReportModule  name: " + moduleName + " type: "
 					+ moduleType + " family: " + moduleFamily + " not found in xmlDocument " + xdoc);
 			throw new Exception(ResourcesHelper.getCustomPropString("sectionNotFound", moduleName));
-					// String.format(
-					// ResourceBundle.getBundle("com/sage/izpack/messages").getString("sectionNotFound"), moduleName));
+			// String.format(
+			// ResourceBundle.getBundle("com/sage/izpack/messages").getString("sectionNotFound"),
+			// moduleName));
 		}
 
 		Node status = module.getElementsByTagName("component." + moduleFamily.toLowerCase() + ".installstatus").item(0);
@@ -395,6 +499,5 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 				+ ". Root element: " + xdoc.getDocumentElement().getNodeName());
 		return xdoc;
 	}
-
 
 }

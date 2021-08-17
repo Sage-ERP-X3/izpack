@@ -22,6 +22,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.event.AbstractUninstallerListener;
 import com.izforge.izpack.api.event.ProgressListener;
@@ -32,6 +33,7 @@ import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.uninstaller.event.*;
 import com.izforge.izpack.util.CleanupClient;
+import com.izforge.izpack.util.helper.SpecHelper;
 import com.izforge.izpack.core.handler.PromptUIHandler;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
@@ -43,7 +45,8 @@ import com.izforge.izpack.installer.data.UninstallData;
 public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	// implements CleanupClient {
 
-	// private static final Logger logger = Logger.getLogger(AdxCompUninstallerListener.class.getName());
+	// private static final Logger logger =
+	// Logger.getLogger(AdxCompUninstallerListener.class.getName());
 
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
 
@@ -51,14 +54,20 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	private RegistryHandler registryHandler;
 	private Prompt prompt;
 	private Resources resources;
+	private Messages messages;
+	private SpecHelper specHelper = null;
 
-	public AdxCompUninstallerListener(InstallData installData,
-			RegistryDefaultHandler handler, Resources resources, Messages messages) {
+	public AdxCompUninstallerListener(RegistryDefaultHandler handler, Resources resources, Messages messages) {
+		// InstallData installData,
+//			RegistryDefaultHandler handler, Resources resources, Messages messages) {
 
-		this.installData = installData;
+		super();
+
+		// this.installData = installData;
 		this.registryHandler = handler.getInstance();
 		// this.prompt = prompt;
 		this.resources = resources;
+		this.messages = messages;
 	}
 
 	@Override
@@ -76,32 +85,54 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	@Override
 	public void beforeDelete(List<File> arg0) {
 
-		// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDelete(List<File> arg0: " + arg0 + ")");
+		System.out.println("AdxCompUninstallerListener.beforeDelete(List<File>arg0: " + arg0 + ")");
 
-		// beforeDeletion();
-
-	}
-
-	@Override
-	public void beforeDelete(File arg0) {
-
-		// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDelete(File arg0: " + arg0 + ")");
+		beforeDeletion();
 
 	}
 
 	@Override
 	public void beforeDelete(List<File> arg0, ProgressListener arg1) {
 
-		// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDelete(List<File> arg0, ProgressListener arg1)");
+		System.out.println("AdxCompUninstallerListener.beforeDelete(List<File> arg0, ProgressListener arg1)");
+
+		beforeDeletion();
+
+	}
+
+	@Override
+	public void beforeDelete(File arg0) {
+
+		System.out.println("AdxCompUninstallerListener.beforeDelete(File arg0:" + arg0 + ")");
 
 	}
 
 	private void beforeDeletion() {
 		try {
 
+			this.specHelper = new SpecHelper(this.resources);
+			try {
+				this.specHelper.readSpec(SPEC_FILE_NAME);
+				// this.specHelper.readSpec("moduleName");
+				// this.specHelper.readSpec("moduleFamily");
+				// this.specHelper.readSpec("moduleType");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			System.out.println("AdxCompUninstallerListener.beforeDeletion().");
+
+			// IXMLElement elemSpec = this.specHelper.getSpec(); // AdxCompSpec.xml
+
 			// Load the defined adx module to be deleted.
 			InputStream in = getClass().getResourceAsStream("/" + SPEC_FILE_NAME);
+			// InputStream in = getClass().getResourceAsStream("/" + SPEC_FILE_NAME);
+
+			// System.out.println("AdxCompUninstallerListener.beforeDeletion(). " + moduleName + ".");
+
+			
 			if (in == null) { // No actions, nothing todo.
+				System.out.println("AdxCompUninstallerListener.beforeDeletion(). " + SPEC_FILE_NAME + " not found.");
 				return;
 			}
 
@@ -115,7 +146,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, this.installData);
 			String adxAdminPath = adxCompHelper.getAdxAdminPath();
 			if (adxAdminPath == null || "".equals(adxAdminPath)) {
-				// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion OK => AdxAdmin not found.");
+				System.out.println("AdxCompUninstallerListener.beforeDeletion OK => AdxAdmin not found.");
 				return;
 			}
 
@@ -126,16 +157,16 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
 
 			java.io.File fileAdxinstalls = adxCompHelper.getAdxInstallFile(dirAdxDir);
-			// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  Reading XML file fileAdxinstalls: "
-			//		+ fileAdxinstalls.getAbsolutePath());
+			System.out.println("AdxCompUninstallerListener.beforeDeletion Reading XML file fileAdxinstalls: "
+					+ fileAdxinstalls.getAbsolutePath());
 
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document adxInstallXmlDoc = null;
 
 			if (!fileAdxinstalls.exists()) {
-				// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  " + fileAdxinstalls.getAbsolutePath()
-				//		+ " doesn't exist.");
+				System.out.println("AdxCompUninstallerListener.beforeDeletion " + fileAdxinstalls.getAbsolutePath()
+						+ " doesn't exist.");
 				return;
 			} else {
 				adxInstallXmlDoc = dBuilder.parse(fileAdxinstalls);
@@ -153,10 +184,13 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 			// module non trouvé :(
 			if (reportModule == null) {
-				// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion  OK => module " + moduleName + "/"
-				//		+ moduleFamily + " not in " + fileAdxinstalls.getAbsolutePath());
+				System.out.println("AdxCompUninstallerListener.beforeDeletion OK =>  module " + moduleName + "/"
+						+ moduleFamily + " not in " + fileAdxinstalls.getAbsolutePath());
 				return;
 			}
+
+			System.out.println("AdxCompUninstallerListener.beforeDeletion OK =>  module " + moduleName + "/"
+					+ moduleFamily + "/" + moduleFamily + " in " + fileAdxinstalls.getAbsolutePath());
 
 			cleanAndSave(fileAdxinstalls, adxInstallXmlDoc, moduleName, moduleFamily, reportModule);
 

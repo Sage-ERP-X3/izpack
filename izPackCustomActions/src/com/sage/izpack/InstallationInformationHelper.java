@@ -112,15 +112,14 @@ public final class InstallationInformationHelper {
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
 					// if (key == "component.node.name") {
-					if (key == "app-version" || key == "APP_VER") {
+					if ((String)key == "app-version" || (String)key == "APP_VER") {
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE,
-								"InstallationInformationHelper Skip variable : " + key + ": " + variables.get(key));						
-					}
-					else {
-					installData.setVariable((String) key, (String) variables.get(key));
-					logger.log(Level.FINE,
-							"InstallationInformationHelper Set variable : " + key + ": " + variables.get(key));
+								"InstallationInformationHelper Skip variable : " + key + ": " + variables.get(key));
+					} else {
+						installData.setVariable((String) key, (String) variables.get(key));
+						logger.log(Level.FINE,
+								"InstallationInformationHelper  Set variable " + key + ": " + variables.get(key));
 					}
 				}
 			} catch (Exception e) {
@@ -208,17 +207,17 @@ public final class InstallationInformationHelper {
 			try {
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
-					
-					if (key == "app-version") {
+
+					if ((String)key == "app-version" || (String)key == "APP_VER") {
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE,
-								"InstallationInformationHelper.loadLegacyInstallationInformation  Skip variable : " + key + ": " + variables.get(key));						
-					}
-					else {
-											installData.setVariable((String) key, (String) variables.get(key));
-					logger.log(Level.FINE,
-							"InstallationInformationHelper.loadLegacyInstallationInformation  Set Legacy variable : "
-									+ key + ": " + variables.get(key));
+								"InstallationInformationHelper.loadLegacyInstallationInformation  Skip variable : "
+										+ key + ": " + variables.get(key));
+					} else {
+						installData.setVariable((String) key, (String) variables.get(key));
+						logger.log(Level.FINE,
+								"InstallationInformationHelper.loadLegacyInstallationInformation  Set Legacy variable : "
+										+ key + ": " + variables.get(key));
 					}
 				}
 

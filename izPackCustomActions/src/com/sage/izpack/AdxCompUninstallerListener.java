@@ -3,27 +3,16 @@ package com.sage.izpack;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.izforge.izpack.api.adaptator.IXMLElement;
-import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.event.AbstractUninstallerListener;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.IzPackException;
@@ -31,13 +20,10 @@ import com.izforge.izpack.api.handler.AbstractUIHandler;
 import com.izforge.izpack.api.handler.Prompt;
 import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
-import com.izforge.izpack.uninstaller.event.*;
-import com.izforge.izpack.util.CleanupClient;
 import com.izforge.izpack.util.helper.SpecHelper;
 import com.izforge.izpack.core.handler.PromptUIHandler;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
-import com.izforge.izpack.installer.data.UninstallData;
 
 /*
  * @author Franck DEPOORTERE
@@ -125,16 +111,18 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			// IXMLElement elemSpec = this.specHelper.getSpec(); // AdxCompSpec.xml
 
 			// Load the defined adx module to be deleted.
-			InputStream in = getClass().getResourceAsStream("/" + SPEC_FILE_NAME);
+			// InputStream in = getClass().getResourceAsStream("/" + SPEC_FILE_NAME);
+			InputStream in = this.specHelper.getResource(SPEC_FILE_NAME);
 			// InputStream in = getClass().getResourceAsStream("/" + SPEC_FILE_NAME);
 
-			// System.out.println("AdxCompUninstallerListener.beforeDeletion(). " + moduleName + ".");
+			// System.out.println("AdxCompUninstallerListener.beforeDeletion(). " +
+			// moduleName + ".");
 
-			
 			if (in == null) { // No actions, nothing todo.
 				System.out.println("AdxCompUninstallerListener.beforeDeletion(). " + SPEC_FILE_NAME + " not found.");
 				return;
 			}
+			System.out.println("AdxCompUninstallerListener.beforeDeletion(). " + SPEC_FILE_NAME + " inputstream.");
 
 			// get file adxinstalls
 
@@ -170,15 +158,27 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 				return;
 			} else {
 				adxInstallXmlDoc = dBuilder.parse(fileAdxinstalls);
+				System.out.println("AdxCompUninstallerListener.beforeDeletion FileAdxinstalls: "
+						+ fileAdxinstalls.getAbsolutePath() + " read.");
 			}
 
 			// TODO : FRDEPO
 			// XMLHelper.cleanEmptyTextNodes((Node)xdoc);
 
+			System.out.println("AdxCompUninstallerListener.beforeDeletion  Parsing 'in': " + in);
 			Document elemSpecDoc = dBuilder.parse(in);
-			Element moduleSpec = (Element) elemSpecDoc.getDocumentElement().getElementsByTagName("module").item(0);
+			System.out.println("AdxCompUninstallerListener.beforeDeletion  'in' parsed. elemSpecDoc: " + elemSpecDoc);
+
+			System.out.println("AdxCompUninstallerListener.beforeDeletion   elemSpecDoc.getDocumentElement() : + "
+					+ AdxCompHelper.asByteString(elemSpecDoc.getDocumentElement(), "utf-8"));
+
+			Element moduleSpec = AdxCompHelper.getElementByTag(elemSpecDoc, "module");
 			String moduleName = moduleSpec.getAttribute("name");
 			String moduleFamily = moduleSpec.getAttribute("family");
+
+			System.out.println("AdxCompUninstallerListener.beforeDeletion   moduleSpec 0: + "
+					+ AdxCompHelper.asByteString(moduleSpec, "utf-8") + "  moduleName found: " + moduleName
+					+ "   moduleFamily found: " + moduleFamily);
 
 			Element reportModule = getReportModule(adxInstallXmlDoc, moduleSpec, moduleName, moduleFamily);
 
@@ -190,7 +190,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			}
 
 			System.out.println("AdxCompUninstallerListener.beforeDeletion OK =>  module " + moduleName + "/"
-					+ moduleFamily + "/" + moduleFamily + " in " + fileAdxinstalls.getAbsolutePath());
+					+ moduleFamily + " in " + fileAdxinstalls.getAbsolutePath());
 
 			cleanAndSave(fileAdxinstalls, adxInstallXmlDoc, moduleName, moduleFamily, reportModule);
 
@@ -203,12 +203,8 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	}
 
 	private void cleanAndSave(java.io.File fileAdxinstalls, Document adxInstallXmlDoc, String moduleName,
-			String moduleFamily, Element reportModule)
-			throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
-		// Report module found
-		// logger.log(Level.FINE, "AdxCompUninstallerListener.beforeDeletion module " +
-		// moduleName + "/" + moduleFamily
-		// + " has been found in " + fileAdxinstalls.getAbsolutePath());
+			String moduleFamily, Element reportModule) throws TransformerFactoryConfigurationError,
+			TransformerConfigurationException, TransformerException, ParserConfigurationException {
 
 		NodeList lstChilds = reportModule.getElementsByTagName("*");
 		for (int i = 0; i < lstChilds.getLength(); i++) {
@@ -225,11 +221,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 					// String notidleMsg = helper.getCustomString("notidle", false);
 					String notidleMsg = "notidle";
 					String friendlyMsg = errorMsg + ": module not idle (Status: " + modstatus + ") " + notidleMsg;
-					// logger.log(Level.SEVERE, "AdxCompUninstallerListener.beforeDeletion " +
-					// friendlyMsg);
-
 					GetPromptUIHandler().emitError(errorMsg, friendlyMsg);
-
 					System.exit(1);
 				}
 			}
@@ -237,7 +229,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 		reportModule.getParentNode().removeChild(reportModule);
 
-		saveXml(fileAdxinstalls, adxInstallXmlDoc);
+		AdxCompHelper.saveXml(fileAdxinstalls, adxInstallXmlDoc, AdxCompHelper.getTransformer(null));
 	}
 
 	private Element getReportModule(Document adxInstallXmlDoc, Element moduleSpec, String moduleName,
@@ -255,21 +247,6 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			}
 		}
 		return reportModule;
-	}
-
-	private void saveXml(java.io.File fileAdxinstalls, Document adxInstallXmlDoc)
-			throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
-		// write the content into xml file
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		DOMSource source = new DOMSource(adxInstallXmlDoc);
-		StreamResult result = new StreamResult(fileAdxinstalls);
-
-		// Output to console for testing
-		// StreamResult result = new StreamResult(System.out);
-		transformer.transform(source, result);
 	}
 
 	@Override

@@ -5,20 +5,41 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import com.coi.tools.os.win.MSWinConstants;
+import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.util.OsVersion;
 
 /**
-*
-* @author Franck DEPOORTERE
-*/
+ *
+ * @author Franck DEPOORTERE
+ */
 public class AdxCompHelper {
-	
+
 	private static final Logger logger = Logger.getLogger(AdxCompHelper.class.getName());
 
 	/**
@@ -37,12 +58,10 @@ public class AdxCompHelper {
 	private com.izforge.izpack.api.data.InstallData installData;
 	private RegistryHandler registryHandler;
 
-	
 	public AdxCompHelper(RegistryHandler registryHandler, com.izforge.izpack.api.data.InstallData installData) {
 		this.registryHandler = registryHandler;
 		this.installData = installData;
 	}
-
 
 	/**
 	 * 
@@ -61,7 +80,6 @@ public class AdxCompHelper {
 		return new java.io.File(adxInstallBuilder.toString());
 	}
 
-	
 	/*
 	 * we need to find adxadmin path
 	 */
@@ -70,18 +88,17 @@ public class AdxCompHelper {
 		String strAdxAdminPath = "";
 
 		if (this.installData != null) {
-		logger.log(Level.FINE,
-				"AdxCompHelper  Init registry installData Locale: " + this.installData.getLocaleISO2());
-		logger.log(Level.FINE,
-				"AdxCompHelper  Init registry getInstallPath: " + this.installData.getInstallPath());
+			logger.log(Level.FINE,
+					"AdxCompHelper  Init registry installData Locale: " + this.installData.getLocaleISO2());
+			logger.log(Level.FINE, "AdxCompHelper  Init registry getInstallPath: " + this.installData.getInstallPath());
 		}
-		
+
 		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler);
 		if (this.registryHandler != null && rh != null) {
 
 			boolean adxAdminRegistered = rh.adxadminProductRegistered();
-			logger.log(Level.FINE, "AdxCompHelper  Init RegistryHandlerX3. adxadminProductRegistered: "
-					+ adxAdminRegistered);
+			logger.log(Level.FINE,
+					"AdxCompHelper  Init RegistryHandlerX3. adxadminProductRegistered: " + adxAdminRegistered);
 
 			// Test adxadmin is already installed. Read registry
 			// String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
@@ -106,8 +123,7 @@ public class AdxCompHelper {
 				// fetch ADXDIR path
 				strAdxAdminPath = this.registryHandler.getValue(keyName, "ADXDIR").getStringData();
 
-				logger.log(Level.FINE,
-						"AdxCompHelper  ADXDIR path: " + strAdxAdminPath + "  Key: " + keyName);
+				logger.log(Level.FINE, "AdxCompHelper  ADXDIR path: " + strAdxAdminPath + "  Key: " + keyName);
 
 				// free RegistryHandler
 				this.registryHandler.setRoot(oldVal);
@@ -120,7 +136,8 @@ public class AdxCompHelper {
 				// throw new
 				// Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages").getString("adxadminNotRegistered"));
 				throw new Exception(ResourcesHelper.getCustomPropString("adxadminNotRegistered"));
-				// throw new Exception("You must install an adxadmin administration runtime first. Exiting now.");
+				// throw new Exception("You must install an adxadmin administration runtime
+				// first. Exiting now.");
 			}
 
 		} else {
@@ -138,8 +155,8 @@ public class AdxCompHelper {
 					if (!adxadmFile.exists()) {
 						// throw new Exception(langpack.getString("adxadminNotRegistered"));
 						throw new Exception(ResourcesHelper.getCustomPropString("adxadminNotRegistered"));
-								// ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
-								//.getString("adxadminNotRegistered"));
+						// ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
+						// .getString("adxadminNotRegistered"));
 					}
 				}
 
@@ -151,4 +168,79 @@ public class AdxCompHelper {
 		}
 		return strAdxAdminPath;
 	}
+
+	public static String asByteString(Element elementdoc, String encoding) throws TransformerException {
+
+		Transformer transformer =  getTransformer(null);		
+		StringWriter writer = new StringWriter();
+		Result result = new StreamResult(writer);
+		DOMSource source = new DOMSource(elementdoc);
+		transformer.transform(source, result);
+		return writer.getBuffer().toString();
+	}
+
+	public static Element getElementByTag(Document elemSpecDoc, String moduleName) throws XPathExpressionException {
+
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		Element moduleSpec = (Element) xPath.compile("/module").evaluate(elemSpecDoc, XPathConstants.NODE);
+		
+		return moduleSpec;
+	}
+
+	
+	/*
+	TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	transformerFactory.setAttribute("indent-number", 4);
+	Transformer transformer = transformerFactory.newTransformer();
+	transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+	transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+	transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+*/
+
+	// Transformer transformer = TransformerFactory.newInstance().newTransformer();
+	// transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	// transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+	// transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+
+	public static Transformer getTransformer(String encoding)
+			throws TransformerFactoryConfigurationError, TransformerConfigurationException {
+		if (encoding == null)
+			encoding = "UTF-8";
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		transformerFactory.setAttribute("indent-number", 2);
+		Transformer transformer = transformerFactory.newTransformer();
+		// transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+		
+		return transformer;
+	}
+
+
+	public static void saveXml(java.io.File fileAdxinstalls, Document adxInstallXmlDoc, Transformer transformer)
+			throws TransformerException, ParserConfigurationException {
+		// It's ok normally, the module is added, recreate the XML
+
+		// write the content into xml filed
+		DOMSource source = new DOMSource(adxInstallXmlDoc);
+		StreamResult result = new StreamResult(fileAdxinstalls);
+		transformer.transform(source, result);
+	}
+
+	/*
+	private void saveXml(java.io.File fileAdxinstalls, Document adxInstallXmlDoc)
+			throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+		// write the content into xml file
+		Transformer transformer = AdxCompHelper.getTransformer(null);
+		DOMSource source = new DOMSource(adxInstallXmlDoc);
+		StreamResult result = new StreamResult(fileAdxinstalls);
+
+		// Output to console for testing
+		transformer.transform(source, result);
+	}
+	*/
+
+
 }

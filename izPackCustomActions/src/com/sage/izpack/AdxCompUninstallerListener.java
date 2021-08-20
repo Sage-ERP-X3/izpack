@@ -45,14 +45,14 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	private Messages messages;
 	private SpecHelper specHelper = null;
 
-	public AdxCompUninstallerListener(RegistryDefaultHandler handler, Resources resources, Messages messages) {
+	public AdxCompUninstallerListener(RegistryDefaultHandler handler, Resources resources, Messages messages, Prompt prompt) {
 		// InstallData installData,
 
 		super();
 
 		// this.installData = installData;
 		this.registryHandler = handler.getInstance();
-		// this.prompt = prompt;
+		this.prompt = prompt;
 		this.resources = resources;
 		this.messages = messages;
 	}

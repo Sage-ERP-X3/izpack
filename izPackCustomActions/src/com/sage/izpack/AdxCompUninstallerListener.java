@@ -109,9 +109,10 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			ObjectInputStream objIn = new ObjectInputStream(in);
 
 			String obj = (String) objIn.readObject();
-			System.out.println("AdxCompUninstallerListener.beforeDeletion(). obj: " + obj + " type: " + obj.getClass().getTypeName());
-			
-			Element elemSpec = AdxCompHelper.asXml(obj);
+			System.out.println("AdxCompUninstallerListener.beforeDeletion(). obj: " + obj + " type: "
+					+ obj.getClass().getTypeName());
+
+			Element elemSpecDoc = AdxCompHelper.asXml(obj);
 			objIn.close();
 			in.close();
 
@@ -121,7 +122,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			// IXMLElement elemSpec = this.specHelper.getSpec(); // AdxCompSpec.xml
 
 			// if (in == null) { // No actions, nothing todo.
-			if (elemSpec == null) {
+			if (elemSpecDoc == null) {
 				System.out.println("AdxCompUninstallerListener.beforeDeletion(). " + SPEC_FILE_NAME + " not found.");
 				return;
 			}
@@ -131,7 +132,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			// AdxCompHelper.asByteString((Element)this.specHelper.getSpec().getElement(),
 			// null));
 			System.out.println("AdxCompUninstallerListener.beforeDeletion(). " + SPEC_FILE_NAME + " : "
-					+ AdxCompHelper.asString(elemSpec, null));
+					+ AdxCompHelper.asString(elemSpecDoc, null));
 
 			// get file adxinstalls
 
@@ -171,19 +172,6 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 						+ fileAdxinstalls.getAbsolutePath() + " read.");
 			}
 
-			// TODO : FRDEPO
-			// XMLHelper.cleanEmptyTextNodes((Node)xdoc);
-
-			// System.out.println("AdxCompUninstallerListener.beforeDeletion Parsing 'in': "
-			// + in);
-			// Document elemSpecDoc = dBuilder.parse(in);
-			Element elemSpecDoc = (Element) elemSpec;
-			System.out.println("AdxCompUninstallerListener.beforeDeletion  'in' parsed. elemSpecDoc: " + elemSpecDoc);
-
-			System.out.println("AdxCompUninstallerListener.beforeDeletion   elemSpecDoc.getDocumentElement() : + "
-					+ AdxCompHelper.asString(elemSpecDoc, "utf-8"));
-
-			// Element moduleSpec = AdxCompHelper.getElementByTag(elemSpecDoc, "module");
 			String moduleName = elemSpecDoc.getAttribute("name");
 			String moduleFamily = elemSpecDoc.getAttribute("family");
 
@@ -195,13 +183,13 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 			// module non trouvé :(
 			if (reportModule == null) {
-				System.out.println("AdxCompUninstallerListener.beforeDeletion OK =>  module " + moduleName + "/"
-						+ moduleFamily + " not in " + fileAdxinstalls.getAbsolutePath());
+				System.out.println("AdxCompUninstallerListener.beforeDeletion.  module " + moduleName + "/"
+						+ moduleFamily + " not in " + fileAdxinstalls.getAbsolutePath() + ". Check finished.");
 				return;
 			}
 
-			System.out.println("AdxCompUninstallerListener.beforeDeletion OK =>  module " + moduleName + "/"
-					+ moduleFamily + " in " + fileAdxinstalls.getAbsolutePath());
+			System.out.println("AdxCompUninstallerListener.beforeDeletion module " + moduleName + "/"
+					+ moduleFamily + " found in " + fileAdxinstalls.getAbsolutePath()+ " Remove XML and document." );
 
 			cleanAndSave(fileAdxinstalls, adxInstallXmlDoc, moduleName, moduleFamily, reportModule);
 

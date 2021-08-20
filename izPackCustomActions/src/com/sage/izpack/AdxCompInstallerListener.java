@@ -166,15 +166,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  saving XML xdoc:"
 					+ adxInstallXmlDoc.getDocumentElement().getNodeName());
-			/*
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			transformerFactory.setAttribute("indent-number", 4);
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-*/
+
 			Transformer transformer = AdxCompHelper.getTransformer(null);
 			AdxCompHelper.saveXml(fileAdxinstalls, adxInstallXmlDoc, transformer);
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  XML doc saved");
@@ -201,39 +193,40 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 		try {
 
-			logger.log(Level.FINE, "AdxCompInstallerListener  Add data " + SPEC_FILE_NAME + "2: " + module);
-			this.uninstallData.addAdditionalData("" + SPEC_FILE_NAME, asByteArray(module, "utf-8"));
-			this.uninstallData.addAdditionalData("3" + SPEC_FILE_NAME, module);
+			logger.log(Level.FINE, "AdxCompInstallerListener  Add data " + SPEC_FILE_NAME + ": " + module);
 			
+			// specHelper.setSpec((IXMLElement) module);
 			
+			this.uninstallData.addAdditionalData("1" + SPEC_FILE_NAME, AdxCompHelper.asByteArray(module, "utf-8"));
+			// this.uninstallData.addAdditionalData("3" + SPEC_FILE_NAME, module);			
 			
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document xdoc = dBuilder.newDocument();
+			// DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			// DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			// Document xdoc = dBuilder.newDocument();
 			// Properties DOM
-			xdoc.setXmlVersion("1.0");
-			xdoc.setXmlStandalone(true);
-			Node newnode = xdoc.importNode(module, true);
-			xdoc.appendChild(newnode);
-			this.uninstallData.addAdditionalData("4" + SPEC_FILE_NAME, xdoc);
+			// xdoc.setXmlVersion("1.0");
+			// xdoc.setXmlStandalone(true);
+			// Node newnode = xdoc.importNode(module, true);
+			// xdoc.appendChild(newnode);
+			// this.uninstallData.addAdditionalData("4" + SPEC_FILE_NAME, xdoc);
 
-			this.uninstallData.addAdditionalData("5" + SPEC_FILE_NAME, encode(xdoc));
+			// this.uninstallData.addAdditionalData("5" + SPEC_FILE_NAME, encode(xdoc));
 
-			this.uninstallData.addAdditionalData("6" + SPEC_FILE_NAME, AdxCompHelper.asByteString(module, "utf-8"));
+			this.uninstallData.addAdditionalData("" + SPEC_FILE_NAME, AdxCompHelper.asString(module, "utf-8"));
 
 			
-			String fileName = adxCompHelper.getAdxAdminPath() + File.separator + "tmp" + File.separator
-					+ SPEC_FILE_NAME;
-			java.io.File file = new java.io.File(fileName);
-			saveElementToFile(module, file, transformer);
+			//String fileName = adxCompHelper.getAdxAdminPath() + File.separator + "tmp" + File.separator
+			// 		+ SPEC_FILE_NAME;
+			// java.io.File file = new java.io.File(fileName);
+			// saveElementToFile(module, file, transformer);
 
-			logger.log(Level.FINE, "AdxCompInstallerListener Add file " + fileName);
+			// logger.log(Level.FINE, "AdxCompInstallerListener Add file " + fileName);
 			// this.uninstallData.addFile(fileName, false);
 
-			this.uninstallData.addUninstallScript(fileName);
+			// this.uninstallData.addUninstallScript(fileName);
 
-			logger.log(Level.FINE, "AdxCompInstallerListener  Add file addBuildResourceToUninstallerData " + fileName);
-			addBuildResourceToUninstallerData("7"+SPEC_FILE_NAME, file);
+			// logger.log(Level.FINE, "AdxCompInstallerListener  Add file addBuildResourceToUninstallerData " + fileName);
+			// addBuildResourceToUninstallerData("7"+SPEC_FILE_NAME, file);
 
 			// file.deleteOnExit();
 			
@@ -242,7 +235,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		}
 	}
 
-	
+	/*
 	 private byte[] encode(Document obj)
 	    {
 	        byte[] bytes = null;
@@ -262,7 +255,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	        }
 	        return bytes;
 	    }
-
+*/
 	
 	private void addBuildResourceToUninstallerData(String dataName, File buildFile) throws IOException {
 		byte[] content;
@@ -297,18 +290,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		transformer.transform(source, result);
 	}
 
-	private static byte[] asByteArray(Element elementdoc, String encoding) throws TransformerException {
-		Transformer transformer = TransformerFactory.newInstance().newTransformer();
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-
-		StringWriter writer = new StringWriter();
-		Result result = new StreamResult(writer);
-		DOMSource source = new DOMSource(elementdoc);
-		transformer.transform(source, result);
-		return writer.getBuffer().toString().getBytes();
-	}
 
 	
 

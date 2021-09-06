@@ -1,4 +1,5 @@
-package com.sage.izpack;
+package com.izforge.izpack;
+// package com.sage.izpack;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,7 +17,7 @@ import com.izforge.izpack.util.OsVersion;
 public class OsConstraint   implements java.io.Serializable {
 	   //~ Static variables/initializers 
 
-	private static final Logger logger = Logger.getLogger(InstallationInformationHelper.class.getName());
+	private static final Logger logger = Logger.getLogger(OsConstraint.class.getName());
 
     /**
      *

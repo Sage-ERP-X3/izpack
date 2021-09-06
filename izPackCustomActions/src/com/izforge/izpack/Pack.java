@@ -1,4 +1,5 @@
-package com.sage.izpack;
+package com.izforge.izpack;
+// package com.sage.izpack;
 
 /*
  * Former Pack class, from IzPack 4.3, legacy version

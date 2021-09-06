@@ -144,7 +144,8 @@ public final class InstallationInformationHelper {
 	 */
 	private static void loadLegacyInstallationInformation(com.izforge.izpack.api.data.InstallData installData) {
 
-		Map<String, com.sage.izpack.Pack> readPacks = new HashMap<String, com.sage.izpack.Pack>();
+		// Map<String, com.sage.izpack.Pack> readPacks = new HashMap<String, com.sage.izpack.Pack>();
+		Map<String, com.izforge.izpack.Pack> readPacks = new HashMap<String, com.izforge.izpack.Pack>();
 
 		ObjectInputStream oin = null;
 		File installInfo = new File(installData.getInstallPath(), InstallData.INSTALLATION_INFORMATION);
@@ -163,12 +164,12 @@ public final class InstallationInformationHelper {
 				return;
 			}
 
-			List<com.sage.izpack.Pack> packsinstalled;
+			List<com.izforge.izpack.Pack> packsinstalled;
 			ArrayList<Pack> packLists = new ArrayList<Pack>();
 			try {
-				packsinstalled = (List<com.sage.izpack.Pack>) oin.readObject();
+				packsinstalled = (List<com.izforge.izpack.Pack>) oin.readObject();
 
-				for (com.sage.izpack.Pack installedpack : packsinstalled) {
+				for (com.izforge.izpack.Pack installedpack : packsinstalled) {
 					readPacks.put(installedpack.name, installedpack);
 					packLists.add(new Pack(installedpack.name, installedpack.id, installedpack.description, null,
 							installedpack.dependencies, installedpack.required, installedpack.preselected,

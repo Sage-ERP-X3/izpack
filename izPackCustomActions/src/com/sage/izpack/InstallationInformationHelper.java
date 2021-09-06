@@ -24,7 +24,7 @@ public final class InstallationInformationHelper {
 
 	private static final Logger logger = Logger.getLogger(InstallationInformationHelper.class.getName());
 
-	public static void readInformation(com.izforge.izpack.api.data.InstallData installData) {
+	public static boolean readInformation(com.izforge.izpack.api.data.InstallData installData) {
 
 		logger.log(Level.FINE, "InstallationInformationHelper Reading file " + InstallData.INSTALLATION_INFORMATION);
 
@@ -74,6 +74,115 @@ public final class InstallationInformationHelper {
 
 		logger.log(Level.FINE, "File " + InstallData.INSTALLATION_INFORMATION + " read.");
 
+		return informationloaded;
+	}
+
+	static boolean isIncompatibleInstallation(String installPath, boolean isReadInstallationInformation) {
+
+		boolean result = false;
+
+		if (isReadInstallationInformation) {
+
+			ObjectInputStream oin = null;
+			File installInfo = new File(installPath, InstallData.INSTALLATION_INFORMATION);
+			if (installInfo.exists()) {
+				FileInputStream fin = null;
+				List<Pack> packsinstalled = null;
+				try {
+					fin = new FileInputStream(installInfo);
+					oin = new ObjectInputStream(fin);
+
+					packsinstalled = (List<Pack>) oin.readObject();
+
+					for (Pack installedpack : packsinstalled) {
+						logger.log(Level.FINE, "InstallationInformationHelper.isIncompatibleInstallation pack "
+								+ installedpack.getName() + "");
+
+					}
+					logger.log(Level.FINE, "InstallationInformationHelper.isIncompatibleInstallation  Found "
+							+ packsinstalled.size() + " installed packs");
+				} catch (Exception e) {
+					result = true;
+					logger.warning(
+							"InstallationInformationHelper.isIncompatibleInstallation  Could not read Pack installation information: "
+									+ e.getMessage());
+					// e.printStackTrace();
+				}
+
+				try {
+					if (oin != null) {
+						Properties variables = (Properties) oin.readObject();
+						for (Object key : variables.keySet()) {
+							logger.log(Level.FINE,
+									"InstallationInformationHelper.isIncompatibleInstallation  Read variable " + key
+											+ ": " + variables.get(key));
+						}
+					}
+				} catch (Exception e) {
+					result = true;
+					logger.warning(
+							"InstallationInformationHelper.isIncompatibleInstallation   Could not read Properties installation information: "
+									+ e.getMessage());
+				}
+
+				// Previous version of izPack 4.3
+				if (result == false) {
+
+					try {
+						oin = new ObjectInputStream(fin);
+						List<com.izforge.izpack.Pack> packsinstalled2 = (List<com.izforge.izpack.Pack>) oin
+								.readObject();
+
+						for (com.izforge.izpack.Pack installedpack : packsinstalled2) {
+							logger.log(Level.FINE,
+									"InstallationInformationHelper.isIncompatibleInstallation - installedpack: "
+											+ installedpack.name);
+						}
+						logger.log(Level.FINE,
+								"InstallationInformationHelper.isIncompatibleInstallation - Found Legacy "
+										+ packsinstalled.size() + " installed packs");
+
+					} catch (Exception e) {
+						logger.warning(
+								"InstallationInformationHelper.isIncompatibleInstallation  Could not read Legacy 'Pack' installation information: "
+										+ e.getMessage());
+						e.printStackTrace();
+					} finally {
+
+					}
+
+					try {
+						if (oin != null) {
+							Properties variables = (Properties) oin.readObject();
+							result = false;
+							for (Object key : variables.keySet()) {
+
+								logger.log(Level.FINE,
+										"InstallationInformationHelper.isIncompatibleInstallation  Legacy variable : "
+												+ key + ": " + variables.get(key));
+							}
+
+							logger.log(Level.FINE,
+									"InstallationInformationHelper.isIncompatibleInstallation  InstallationInformation legacy read");
+						}
+					} catch (Exception e) {
+						result = true;
+						logger.warning(
+								"InstallationInformationHelper.isIncompatibleInstallation  Could not read Legacy 'Properties' installation information: "
+										+ e.getMessage());
+					}
+				}
+			}
+
+			if (oin != null) {
+				try {
+					oin.close();
+				} catch (IOException ignored) {
+				}
+			}
+		}
+
+		return result;
 	}
 
 	private static Map<String, Pack> loadInstallationInformation(com.izforge.izpack.api.data.InstallData installData)
@@ -112,7 +221,7 @@ public final class InstallationInformationHelper {
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
 					// if (key == "component.node.name") {
-					if ((String)key == "app-version" || (String)key == "APP_VER") {
+					if ((String) key == "app-version" || (String) key == "APP_VER") {
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE,
 								"InstallationInformationHelper Skip variable : " + key + ": " + variables.get(key));
@@ -144,7 +253,8 @@ public final class InstallationInformationHelper {
 	 */
 	private static void loadLegacyInstallationInformation(com.izforge.izpack.api.data.InstallData installData) {
 
-		// Map<String, com.sage.izpack.Pack> readPacks = new HashMap<String, com.sage.izpack.Pack>();
+		// Map<String, com.sage.izpack.Pack> readPacks = new HashMap<String,
+		// com.sage.izpack.Pack>();
 		Map<String, com.izforge.izpack.Pack> readPacks = new HashMap<String, com.izforge.izpack.Pack>();
 
 		ObjectInputStream oin = null;
@@ -209,7 +319,7 @@ public final class InstallationInformationHelper {
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
 
-					if ((String)key == "app-version" || (String)key == "APP_VER") {
+					if ((String) key == "app-version" || (String) key == "APP_VER") {
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE,
 								"InstallationInformationHelper.loadLegacyInstallationInformation  Skip variable : "
@@ -284,7 +394,6 @@ public final class InstallationInformationHelper {
 		FileOutputStream fout = new FileOutputStream(installationInfo);
 		ObjectOutputStream oout = new ObjectOutputStream(fout);
 		oout.writeObject(selectedPacks);
-		// oout.writeObject(variables.getProperties());
 		oout.writeObject(variables.getProperties());
 		fout.close();
 

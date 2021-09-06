@@ -15,23 +15,42 @@ public class TargetNewConsolePanel extends TargetConsolePanel {
 
 	private static Logger logger = Logger.getLogger(TargetNewConsolePanel.class.getName());
 
-	
 	public TargetNewConsolePanel(PanelView<ConsolePanel> panel, InstallData installData, Prompt prompt) {
 		super(panel, installData, prompt);
 	}
 
+	@Override
+	public boolean run(InstallData installData, Properties properties) {
+		logger.log(Level.FINE, "TargetNewConsolePanel.run  properties: " + properties);
 
-    @Override
-    public boolean run(InstallData installData, Properties properties)
-    {
-    	logger.log(Level.FINE, "TargetNewConsolePanel.run  properties: " + properties);
-    	return super.run(installData, properties);
-    }
-    
-    @Override
-    public boolean run(InstallData installData, Console console)
-    {
-    	logger.log(Level.FINE, "TargetNewConsolePanel.run  console: " + console);
-    	return super.run(installData, console);
-    }
+		// return super.run(installData, properties);
+
+		boolean result = false;
+		String path = properties.getProperty(InstallData.INSTALL_PATH);
+		if (path == null || "".equals(path.trim())) {
+			System.err.println("Missing mandatory target path!");
+		} else if (InstallationInformationHelper.isIncompatibleInstallation(installData.getInstallPath(),
+				installData.getInfo().isReadInstallationInformation())) {
+
+			System.err.println("getIncompatibleInstallationMsg(installData)");
+
+		}
+		// else if (TargetPanelHelper.isIncompatibleInstallation(path,
+		// installData.getInfo().isReadInstallationInformation()))
+		// {
+		// System.err.println(getIncompatibleInstallationMsg(installData));
+		// }
+		else {
+			path = installData.getVariables().replace(path);
+			installData.setInstallPath(path);
+			result = true;
+		}
+		return result;
+	}
+
+	@Override
+	public boolean run(InstallData installData, Console console) {
+		logger.log(Level.FINE, "TargetNewConsolePanel.run  console: " + console);
+		return super.run(installData, console);
+	}
 }

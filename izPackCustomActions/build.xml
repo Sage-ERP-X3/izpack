@@ -185,6 +185,7 @@
         
         <build-installer-listener name="com.sage.izpack" 
         classpath-ext="${basedir}/lib/izpack-core-5.1.3.jar;${basedir}/lib/izpack-uninstaller-5.1.3.jar;${basedir}/lib/izpack-util-5.1.3.jar;${basedir}/lib/izpack-api-5.1.3.jar;${basedir}/lib/izpack-tools-5.1.3.jar;${basedir}/lib/izpack-event-5.1.3.jar;${basedir}/lib/izpack-installer-5.1.3.jar;${basedir}/lib/izpack-panel-5.1.3.jar;${basedir}/lib/izpack-gui-5.1.3.jar;${basedir}/lib/jline-2.12.1.jar">
+            <include name="AdxCompHelper.java"/>
             <include name="AdxCompInstallerListener.java"/>
             <include name="AdxCompUninstallerListener.java"/>
             <include name="CheckedHelloNewConsolePanel.java"/>
@@ -192,8 +193,14 @@
             <include name="CheckedHelloNewPanelAutomationHelper.java"/>
             <include name="CheckProductAlreadyInstalled.java"/>
             <include name="PacksNewPanel.java"/>
+            <include name="PacksNewPanelAutomationHelper.java"/>
+            <include name="PacksNewPanelValidator.java"/>           
             <include name="RegistryHandlerX3.java"/>
             <include name="RegistryInstallerNewListener.java"/>
+            <include name="TargetNewConsolePanel.java"/>
+            <include name="TargetNewPanel.java"/>
+            <include name="TargetNewPanelAutomationHelper.java"/>
+            <include name="TargetNewPanelValidator.java"/>
             <include name="UpdateListener.java"/>
             <include name="XMLHelper.java"/>
             <include name="PrintMessage.java"/>
@@ -201,6 +208,10 @@
             <include name="fra.xml"/>
             <include name="messages_en.properties"/>
             <include name="messages_fr.properties"/>
+            
+            <include name="Pack.java"/>
+            <include name="OsConstraint.java"/>
+
         </build-installer-listener>
     </target>
 

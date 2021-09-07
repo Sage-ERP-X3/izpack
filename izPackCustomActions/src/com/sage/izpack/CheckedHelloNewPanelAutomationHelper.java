@@ -29,10 +29,14 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
         String path = registryHelper.getInstallationPath();
 		if (path != null) {
 			installData.setVariable("TargetPanel.dir.windows", path);
-			logger.log(Level.FINE, "Set TargetPanel.dir.windows: " + path);
+			logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper Set TargetPanel.dir.windows: " + path);
 
 			installData.setVariable(InstallData.INSTALL_PATH, path);
-			logger.log(Level.FINE, "Set INSTALL_PATH", path);
+			logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper Set INSTALL_PATH", path);
+			
+			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+			logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper Set " + InstallData.MODIFY_INSTALLATION + ": true");
+
 		}
     }
 	

@@ -126,9 +126,10 @@ public final class InstallationInformationHelper {
 				}
 
 				// Previous version of izPack 4.3
-				if (result == false) {
+				if (result == true) {
 
 					try {
+						fin = new FileInputStream(installInfo);
 						oin = new ObjectInputStream(fin);
 						List<com.izforge.izpack.Pack> packsinstalled2 = (List<com.izforge.izpack.Pack>) oin
 								.readObject();
@@ -146,7 +147,7 @@ public final class InstallationInformationHelper {
 						logger.warning(
 								"InstallationInformationHelper.isIncompatibleInstallation  Could not read Legacy 'Pack' installation information: "
 										+ e.getMessage());
-						e.printStackTrace();
+						// e.printStackTrace();
 					} finally {
 
 					}
@@ -181,6 +182,7 @@ public final class InstallationInformationHelper {
 				}
 			}
 		}
+		logger.log(Level.FINE, "InstallationInformationHelper.isIncompatibleInstallation returns " + result + "");
 
 		return result;
 	}

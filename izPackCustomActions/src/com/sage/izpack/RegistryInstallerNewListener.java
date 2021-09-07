@@ -22,8 +22,8 @@ import com.izforge.izpack.util.Housekeeper;
 
 /*
  * 
-* @author Franck DEPOORTERE
-*/
+ * @author Franck DEPOORTERE
+ */
 public class RegistryInstallerNewListener extends com.izforge.izpack.event.RegistryInstallerListener {
 
 	private static Logger logger = Logger.getLogger(RegistryInstallerNewListener.class.getName());
@@ -65,7 +65,8 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 	 */
 	private void updateRegistry() {
 
-		Variables variables = getInstallData().getVariables();
+		InstallationInformationHelper.restoreNewVersion(getInstallData());
+		Variables variables = getInstallData().getVariables();		
 		String version = variables.get("APP_VER");
 		String appName = variables.get("APP_NAME");
 		// String keyName = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"

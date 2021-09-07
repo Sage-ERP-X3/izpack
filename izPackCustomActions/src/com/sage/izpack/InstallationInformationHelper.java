@@ -20,6 +20,10 @@ import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.exception.InstallerException;
 
+/*
+ * 
+ * @author Franck DEPOORTERE
+ */
 public final class InstallationInformationHelper {
 
 	private static final Logger logger = Logger.getLogger(InstallationInformationHelper.class.getName());
@@ -32,21 +36,12 @@ public final class InstallationInformationHelper {
 				+ " component.node.name : " + installData.getVariable("component.node.name"));
 
 		// Read .installationinformation
-		// If old version 4.3.8, ... ?
-
-		/*
-		 * PacksModel model = new PacksModel(installData); Map<String, Pack>
-		 * installedPacks = model.getInstalledPacks(); logger.info("Installed Packs : "
-		 * + installedPacks);
-		 * 
-		 * for (Entry<String, Pack> entry : installedPacks.entrySet()) { Pack pack =
-		 * entry.getValue(); logger.info("installedPacks: " + entry.getKey() +
-		 * " - required: " + pack.isRequired() + "  Preselected: " +
-		 * pack.isPreselected()); }
-		 */
 		Boolean informationloaded = false;
 		try {
 			logger.log(Level.FINE, "InstallationInformationHelper Loading installation information");
+			
+			saveNewAppVersion(installData);
+			
 			loadInstallationInformation(installData);
 			informationloaded = true;
 			logger.log(Level.FINE, "InstallationInformationHelper Installation information loaded");
@@ -56,6 +51,7 @@ public final class InstallationInformationHelper {
 			informationloaded = false;
 		}
 
+		// If old version 4.3.8, ... 
 		if (!informationloaded) {
 			logger.log(Level.FINE, "InstallationInformationHelper Loading legacy installation information");
 			try {
@@ -69,12 +65,48 @@ public final class InstallationInformationHelper {
 			}
 		}
 
+		restoreNewVersion(installData);
+		
+		
 		logger.log(Level.FINE, "After " + InstallData.INSTALLATION_INFORMATION + " component.node.name : "
 				+ installData.getVariable("component.node.name"));
 
 		logger.log(Level.FINE, "File " + InstallData.INSTALLATION_INFORMATION + " read.");
 
 		return informationloaded;
+	}
+
+	public static void restoreNewVersion(com.izforge.izpack.api.data.InstallData installData) {
+		String currentVersion = installData.getVariable("app-version");
+		String newCurrentVersion = installData.getVariable("app-version-new");
+		if (newCurrentVersion != null) {
+			logger.log(Level.FINE,
+					"InstallationInformationHelper Set current version 'app-version' ("+currentVersion+") from 'app-version-new' : " + currentVersion);							
+			installData.setVariable("app-version", newCurrentVersion);
+		}
+
+		String currentAPPVersion = installData.getVariable("APP_VER");
+		String newCurrentAPPVersion = installData.getVariable("APP_VER_NEW");
+		if (newCurrentAPPVersion != null) {
+			logger.log(Level.FINE,
+					"InstallationInformationHelper Set current version 'APP_VER' ("+currentAPPVersion+") from 'APP_VER_NEW' : " + currentAPPVersion);							
+			installData.setVariable("APP_VER", newCurrentAPPVersion);
+		}
+	}
+
+	private static void saveNewAppVersion(com.izforge.izpack.api.data.InstallData installData) {
+		String currentVersion = installData.getVariable("app-version");
+		if (currentVersion != null) {
+			installData.setVariable("app-version-new", currentVersion);
+			logger.log(Level.FINE,
+					"InstallationInformationHelper save current version 'app-version-new' : " + currentVersion);							
+		}
+		String currentAPPVER = installData.getVariable("APP_VER");
+		if (currentAPPVER != null) {
+			installData.setVariable("APP_VER_NEW", currentAPPVER);
+			logger.log(Level.FINE,
+					"InstallationInformationHelper save current version 'APP_VER_NEW' : " + currentAPPVER);
+		}
 	}
 
 	static boolean isIncompatibleInstallation(String installPath, boolean isReadInstallationInformation) {
@@ -200,9 +232,9 @@ public final class InstallationInformationHelper {
 			oin = new ObjectInputStream(fin);
 			// noinspection unchecked
 
-			List<Pack> packsinstalled = (List<Pack>) oin.readObject();
+			List<com.izforge.izpack.api.data.Pack> packsinstalled = (List<com.izforge.izpack.api.data.Pack>) oin.readObject();
 			try {
-				for (Pack installedpack : packsinstalled) {
+				for (com.izforge.izpack.api.data.Pack installedpack : packsinstalled) {
 					if (!readPacks.containsKey(installedpack.getName())) {
 						readPacks.put(installedpack.getName(), installedpack);
 						logger.log(Level.FINE,
@@ -215,15 +247,15 @@ public final class InstallationInformationHelper {
 				logger.log(Level.FINE,
 						"InstallationInformationHelper Found " + packsinstalled.size() + " installed packs");
 			} catch (Exception e) {
-				logger.warning("InstallationInformationHelper Could not read Pack installation information: "
+				logger.warning("InstallationInformationHelper Could not read Pack installation information in current izPack version: "
 						+ e.getMessage());
+				throw e;
 			}
 
 			try {
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
-					// if (key == "component.node.name") {
-					if ((String) key == "app-version" || (String) key == "APP_VER") {
+					if (((String) key) == "app-version" || ((String) key) == "APP_VER") {
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE,
 								"InstallationInformationHelper Skip variable : " + key + ": " + variables.get(key));

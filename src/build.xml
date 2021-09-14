@@ -333,7 +333,7 @@
                 <include name="com/izforge/izpack/util/VariableSubstitutor.class"/>
                 <include name="com/izforge/izpack/util/JarOutputStream.class"/>
                 <include name="com/izforge/izpack/util/FileUtil.class"/>
-                <!-- include name="com/izforge/izpack/util/sage/*.class"/-->
+                <include name="com/izforge/izpack/util/sage/*.class"/>
                 <include name="com/izforge/izpack/ant/*.class"/>
                 <include name="com/izforge/izpack/ant/langpacks/*.properties"/>
                 <include name="com/izforge/izpack/adaptator/*.xsl"/>
@@ -398,6 +398,7 @@
             <include name="com/izforge/izpack/installer/*.java"/>
             <include name="com/izforge/izpack/panels/NextMedia*.java"/>
             <include name="com/izforge/izpack/util/*.java"/>
+            <include name="com/izforge/izpack/util/sage/*.java"/>
             <include name="com/izforge/izpack/util/os/*.java"/>
             <include name="com/izforge/izpack/rules/*.java"/>
             <include name="com/izforge/izpack/uninstaller/SelfModifier*.java"/>

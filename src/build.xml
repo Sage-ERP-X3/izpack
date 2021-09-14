@@ -296,6 +296,7 @@
             <include name="com/izforge/izpack/compiler/*.java"/>
             <include name="com/izforge/izpack/compressor/*.java"/>
             <include name="com/izforge/izpack/ant/*.java"/>
+            <include name="com/izforge/izpack/util/sage/*.java"/>
             <include name="com/izforge/izpack/util/Debug.java"/>
             <include name="com/izforge/izpack/util/OsConstraint.java"/>
             <include name="com/izforge/izpack/util/JarOutputStream.java"/>
@@ -332,6 +333,7 @@
                 <include name="com/izforge/izpack/util/VariableSubstitutor.class"/>
                 <include name="com/izforge/izpack/util/JarOutputStream.class"/>
                 <include name="com/izforge/izpack/util/FileUtil.class"/>
+                <!-- include name="com/izforge/izpack/util/sage/*.class"/-->
                 <include name="com/izforge/izpack/ant/*.class"/>
                 <include name="com/izforge/izpack/ant/langpacks/*.properties"/>
                 <include name="com/izforge/izpack/adaptator/*.xsl"/>

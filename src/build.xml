@@ -749,6 +749,7 @@
             <include name="com/izforge/izpack/panels/ShortcutData.java"/>
             <include name="com/izforge/izpack/panels/ShortcutPanel*.java"/>
             <include name="com/izforge/izpack/util/xml/*.java"/>
+            <!-- include name="com/izforge/izpack/util/sage/*.java"/-->
         </build-panel>
         <build-panel name="UserInputPanel">
             <include name="com/izforge/izpack/panels/PasswordGroup.java"/>
@@ -771,6 +772,7 @@
             <include name="com/izforge/izpack/panels/RadioButtonUIElement.java"/>
             <include name="com/izforge/izpack/panels/PasswordUIElement.java"/>
         	<include name="com/izforge/izpack/panels/UserInputPanelConsoleHelper.java" />
+        	<include name="com/izforge/izpack/util/sage/CompilePrerequisitesControl.java" />
         </build-panel>
         <build-panel name="UserPathPanel">
             <include name="com/izforge/izpack/panels/UserPathInputPanel.java"/>

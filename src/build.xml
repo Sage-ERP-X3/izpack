@@ -750,7 +750,6 @@
             <include name="com/izforge/izpack/panels/ShortcutData.java"/>
             <include name="com/izforge/izpack/panels/ShortcutPanel*.java"/>
             <include name="com/izforge/izpack/util/xml/*.java"/>
-            <include name="com/izforge/izpack/util/sage/*.java"/>
         </build-panel>
         <build-panel name="UserInputPanel">
             <include name="com/izforge/izpack/panels/PasswordGroup.java"/>

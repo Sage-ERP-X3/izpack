@@ -28,6 +28,21 @@ public final class InstallationInformationHelper {
 
 	private static final Logger logger = Logger.getLogger(InstallationInformationHelper.class.getName());
 
+	
+	public static boolean hasAlreadyReadInformation(com.izforge.izpack.api.data.InstallData installData) {
+
+		String informationRead = installData.getVariable("information-read") ;
+		boolean result = false;
+		if (informationRead != null && informationRead.equalsIgnoreCase("true"))
+		{
+			result = true;
+		}
+				
+		logger.log(Level.FINE, "InstallationInformationHelper hasAlreadyReadInformation : " + result + " value: " + informationRead);
+		return result;
+	}
+	
+	
 	public static boolean readInformation(com.izforge.izpack.api.data.InstallData installData) {
 
 		logger.log(Level.FINE, "InstallationInformationHelper Reading file " + InstallData.INSTALLATION_INFORMATION);
@@ -265,6 +280,8 @@ public final class InstallationInformationHelper {
 								"InstallationInformationHelper  Set variable " + key + ": " + variables.get(key));
 					}
 				}
+				installData.setVariable("information-read", "true");
+
 			} catch (Exception e) {
 				logger.warning("InstallationInformationHelper Could not read Properties installation information: "
 						+ e.getMessage());

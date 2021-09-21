@@ -74,8 +74,14 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		// Update case : read .installationinformation
 		if (path != null && installData.getInfo().isReadInstallationInformation()) {
 
-			InstallationInformationHelper.readInformation(installData);
-
+			if (!InstallationInformationHelper.hasAlreadyReadInformation(this.installData)) {
+				InstallationInformationHelper.readInformation(installData);
+			} else {
+				logger.log(Level.FINE,
+						"CheckedHelloNewConsolePanel ReadInstallationInformation: "
+								+ this.installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
+								+ InstallationInformationHelper.hasAlreadyReadInformation(this.installData));
+			}
 		}
 	}
 
@@ -135,11 +141,12 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 			result = multipleInstall(installData);
 			if (result) {
 				// try {
-					// _registryHelper.updateUninstallName();
-					// registered = false;
-				//} catch (NativeLibException exception) {
-				// 	result = false;
-				//	logger.log(Level.SEVERE, "CheckedHelloNewConsolePanel " + exception.getMessage(), exception);
+				// _registryHelper.updateUninstallName();
+				// registered = false;
+				// } catch (NativeLibException exception) {
+				// result = false;
+				// logger.log(Level.SEVERE, "CheckedHelloNewConsolePanel " +
+				// exception.getMessage(), exception);
 				// }
 			}
 

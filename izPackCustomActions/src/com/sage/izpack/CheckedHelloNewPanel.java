@@ -51,7 +51,14 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		// Update case : read .installationinformation
 		if (path != null && installData.getInfo().isReadInstallationInformation()) {
 
-			InstallationInformationHelper.readInformation(installData);
+			if (!InstallationInformationHelper.hasAlreadyReadInformation(this.installData)) {
+				InstallationInformationHelper.readInformation(installData);
+			} else {
+				logger.log(Level.FINE,
+						"CheckedHelloNewPanel ReadInstallationInformation: "
+								+ this.installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
+								+ InstallationInformationHelper.hasAlreadyReadInformation(this.installData));
+			}
 
 		}
 	}

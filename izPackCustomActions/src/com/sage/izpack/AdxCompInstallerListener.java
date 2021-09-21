@@ -102,7 +102,13 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 		if (this.installData.getInfo().isReadInstallationInformation()) {
 
-			InstallationInformationHelper.readInformation(this.installData);
+			if (!InstallationInformationHelper.hasAlreadyReadInformation(this.installData))
+				InstallationInformationHelper.readInformation(this.installData);
+			else
+				logger.log(Level.FINE,
+						"AdxCompInstallerListener.beforePacks  ReadInstallationInformation: "
+								+ this.installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
+								+ InstallationInformationHelper.hasAlreadyReadInformation(this.installData));
 
 		} else {
 			logger.log(Level.FINE, "AdxCompInstallerListener.beforePacks  ReadInstallationInformation: "
@@ -148,7 +154,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			String version = moduleSpec.getFirstChildNamed("component." + moduleFamily.toLowerCase() + ".version")
 					.getContent();
 
-
 			boolean modifyinstallation = Boolean.valueOf(installData.getVariable(InstallData.MODIFY_INSTALLATION));
 
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  moduleName: " + moduleName + " moduleFamily: "
@@ -190,16 +195,15 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		// transformer.transform(source2, result2);
 		// idata.uninstallOutJar.closeEntry();
 
-
 		try {
 
 			logger.log(Level.FINE, "AdxCompInstallerListener  Add data " + SPEC_FILE_NAME + ": " + module);
-			
+
 			// specHelper.setSpec((IXMLElement) module);
-			
+
 			this.uninstallData.addAdditionalData("1" + SPEC_FILE_NAME, AdxCompHelper.asByteArray(module, "utf-8"));
-			// this.uninstallData.addAdditionalData("3" + SPEC_FILE_NAME, module);			
-			
+			// this.uninstallData.addAdditionalData("3" + SPEC_FILE_NAME, module);
+
 			// DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			// DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			// Document xdoc = dBuilder.newDocument();
@@ -214,9 +218,9 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 			this.uninstallData.addAdditionalData("" + SPEC_FILE_NAME, AdxCompHelper.asString(module, "utf-8"));
 
-			
-			//String fileName = adxCompHelper.getAdxAdminPath() + File.separator + "tmp" + File.separator
-			// 		+ SPEC_FILE_NAME;
+			// String fileName = adxCompHelper.getAdxAdminPath() + File.separator + "tmp" +
+			// File.separator
+			// + SPEC_FILE_NAME;
 			// java.io.File file = new java.io.File(fileName);
 			// saveElementToFile(module, file, transformer);
 
@@ -225,38 +229,27 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 			// this.uninstallData.addUninstallScript(fileName);
 
-			// logger.log(Level.FINE, "AdxCompInstallerListener  Add file addBuildResourceToUninstallerData " + fileName);
+			// logger.log(Level.FINE, "AdxCompInstallerListener Add file
+			// addBuildResourceToUninstallerData " + fileName);
 			// addBuildResourceToUninstallerData("7"+SPEC_FILE_NAME, file);
 
 			// file.deleteOnExit();
-			
+
 		} catch (TransformerException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/*
-	 private byte[] encode(Document obj)
-	    {
-	        byte[] bytes = null;
-	        try
-	        {
-	        	// Document vsNew = new Document(obj)
-	            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	                GZIPOutputStream out = new GZIPOutputStream(baos);
-	                XMLEncoder encoder = new XMLEncoder(out);
-	                encoder.writeObject(obj);
-	                encoder.close();
-	                bytes = baos.toByteArray();
-	        }
-	        catch (Exception e)
-	        {
-	        	logger.log(Level.FINE, "Exception caught while encoding/zipping ", e);
-	        }
-	        return bytes;
-	    }
-*/
-	
+	 * private byte[] encode(Document obj) { byte[] bytes = null; try { // Document
+	 * vsNew = new Document(obj) ByteArrayOutputStream baos = new
+	 * ByteArrayOutputStream(); GZIPOutputStream out = new GZIPOutputStream(baos);
+	 * XMLEncoder encoder = new XMLEncoder(out); encoder.writeObject(obj);
+	 * encoder.close(); bytes = baos.toByteArray(); } catch (Exception e) {
+	 * logger.log(Level.FINE, "Exception caught while encoding/zipping ", e); }
+	 * return bytes; }
+	 */
+
 	private void addBuildResourceToUninstallerData(String dataName, File buildFile) throws IOException {
 		byte[] content;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream((int) buildFile.length());
@@ -290,10 +283,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		transformer.transform(source, result);
 	}
 
-
-	
-
-	
 	// <module name="EDTSRV" family="REPORT" type="">
 	// <component.report.installstatus>update</component.report.installstatus>
 	// <component.report.path>c:\Sage\SafeX3\EDTV2\EDTSRVFRDEP</component.report.path>

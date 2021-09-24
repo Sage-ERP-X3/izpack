@@ -52,7 +52,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		if (path != null && installData.getInfo().isReadInstallationInformation()) {
 
 			if (!InstallationInformationHelper.hasAlreadyReadInformation(this.installData)) {
-				InstallationInformationHelper.readInformation(installData);
+				InstallationInformationHelper.readInformation(installData, resources);
 			} else {
 				logger.log(Level.FINE,
 						"CheckedHelloNewPanel ReadInstallationInformation: "

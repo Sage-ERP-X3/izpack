@@ -15,10 +15,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Properties;
 
+import com.izforge.izpack.api.data.DynamicVariable;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Pack;
+import com.izforge.izpack.api.data.Value;
 import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.exception.InstallerException;
+import com.izforge.izpack.api.resource.Resources;
+import com.izforge.izpack.api.rules.RulesEngine;
+import com.izforge.izpack.core.data.DefaultVariables;
 
 /*
  * 
@@ -41,7 +46,7 @@ public final class InstallationInformationHelper {
 		return result;
 	}
 
-	public static boolean readInformation(com.izforge.izpack.api.data.InstallData installData) {
+	public static boolean readInformation(com.izforge.izpack.api.data.InstallData installData, Resources resources) {
 
 		logger.log(Level.FINE, "InstallationInformationHelper Reading file " + InstallData.INSTALLATION_INFORMATION);
 
@@ -55,7 +60,7 @@ public final class InstallationInformationHelper {
 
 			saveNewAppVersion(installData);
 
-			loadInstallationInformation(installData);
+			loadInstallationInformation(installData, resources);
 			informationloaded = true;
 			logger.log(Level.FINE, "InstallationInformationHelper Installation information loaded");
 		} catch (Exception e) {
@@ -68,7 +73,7 @@ public final class InstallationInformationHelper {
 		if (!informationloaded) {
 			logger.log(Level.FINE, "InstallationInformationHelper Loading legacy installation information");
 			try {
-				loadLegacyInstallationInformation(installData);
+				loadLegacyInstallationInformation(installData, resources);
 				logger.log(Level.FINE, "InstallationInformationHelper Legacy installation information loaded");
 
 			} catch (Exception e) {
@@ -231,8 +236,8 @@ public final class InstallationInformationHelper {
 		return result;
 	}
 
-	private static Map<String, Pack> loadInstallationInformation(com.izforge.izpack.api.data.InstallData installData)
-			throws Exception {
+	private static Map<String, Pack> loadInstallationInformation(com.izforge.izpack.api.data.InstallData installData,
+			Resources resources) throws Exception {
 		Map<String, Pack> readPacks = new HashMap<String, Pack>();
 
 		// installation shall be modified
@@ -267,10 +272,18 @@ public final class InstallationInformationHelper {
 			}
 
 			try {
+				Variables envvariables = installData.getVariables();
+				List<DynamicVariable> dynamicVariables = loadDynamicVariables(resources);
+
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
-					if (((String) key).equals("app-version") || ((String) key).equals("APP_VER")
-							|| ((String) key).equals("app-version-new") || ((String) key).equals("APP_VER_NEW") ) {
+					
+					DynamicVariable dynVar = getDynamicVariable(dynamicVariables, (String)key);
+					
+					if ((dynVar != null && !dynVar.isCheckonce()) || 
+							envvariables.isBlockedVariableName((String) key) || envvariables.containsOverride((String) key)
+							|| ((String) key).equals("app-version") || ((String) key).equals("APP_VER")
+							|| ((String) key).equals("app-version-new") || ((String) key).equals("APP_VER_NEW")) {
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE,
 								"InstallationInformationHelper Skip variable : " + key + ": " + variables.get(key));
@@ -302,10 +315,9 @@ public final class InstallationInformationHelper {
 	/*
 	 * 
 	 */
-	private static void loadLegacyInstallationInformation(com.izforge.izpack.api.data.InstallData installData) {
+	private static void loadLegacyInstallationInformation(com.izforge.izpack.api.data.InstallData installData,
+			Resources resources) {
 
-		// Map<String, com.sage.izpack.Pack> readPacks = new HashMap<String,
-		// com.sage.izpack.Pack>();
 		Map<String, com.izforge.izpack.Pack> readPacks = new HashMap<String, com.izforge.izpack.Pack>();
 
 		ObjectInputStream oin = null;
@@ -367,10 +379,17 @@ public final class InstallationInformationHelper {
 			}
 
 			try {
+				Variables envvariables = installData.getVariables();
+
+				List<DynamicVariable> dynamicVariables = loadDynamicVariables(resources);
+
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
 
-					if (((String) key).equals("app-version") || ((String) key).equals("APP_VER")) {
+					DynamicVariable dynVariable = getDynamicVariable(dynamicVariables, (String) key);
+					if (((dynVariable != null && !dynVariable.isCheckonce())) || envvariables.isBlockedVariableName((String) key)
+							|| envvariables.containsOverride((String) key) || ((String) key).equals("app-version")
+							|| ((String) key).equals("APP_VER")) {
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE,
 								"InstallationInformationHelper.loadLegacyInstallationInformation  Skip variable : "
@@ -385,10 +404,9 @@ public final class InstallationInformationHelper {
 
 				logger.log(Level.FINE,
 						"InstallationInformationHelper.loadLegacyInstallationInformation  writeInstallationInformation to fix legacy issue");
-				// writeInstallationInformation(installData, installData.getSelectedPacks(),
-				// installData.getVariables());
+
 				writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
-						true);
+						resources, true);
 
 			} catch (Exception e) {
 				logger.warning(
@@ -398,8 +416,45 @@ public final class InstallationInformationHelper {
 		}
 	}
 
+	private static DynamicVariable getDynamicVariable(List<DynamicVariable> dynamicVariables, String name) {
+		if (name == null)
+			return null;
+
+		DynamicVariable result = null;
+		for (DynamicVariable dynamic : dynamicVariables) {
+			if (name.equals(dynamic.getName())) {
+				result = dynamic;
+				return dynamic;
+			}
+		}
+		return result;
+	}
+
+	private static List<DynamicVariable> loadDynamicVariables(Resources resources) {
+
+		if (resources == null) return null;
+		
+		// InstallData installData
+		List<DynamicVariable> dynamicVariables = null;
+		try {
+			dynamicVariables = (List<DynamicVariable>) resources.getObject("dynvariables");
+			// for (DynamicVariable dynamic : dynamicVariables)
+			// {
+			// Value value = dynamic.getValue();
+			// value.setInstallData(installData);
+			// variables.add(dynamic);
+			// }
+			logger.log(Level.FINE, "InstallationInformationHelper.loadDynamicVariables  " + dynamicVariables);
+
+		} catch (Exception e) {
+			logger.log(Level.WARNING,
+					"InstallationInformationHelper.loadDynamicVariables  Cannot find optional dynamic variables", e);
+		}
+		return dynamicVariables;
+	}
+
 	private static void writeInstallationInformation(com.izforge.izpack.api.data.InstallData installData,
-			List<Pack> selectedPacks, Variables variables, boolean forceWrite) throws IOException {
+			List<Pack> selectedPacks, Variables variables, Resources resources, boolean forceWrite) throws IOException {
 
 		if (!installData.getInfo().isWriteInstallationInformation() && !forceWrite) {
 			logger.log(Level.FINE, "InstallationInformationHelper  Skip writing installation information");
@@ -407,8 +462,6 @@ public final class InstallationInformationHelper {
 		}
 		logger.log(Level.FINE, "InstallationInformationHelper  Writing installation information to fix legacy issue");
 		String installDir = installData.getInstallPath();
-
-		// List<Pack> installedPacks = new ArrayList<Pack>(selectedPacks);
 
 		File installationInfo = new File(installDir + File.separator + InstallData.INSTALLATION_INFORMATION);
 		if (!installationInfo.exists()) {
@@ -442,10 +495,21 @@ public final class InstallationInformationHelper {
 			// installedPacks.addAll(packs);
 		}
 
+		DefaultVariables clone = new DefaultVariables(variables.getProperties());
+		List<DynamicVariable> dynamicVariables = loadDynamicVariables(resources);
+		if (dynamicVariables != null)
+			for (DynamicVariable dynvar : dynamicVariables) {
+
+				if (clone.get(dynvar.getName()) != null) {
+					clone.getProperties().remove(dynvar.getName());
+				}
+			}
+
 		FileOutputStream fout = new FileOutputStream(installationInfo);
 		ObjectOutputStream oout = new ObjectOutputStream(fout);
 		oout.writeObject(selectedPacks);
-		oout.writeObject(variables.getProperties());
+		// oout.writeObject(variables.getProperties());
+		oout.writeObject(clone.getProperties());
 		fout.close();
 
 		logger.log(Level.FINE, "Installation information saved: " + installationInfo.getAbsolutePath());

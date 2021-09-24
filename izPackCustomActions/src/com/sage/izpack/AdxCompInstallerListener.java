@@ -103,7 +103,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		if (this.installData.getInfo().isReadInstallationInformation()) {
 
 			if (!InstallationInformationHelper.hasAlreadyReadInformation(this.installData))
-				InstallationInformationHelper.readInformation(this.installData);
+				InstallationInformationHelper.readInformation(this.installData, this.resources);
 			else
 				logger.log(Level.FINE,
 						"AdxCompInstallerListener.beforePacks  ReadInstallationInformation: "

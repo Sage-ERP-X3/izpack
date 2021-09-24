@@ -53,7 +53,7 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 			deleteInstallInformation();
 		}
 		updateRegistry();
-		
+
 		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks end");
 	}
 
@@ -66,8 +66,10 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 	private void updateRegistry() {
 
 		InstallationInformationHelper.restoreNewVersion(getInstallData());
-		Variables variables = getInstallData().getVariables();		
+		Variables variables = getInstallData().getVariables();
 		String version = variables.get("APP_VER");
+		if (version == null)
+			version = variables.get("app-version");
 		String appName = variables.get("APP_NAME");
 		// String keyName = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
 		// + appName;
@@ -83,7 +85,7 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 				RegDataContainer cont = myHandlerInstance.getValue(keyName, "DisplayVersion");
 				if (cont != null) {
 					String displayVersionVal = cont.getStringData();
-					if (displayVersionVal != null && displayVersionVal != version) {
+					if (displayVersionVal != null && version != null && displayVersionVal != version) {
 						myHandlerInstance.setValue(keyName, "DisplayVersion", version);
 
 						logger.log(Level.FINE,

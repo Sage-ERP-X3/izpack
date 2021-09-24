@@ -106,6 +106,7 @@ public final class InstallationInformationHelper {
 			installData.setVariable("app-version", newCurrentVersion);
 		}
 
+		/*
 		String currentAPPVersion = installData.getVariable("APP_VER");
 		String newCurrentAPPVersion = installData.getVariable("APP_VER_NEW");
 		if (newCurrentAPPVersion != null) {
@@ -113,6 +114,7 @@ public final class InstallationInformationHelper {
 					+ ") from 'APP_VER_NEW' : " + currentAPPVersion);
 			installData.setVariable("APP_VER", newCurrentAPPVersion);
 		}
+		*/
 	}
 
 	private static void saveNewAppVersion(com.izforge.izpack.api.data.InstallData installData) {
@@ -122,12 +124,14 @@ public final class InstallationInformationHelper {
 			logger.log(Level.FINE,
 					"InstallationInformationHelper save current version 'app-version-new' : " + currentVersion);
 		}
+		/*
 		String currentAPPVER = installData.getVariable("APP_VER");
 		if (currentAPPVER != null) {
 			installData.setVariable("APP_VER_NEW", currentAPPVER);
 			logger.log(Level.FINE,
 					"InstallationInformationHelper save current version 'APP_VER_NEW' : " + currentAPPVER);
 		}
+		*/
 	}
 
 	static boolean isIncompatibleInstallation(String installPath, boolean isReadInstallationInformation) {

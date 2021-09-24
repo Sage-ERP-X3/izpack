@@ -104,6 +104,7 @@ public final class InstallationInformationHelper {
 			logger.log(Level.FINE, "InstallationInformationHelper Set current version 'app-version' (" + currentVersion
 					+ ") from 'app-version-new' : " + currentVersion);
 			installData.setVariable("app-version", newCurrentVersion);
+			installData.setVariable("APP_VER", newCurrentVersion);
 		}
 
 		/*

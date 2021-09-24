@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,9 @@ import com.izforge.izpack.core.data.DefaultVariables;
 public final class InstallationInformationHelper {
 
 	private static final Logger logger = Logger.getLogger(InstallationInformationHelper.class.getName());
+
+	private static List<String> VariablesExceptions = new ArrayList<String>(
+			Arrays.asList("app-version", "APP_VER", "app-version-new", "APP_VER_NEW"));
 
 	public static boolean hasAlreadyReadInformation(com.izforge.izpack.api.data.InstallData installData) {
 
@@ -277,13 +281,13 @@ public final class InstallationInformationHelper {
 
 				Properties variables = (Properties) oin.readObject();
 				for (Object key : variables.keySet()) {
-					
-					DynamicVariable dynVar = getDynamicVariable(dynamicVariables, (String)key);
-					
-					if ((dynVar != null && !dynVar.isCheckonce()) || 
-							envvariables.isBlockedVariableName((String) key) || envvariables.containsOverride((String) key)
-							|| ((String) key).equals("app-version") || ((String) key).equals("APP_VER")
-							|| ((String) key).equals("app-version-new") || ((String) key).equals("APP_VER_NEW")) {
+
+					DynamicVariable dynVar = getDynamicVariable(dynamicVariables, (String) key);
+
+					if ((dynVar != null && !dynVar.isCheckonce()) || envvariables.isBlockedVariableName((String) key)
+							|| envvariables.containsOverride((String) key)
+							|| VariablesExceptions.contains((String) key))
+					{
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE,
 								"InstallationInformationHelper Skip variable : " + key + ": " + variables.get(key));
@@ -387,9 +391,11 @@ public final class InstallationInformationHelper {
 				for (Object key : variables.keySet()) {
 
 					DynamicVariable dynVariable = getDynamicVariable(dynamicVariables, (String) key);
-					if (((dynVariable != null && !dynVariable.isCheckonce())) || envvariables.isBlockedVariableName((String) key)
-							|| envvariables.containsOverride((String) key) || ((String) key).equals("app-version")
-							|| ((String) key).equals("APP_VER")) {
+					if (((dynVariable != null && !dynVariable.isCheckonce()))
+							|| envvariables.isBlockedVariableName((String) key)
+							|| envvariables.containsOverride((String) key)
+							|| VariablesExceptions.contains((String) key))
+					{
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE,
 								"InstallationInformationHelper.loadLegacyInstallationInformation  Skip variable : "
@@ -430,22 +436,15 @@ public final class InstallationInformationHelper {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static List<DynamicVariable> loadDynamicVariables(Resources resources) {
+		if (resources == null)
+			return null;
 
-		if (resources == null) return null;
-		
-		// InstallData installData
 		List<DynamicVariable> dynamicVariables = null;
 		try {
 			dynamicVariables = (List<DynamicVariable>) resources.getObject("dynvariables");
-			// for (DynamicVariable dynamic : dynamicVariables)
-			// {
-			// Value value = dynamic.getValue();
-			// value.setInstallData(installData);
-			// variables.add(dynamic);
-			// }
 			logger.log(Level.FINE, "InstallationInformationHelper.loadDynamicVariables  " + dynamicVariables);
-
 		} catch (Exception e) {
 			logger.log(Level.WARNING,
 					"InstallationInformationHelper.loadDynamicVariables  Cannot find optional dynamic variables", e);
@@ -481,18 +480,6 @@ public final class InstallationInformationHelper {
 
 			logger.log(Level.FINE, "InstallationInformationHelper  Previous installation information found: "
 					+ installationInfo.getAbsolutePath());
-			// read in old information and update
-			// FileInputStream fin = new FileInputStream(installationInfo);
-			// ObjectInputStream oin = new ObjectInputStream(fin);
-
-			/*
-			 * List<Pack> packs; try { //noinspection unchecked packs = (List<Pack>)
-			 * oin.readObject(); } catch (Exception exception) { throw new
-			 * InstallerException("Failed to read previous installation information",
-			 * exception); } finally { IOUtils.closeQuietly(oin); IOUtils.closeQuietly(fin);
-			 * }
-			 */
-			// installedPacks.addAll(packs);
 		}
 
 		DefaultVariables clone = new DefaultVariables(variables.getProperties());
@@ -504,6 +491,13 @@ public final class InstallationInformationHelper {
 					clone.getProperties().remove(dynvar.getName());
 				}
 			}
+
+		if (clone.get("APP_VER_NEW") != null) {
+			clone.getProperties().remove("APP_VER_NEW");
+		}
+		if (clone.get("APP_VER") != null) {
+			clone.getProperties().remove("APP_VER");
+		}
 
 		FileOutputStream fout = new FileOutputStream(installationInfo);
 		ObjectOutputStream oout = new ObjectOutputStream(fout);

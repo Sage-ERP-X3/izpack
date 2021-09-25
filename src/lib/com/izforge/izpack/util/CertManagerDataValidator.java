@@ -14,6 +14,8 @@ import java.security.cert.PKIXCertPathBuilderResult;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
@@ -35,6 +37,7 @@ import com.izforge.izpack.util.ssl.CertificateVerifier;
 public class CertManagerDataValidator implements DataValidator
 {
     
+	private static final transient Logger logger = Logger.getLogger(CertManagerDataValidator.class.getName());
     private String strMessage = "";
     public static final String strMessageId = "messageid";
     public static final String strMessageValue = "message.oldvalue"; // not to be stored
@@ -171,103 +174,116 @@ public class CertManagerDataValidator implements DataValidator
     return Status.ERROR;
     }
 
-    public void  clientPutInPlace (AutomatedInstallData adata, String strFieldCa) throws Exception
-    {
-        // client cert is provided with CA
-        // only need to copy if not already in place
-        
-        //mongodb.ssl.client.certfile
-        //mongodb.ssl.client.pemkeyfile
-        //mongodb.ssl.pemcafile
+	public void clientPutInPlace(AutomatedInstallData adata, String strFieldCa) throws Exception {
+		// client cert is provided with CA
+		// only need to copy if not already in place
 
-        String fieldPemCertFile = adata.getVariable("mongodb.ssl.client.certfile");
-        String fieldPemKeyFile = adata.getVariable("mongodb.ssl.client.pemkeyfile");
-        String fieldPemCaFile = strFieldCa;
-        
+		// mongodb.ssl.client.certfile
+		// mongodb.ssl.client.pemkeyfile
+		// mongodb.ssl.pemcafile
 
-        String strCertPath = adata.getVariable("syracuse.dir.certs")+File.separator+"mongodb";
-        File dirCerts =  new File (strCertPath);
-        if (!dirCerts.exists()) dirCerts.mkdirs();
+		String fieldPemCertFile = adata.getVariable("mongodb.ssl.client.certfile");
+		String fieldPemKeyFile = adata.getVariable("mongodb.ssl.client.pemkeyfile");
+		String fieldPemCaFile = strFieldCa;
 
-        File certsCaCRT = new File (strCertPath + File.separator + "ca.cacrt");
-        File certsServerCRT = new File (strCertPath + File.separator + "client.crt");
-        File certsServerKey = new File (strCertPath + File.separator + "client.key");
-        File certsServerPem = new File (strCertPath + File.separator + "client.pem");
-        
-        // copy CA in output directory
-        if (fieldPemCaFile!= null && !"".equals(fieldPemCaFile) && !fieldPemCaFile.equals(strCertPath + File.separator + "ca.cacrt"))
-        {
-            File sourceCaCRT = new File (fieldPemCaFile);
-            Files.copy(sourceCaCRT.toPath(), certsCaCRT.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
-        
-        if (!fieldPemCertFile.equals(strCertPath + File.separator + "client.crt"))
-        {
-            File sourceServerCRT = new File (fieldPemCertFile);
-            Files.copy(sourceServerCRT.toPath(), certsServerCRT.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
+		String strCertPath = adata.getVariable("syracuse.dir.certs") + File.separator + "mongodb";
+		File dirCerts = new File(strCertPath);
+		if (!dirCerts.exists())
+			dirCerts.mkdirs();
 
-        if (!fieldPemKeyFile.equals(strCertPath + File.separator + "client.key"))
-        {
-            File sourceServerKey = new File (fieldPemKeyFile);
-            Files.copy(sourceServerKey.toPath(), certsServerKey.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
-        
-        KeyPairGeneratorDataValidator.mergeFiles(new File[]{certsServerCRT,certsServerKey}, certsServerPem);
-        
-        // set variables for future use
-        adata.setVariable("mongodb.ssl.client.certfile",strCertPath + File.separator + "client.crt");
-        adata.setVariable("mongodb.ssl.client.pemkeyfile",strCertPath + File.separator + "client.key");
-        adata.setVariable("mongodb.ssl.pemcafile",strCertPath + File.separator + "ca.cacrt");    }    
+		File certsCaCRT = new File(strCertPath + File.separator + "ca.cacrt");
+		File certsServerCRT = new File(strCertPath + File.separator + "client.crt");
+		File certsServerKey = new File(strCertPath + File.separator + "client.key");
+		File certsServerPem = new File(strCertPath + File.separator + "client.pem");
+
+		// copy CA in output directory
+		if (fieldPemCaFile != null && !"".equals(fieldPemCaFile)
+				&& !fieldPemCaFile.equals(strCertPath + File.separator + "ca.cacrt")) {
+			File sourceCaCRT = new File(fieldPemCaFile);
+			Files.copy(sourceCaCRT.toPath(), certsCaCRT.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		}
+
+		if (!fieldPemCertFile.equals(strCertPath + File.separator + "client.crt")) {
+			File sourceServerCRT = new File(fieldPemCertFile);
+			Files.copy(sourceServerCRT.toPath(), certsServerCRT.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		}
+
+		if (!fieldPemKeyFile.equals(strCertPath + File.separator + "client.key")) {
+			File sourceServerKey = new File(fieldPemKeyFile);
+			Files.copy(sourceServerKey.toPath(), certsServerKey.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		}
+
+		KeyPairGeneratorDataValidator.mergeFiles(new File[] { certsServerCRT, certsServerKey }, certsServerPem);
+
+		// set variables for future use
+		adata.setVariable("mongodb.ssl.client.certfile", strCertPath + File.separator + "client.crt");
+		adata.setVariable("mongodb.ssl.client.pemkeyfile", strCertPath + File.separator + "client.key");
+		adata.setVariable("mongodb.ssl.pemcafile", strCertPath + File.separator + "ca.cacrt");
+
+		logger.log(Level.FINE,
+				"CertManagerDataValidator.clientPutInPlace  setVariable mongodb.ssl.client.certfile: " + strCertPath + File.separator + "client.crt");
+		logger.log(Level.FINE,
+				"CertManagerDataValidator.clientPutInPlace  setVariable mongodb.ssl.client.pemkeyfile: " + strCertPath + File.separator + "client.key");
+		logger.log(Level.FINE, 
+				"CertManagerDataValidator.clientPutInPlace  setVariable mongodb.ssl.pemcafile: " + strCertPath + File.separator + "ca.cacrt");
+
+	}
     
     
-    public void  clientCertCreate (AutomatedInstallData adata) throws Exception
-    {
-        String countryCode = adata.getVariable("syracuse.certificate.countrycode");
-        String state = adata.getVariable("syracuse.certificate.state");
-        String city = adata.getVariable("syracuse.certificate.city");
-        String organization = adata.getVariable("syracuse.certificate.organization");
-        String organizationalUnit = adata.getVariable("syracuse.certificate.organisationalunit");
-        String name = adata.getVariable("syracuse.certificate.name");
-        String email = adata.getVariable("syracuse.certificate.email");
-        int validity = Integer.parseInt(adata.getVariable("syracuse.certificate.validity"));
-        String localHOST_NAME = adata.getVariable("HOST_NAME").toLowerCase();
+	public void clientCertCreate(AutomatedInstallData adata) throws Exception {
+		String countryCode = adata.getVariable("syracuse.certificate.countrycode");
+		String state = adata.getVariable("syracuse.certificate.state");
+		String city = adata.getVariable("syracuse.certificate.city");
+		String organization = adata.getVariable("syracuse.certificate.organization");
+		String organizationalUnit = adata.getVariable("syracuse.certificate.organisationalunit");
+		String name = adata.getVariable("syracuse.certificate.name");
+		String email = adata.getVariable("syracuse.certificate.email");
+		int validity = Integer.parseInt(adata.getVariable("syracuse.certificate.validity"));
+		String localHOST_NAME = adata.getVariable("HOST_NAME").toLowerCase();
 
-        // need to create client cert
-        // then  create a client cert
-        KeyPair pairClient = CreateCertsValidator.generateRSAKeyPair(2048);
-        X509Certificate clientcert = CreateCertsValidator.generateClientV3Certificate(pairClient, countryCode, organization, organizationalUnit,
-                state, city, name, email, validity, cacert , pairCA);
-        
-        String strCertPath = adata.getVariable("syracuse.dir.certs")+File.separator+"mongodb";
-        File dirCerts =  new File (strCertPath);
-        if (!dirCerts.exists()) dirCerts.mkdirs();
+		// need to create client cert
+		// then create a client cert
+		KeyPair pairClient = CreateCertsValidator.generateRSAKeyPair(2048);
+		X509Certificate clientcert = CreateCertsValidator.generateClientV3Certificate(pairClient, countryCode,
+				organization, organizationalUnit, state, city, name, email, validity, cacert, pairCA);
 
-        File certsCaCRT = new File (strCertPath + File.separator + "ca.cacrt");
-        File certsServerCRT = new File (strCertPath + File.separator + "client.crt");
-        File certsServerKey = new File (strCertPath + File.separator + "client.key");
-        File certsServerPem = new File (strCertPath + File.separator + "client.pem");
-        
-        FileWriter cacertfile = new FileWriter(certsCaCRT);
-        PEMWriter pem = new PEMWriter(cacertfile);
-        pem.writeObject(cacert);
-        pem.close();
-        
-        FileWriter clientcertfile = new FileWriter(certsServerCRT);
-        pem = new PEMWriter(clientcertfile);
-        pem.writeObject(clientcert);
-        pem.close();
+		String strCertPath = adata.getVariable("syracuse.dir.certs") + File.separator + "mongodb";
+		File dirCerts = new File(strCertPath);
+		if (!dirCerts.exists())
+			dirCerts.mkdirs();
 
-        KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + "client.key", pairClient, null);
+		File certsCaCRT = new File(strCertPath + File.separator + "ca.cacrt");
+		File certsServerCRT = new File(strCertPath + File.separator + "client.crt");
+		File certsServerKey = new File(strCertPath + File.separator + "client.key");
+		File certsServerPem = new File(strCertPath + File.separator + "client.pem");
 
-        KeyPairGeneratorDataValidator.mergeFiles(new File[]{certsServerCRT,certsServerKey}, certsServerPem);
-        
-        // set variables for future use
-        adata.setVariable("mongodb.ssl.client.certfile",strCertPath + File.separator + "client.crt");
-        adata.setVariable("mongodb.ssl.client.pemkeyfile",strCertPath + File.separator + "client.key");
-        adata.setVariable("mongodb.ssl.pemcafile",strCertPath + File.separator + "ca.cacrt");
+		FileWriter cacertfile = new FileWriter(certsCaCRT);
+		PEMWriter pem = new PEMWriter(cacertfile);
+		pem.writeObject(cacert);
+		pem.close();
 
-    }    
+		FileWriter clientcertfile = new FileWriter(certsServerCRT);
+		pem = new PEMWriter(clientcertfile);
+		pem.writeObject(clientcert);
+		pem.close();
+
+		KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + "client.key", pairClient, null);
+
+		KeyPairGeneratorDataValidator.mergeFiles(new File[] { certsServerCRT, certsServerKey }, certsServerPem);
+
+		// set variables for future use
+		adata.setVariable("mongodb.ssl.client.certfile", strCertPath + File.separator + "client.crt");
+		adata.setVariable("mongodb.ssl.client.pemkeyfile", strCertPath + File.separator + "client.key");
+		adata.setVariable("mongodb.ssl.pemcafile", strCertPath + File.separator + "ca.cacrt");
+
+		logger.log(Level.FINE,
+				"CertManagerDataValidator.clientCertCreate  setVariable mongodb.ssl.client.certfile: " + strCertPath + File.separator + "client.crt");
+		logger.log(Level.FINE,
+				"CertManagerDataValidator.clientCertCreate  setVariable mongodb.ssl.client.pemkeyfile: " + strCertPath + File.separator + "client.key");
+		logger.log(Level.FINE, 
+				"CertManagerDataValidator.clientCertCreate  setVariable mongodb.ssl.pemcafile: " + strCertPath + File.separator + "ca.cacrt");
+
+	}
     
     public void  readCerts (AutomatedInstallData adata) throws Exception
     {

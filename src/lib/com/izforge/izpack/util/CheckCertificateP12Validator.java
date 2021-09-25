@@ -3,38 +3,23 @@ package com.izforge.izpack.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.CertificateFactory;
-import java.security.cert.PKIXCertPathBuilderResult;
 import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import javax.xml.bind.DatatypeConverter;
 import java.security.cert.CertificateEncodingException;
-import java.security.spec.RSAPrivateCrtKeySpec;
-import java.security.spec.RSAPublicKeySpec;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import com.izforge.izpack.util.Debug;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
@@ -42,20 +27,17 @@ import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
-import org.bouncycastle.util.io.pem.PemHeader;
-import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import sun.security.x509.X500Name;
 import com.izforge.izpack.installer.AutomatedInstallData;
-import com.izforge.izpack.installer.DataValidator;
-import com.izforge.izpack.installer.DataValidator.Status;
-import com.izforge.izpack.util.ssl.CertificateVerifier;
 
 
 public class CheckCertificateP12Validator implements com.izforge.izpack.installer.DataValidator
 {
     
+	private static final transient Logger logger = Logger.getLogger(CheckCertificateP12Validator.class.getName());
+
     private String strMessage = "";
     public static final String strMessageId = "messageid";
     public static final String strMessageValue = "message.oldvalue"; // not to be stored
@@ -129,7 +111,8 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         String thumbPrint = getThumbprint(servercert);
         adata.setVariable("mongodb.ssl.certificate.thumbprint",thumbPrint);
         Debug.trace("Set certificate thumbPrint " + thumbPrint);
-
+        logger.log(Level.FINE,"Set certificate thumbPrint " + thumbPrint);
+        
         PEMParser pemParser = new PEMParser(keyStreamReader);
         Object object = pemParser.readObject();
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(bcprovider);

@@ -1,5 +1,5 @@
 
-package com.izforge.izpack.panels;
+package com.izforge.izpack.panels.sage;
 
 import com.izforge.izpack.gui.IzPanelLayout;
 import com.izforge.izpack.gui.LabelFactory;

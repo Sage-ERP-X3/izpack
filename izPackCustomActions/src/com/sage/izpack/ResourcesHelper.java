@@ -55,13 +55,17 @@ public class ResourcesHelper {
 	 * izPackCustomActions\src\com\sage\izpack\langpacks\eng.xml
 	 */
 	public String getCustomString(String key, boolean searchInProject) {
+		return getCustomString(key, null, searchInProject);
+	}
+
+	public String getCustomString(String key, String arg1, boolean searchInProject) {
 		// customResourcesPath = "/com/sage/izpack/langpacks/" +
 		// * installData.getLocaleISO3() + ".xml"; String result = null; try { result =
 		String result = null;
 		if (searchInProject) {
 			// result = getProjectString(key);
 			// if (result != null && result!= key) {
-			//	return result;
+			// return result;
 			// }
 		}
 
@@ -74,6 +78,9 @@ public class ResourcesHelper {
 			}
 
 			result = this.customResources.get(key);
+			if (result != null && arg1 != null) {
+				result = String.format(result, arg1);
+			}
 			logger.log(Level.FINE, "ResourcesHelper.getCustomString  get '" + key + "': '" + result + "'  from "
 					+ customResourcesPath);
 
@@ -87,8 +94,9 @@ public class ResourcesHelper {
 	}
 
 	/**
-	 * Message from the project
-	 * ex: C:\Source\X3\print-server225\installers\izpack\X3Print\project\i18n\PacksLangEng.xml
+	 * Message from the project ex:
+	 * C:\Source\X3\print-server225\installers\izpack\X3Print\project\i18n\PacksLangEng.xml
+	 * 
 	 * @param key
 	 * @return
 	 */
@@ -99,7 +107,8 @@ public class ResourcesHelper {
 		try {
 			if (langpack == null) {
 				Locales locales = new DefaultLocales(resources, installData.getLocale());
-				langpack = new LocaleDatabase(ResourcesHelper.class.getResourceAsStream("/langpack" + this.installData.getLocaleISO3() + ".xml"), locales);
+				langpack = new LocaleDatabase(ResourcesHelper.class
+						.getResourceAsStream("/langpack" + this.installData.getLocaleISO3() + ".xml"), locales);
 			}
 			result = this.langpack.get(key);
 			logger.log(Level.FINE, "ResourcesHelper.getProjectString  get '" + key + "': '" + result + "'  ");

@@ -360,15 +360,12 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 				+ moduleFamily + "']";
 		Element module = (Element) xPath.compile(filter).evaluate(xdoc, XPathConstants.NODE);
 
-		// if (module == null) throw new
-		// Exception(String.format(langpack.getString("sectionNotFound"), moduleName));
 		if (module == null) {
 			logger.log(Level.FINE, "AdxCompInstallerListener.modifyReportModule  name: " + moduleName + " type: "
 					+ moduleType + " family: " + moduleFamily + " not found in xmlDocument " + xdoc);
-			throw new Exception(ResourcesHelper.getCustomPropString("sectionNotFound", moduleName));
-			// String.format(
-			// ResourceBundle.getBundle("com/sage/izpack/messages").getString("sectionNotFound"),
-			// moduleName));
+			// throw new Exception(ResourcesHelper.getCustomPropString("sectionNotFound", moduleName));
+			ResourcesHelper resourceHelper = new  ResourcesHelper(this.installData, this.resources);
+			throw new Exception(resourceHelper.getCustomString("sectionNotFound", moduleName, true));
 		}
 
 		Node status = module.getElementsByTagName("component." + moduleFamily.toLowerCase() + ".installstatus").item(0);

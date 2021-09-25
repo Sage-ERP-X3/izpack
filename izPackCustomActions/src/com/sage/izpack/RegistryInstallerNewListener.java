@@ -67,9 +67,9 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 
 		InstallationInformationHelper.restoreNewVersion(getInstallData());
 		Variables variables = getInstallData().getVariables();
-		String version = variables.get("APP_VER");
+		String version = variables.get("app-version");
 		if (version == null)
-			version = variables.get("app-version");
+			version = variables.get("APP_VER");
 		String appName = variables.get("APP_NAME");
 		// String keyName = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
 		// + appName;

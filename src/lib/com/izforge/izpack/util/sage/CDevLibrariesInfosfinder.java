@@ -1,5 +1,7 @@
 package com.izforge.izpack.util.sage;
 
+import com.izforge.izpack.installer.AutomatedInstallData;
+
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
  * 
@@ -8,11 +10,20 @@ package com.izforge.izpack.util.sage;
  */
 public class CDevLibrariesInfosfinder extends CAbstractOsInfosfinder {
 
+	private final static String PREREQUISITES_SCRIPT = "PrerequisitesControlLibScript"; // "PrerequisitesControlScript.sh";
+
 	/**
 	 * @param aReport
 	 */
-	public CDevLibrariesInfosfinder(final CReport aReport) {
-		super(aReport);
+	public CDevLibrariesInfosfinder(final CReport pReport, AutomatedInstallData pData) {
+		super(pReport, pData);
+	}
+
+	/*
+	 * @override
+	 */
+	public String getResourceName() {
+		return PREREQUISITES_SCRIPT + "_" + PLATFORM;
 	}
 
 	/**
@@ -55,31 +66,27 @@ public class CDevLibrariesInfosfinder extends CAbstractOsInfosfinder {
 		libxml2-devel.x86_64
 	 * </pre>
 	 */
-	@Override
-	public StringBuffer getScriptLines() {
-
-		StringBuffer wLines = new StringBuffer();
-
-		addOneLine(wLines);
-		addOneLine(wLines, "logStep \"Get the list of libraries using yum\"");
-		addOneLine(wLines);
-		addOneLine(wLines, "yum list installed '*-devel*';");
-		addOneLine(wLines, "if [ $? -ne 0 ]; then");
-		addOneLine(wLines,
-				"  logErr \"Unable to get the list of the '*-devel*' libraries \"");
-		addOneLine(wLines, "  exit 1;");
-		addOneLine(wLines, "fi");
-		addOneLine(wLines);
-		addOneLine(wLines, "yum list installed 'libxml2*';");
-		addOneLine(wLines, "if [ $? -ne 0 ]; then");
-		addOneLine(wLines,
-				"  logErr \"Unable to get the list of the 'libxml2*' libraries \"");
-		addOneLine(wLines, "  exit 1;");
-		addOneLine(wLines, "fi");
-		addOneLine(wLines);
-
-		return wLines;
-
-	}
-
+	/*
+	 * Override
+	 * 
+	 * public StringBuffer getScriptLines() {
+	 * 
+	 * StringBuffer wLines = new StringBuffer();
+	 * 
+	 * addOneLine(wLines); addOneLine(wLines,
+	 * "logStep \"Get the list of libraries using yum\""); addOneLine(wLines);
+	 * addOneLine(wLines, "yum list installed '*-devel*';"); addOneLine(wLines,
+	 * "if [ $? -ne 0 ]; then"); addOneLine(wLines,
+	 * "  logErr \"Unable to get the list of the '*-devel*' libraries \"");
+	 * addOneLine(wLines, "  exit 1;"); addOneLine(wLines, "fi");
+	 * addOneLine(wLines); addOneLine(wLines, "yum list installed 'libxml2*';");
+	 * addOneLine(wLines, "if [ $? -ne 0 ]; then"); addOneLine(wLines,
+	 * "  logErr \"Unable to get the list of the 'libxml2*' libraries \"");
+	 * addOneLine(wLines, "  exit 1;"); addOneLine(wLines, "fi");
+	 * addOneLine(wLines);
+	 * 
+	 * return wLines;
+	 * 
+	 * }
+	 */
 }

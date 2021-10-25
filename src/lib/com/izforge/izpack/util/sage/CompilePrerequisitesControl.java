@@ -56,8 +56,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 * @param aSB
 	 * @return
 	 */
-	private StringBuilder dumpComponents(final Container aContainer,
-			StringBuilder aSB) {
+	private StringBuilder dumpComponents(final Container aContainer, StringBuilder aSB) {
 
 		for (Component wComponent : aContainer.getComponents()) {
 
@@ -71,8 +70,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 				wText = ((JLabel) wComponent).getText();
 			}
 
-			aSB.append(toInsecable(String.format(
-					"\n- isTextPane=[%-5s] Component=[%-12s][%s]", wIsTextPane,
+			aSB.append(toInsecable(String.format("\n- isTextPane=[%-5s] Component=[%-12s][%s]", wIsTextPane,
 					//
 					wComponent.getClass().getSimpleName(),
 					//
@@ -98,8 +96,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 		int wIdx = 0;
 		for (Entry<Object, Object> wEntry : wSortedProperties.entrySet()) {
 			wIdx++;
-			wDump.append(toInsecable(String.format("\n- %3d[%-60s]=[%s]", wIdx,
-					String.valueOf(wEntry.getKey()),
+			wDump.append(toInsecable(String.format("\n- %3d[%-60s]=[%s]", wIdx, String.valueOf(wEntry.getKey()),
 					String.valueOf(wEntry.getValue()))));
 
 		}
@@ -141,11 +138,8 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 */
 	private String getOsDetails(AutomatedInstallData aData) {
 
-		return String
-				.format("%s - %s - %s", aData.getVariable("SYSTEM_os_name"),
-						aData.getVariable("SYSTEM_os_version"),
-						aData.getVariable("SYSTEM_os_arch"))
-				.replace('\n', ' ');
+		return String.format("%s - %s - %s", aData.getVariable("SYSTEM_os_name"),
+				aData.getVariable("SYSTEM_os_version"), aData.getVariable("SYSTEM_os_arch")).replace('\n', ' ');
 
 	}
 
@@ -199,8 +193,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 * @return
 	 * @throws Exception
 	 */
-	private IzPanel retrieveCurrentPanel(AutomatedInstallData aData)
-			throws Exception {
+	private IzPanel retrieveCurrentPanel(AutomatedInstallData aData) throws Exception {
 
 		// test each panel of the installer
 		for (IzPanel wPanel : aData.panels) {
@@ -208,8 +201,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 				// its the current panel if the validation service of the panel
 				// is this instance of CompilePrerequisitesControl
-				boolean wIsCurrentPanel = (wPanel
-						.getValidationService() == this);
+				boolean wIsCurrentPanel = (wPanel.getValidationService() == this);
 
 				if (wIsCurrentPanel) {
 					return wPanel;
@@ -224,11 +216,9 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 * @return the 3th JTextPane of the panel
 	 * @throws Exception
 	 */
-	private JTextPane searchJTextPaneProgress(Container aContainer)
-			throws Exception {
+	private JTextPane searchJTextPaneProgress(Container aContainer) throws Exception {
 
-		return new GUIComponentSearcher<>(JTextPane.class, aContainer, 3)
-				.search();
+		return new GUIComponentSearcher<>(JTextPane.class, aContainer, 3).search();
 	}
 
 	/**
@@ -236,11 +226,9 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 * @return the 4th JTextPane of the panel
 	 * @throws Exception
 	 */
-	private JTextPane searchJTextPaneResult(Container aContainer)
-			throws Exception {
+	private JTextPane searchJTextPaneResult(Container aContainer) throws Exception {
 
-		return new GUIComponentSearcher<>(JTextPane.class, aContainer, 4)
-				.search();
+		return new GUIComponentSearcher<>(JTextPane.class, aContainer, 4).search();
 	}
 
 	/**
@@ -248,14 +236,12 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 * @param aInfos
 	 * @throws Exception
 	 */
-	private void setProgress(final AutomatedInstallData aData,
-			final String aInfos) throws Exception {
+	private void setProgress(final AutomatedInstallData aData, final String aInfos) throws Exception {
 
 		// if not in console mode,
 		if (!isConsoleMode(aData)) {
 
-			JTextPane wTextPaneResultLabel = searchJTextPaneProgress(
-					retrieveCurrentPanel(aData));
+			JTextPane wTextPaneResultLabel = searchJTextPaneProgress(retrieveCurrentPanel(aData));
 
 			String wText = wTextPaneResultLabel.getText();
 			if (wText != null) {
@@ -266,8 +252,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 			} else {
 				wText = "Result";
 			}
-			wTextPaneResultLabel
-					.setText(String.format("%s: %s", wText, aInfos));
+			wTextPaneResultLabel.setText(String.format("%s: %s", wText, aInfos));
 		}
 		// else, if in console mode
 		else {
@@ -281,23 +266,14 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 * @param aReport
 	 * @throws Exception
 	 */
-	private void setResult(AutomatedInstallData aData, final boolean aIsOK,
-			final CReport aReport) throws Exception {
+	private void setResult(AutomatedInstallData aData, final boolean aIsOK, final CReport aReport) throws Exception {
 
 		IzPanel wPanel = retrieveCurrentPanel(aData);
-
-		CLoggerUtils.logInfo("Components of the panel:%s",
-				dumpComponents(wPanel));
-
+		CLoggerUtils.logInfo("Components of the panel:%s", dumpComponents(wPanel));
 		JTextPane wJTextPaneResult = searchJTextPaneResult(wPanel);
-
 		wJTextPaneResult.setForeground(aIsOK ? Color.BLUE : Color.RED);
-
-		wJTextPaneResult.setFont(
-				new Font(Font.MONOSPACED, Font.PLAIN, RESULT_FONT_SIZE_9));
-
+		wJTextPaneResult.setFont(new Font(Font.MONOSPACED, Font.PLAIN, RESULT_FONT_SIZE_9));
 		wJTextPaneResult.setText(aReport.toStringWithoutNow());
-
 	}
 
 	/*
@@ -318,22 +294,18 @@ public class CompilePrerequisitesControl implements DataValidator {
 		CReportWritter wReportWritter = null;
 
 		// create the report (name of the validator & width 200)
-		CReport wReport = new CReport(getClass().getSimpleName(),
-				REPORT_WIDTH_200);
+		CReport wReport = new CReport(getClass().getSimpleName(), REPORT_WIDTH_200);
 
 		// tels the report to log each line in the root jul logger
 		wReport.setConsoleLogOn(CReport.CONSOLE_LOG_ON);
 
 		wReport.appendTitle("%s:validateData", getClass().getSimpleName());
 
-		boolean wIsRedHatOrOracleLinux = OsVersion.IS_REDHAT_LINUX
-				|| OsVersion.IS_ORACLE_LINUX;
+		boolean wIsRedHatOrOracleLinux = OsVersion.IS_REDHAT_LINUX || OsVersion.IS_ORACLE_LINUX;
 
 		if (!wIsRedHatOrOracleLinux) {
 
-			wReport.appendStep(
-					"WARNING NOT 'REDHAT_LINUX' OR 'ORACLE_LINUX' : [%s]",
-					getOsDetails(aData));
+			wReport.appendStep("WARNING NOT 'REDHAT_LINUX' OR 'ORACLE_LINUX' : [%s]", getOsDetails(aData));
 		}
 
 		wReport.appendStep("Current variables");
@@ -356,11 +328,9 @@ public class CompilePrerequisitesControl implements DataValidator {
 				wReport.appendStep("Writing the '_onError' report");
 
 				// new Report writter
-				wReportWritter = new CReportWritter(wReport,
-						CReport.SUFFIX_ON_ERROR);
+				wReportWritter = new CReportWritter(wReport, CReport.SUFFIX_ON_ERROR);
 
-				wReport.append("OutputFile=[%s]",
-						wReportWritter.getOutputFile());
+				wReport.append("OutputFile=[%s]", wReportWritter.getOutputFile());
 
 			}
 
@@ -376,8 +346,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 			try {
 				wReportWritter.write();
 
-				CLoggerUtils.logInfo("NbWritedBytes=[%s]",
-						Files.size(wReportWritter.getOutputFile().toPath()));
+				CLoggerUtils.logInfo("NbWritedBytes=[%s]", Files.size(wReportWritter.getOutputFile().toPath()));
 			} catch (Exception e) {
 				CLoggerUtils.logSevere(e);
 			}
@@ -415,8 +384,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean validPrerequisites(CReport aReport,
-			AutomatedInstallData aData) throws Exception {
+	private boolean validPrerequisites(CReport aReport, AutomatedInstallData aData) throws Exception {
 
 		/**
 		 * <pre>
@@ -426,22 +394,13 @@ public class CompilePrerequisitesControl implements DataValidator {
 		 */
 		aReport.appendStep("validPrerequisites searching tools");
 
-		String wToolsDef = aData
-				.getVariable("compile.prerequisites.controle.packages.tools");
-
-		CWordList wToolList = new CWordList(aReport, "tool",
-				wToolsDef.split(","));
-
-		setProgress(aData,
-				String.format("Searching %d tools.", wToolList.size()));
-
+		String wToolsDef = aData.getVariable("compile.prerequisites.controle.packages.tools");
+		CWordList wToolList = new CWordList(aReport, "tool", wToolsDef.split(","));
+		setProgress(aData, String.format("Searching %d tools.", wToolList.size()));
 		aReport.append(wToolList.dumpAsNumberedList());
 
-		String wDevToolsInfos = new CDevToolsInfosFinder(aReport).execute();
-
-		boolean wToolsFound = wToolList.isAllWordsIn(wDevToolsInfos,
-				EKindOfFinding.AT_THE_BEGINING_OF_A_LINE);
-
+		String wDevToolsInfos = new CDevToolsInfosFinder(aReport, aData).execute();
+		boolean wToolsFound = wToolList.isAllWordsIn(wDevToolsInfos, EKindOfFinding.AT_THE_BEGINING_OF_A_LINE);
 		setProgress(aData, String.format("All tools found=[%b]", wToolsFound));
 
 		/**
@@ -454,28 +413,14 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 		aReport.appendStep("validPrerequisites searching libraries");
 
-		String wLibsDef = aData
-				.getVariable("compile.prerequisites.controle.packages.libs");
-
-		CWordList wLibraryList = new CWordList(aReport, "library",
-				wLibsDef.split(","));
-
-		setProgress(aData,
-				String.format("Searching %d libraries.", wLibraryList.size()));
-
+		String wLibsDef = aData.getVariable("compile.prerequisites.controle.packages.libs");
+		CWordList wLibraryList = new CWordList(aReport, "library", wLibsDef.split(","));
+		setProgress(aData, String.format("Searching %d libraries.", wLibraryList.size()));
 		aReport.append(wLibraryList.dumpAsNumberedList());
-
-		String wDevLibrariesInfos = new CDevLibrariesInfosfinder(aReport)
-				.execute();
-
-		boolean wLibraryFound = wLibraryList.isAllWordsIn(wDevLibrariesInfos,
-				EKindOfFinding.AT_THE_BEGINING_OF_A_LINE);
-
-		setProgress(aData,
-				String.format("All libraries found=[%b]", wLibraryFound));
-
+		String wDevLibrariesInfos = new CDevLibrariesInfosfinder(aReport, aData).execute();
+		boolean wLibraryFound = wLibraryList.isAllWordsIn(wDevLibrariesInfos, EKindOfFinding.AT_THE_BEGINING_OF_A_LINE);
+		setProgress(aData, String.format("All libraries found=[%b]", wLibraryFound));
 		setProgress(aData, "");
-
 		return wToolsFound && wLibraryFound;
 	}
 }

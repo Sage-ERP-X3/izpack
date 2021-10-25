@@ -1,5 +1,7 @@
 package com.izforge.izpack.util.sage;
 
+import com.izforge.izpack.installer.AutomatedInstallData;
+
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
  * 
@@ -8,11 +10,20 @@ package com.izforge.izpack.util.sage;
  */
 public class CDevToolsInfosFinder extends CAbstractOsInfosfinder {
 
+	private final static String PREREQUISITES_SCRIPT = "PrerequisitesControlInfoScript"; // "PrerequisitesControlScript.sh";
+
 	/**
 	 * @param aReport
 	 */
-	public CDevToolsInfosFinder(final CReport aReport) {
-		super(aReport);
+	public CDevToolsInfosFinder(final CReport pReport, AutomatedInstallData pData) {
+		super(pReport, pData);
+	}
+
+	/*
+	 * @override
+	 */
+	public String getResourceName() {
+		return PREREQUISITES_SCRIPT + "_" + PLATFORM;
 	}
 
 	/**
@@ -73,22 +84,20 @@ public class CDevToolsInfosFinder extends CAbstractOsInfosfinder {
 	 * 
 	 * @see com.izforge.izpack.util.sage.CAbstractOsInfosfinder#getScriptLines()
 	 */
-	@Override
-	public StringBuffer getScriptLines() {
-		StringBuffer wLines = new StringBuffer();
-
-		addOneLine(wLines);
-		addOneLine(wLines,
-				"logStep \"Get the tools of the group [Development tools] using yum\"");
-		addOneLine(wLines);
-		addOneLine(wLines, "yum groupinfo \"Development tools\"");
-		addOneLine(wLines, "if [ $? -ne 0 ]; then");
-		addOneLine(wLines, "  logErr \"Unable to get the list of tools \"");
-		addOneLine(wLines, "  exit 1;");
-		addOneLine(wLines, "fi");
-		addOneLine(wLines);
-
-		return wLines;
-	}
+	// Override
+	/*
+	 * public StringBuffer getScriptLines() { StringBuffer wLines = new
+	 * StringBuffer();
+	 * 
+	 * addOneLine(wLines); addOneLine(wLines,
+	 * "logStep \"Get the tools of the group [Development tools] using yum\"");
+	 * addOneLine(wLines); addOneLine(wLines,
+	 * "yum groupinfo \"Development tools\""); addOneLine(wLines,
+	 * "if [ $? -ne 0 ]; then"); addOneLine(wLines,
+	 * "  logErr \"Unable to get the list of tools \""); addOneLine(wLines,
+	 * "  exit 1;"); addOneLine(wLines, "fi"); addOneLine(wLines);
+	 * 
+	 * return wLines; }
+	 */
 
 }

@@ -1,33 +1,22 @@
 package com.izforge.izpack.util;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESedeKeySpec;
-import javax.crypto.spec.IvParameterSpec;
-import javax.xml.bind.DatatypeConverter;
 
 import org.bouncycastle.openssl.PEMEncryptor;
 import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.openssl.jcajce.JcePEMEncryptorBuilder;
 
 import com.izforge.izpack.installer.AutomatedInstallData;
-import com.izforge.izpack.installer.DataValidator.Status;
 
 
 public class KeyPairGeneratorDataValidator implements com.izforge.izpack.installer.DataValidator

@@ -42,28 +42,6 @@ public abstract class CAbstractOsInfosfinder {
 		return PREREQUISITES_SCRIPT;
 	}
 
-	/**
-	 * @param aLines
-	 * @return
-	 */
-	/*
-	 * protected StringBuffer addOneLine(final StringBuffer aLines) {
-	 * 
-	 * return addOneLine(aLines, ""); }
-	 */
-	/**
-	 * @param aLines
-	 * @param aLine
-	 * @return
-	 */
-	/*
-	 * protected StringBuffer addOneLine(final StringBuffer aLines, final String
-	 * aLine) {
-	 * 
-	 * aLines.append('\n').append(aLine);
-	 * 
-	 * return aLines; }
-	 */
 
 	/**
 	 * @return
@@ -73,70 +51,16 @@ public abstract class CAbstractOsInfosfinder {
 
 		CLoggerUtils.logInfo("begin");
 		String wShellScriptName = getResourceName();
+		
+		Debug.log("execute " + wShellScriptName);
 		aReport.appendStep("Exec ScriptName=[%s]", wShellScriptName);
-
-		// -------
-		// File wScriptDir = getScriptDir();
-
-		// pReport.append("ScriptDir=[%s]", wScriptDir.getAbsolutePath());
-		// String wScriptLocation = new File(wScriptDir,
-		// wShellScriptName).getAbsolutePath();
-		// pReport.append("ScriptLocation=[%s]", wScriptLocation);
-		// String wScriptParamter = getScriptParamter();
-		// pReport.append("ScriptParamter=[%s]", wScriptParamter);
-		// StringBuffer wLines = getScript();
-		// dump the script in the report
-		// pReport.appendScript(wLines.toString());
-		// -------
-		// String wOutput = ShellScript.execAndDelete(ShellScript.BASH, wLines,
-		// wScriptLocation, wScriptParamter);
 
 		String wOutput = loadPredefinedFunctions(getResourceName());
 		aReport.appendOutput(wOutput);
 		return wOutput;
 	}
 
-	/*
-	 * public StringBuffer getScript() throws Exception {
-	 * 
-	 * StringBuffer wLines = new StringBuffer();
-	 * 
-	 * // wLines.append(loadPredefinedFunctions(PREREQUISITES_SCRIPT+"_"+PLATFORM));
-	 * 
-	 * wLines.append(getScriptLines());
-	 * 
-	 * addOneLine(wLines); addOneLine(wLines, "exit 0;"); addOneLine(wLines,
-	 * "#eof");
-	 * 
-	 * return wLines;
-	 * 
-	 * }
-	 */
 
-	/**
-	 * @return
-	 */
-	/*
-	 * public File getScriptDir() {
-	 * 
-	 * return new File(System.getProperty("user.dir")); }
-	 */
-
-	// public abstract StringBuffer getScriptLines();
-
-	/**
-	 * @return
-	 */
-	// public String getScriptName() {
-	// return String.format("%s.sh", getClass().getSimpleName());
-	// }
-
-	/**
-	 * @return
-	 */
-	// public String getScriptParamter() {
-	// return null;
-	// }
 
 	private String loadPredefinedFunctions(String resource) throws Exception {
 		String result = "";

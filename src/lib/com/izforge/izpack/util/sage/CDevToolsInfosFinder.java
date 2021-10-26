@@ -84,20 +84,6 @@ public class CDevToolsInfosFinder extends CAbstractOsInfosfinder {
 	 * 
 	 * @see com.izforge.izpack.util.sage.CAbstractOsInfosfinder#getScriptLines()
 	 */
-	// Override
-	/*
-	 * public StringBuffer getScriptLines() { StringBuffer wLines = new
-	 * StringBuffer();
-	 * 
-	 * addOneLine(wLines); addOneLine(wLines,
-	 * "logStep \"Get the tools of the group [Development tools] using yum\"");
-	 * addOneLine(wLines); addOneLine(wLines,
-	 * "yum groupinfo \"Development tools\""); addOneLine(wLines,
-	 * "if [ $? -ne 0 ]; then"); addOneLine(wLines,
-	 * "  logErr \"Unable to get the list of tools \""); addOneLine(wLines,
-	 * "  exit 1;"); addOneLine(wLines, "fi"); addOneLine(wLines);
-	 * 
-	 * return wLines; }
-	 */
+
 
 }

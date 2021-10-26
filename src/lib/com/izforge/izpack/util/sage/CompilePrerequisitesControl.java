@@ -388,13 +388,13 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 		/**
 		 * <pre>
-		<variable name="compile.prerequisites.controle.packages.tools" value=
+		<variable name="compile.prerequisites.control.packages.tools" value=
 		"gcc,make" />
 		 * </pre>
 		 */
 		aReport.appendStep("validPrerequisites searching tools");
 
-		String wToolsDef = aData.getVariable("compile.prerequisites.controle.packages.tools");
+		String wToolsDef = aData.getVariable("compile.prerequisites.control.packages.tools");
 		CWordList wToolList = new CWordList(aReport, "tool", wToolsDef.split(","));
 		setProgress(aData, String.format("Searching %d tools.", wToolList.size()));
 		aReport.append(wToolList.dumpAsNumberedList());
@@ -406,14 +406,14 @@ public class CompilePrerequisitesControl implements DataValidator {
 		/**
 		 * <pre>
 		<variable name=
-		"compile.prerequisites.controle.packages.libs" value=
+		"compile.prerequisites.control.packages.libs" value=
 		"pcre-devel.x86_64,apr-devel.x86_64,apr-util-devel.x86_64,httpd-devel,libxml2.x86_64,libxml2-devel.x86_64"/>
 		 * </pre>
 		 */
 
 		aReport.appendStep("validPrerequisites searching libraries");
 
-		String wLibsDef = aData.getVariable("compile.prerequisites.controle.packages.libs");
+		String wLibsDef = aData.getVariable("compile.prerequisites.control.packages.libs");
 		CWordList wLibraryList = new CWordList(aReport, "library", wLibsDef.split(","));
 		setProgress(aData, String.format("Searching %d libraries.", wLibraryList.size()));
 		aReport.append(wLibraryList.dumpAsNumberedList());

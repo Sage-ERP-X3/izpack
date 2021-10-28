@@ -158,8 +158,8 @@
     <str id="FinishPanel.fail" txt="L'installation a échouée ..."/>
     <str id="FinishPanel.installed.on" txt="l'application a été installée dans le répertoire"/>
     <str id="FinishPanel.uninst.info" txt="Un désinstallateur a été créé :"/>
-    <str id="FinishPanel.auto" txt="Générer un script d'installation automatisée"/>
-    <str id="FinishPanel.auto.ask" txt="Voulez-vous générer un script d'installation automatisée ?"/>
+    <str id="FinishPanel.auto" txt="Fichier de réponses"/>
+    <str id="FinishPanel.auto.ask" txt="Voulez-vous générer un fichier de réponses ?"/>
     <str id="FinishPanel.auto.tip" txt="Génère un fichier qui permet de refaire automatiquement la meme installation sur une autre machine."/>
 		<str id="FinishPanel.auto.dialog.filterdesc" txt="Fichiers XML"/>
 

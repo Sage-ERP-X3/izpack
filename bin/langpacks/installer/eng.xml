@@ -160,8 +160,8 @@
     <str id="FinishPanel.restartLabel" txt="Restart is required to finish the installation"/>
     <str id="FinishPanel.installed.on" txt="Application installed on"/>
     <str id="FinishPanel.uninst.info" txt="An uninstaller program has been created in: "/>
-    <str id="FinishPanel.auto" txt="Generate an automatic installation script"/>
-    <str id="FinishPanel.auto.ask" txt="Do you want to generate an automatic installation script ?"/>
+    <str id="FinishPanel.auto" txt="Generate a response file"/>
+    <str id="FinishPanel.auto.ask" txt="Do you want to generate a response file ?"/>
     <str id="FinishPanel.auto.tip" txt="Use this script to repeat this installation on other computers."/>
     <str id="FinishPanel.auto.dialog.filterdesc" txt="XML Files"/>
 

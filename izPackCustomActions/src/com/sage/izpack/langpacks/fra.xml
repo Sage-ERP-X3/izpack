@@ -167,10 +167,12 @@
     <str id="FinishPanel.fail" txt="L'installation a échouée ..."/>
     <str id="FinishPanel.installed.on" txt="l'application a été installée dans le répertoire"/>
     <str id="FinishPanel.uninst.info" txt="Un désinstallateur a été créé :"/>
-    <str id="FinishPanel.auto" txt="Générer un script d'installation automatisée"/>
-    <str id="FinishPanel.auto.ask" txt="Voulez-vous générer un script d'installation automatisée ?"/>
-    <str id="FinishPanel.auto.tip" txt="Génère un fichier qui permet de refaire automatiquement la meme installation sur une autre machine."/>
-		<str id="FinishPanel.auto.dialog.filterdesc" txt="Fichiers XML"/>
+	<!-- str id="FinishPanel.auto" txt="Générer un script d'installation automatisée"/-->
+    <!-- str id="FinishPanel.auto.ask" txt="Voulez-vous générer un script d'installation automatisée ?"/-->
+    <str id="FinishPanel.auto" txt="Générer un fichier de réponses"/>
+    <str id="FinishPanel.auto.ask" txt="Voulez-vous générer un fichier de réponse ?"/>
+    <str id="FinishPanel.auto.tip" txt="Génère un fichier qui permet de refaire automatiquement la même installation sur une autre machine."/>
+	<str id="FinishPanel.auto.dialog.filterdesc" txt="Fichiers XML"/>
 
     <!-- ImgPacksPanel strings -->
     <str id="ImgPacksPanel.dependencyList" txt="Dépendences"/>
@@ -205,6 +207,7 @@
     <str id="ShortcutPanel.location.startup" txt="Groupe de démarrage"/>
     <str id="ShortcutPanel.regular.StartMenu:Start-Menu" txt="Menu démarrer"/>
     <str id="ShortcutPanel.regular.StartMenu:K-Menu" txt="Menu K"/>
+
 
     <!-- UserInputPanel strings -->
     <str id="UserInputPanel.error.caption" txt="Problème de saisie"/>

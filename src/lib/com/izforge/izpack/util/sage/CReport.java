@@ -48,8 +48,7 @@ public class CReport {
 
 	private static final int REPORT_WITDH = 160;
 
-	private final static SimpleDateFormat sIso8601Formatter = new SimpleDateFormat(
-			PATTERN_ISO_8601);
+	private final static SimpleDateFormat sIso8601Formatter = new SimpleDateFormat(PATTERN_ISO_8601);
 
 	public static final String SUFFIX_EMPTY = "";
 
@@ -77,8 +76,7 @@ public class CReport {
 	}
 
 	/**
-	 * @param aWidth
-	 *            the width of the report
+	 * @param aWidth the width of the report
 	 */
 	public CReport(final String aName, final int aWidth) {
 		super();
@@ -139,8 +137,7 @@ public class CReport {
 	 * @param aArgs
 	 * @return
 	 */
-	private String appendBanner(final EKindOfBanner aKindOfBanner,
-			final char aBannerChar, final String aFormat,
+	private String appendBanner(final EKindOfBanner aKindOfBanner, final char aBannerChar, final String aFormat,
 			final Object... aArgs) {
 
 		String wTitle = String.format(aFormat, aArgs);
@@ -156,9 +153,9 @@ public class CReport {
 		String wLineFull = generateLineFull(aBannerChar, getWidth());
 		appendEmpty();
 		append(wLineFull);
-		//append(generateLineBeginEnd(aBannerChar, getWidth()));
+		// append(generateLineBeginEnd(aBannerChar, getWidth()));
 		append(generateLineBeginEnd(aBannerChar, getWidth(), wTitle));
-		//append(generateLineBeginEnd(aBannerChar, getWidth()));
+		// append(generateLineBeginEnd(aBannerChar, getWidth()));
 		append(wLineFull);
 		appendEmpty();
 		return wTitle;
@@ -219,8 +216,7 @@ public class CReport {
 	 * @param aWidth
 	 * @return
 	 */
-	public String appendLineFull(final char aChar, final int aWidth,
-			final String aText) {
+	public String appendLineFull(final char aChar, final int aWidth, final String aText) {
 		return append(generateLineFull(aChar, aWidth, aText));
 	}
 
@@ -259,11 +255,9 @@ public class CReport {
 	public String appendOutput(String aOutPut) {
 
 		appendLineFull('-', "Output begin");
-		int wNbAppentLines = appendNumberedLines(
-				aOutPut.split(REGEX_SPLIT_LINES));
+		int wNbAppentLines = appendNumberedLines(aOutPut.split(REGEX_SPLIT_LINES));
 		appendLineFull('-', "Output end");
 		return String.format(" [%d] output lines appent", wNbAppentLines);
-
 	}
 
 	/**
@@ -273,8 +267,7 @@ public class CReport {
 	public String appendScript(String aScript) {
 
 		appendLineFull('.', "Script begin");
-		int wNbAppentLines = appendNumberedLines(
-				aScript.split(REGEX_SPLIT_LINES));
+		int wNbAppentLines = appendNumberedLines(aScript.split(REGEX_SPLIT_LINES));
 		appendLineFull('.', "Script end");
 
 		return String.format(" [%d] script lines appent", wNbAppentLines);
@@ -289,8 +282,7 @@ public class CReport {
 
 		pStepIdx++;
 
-		return appendBanner(EKindOfBanner.BANNER_STEP, CHAR_STEP, aFormat,
-				aArgs);
+		return appendBanner(EKindOfBanner.BANNER_STEP, CHAR_STEP, aFormat, aArgs);
 	}
 
 	/**
@@ -320,8 +312,7 @@ public class CReport {
 
 		pTitleIdx++;
 
-		return appendBanner(EKindOfBanner.BANNER_TITLE, CHAR_TITRE, aFormat,
-				aArgs);
+		return appendBanner(EKindOfBanner.BANNER_TITLE, CHAR_TITRE, aFormat, aArgs);
 
 	}
 

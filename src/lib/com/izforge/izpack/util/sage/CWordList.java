@@ -15,7 +15,6 @@ import java.util.List;
  */
 public class CWordList {
 
-
 	public enum EKindOfFinding {
 		//
 		AT_THE_BEGINING_OF_A_LINE,
@@ -29,18 +28,28 @@ public class CWordList {
 
 	private final String[] pWordList;
 
+	private String friendlySuccessMesg;
+	private String friendlyWarningMesg;
+
 	/**
 	 * @param aReport
 	 * @param aKindOfWord
 	 * @param aWordList
 	 */
-	public CWordList(CReport aReport, final String aKindOfWord,
-			final String[] aWordList) {
+	public CWordList(CReport aReport, final String aKindOfWord, final String[] aWordList) {
 		super();
 		pReport = aReport;
 		pKindOfWord = aKindOfWord;
 		pWordList = aWordList;
 
+	}
+
+	public void SetFriendlySuccessMsg(String friendlyMsg) {
+		this.friendlySuccessMesg = friendlyMsg;
+	}
+
+	public void SetFriendlyWarningMsg(String friendlyMsg) {
+		this.friendlyWarningMesg = friendlyMsg;
 	}
 
 	/**
@@ -53,24 +62,20 @@ public class CWordList {
 		int wIdx = 0;
 		for (String wWord : pWordList) {
 			wIdx++;
-			wDump.append(toInsecable(String.format("\n- %s(%2d)=[%s]",
-					pKindOfWord, wIdx, wWord)));
+			wDump.append(toInsecable(String.format("\n- %s(%2d)=[%s]", pKindOfWord, wIdx, wWord)));
 		}
 		return wDump.toString();
 	}
-	
 
 	/**
 	 * @param aLines
 	 * @return
 	 */
-	public String[] missingWordsIn(final String aLines,
-			final EKindOfFinding aKindOfFinding) {
+	public String[] missingWordsIn(final String aLines, final EKindOfFinding aKindOfFinding) {
 
 		if (aLines == null || aLines.isEmpty()) {
-			throw new RuntimeException(String.format(
-					"Unable to find a '%s' in a null or empty set of Lines",
-					pKindOfWord));
+			throw new RuntimeException(
+					String.format("Unable to find a '%s' in a null or empty set of Lines", pKindOfWord));
 		}
 		List<String> result = new ArrayList<String>();
 		// hypothesis
@@ -79,27 +84,32 @@ public class CWordList {
 
 			if (EKindOfFinding.AT_THE_BEGINING_OF_A_LINE == aKindOfFinding) {
 
+
 				if (!oneOfTheLinesStartsWith(aLines, wWord)) {
-					pReport.appendError(String.format(
-							"The %s [%s] is not present", pKindOfWord, wWord));
+					if (this.friendlyWarningMesg != null && !this.friendlyWarningMesg.isEmpty()) {
+						String.format(this.friendlyWarningMesg, wWord);
+					} else {
+						pReport.appendError(String.format("The %s [%s] is not present", pKindOfWord, wWord));
+					}
 					// if at least one is not found
 					wAllFound = false;
 				} else {
-					pReport.appendSuccess(String.format(
-							"The %s [%s] is present", pKindOfWord, wWord));
+					if (this.friendlySuccessMesg != null  && !this.friendlySuccessMesg.isEmpty()) {
+						String.format(this.friendlySuccessMesg, wWord);
+					} else {
+						pReport.appendSuccess(String.format("The %s [%s] is present", pKindOfWord, wWord));
+					}
 				}
 			}
 			//
 			else {
 				if (!aLines.contains(wWord)) {
 					result.add(wWord);
-					pReport.appendError(String.format(
-							"The %s [%s] is not present", pKindOfWord, wWord));
+					pReport.appendError(String.format("The %s [%s] is not present", pKindOfWord, wWord));
 					// if at least one is not found
 					wAllFound = false;
 				} else {
-					pReport.appendSuccess(String.format(
-							"The %s [%s] is present", pKindOfWord, wWord));
+					pReport.appendSuccess(String.format("The %s [%s] is present", pKindOfWord, wWord));
 				}
 			}
 
@@ -107,19 +117,16 @@ public class CWordList {
 
 		return (String[]) result.toArray();
 	}
-	
 
 	/**
 	 * @param aLines
 	 * @return
 	 */
-	public boolean isAllWordsIn(final String aLines,
-			final EKindOfFinding aKindOfFinding) {
+	public boolean isAllWordsIn(final String aLines, final EKindOfFinding aKindOfFinding) {
 
 		if (aLines == null || aLines.isEmpty()) {
-			throw new RuntimeException(String.format(
-					"Unable to find a '%s' in a null or empty set of Lines",
-					pKindOfWord));
+			throw new RuntimeException(
+					String.format("Unable to find a '%s' in a null or empty set of Lines", pKindOfWord));
 		}
 		// hypothesis
 		boolean wAllFound = true;
@@ -128,28 +135,21 @@ public class CWordList {
 			if (EKindOfFinding.AT_THE_BEGINING_OF_A_LINE == aKindOfFinding) {
 
 				if (!oneOfTheLinesStartsWith(aLines, wWord)) {
-					pReport.appendError(String.format(
-							"The %s [%s] is not present at the begining of one of the lines",
-							pKindOfWord, wWord));
+					pReport.appendError(String.format("The %s [%s] has NOT been found.", pKindOfWord, wWord));
 					// if at least one is not found
 					wAllFound = false;
 				} else {
-					pReport.appendSuccess(String.format(
-							"The %s [%s] is present at the begining of one of the lines",
-
-							pKindOfWord, wWord));
+					pReport.appendSuccess(String.format("The %s [%s] has been found.", pKindOfWord, wWord));
 				}
 			}
 			//
 			else {
 				if (!aLines.contains(wWord)) {
-					pReport.appendError(String.format(
-							"The %s [%s] is not present", pKindOfWord, wWord));
+					pReport.appendError(String.format("The %s [%s] is not present", pKindOfWord, wWord));
 					// if at least one is not found
 					wAllFound = false;
 				} else {
-					pReport.appendSuccess(String.format(
-							"The %s [%s] is present", pKindOfWord, wWord));
+					pReport.appendSuccess(String.format("The %s [%s] is present", pKindOfWord, wWord));
 				}
 			}
 
@@ -163,11 +163,9 @@ public class CWordList {
 	 * @param aWord
 	 * @return
 	 */
-	private boolean oneOfTheLinesStartsWith(final String aText,
-			final String aWord) {
+	private boolean oneOfTheLinesStartsWith(final String aText, final String aWord) {
 		for (String wLines : aText.split(CReport.REGEX_SPLIT_LINES)) {
-			if (wLines != null && !wLines.isEmpty()
-					&& wLines.trim().startsWith(aWord)) {
+			if (wLines != null && !wLines.isEmpty() && wLines.trim().startsWith(aWord)) {
 				return true;
 			}
 		}
@@ -188,7 +186,6 @@ public class CWordList {
 	 */
 	@Override
 	public String toString() {
-		return String.format("KindOfWord=[%s]:%s", pKindOfWord,
-				dumpAsNumberedList());
+		return String.format("KindOfWord=[%s]:%s", pKindOfWord, dumpAsNumberedList());
 	}
 }

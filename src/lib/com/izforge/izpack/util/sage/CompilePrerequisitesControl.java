@@ -272,7 +272,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 		IzPanel wPanel = retrieveCurrentPanel(aData);
 		CLoggerUtils.logInfo("Components of the panel:%s", dumpComponents(wPanel));
 		JTextPane wJTextPaneResult = searchJTextPaneResult(wPanel);
-		wJTextPaneResult.setForeground(aIsOK ? Color.BLUE : Color.RED);
+		wJTextPaneResult.setForeground(aIsOK ? Color.BLACK : Color.BLUE);
 		wJTextPaneResult.setFont(new Font(Font.MONOSPACED, Font.PLAIN, RESULT_FONT_SIZE_9));
 		wJTextPaneResult.setText(aReport.toStringWithoutNow());
 	}
@@ -303,7 +303,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 		else
 			wReport.setConsoleLogOn(CReport.CONSOLE_LOG_OFF);
 
-		wReport.appendTitle("%s:validateData", getClass().getSimpleName());
+		// wReport.appendTitle("%s:validateData", getClass().getSimpleName());
 
 		boolean wIsRedHatOrOracleLinux = OsVersion.IS_REDHAT_LINUX || OsVersion.IS_ORACLE_LINUX;
 
@@ -313,7 +313,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 		if (Debug.isTRACE()) {
 			wReport.appendStep("Current variables");
-			wReport.append("Variables:%s", dumpVariables(aData));
+			wReport.append("Variables: %s", dumpVariables(aData));
 		}
 		try {
 			// the validation itself: searching of the prerequisites
@@ -323,7 +323,9 @@ public class CompilePrerequisitesControl implements DataValidator {
 			wValidatorStatus = (wIsOK) ? Status.OK : Status.ERROR;
 
 			// wReport.appendStep("Validator status");
-			wReport.append("ValidatorStatus = [%s]", wValidatorStatus.name());
+			
+			wReport.append("");
+			wReport.append("Validator status = [%s]", wValidatorStatus.name());
 
 			// if the status is not OK, prepare the storage of the report
 			if (!wIsOK) {
@@ -394,6 +396,8 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 		String wToolsDef = aData.getVariable("compile.prerequisites.control.packages.tools");
 		CWordList wToolList = new CWordList(aReport, "tool", wToolsDef.split(","));
+		wToolList.SetFriendlySuccessMsg(aData.getVariable("compile.prerequisites.control.packages.successmessage"));		
+		wToolList.SetFriendlyWarningMsg(aData.getVariable("compile.prerequisites.control.packages.warningmessage"));		
 		setProgress(aData, String.format("Searching %d tools : %s", wToolList.size(), wToolsDef));
 		aReport.append(wToolList.dumpAsNumberedList());
 
@@ -413,6 +417,8 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 		String wLibsDef = aData.getVariable("compile.prerequisites.control.packages.libs");
 		CWordList wLibraryList = new CWordList(aReport, "library", wLibsDef.split(","));
+		wLibraryList.SetFriendlySuccessMsg(aData.getVariable("compile.prerequisites.control.packages.successmessage"));		
+		wLibraryList.SetFriendlyWarningMsg(aData.getVariable("compile.prerequisites.control.packages.warningmessage"));		
 		setProgress(aData, String.format("Searching %d libraries : %s", wLibraryList.size(), wLibsDef));
 		aReport.append(wLibraryList.dumpAsNumberedList());
 		String wDevLibrariesInfos = new CDevLibrariesInfosfinder(aReport, aData).execute();

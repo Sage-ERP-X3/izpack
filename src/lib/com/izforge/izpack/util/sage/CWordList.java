@@ -81,15 +81,12 @@ public class CWordList {
 
 				if (!oneOfTheLinesStartsWith(aLines, wWord)) {
 					pReport.appendError(String.format(
-							"The %s [%s] is not present at the begining of one of the lines",
-							pKindOfWord, wWord));
+							"The %s [%s] is not present", pKindOfWord, wWord));
 					// if at least one is not found
 					wAllFound = false;
 				} else {
 					pReport.appendSuccess(String.format(
-							"The %s [%s] is present at the begining of one of the lines",
-
-							pKindOfWord, wWord));
+							"The %s [%s] is present", pKindOfWord, wWord));
 				}
 			}
 			//

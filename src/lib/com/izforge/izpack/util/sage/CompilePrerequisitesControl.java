@@ -308,14 +308,13 @@ public class CompilePrerequisitesControl implements DataValidator {
 		boolean wIsRedHatOrOracleLinux = OsVersion.IS_REDHAT_LINUX || OsVersion.IS_ORACLE_LINUX;
 
 		if (!wIsRedHatOrOracleLinux) {
-
 			wReport.appendStep("WARNING NOT 'REDHAT_LINUX' OR 'ORACLE_LINUX' : [%s]", getOsDetails(aData));
 		}
 
-		wReport.appendStep("Current variables");
-
-		wReport.append("Variables:%s", dumpVariables(aData));
-
+		if (Debug.isTRACE()) {
+			wReport.appendStep("Current variables");
+			wReport.append("Variables:%s", dumpVariables(aData));
+		}
 		try {
 			// the validation itself: searching of the prerequisites
 			wIsOK = validPrerequisites(wReport, aData);
@@ -323,25 +322,20 @@ public class CompilePrerequisitesControl implements DataValidator {
 			// according the result of the seraching of the prerequisites
 			wValidatorStatus = (wIsOK) ? Status.OK : Status.ERROR;
 
-			wReport.appendStep("Validator status");
-
-			wReport.append("ValidatorStatus=[%s]", wValidatorStatus.name());
+			// wReport.appendStep("Validator status");
+			wReport.append("ValidatorStatus = [%s]", wValidatorStatus.name());
 
 			// if the status is not OK, prepare the storage of the report
 			if (!wIsOK) {
-				wReport.appendStep("Writing the '_onError' report");
-
-				// new Report writter
+				// wReport.appendStep("Writing the '_onError' report");
 				wReportWritter = new CReportWritter(wReport, CReport.SUFFIX_ON_ERROR);
-
-				wReport.append("OutputFile=[%s]", wReportWritter.getOutputFile());
-
+				wReport.append("OutputFile = [%s]", wReportWritter.getOutputFile());
 			}
 
 		} catch (Exception e) {
 			wReport.appendError(e);
 		} finally {
-			wReport.appendEof();
+			// wReport.appendEof();
 		}
 
 		// if the status is not OK, store the "_onError" report
@@ -350,7 +344,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 			try {
 				wReportWritter.write();
 
-				CLoggerUtils.logInfo("NbWritedBytes=[%s]", Files.size(wReportWritter.getOutputFile().toPath()));
+				CLoggerUtils.logInfo("NbWritedBytes = [%s]", Files.size(wReportWritter.getOutputFile().toPath()));
 			} catch (Exception e) {
 				CLoggerUtils.logSevere(e);
 			}

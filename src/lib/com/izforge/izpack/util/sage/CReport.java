@@ -156,9 +156,9 @@ public class CReport {
 		String wLineFull = generateLineFull(aBannerChar, getWidth());
 		appendEmpty();
 		append(wLineFull);
-		append(generateLineBeginEnd(aBannerChar, getWidth()));
+		//append(generateLineBeginEnd(aBannerChar, getWidth()));
 		append(generateLineBeginEnd(aBannerChar, getWidth(), wTitle));
-		append(generateLineBeginEnd(aBannerChar, getWidth()));
+		//append(generateLineBeginEnd(aBannerChar, getWidth()));
 		append(wLineFull);
 		appendEmpty();
 		return wTitle;

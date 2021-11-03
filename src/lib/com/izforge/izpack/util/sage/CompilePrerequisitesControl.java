@@ -400,7 +400,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 		String wToolsDef = aData.getVariable("compile.prerequisites.control.packages.tools");
 		CWordList wToolList = new CWordList(aReport, "tool", wToolsDef.split(","));
-		setProgress(aData, String.format("Searching %d tools : %d", wToolList.size(), wToolsDef));
+		setProgress(aData, String.format("Searching %d tools : %s", wToolList.size(), wToolsDef));
 		aReport.append(wToolList.dumpAsNumberedList());
 
 		String wDevToolsInfos = new CDevToolsInfosFinder(aReport, aData).execute();
@@ -419,7 +419,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 		String wLibsDef = aData.getVariable("compile.prerequisites.control.packages.libs");
 		CWordList wLibraryList = new CWordList(aReport, "library", wLibsDef.split(","));
-		setProgress(aData, String.format("Searching %d libraries : %d", wLibraryList.size(), wLibsDef));
+		setProgress(aData, String.format("Searching %d libraries : %s", wLibraryList.size(), wLibsDef));
 		aReport.append(wLibraryList.dumpAsNumberedList());
 		String wDevLibrariesInfos = new CDevLibrariesInfosfinder(aReport, aData).execute();
 		boolean wLibraryFound = wLibraryList.isAllWordsIn(wDevLibrariesInfos, EKindOfFinding.AT_THE_BEGINING_OF_A_LINE);

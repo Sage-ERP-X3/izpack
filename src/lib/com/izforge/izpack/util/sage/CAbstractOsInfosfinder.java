@@ -97,34 +97,32 @@ public abstract class CAbstractOsInfosfinder {
 				procBuilder = new ProcessBuilder("cmd.exe", "/C", tempFile.getAbsolutePath());
 			}
 
-			Debug.log("launching " + tempFile.getAbsolutePath());
+			Debug.log("Launching " + tempFile.getAbsolutePath());
 			Process p = procBuilder.start();
 			InputStream errorOutput = new BufferedInputStream(p.getErrorStream(), 10000);
 			InputStream consoleOutput = new BufferedInputStream(p.getInputStream(), 10000);
 
-			Debug.log("errorOutput:");
-
+			Debug.log("ErrorOutput:");
 			BufferedReader br = new BufferedReader(new InputStreamReader(errorOutput));
-			String read = br.readLine();
-			while (read != null) {
-				Debug.log(read);
-				read = br.readLine();
-				result += read;
+			String readErrorOutput = br.readLine();
+			while (readErrorOutput != null) {
+				Debug.log(readErrorOutput);
+				readErrorOutput = br.readLine();
+				result += readErrorOutput + "\r\n";
 			}
 
-			Debug.log("consoleOutput:");
-
-			BufferedReader br2 = new BufferedReader(new InputStreamReader(consoleOutput));
-			String read2 = br2.readLine();
-			while (read2 != null) {
-				Debug.log(read2);
-				read2 = br2.readLine();
-				result += read2;
+			Debug.log("ConsoleOutput:");
+			BufferedReader readerOutput = new BufferedReader(new InputStreamReader(consoleOutput));
+			String readOutput = readerOutput.readLine();
+			while (readOutput != null) {
+				Debug.log(readOutput);
+				readOutput = readerOutput.readLine();
+				result += readOutput + "\r\n";
 			}
 
 			int exitCode = p.waitFor();
 
-			Debug.log("exitCode: " + exitCode);
+			Debug.log("ExitCode: " + exitCode);
 			aReport.appendStep("exitCode: ", exitCode);
 
 			if (exitCode != 0) {
@@ -140,31 +138,4 @@ public abstract class CAbstractOsInfosfinder {
 		return result;
 	}
 
-	/**
-	 * return throws Exception
-	 *
-	 * Finds a resource with a given name. The rules for searching resources
-	 * associated with a given class are implemented by the defining class loader of
-	 * the class. This method delegates to this object's class loader. If this
-	 * object was loaded by the bootstrap class loader, the method delegates to
-	 * ClassLoader.getSystemResource.
-	 * 
-	 * Before delegation, an absolute resource name is constructed from the given
-	 * resource name using this algorithm:
-	 * 
-	 * If the name begins with a '/' ('\u002f'), then the absolute name of the
-	 * resource is the portion of the name following the '/'. Otherwise, the
-	 * absolute name is of the following form: modified_package_name/name Where the
-	 * modified_package_name is the package name of this object with '/' substituted
-	 * for '.' ('\u002e').
-	 */
-	/*
-	 * protected String loadPredefinedFunctionsOLD() throws Exception { try {
-	 * 
-	 * return new String(Files.readAllBytes(
-	 * Paths.get(getClass().getResource(PREREQUISITES_SCRIPT).toURI()))); } catch
-	 * (Exception e) { throw new Exception(String.format(
-	 * "Unable to load the resource [%s] from the package [%s]",
-	 * PREREQUISITES_SCRIPT, this.getClass().getPackage().getName()), e); } }
-	 */
 }

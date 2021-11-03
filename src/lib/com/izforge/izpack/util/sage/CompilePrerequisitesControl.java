@@ -20,6 +20,7 @@ import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.DataValidator;
 import com.izforge.izpack.installer.IzPanel;
 import com.izforge.izpack.panels.UserInputPanel;
+import com.izforge.izpack.util.Debug;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.sage.CWordList.EKindOfFinding;
 
@@ -285,7 +286,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 	@Override
 	public Status validateData(AutomatedInstallData aData) {
 
-		CLoggerUtils.logInfo("Validatator begin.");
+		CLoggerUtils.logInfo("Validator begin.");
 
 		// hypothesis
 		boolean wIsOK = false;
@@ -297,7 +298,10 @@ public class CompilePrerequisitesControl implements DataValidator {
 		CReport wReport = new CReport(getClass().getSimpleName(), REPORT_WIDTH_200);
 
 		// tels the report to log each line in the root jul logger
-		wReport.setConsoleLogOn(CReport.CONSOLE_LOG_ON);
+		if (Debug.isTRACE())
+			wReport.setConsoleLogOn(CReport.CONSOLE_LOG_ON);
+		else
+			wReport.setConsoleLogOn(CReport.CONSOLE_LOG_OFF);
 
 		wReport.appendTitle("%s:validateData", getClass().getSimpleName());
 
@@ -313,7 +317,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 		wReport.append("Variables:%s", dumpVariables(aData));
 
 		try {
-			// the validation itself: serching of the prerequisites
+			// the validation itself: searching of the prerequisites
 			wIsOK = validPrerequisites(wReport, aData);
 
 			// according the result of the seraching of the prerequisites
@@ -373,7 +377,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 			}
 		}
 
-		CLoggerUtils.logInfo("Validatator end.");
+		CLoggerUtils.logInfo("Validator end.");
 
 		return wValidatorStatus;
 	}

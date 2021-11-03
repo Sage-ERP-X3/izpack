@@ -119,7 +119,7 @@ public abstract class CAbstractOsInfosfinder {
 			while (read2 != null) {
 				Debug.log(read2);
 				read2 = br2.readLine();
-				result += read;
+				result += read2;
 			}
 
 			int exitCode = p.waitFor();

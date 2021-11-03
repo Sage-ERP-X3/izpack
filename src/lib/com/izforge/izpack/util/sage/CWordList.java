@@ -12,10 +12,7 @@ import static com.izforge.izpack.util.sage.CTextLineUtils.toInsecable;
  */
 public class CWordList {
 
-	/**
-	 * @author ogattaz
-	 *
-	 */
+
 	public enum EKindOfFinding {
 		//
 		AT_THE_BEGINING_OF_A_LINE,

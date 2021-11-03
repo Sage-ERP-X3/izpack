@@ -2,6 +2,9 @@ package com.izforge.izpack.util.sage;
 
 import static com.izforge.izpack.util.sage.CTextLineUtils.toInsecable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
  * 
@@ -69,6 +72,7 @@ public class CWordList {
 					"Unable to find a '%s' in a null or empty set of Lines",
 					pKindOfWord));
 		}
+		List<String> result = new ArrayList<String>();
 		// hypothesis
 		boolean wAllFound = true;
 		for (String wWord : pWordList) {
@@ -91,6 +95,7 @@ public class CWordList {
 			//
 			else {
 				if (!aLines.contains(wWord)) {
+					result.add(wWord);
 					pReport.appendError(String.format(
 							"The %s [%s] is not present", pKindOfWord, wWord));
 					// if at least one is not found
@@ -103,7 +108,7 @@ public class CWordList {
 
 		}
 
-		return wAllFound;
+		return (String[]) result.toArray();
 	}
 	
 

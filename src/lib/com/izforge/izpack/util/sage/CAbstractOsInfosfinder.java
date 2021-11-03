@@ -6,16 +6,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.InstallerException;
 import com.izforge.izpack.util.Debug;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.SpecHelper;
 import com.izforge.izpack.util.VariableSubstitutor;
-import com.izforge.izpack.util.os.unix.ShellScript;
 
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367

@@ -22,8 +22,6 @@ import com.izforge.izpack.util.Debug;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.sage.CWordList.EKindOfFinding;
 
-import jdk.nashorn.internal.runtime.options.LoggingOption.LoggerInfo;
-
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
  * 
@@ -34,6 +32,7 @@ import jdk.nashorn.internal.runtime.options.LoggingOption.LoggerInfo;
 public class CompilePrerequisitesControl implements DataValidator {
 
 	private static final int REPORT_WIDTH_200 = 200;
+	private static final int REPORT_WIDTH_80 = 100;
 
 	private static final int RESULT_FONT_SIZE_9 = 9;
 
@@ -315,8 +314,10 @@ public class CompilePrerequisitesControl implements DataValidator {
 		CReportWritter wReportWritter = null;
 
 		// create the report (name of the validator & width 200)
-		CReport wReport = new CReport(getClass().getSimpleName(), REPORT_WIDTH_200);
+		
+		CReport wReport = new CReport(getClass().getSimpleName(), isConsoleMode(aData) ? REPORT_WIDTH_80 : REPORT_WIDTH_200);
 
+		
 		// tels the report to log each line in the root jul logger
 		if (Debug.isTRACE()) //  || isConsoleMode(aData))
 			wReport.setConsoleLogOn(CReport.CONSOLE_LOG_ON);

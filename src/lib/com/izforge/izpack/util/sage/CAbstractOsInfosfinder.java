@@ -117,9 +117,9 @@ public abstract class CAbstractOsInfosfinder {
 			}
 
 			int exitCode = p.waitFor();
-
 			Debug.log("ExitCode: " + exitCode);
-			aReport.appendStep("exitCode: ", exitCode);
+			aReport.append("exitCode: ", exitCode);
+			// aReport.appendStep("exitCode: ", exitCode);
 
 			if (exitCode != 0) {
 				// script doesn't return 0 = SUCCESS

@@ -255,7 +255,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 		}
 		// else, if in console mode
 		else {
-			LogInfo(aData, String.format("Progress: %s"));
+			LogInfo(aData, String.format("Progress: %s", aInfos));
 		}
 	}
 

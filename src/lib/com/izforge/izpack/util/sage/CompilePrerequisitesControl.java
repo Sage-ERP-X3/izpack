@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.logging.Level;
-
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 
@@ -257,7 +255,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 		}
 		// else, if in console mode
 		else {
-			CLoggerUtils.logInfo("Progress: %s", aInfos);
+			LogInfo(aData, String.format("Progress: %s"));
 		}
 	}
 
@@ -277,6 +275,25 @@ public class CompilePrerequisitesControl implements DataValidator {
 		wJTextPaneResult.setText(aReport.toStringWithoutNow());
 	}
 
+	
+	private void LogInfo(AutomatedInstallData aData, String mesg) {
+
+		if (isGuiMode(aData)) {
+			CLoggerUtils.logInfo(mesg);
+		} else { // Console mode
+			System.out.println(mesg);
+		}		
+	}
+	
+	private void LogError(AutomatedInstallData aData, String mesg) {
+
+		if (isGuiMode(aData)) {
+			CLoggerUtils.logSevere(mesg);
+		} else { // Console mode
+			System.err.println(mesg);
+		}		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -286,7 +303,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 	@Override
 	public Status validateData(AutomatedInstallData aData) {
 
-		CLoggerUtils.logInfo("Validator begin.");
+		LogInfo(aData, "Validator begin.");
 
 		// hypothesis
 		boolean wIsOK = false;
@@ -298,12 +315,10 @@ public class CompilePrerequisitesControl implements DataValidator {
 		CReport wReport = new CReport(getClass().getSimpleName(), REPORT_WIDTH_200);
 
 		// tels the report to log each line in the root jul logger
-		if (Debug.isTRACE())
+		if (Debug.isTRACE() || isConsoleMode(aData))
 			wReport.setConsoleLogOn(CReport.CONSOLE_LOG_ON);
 		else
 			wReport.setConsoleLogOn(CReport.CONSOLE_LOG_OFF);
-
-		// wReport.appendTitle("%s:validateData", getClass().getSimpleName());
 
 		boolean wIsRedHatOrOracleLinux = OsVersion.IS_REDHAT_LINUX || OsVersion.IS_ORACLE_LINUX;
 
@@ -323,7 +338,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 			wValidatorStatus = (wIsOK) ? Status.OK : Status.ERROR;
 
 			// wReport.appendStep("Validator status");
-			
+
 			wReport.append("");
 			wReport.append("Validator status = [%s]", wValidatorStatus.name());
 
@@ -345,8 +360,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 			try {
 				wReportWritter.write();
-
-				CLoggerUtils.logInfo("NbWritedBytes = [%s]", Files.size(wReportWritter.getOutputFile().toPath()));
+				LogInfo(aData, String.format("NbWritedBytes = [%s]", Files.size(wReportWritter.getOutputFile().toPath())));
 			} catch (Exception e) {
 				CLoggerUtils.logSevere(e);
 			}
@@ -369,11 +383,12 @@ public class CompilePrerequisitesControl implements DataValidator {
 			// if the status is not OK
 			if (!wIsOK) {
 				// write a title banner
-				CLoggerUtils.logBanner(Level.SEVERE, "INSTALLATION STOPPED");
+				LogError(aData, "INSTALLATION STOPPED");
+				// CLoggerUtils.logBanner(Level.SEVERE, "INSTALLATION STOPPED");
 			}
 		}
 
-		CLoggerUtils.logInfo("Validator end.");
+		LogInfo(aData, "Validator end.");
 
 		return wValidatorStatus;
 	}
@@ -396,8 +411,8 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 		String wToolsDef = aData.getVariable("compile.prerequisites.control.packages.tools");
 		CWordList wToolList = new CWordList(aReport, "tool", wToolsDef.split(","));
-		wToolList.SetFriendlySuccessMsg(aData.getVariable("compile.prerequisites.control.packages.successmessage"));		
-		wToolList.SetFriendlyWarningMsg(aData.getVariable("compile.prerequisites.control.packages.warningmessage"));		
+		wToolList.SetFriendlySuccessMsg(aData.getVariable("compile.prerequisites.control.packages.successmessage"));
+		wToolList.SetFriendlyWarningMsg(aData.getVariable("compile.prerequisites.control.packages.warningmessage"));
 		setProgress(aData, String.format("Searching %d tools : %s", wToolList.size(), wToolsDef));
 		aReport.append(wToolList.dumpAsNumberedList());
 
@@ -417,8 +432,8 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 		String wLibsDef = aData.getVariable("compile.prerequisites.control.packages.libs");
 		CWordList wLibraryList = new CWordList(aReport, "library", wLibsDef.split(","));
-		wLibraryList.SetFriendlySuccessMsg(aData.getVariable("compile.prerequisites.control.packages.successmessage"));		
-		wLibraryList.SetFriendlyWarningMsg(aData.getVariable("compile.prerequisites.control.packages.warningmessage"));		
+		wLibraryList.SetFriendlySuccessMsg(aData.getVariable("compile.prerequisites.control.packages.successmessage"));
+		wLibraryList.SetFriendlyWarningMsg(aData.getVariable("compile.prerequisites.control.packages.warningmessage"));
 		setProgress(aData, String.format("Searching %d libraries : %s", wLibraryList.size(), wLibsDef));
 		aReport.append(wLibraryList.dumpAsNumberedList());
 		String wDevLibrariesInfos = new CDevLibrariesInfosfinder(aReport, aData).execute();

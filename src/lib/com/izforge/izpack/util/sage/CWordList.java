@@ -8,17 +8,12 @@ import java.util.List;
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
  * 
- * 
- * 
  * @author ogattaz
- *
  */
 public class CWordList {
 
 	public enum EKindOfFinding {
-		//
 		AT_THE_BEGINING_OF_A_LINE,
-		//
 		IN_ALL_THE_TEXT;
 	}
 
@@ -84,18 +79,17 @@ public class CWordList {
 
 			if (EKindOfFinding.AT_THE_BEGINING_OF_A_LINE == aKindOfFinding) {
 
-
 				if (!oneOfTheLinesStartsWith(aLines, wWord)) {
 					if (this.friendlyWarningMesg != null && !this.friendlyWarningMesg.isEmpty()) {
-						String.format(this.friendlyWarningMesg, wWord);
+						pReport.appendError(String.format(this.friendlyWarningMesg, wWord));
 					} else {
 						pReport.appendError(String.format("The %s [%s] is not present", pKindOfWord, wWord));
 					}
 					// if at least one is not found
 					wAllFound = false;
 				} else {
-					if (this.friendlySuccessMesg != null  && !this.friendlySuccessMesg.isEmpty()) {
-						String.format(this.friendlySuccessMesg, wWord);
+					if (this.friendlySuccessMesg != null && !this.friendlySuccessMesg.isEmpty()) {
+						pReport.appendSuccess(String.format(this.friendlySuccessMesg, wWord));
 					} else {
 						pReport.appendSuccess(String.format("The %s [%s] is present", pKindOfWord, wWord));
 					}
@@ -112,7 +106,6 @@ public class CWordList {
 					pReport.appendSuccess(String.format("The %s [%s] is present", pKindOfWord, wWord));
 				}
 			}
-
 		}
 
 		return (String[]) result.toArray();
@@ -135,11 +128,19 @@ public class CWordList {
 			if (EKindOfFinding.AT_THE_BEGINING_OF_A_LINE == aKindOfFinding) {
 
 				if (!oneOfTheLinesStartsWith(aLines, wWord)) {
-					pReport.appendError(String.format("The %s [%s] has NOT been found.", pKindOfWord, wWord));
+					if (this.friendlyWarningMesg != null && !this.friendlyWarningMesg.isEmpty()) {
+						pReport.appendError(String.format(this.friendlyWarningMesg, wWord));
+					} else {
+						pReport.appendError(String.format("The %s [%s] has NOT been found.", pKindOfWord, wWord));
+					}
 					// if at least one is not found
 					wAllFound = false;
 				} else {
-					pReport.appendSuccess(String.format("The %s [%s] has been found.", pKindOfWord, wWord));
+					if (this.friendlySuccessMesg != null && !this.friendlySuccessMesg.isEmpty()) {
+						pReport.appendSuccess(String.format(this.friendlySuccessMesg, wWord));
+					} else {
+						pReport.appendSuccess(String.format("The %s [%s] has been found.", pKindOfWord, wWord));
+					}
 				}
 			}
 			//

@@ -66,6 +66,7 @@ public class CWordList {
 	 * @param aLines
 	 * @return
 	 */
+	/*
 	public String[] missingWordsIn(final String aLines, final EKindOfFinding aKindOfFinding) {
 
 		if (aLines == null || aLines.isEmpty()) {
@@ -73,7 +74,6 @@ public class CWordList {
 					String.format("Unable to find a '%s' in a null or empty set of Lines", pKindOfWord));
 		}
 		List<String> result = new ArrayList<String>();
-		// hypothesis
 		boolean wAllFound = true;
 		for (String wWord : pWordList) {
 
@@ -110,7 +110,7 @@ public class CWordList {
 
 		return (String[]) result.toArray();
 	}
-
+*/
 	/**
 	 * @param aLines
 	 * @return

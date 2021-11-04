@@ -317,7 +317,8 @@ public class CReport {
 	}
 
 	private void consoleLog(final String aLogLine) {
-		CLoggerUtils.logInfo(aLogLine);
+		// CLoggerUtils.logInfo(aLogLine);
+		System.out.print(aLogLine);
 	}
 
 	/**

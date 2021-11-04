@@ -22,6 +22,8 @@ import com.izforge.izpack.util.Debug;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.sage.CWordList.EKindOfFinding;
 
+import jdk.nashorn.internal.runtime.options.LoggingOption.LoggerInfo;
+
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
  * 
@@ -316,7 +318,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 		CReport wReport = new CReport(getClass().getSimpleName(), REPORT_WIDTH_200);
 
 		// tels the report to log each line in the root jul logger
-		if (Debug.isTRACE() || isConsoleMode(aData))
+		if (Debug.isTRACE()) //  || isConsoleMode(aData))
 			wReport.setConsoleLogOn(CReport.CONSOLE_LOG_ON);
 		else
 			wReport.setConsoleLogOn(CReport.CONSOLE_LOG_OFF);
@@ -383,6 +385,9 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 			// if the status is not OK
 			if (!wIsOK) {
+				
+				LogInfo(aData, wReport.toStringWithoutNow());
+				
 				// write a title banner
 				LogError(aData, "INSTALLATION STOPPED");
 				// CLoggerUtils.logBanner(Level.SEVERE, "INSTALLATION STOPPED");

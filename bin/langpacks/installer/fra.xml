@@ -151,17 +151,17 @@
 	<str id="InstallationTypePanel.errNoCompFound" txt="Aucune version antérieure de ce composant n'a été trouvée, ce logiciel ne peut pas être mis à jour !"/>
 
     <!-- FinishPanel strings -->
-    <str id="FinishPanel.success" txt="L'installation est réussie !"/>
+    <str id="FinishPanel.success" txt="L'installation est réussie"/>
     <str id="FinishPanel.done" txt="Terminer"/>
     <str id="FinishPanel.restart" txt="Redémarrer"/>
     <str id="FinishPanel.restartLabel" txt="Veuillez redémarrer votre machine pour compléter l'installation"/>
     <str id="FinishPanel.fail" txt="L'installation a échouée ..."/>
     <str id="FinishPanel.installed.on" txt="l'application a été installée dans le répertoire"/>
     <str id="FinishPanel.uninst.info" txt="Un désinstallateur a été créé :"/>
-    <str id="FinishPanel.auto" txt="Sauvegarder fichier de réponses"/>
+    <str id="FinishPanel.auto" txt="Sauvegarder le fichier de réponses"/>
     <str id="FinishPanel.auto.ask" txt="Voulez-vous générer un fichier de réponses ?"/>
     <str id="FinishPanel.auto.tip" txt="Génère un fichier XML qui permet de refaire la même installation sur une autre machine."/>
-		<str id="FinishPanel.auto.dialog.filterdesc" txt="Fichiers XML"/>
+	<str id="FinishPanel.auto.dialog.filterdesc" txt="Fichiers XML"/>
 
     <!-- ImgPacksPanel strings -->
     <str id="ImgPacksPanel.dependencyList" txt="Dépendences"/>

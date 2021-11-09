@@ -82,11 +82,11 @@ public class ResourcesHelper {
 				result = String.format(result, arg1);
 			}
 			logger.log(Level.FINE, "ResourcesHelper.getCustomString  get '" + key + "': '" + result + "'  from "
-					+ customResourcesPath);
+					+ customResourcesPath + "  GetLocale():" + this.installData.getLocaleISO3());
 
 		} catch (Exception ex) {
-			logger.log(Level.SEVERE,
-					"ResourcesHelper Cannot get resource " + key + " " + customResourcesPath + " : " + ex);
+			logger.log(Level.SEVERE, "ResourcesHelper Cannot get resource " + key + " " + customResourcesPath
+					+ "GetLocale(): " + this.installData.getLocaleISO3() + " : " + ex);
 			ex.printStackTrace();
 		}
 

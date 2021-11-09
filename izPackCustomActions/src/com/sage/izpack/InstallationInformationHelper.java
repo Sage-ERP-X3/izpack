@@ -36,7 +36,7 @@ public final class InstallationInformationHelper {
 	private static final Logger logger = Logger.getLogger(InstallationInformationHelper.class.getName());
 
 	private static List<String> VariablesExceptions = new ArrayList<String>(
-			Arrays.asList("app-version", "APP_VER", "app-version-new", "APP_VER_NEW"));
+			Arrays.asList("app-version", "APP_VER", "app-version-new", "APP_VER_NEW", "ISO2_LANG", "ISO3_LANG"));
 
 	public static boolean hasAlreadyReadInformation(com.izforge.izpack.api.data.InstallData installData) {
 
@@ -518,11 +518,16 @@ public final class InstallationInformationHelper {
 		if (clone.get("APP_VER") != null) {
 			clone.getProperties().remove("APP_VER");
 		}
+		if (clone.get("ISO2_LANG") != null) {
+			clone.getProperties().remove("ISO2_LANG");
+		}
+		if (clone.get("ISO3_LANG") != null) {
+			clone.getProperties().remove("ISO3_LANG");
+		}
 
 		FileOutputStream fout = new FileOutputStream(installationInfo);
 		ObjectOutputStream oout = new ObjectOutputStream(fout);
 		oout.writeObject(selectedPacks);
-		// oout.writeObject(variables.getProperties());
 		oout.writeObject(clone.getProperties());
 		fout.close();
 

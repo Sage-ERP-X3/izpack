@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -102,20 +103,19 @@ public final class InstallationInformationHelper {
 		String newCurrentVersion = installData.getVariable("app-version-new");
 		if (newCurrentVersion != null) {
 			logger.log(Level.FINE, "InstallationInformationHelper Set current version 'app-version' (" + currentVersion
-					+ ") from 'app-version-new' : " + currentVersion);
+					+ ") from 'app-version-new' : " + newCurrentVersion);
 			installData.setVariable("app-version", newCurrentVersion);
 			installData.setVariable("APP_VER", newCurrentVersion);
 		}
 
 		/*
-		String currentAPPVersion = installData.getVariable("APP_VER");
-		String newCurrentAPPVersion = installData.getVariable("APP_VER_NEW");
-		if (newCurrentAPPVersion != null) {
-			logger.log(Level.FINE, "InstallationInformationHelper Set current version 'APP_VER' (" + currentAPPVersion
-					+ ") from 'APP_VER_NEW' : " + currentAPPVersion);
-			installData.setVariable("APP_VER", newCurrentAPPVersion);
-		}
-		*/
+		 * String currentAPPVersion = installData.getVariable("APP_VER"); String
+		 * newCurrentAPPVersion = installData.getVariable("APP_VER_NEW"); if
+		 * (newCurrentAPPVersion != null) { logger.log(Level.FINE,
+		 * "InstallationInformationHelper Set current version 'APP_VER' (" +
+		 * currentAPPVersion + ") from 'APP_VER_NEW' : " + currentAPPVersion);
+		 * installData.setVariable("APP_VER", newCurrentAPPVersion); }
+		 */
 	}
 
 	private static void saveNewAppVersion(com.izforge.izpack.api.data.InstallData installData) {
@@ -126,13 +126,12 @@ public final class InstallationInformationHelper {
 					"InstallationInformationHelper save current version 'app-version-new' : " + currentVersion);
 		}
 		/*
-		String currentAPPVER = installData.getVariable("APP_VER");
-		if (currentAPPVER != null) {
-			installData.setVariable("APP_VER_NEW", currentAPPVER);
-			logger.log(Level.FINE,
-					"InstallationInformationHelper save current version 'APP_VER_NEW' : " + currentAPPVER);
-		}
-		*/
+		 * String currentAPPVER = installData.getVariable("APP_VER"); if (currentAPPVER
+		 * != null) { installData.setVariable("APP_VER_NEW", currentAPPVER);
+		 * logger.log(Level.FINE,
+		 * "InstallationInformationHelper save current version 'APP_VER_NEW' : " +
+		 * currentAPPVER); }
+		 */
 	}
 
 	static boolean isIncompatibleInstallation(String installPath, boolean isReadInstallationInformation) {
@@ -291,8 +290,7 @@ public final class InstallationInformationHelper {
 
 					if ((dynVar != null && !dynVar.isCheckonce()) || envvariables.isBlockedVariableName((String) key)
 							|| envvariables.containsOverride((String) key)
-							|| VariablesExceptions.contains((String) key))
-					{
+							|| VariablesExceptions.contains((String) key)) {
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE,
 								"InstallationInformationHelper Skip variable : " + key + ": " + variables.get(key));
@@ -399,8 +397,7 @@ public final class InstallationInformationHelper {
 					if (((dynVariable != null && !dynVariable.isCheckonce()))
 							|| envvariables.isBlockedVariableName((String) key)
 							|| envvariables.containsOverride((String) key)
-							|| VariablesExceptions.contains((String) key))
-					{
+							|| VariablesExceptions.contains((String) key)) {
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE,
 								"InstallationInformationHelper.loadLegacyInstallationInformation  Skip variable : "
@@ -483,16 +480,34 @@ public final class InstallationInformationHelper {
 			}
 		} else {
 
-			logger.log(Level.FINE, "InstallationInformationHelper  Previous installation information found: "
-					+ installationInfo.getAbsolutePath());
+			String bakName = variables.get("app-version-old");
+			if (bakName == null)
+				bakName = "BAK";
+			File installationInfoArchive = new File(
+					installDir + File.separator + InstallData.INSTALLATION_INFORMATION + bakName);
+			logger.log(Level.FINE,
+					"InstallationInformationHelper  Previous installation information found: "
+							+ installationInfo.getAbsolutePath() + "  Renaming to "
+							+ installationInfoArchive.getAbsolutePath());
+			// app-version-old 2.23.0.16
+			Files.copy(installationInfo.toPath(), installationInfoArchive.toPath());
+			/*
+			 * if (installationInfo.renameTo(installationInfoArchive)) {
+			 * logger.log(Level.FINE, "InstallationInformationHelper  File " +
+			 * installationInfo + " renamed : " + installationInfoArchive); } else {
+			 * logger.log(Level.FINE, "InstallationInformationHelper  File " +
+			 * installationInfo + " NOT renamed to " + installationInfoArchive); }
+			 */
 		}
 
 		DefaultVariables clone = new DefaultVariables(variables.getProperties());
+
 		List<DynamicVariable> dynamicVariables = loadDynamicVariables(resources);
 		if (dynamicVariables != null)
 			for (DynamicVariable dynvar : dynamicVariables) {
 
-				if (clone.get(dynvar.getName()) != null) {
+				if (clone.get(dynvar.getName()) != null && !dynvar.isCheckonce()) {
+
 					clone.getProperties().remove(dynvar.getName());
 				}
 			}

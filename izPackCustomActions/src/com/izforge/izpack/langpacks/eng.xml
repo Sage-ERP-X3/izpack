@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<!-- The English langpack -->
+
+
+<izpack:langpack version="5.0"
+                 xmlns:izpack="http://izpack.org/schema/langpack"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://izpack.org/schema/langpack http://izpack.org/schema/5.0/izpack-langpack-5.0.xsd">
+
+
+
+    <!-- FinishPanel strings -->
+    <str id="FinishPanel.success" txt="Installation has completed successfully."/>
+    <str id="FinishPanel.done" txt="Done"/>
+    <str id="FinishPanel.fail" txt="Installation has failed!"/>
+    <str id="FinishPanel.uninst.info" txt="An uninstaller program has been created in: "/>
+    <str id="FinishPanel.auto" txt="Generate an automatic installation script"/>
+    <str id="FinishPanel.auto.tip"
+         txt="Use this script to repeat this installation on other computers."/>
+    <str id="FinishPanel.auto.dialog.filterdesc" txt="XML Files"/>
+
+
+
+</izpack:langpack>

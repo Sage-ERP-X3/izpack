@@ -37,6 +37,9 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			RegistryDefaultHandler handler, Log log) throws Exception {
 		super(panel, parent, installData, resources, handler, log);
 
+		ResourcesHelper resourceHelper = new ResourcesHelper(installData, resources);
+		resourceHelper.mergeCustomMessages();
+
 		_registryHelper = new RegistryHelper(handler, installData);
 		String path = _registryHelper.getInstallationPath();
 		// Update case :

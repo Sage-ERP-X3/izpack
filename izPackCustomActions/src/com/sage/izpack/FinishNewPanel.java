@@ -11,10 +11,18 @@ import com.izforge.izpack.panels.finish.FinishPanel;
 
 public class FinishNewPanel extends FinishPanel {
 
+	/*
+	 * @author Franck DEPOORTERE
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public FinishNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			UninstallDataWriter uninstallDataWriter, UninstallData uninstallData, Log log) {
 		super(panel, parent, installData, resources, uninstallDataWriter, uninstallData, log);
-		// TODO Auto-generated constructor stub
+
+		ResourcesHelper resourceHelper = new ResourcesHelper(installData, resources);
+		 resourceHelper.mergeCustomMessages();
+
 	}
 
 }

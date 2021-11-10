@@ -14,6 +14,10 @@ public class FinishNewConsolePanel extends FinishConsolePanel {
 	public FinishNewConsolePanel(ObjectFactory factory, ConsoleInstaller parent, PlatformModelMatcher matcher,
 			UninstallData uninstallData, Prompt prompt, PanelView<ConsolePanel> panel) {
 		super(factory, parent, matcher, uninstallData, prompt, panel);
+		
+		// ResourcesHelper resourceHelper = new ResourcesHelper(uninstallData, resources);
+		// resourceHelper.mergeCustomMessages();
+
 	}
 
 }

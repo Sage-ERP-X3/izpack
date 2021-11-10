@@ -23,8 +23,8 @@ import com.izforge.izpack.panels.checkedhello.RegistryHelper;
 import com.izforge.izpack.util.Console;
 
 /*
-* @author Franck DEPOORTERE
-*/
+ * @author Franck DEPOORTERE
+ */
 public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 
 	private static Logger logger = Logger.getLogger(CheckedHelloNewConsolePanel.class.getName());
@@ -49,6 +49,9 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		this.prompt = prompt;
 		this.installData = installData;
 		this.resources = resources;
+
+		ResourcesHelper resourceHelper = new ResourcesHelper(installData, resources);
+		resourceHelper.mergeCustomMessages();
 
 		RegistryHelper registryHelper = new RegistryHelper(handler, installData);
 		_registryHelper = registryHelper;

@@ -1,5 +1,7 @@
 package com.sage.izpack;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -7,6 +9,7 @@ import java.util.logging.Logger;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.LocaleDatabase;
 import com.izforge.izpack.api.resource.Locales;
+import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.core.resource.DefaultLocales;
 
@@ -15,6 +18,7 @@ public class ResourcesHelper {
 	private Resources resources;
 	private LocaleDatabase langpack = null;
 	private LocaleDatabase customResources = null;
+	private String customResourcesPath = null;
 	private InstallData installData;
 
 	private static Logger logger = Logger.getLogger(ResourcesHelper.class.getName());
@@ -50,6 +54,45 @@ public class ResourcesHelper {
 		return result;
 	}
 
+	/*
+	 * Merge customized resources with the standard resources
+	 */
+	public void mergeCustomMessages() {
+
+		if (this.customResourcesPath == null || this.customResources == null) {
+			getCustomString("TEST", true);
+		}
+		logger.log(Level.FINE, "ResourcesHelper.mergeCustomMessages  from " + this.customResourcesPath
+				+ "  GetLocale():" + this.installData.getLocaleISO3());
+
+		Messages messagesM = installData.getMessages();
+		messagesM.add(customResources);
+
+		/*
+		 * Map<String, String> newMessages = new HashMap<String, String>(); Map<String,
+		 * String> messages = messagesM.getMessages(); messages.forEach((mesgKey,
+		 * mesgValue) -> {
+		 * 
+		 * String customMesg = getCustomString(mesgKey, true); if (customMesg != null) {
+		 * // messages.replace(mesgKey, customMesg); // newMessages.put(mesgKey,
+		 * customMesg);
+		 * 
+		 * logger.log(Level.FINE,
+		 * "ResourcesHelper.mergeCustomMessages  replace custom '" + mesgKey + "': '" +
+		 * customMesg + "'  from " + this.customResourcesPath + "  GetLocale():" +
+		 * this.installData.getLocaleISO3()); } else { newMessages.put(mesgKey,
+		 * mesgValue);
+		 * 
+		 * logger.log(Level.FINE, "ResourcesHelper.mergeCustomMessages  keep '" +
+		 * mesgKey + "': '" + mesgValue + "'  from " + this.customResourcesPath +
+		 * "  GetLocale():" + this.installData.getLocaleISO3());
+		 * 
+		 * } });
+		 * 
+		 */
+
+	}
+
 	/**
 	 * Get message from SAGE izpack custom library ex:
 	 * izPackCustomActions\src\com\sage\izpack\langpacks\eng.xml
@@ -69,7 +112,7 @@ public class ResourcesHelper {
 			// }
 		}
 
-		String customResourcesPath = "/com/sage/izpack/langpacks/" + this.installData.getLocaleISO3() + ".xml";
+		this.customResourcesPath = "/com/sage/izpack/langpacks/" + this.installData.getLocaleISO3() + ".xml";
 		try {
 
 			if (this.customResources == null) {

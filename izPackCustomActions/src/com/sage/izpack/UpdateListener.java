@@ -36,13 +36,15 @@ import com.izforge.izpack.util.helper.SpecHelper;
 
   @author Franck DEPOORTERE
 */
-public class UpdateListener extends AbstractProgressInstallerListener { //  implements com.izforge.izpack.util.CleanupClient {
+public class UpdateListener extends AbstractProgressInstallerListener { // implements
+																		// com.izforge.izpack.util.CleanupClient {
 
 	public UpdateListener(com.izforge.izpack.api.data.InstallData installData) {
 		super(installData);
 	}
 
 	public static final String BEFORE_UPDATE_SCRIPT = "BeforeUpdateScript";
+	public static final String BEFORE_UPDATE_SCRIPT_PS = "BeforeUpdateScriptPs"; // PowerShell
 	public static final String BEFORE_INSTALL_SCRIPT = "BeforeInstallScript";
 	public static final String AFTER_UPDATE_SCRIPT = "AfterUpdateScript";
 	public static final String AFTER_INSTALL_SCRIPT = "AfterInstallScript";
@@ -71,14 +73,14 @@ public class UpdateListener extends AbstractProgressInstallerListener { //  impl
 				// at the top i imagine a first general action script
 				// let says beforeUpdate Script
 
-				fetchAndExcuteResource(AFTER_UPDATE_SCRIPT + "_" + PLATFORM, this.getInstallData());
+				fetchAndExecuteResource(AFTER_UPDATE_SCRIPT + "_" + PLATFORM, null, this.getInstallData());
 
 				// we can call the update before/after script for each deleted packs
 				// ???
 
 			} else {
 
-				fetchAndExcuteResource(AFTER_INSTALL_SCRIPT + "_" + PLATFORM, this.getInstallData());
+				fetchAndExecuteResource(AFTER_INSTALL_SCRIPT + "_" + PLATFORM, null, this.getInstallData());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -105,10 +107,10 @@ public class UpdateListener extends AbstractProgressInstallerListener { //  impl
 			if (Boolean.valueOf(getInstallData().getVariable(InstallData.MODIFY_INSTALLATION))) {
 				// fetchAndExcuteResource(pack.id + "_" + AFTER_UPDATE_SCRIPT + "_" + PLATFORM,
 				// getInstallData());
-				fetchAndExcuteResource(pack.getLangPackId() + "_" + AFTER_UPDATE_SCRIPT + "_" + PLATFORM,
+				fetchAndExecuteResource(pack.getLangPackId() + "_" + AFTER_UPDATE_SCRIPT + "_" + PLATFORM, null,
 						getInstallData());
 			} else {
-				fetchAndExcuteResource(pack.getLangPackId() + "_" + AFTER_INSTALL_SCRIPT + "_" + PLATFORM,
+				fetchAndExecuteResource(pack.getLangPackId() + "_" + AFTER_INSTALL_SCRIPT + "_" + PLATFORM, null,
 						getInstallData());
 			}
 		} catch (Exception e) {
@@ -129,25 +131,10 @@ public class UpdateListener extends AbstractProgressInstallerListener { //  impl
 	// public void beforePacks(AutomatedInstallData idata, Integer npacks,
 	// AbstractUIProgressHandler handler) throws Exception
 	public void beforePacks(List<Pack> packs, ProgressListener listener) {
-		// super.beforePacks(idata, npacks, handler);
 		try {
 			super.beforePacks(packs, listener);
-
-			// if (Boolean.valueOf(idata.getVariable(InstallData.MODIFY_INSTALLATION)))
-			if (Boolean.valueOf(getInstallData().getVariable(InstallData.MODIFY_INSTALLATION))) {
-				// at the top i imagine a first general action script
-				// let says beforeUpdate Script
-
-				fetchAndExcuteResource(BEFORE_UPDATE_SCRIPT + "_" + PLATFORM, this.getInstallData());
-
-				// we can call the update before/after script for each deleted packs
-				// ???
-
-			} else {
-				fetchAndExcuteResource(BEFORE_INSTALL_SCRIPT + "_" + PLATFORM, this.getInstallData());
-			}
+			beforePacksCommon();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -164,18 +151,38 @@ public class UpdateListener extends AbstractProgressInstallerListener { //  impl
 	// handler) throws Exception
 	public void beforePack(Pack pack) {
 		try { // super.beforePack(pack, i, handler);
+
 			super.beforePack(pack);
 
-			if (Boolean.valueOf(this.getInstallData().getVariable(InstallData.MODIFY_INSTALLATION))) {
-				fetchAndExcuteResource(pack.getLangPackId() + "_" + BEFORE_UPDATE_SCRIPT + "_" + PLATFORM,
-						getInstallData());
-			} else {
-				fetchAndExcuteResource(pack.getLangPackId() + "_" + BEFORE_INSTALL_SCRIPT + "_" + PLATFORM,
-						getInstallData());
-			}
+			beforePacksCommon();
+
+			/*
+			 * if (Boolean.valueOf(this.getInstallData().getVariable(InstallData.
+			 * MODIFY_INSTALLATION))) { fetchAndExcuteResource(pack.getLangPackId() + "_" +
+			 * BEFORE_UPDATE_SCRIPT + "_" + PLATFORM, getInstallData()); } else {
+			 * fetchAndExcuteResource(pack.getLangPackId() + "_" + BEFORE_INSTALL_SCRIPT +
+			 * "_" + PLATFORM, getInstallData()); }
+			 */
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	private void beforePacksCommon() throws Exception {
+		// if (Boolean.valueOf(idata.getVariable(InstallData.MODIFY_INSTALLATION)))
+		if (Boolean.valueOf(getInstallData().getVariable(InstallData.MODIFY_INSTALLATION))) {
+			// at the top i imagine a first general action script
+			// let says beforeUpdate Script
+
+			fetchAndExecuteResource(BEFORE_UPDATE_SCRIPT + "_" + PLATFORM, BEFORE_UPDATE_SCRIPT_PS + "_" + PLATFORM,
+					this.getInstallData());
+
+			// we can call the update before/after script for each deleted packs
+			// ???
+
+		} else {
+			fetchAndExecuteResource(BEFORE_INSTALL_SCRIPT + "_" + PLATFORM, null, this.getInstallData());
 		}
 	}
 
@@ -189,19 +196,52 @@ public class UpdateListener extends AbstractProgressInstallerListener { //  impl
 	// @Override
 	// public void afterInstallerInitialization(AutomatedInstallData data)
 	// public void afterInstallerInitialization() {
-	//	super.afterInstallerInitialization(getInstallData());
+	// super.afterInstallerInitialization(getInstallData());
 
-		// do we need to initialize something ?
-		// don't know for now but ??
+	// do we need to initialize something ?
+	// don't know for now but ??
 
 	// }
 
 	// public void fetchAndExcuteResource (String resource, AutomatedInstallData
 	// idata)
-	public void fetchAndExcuteResource(String resource, com.izforge.izpack.api.data.InstallData installData)
-			throws Exception {
-		
+	public void fetchAndExecuteResource(String resource, String resourcePs,
+			com.izforge.izpack.api.data.InstallData installData) throws Exception {
+
 		SpecHelper spechelper = new SpecHelper(new ResourceManager());
+
+		logger.log(Level.FINE,
+				"UpdateListener.fetchAndExecuteResource( resource: " + resource + " resourcePs:" + resourcePs + ")");
+
+		if (resourcePs != null) {
+
+			InputStream streamPs = spechelper.getResource(resourcePs);
+			if (streamPs != null) {
+				
+				VariableSubstitutorInputStream substitutedStreamPs = new VariableSubstitutorInputStream(streamPs,
+						installData.getVariables(), SubstitutionType.TYPE_PLAIN, true);
+				File tempFilePs = File.createTempFile(resourcePs, ".ps1");
+				FileOutputStream fos = null;
+				tempFilePs.deleteOnExit();
+				fos = new FileOutputStream(tempFilePs);
+
+				installData.setVariable("BEFORE_UPDATE_SCRIPT_PS", tempFilePs.getName());
+				installData.setVariable("BEFORE_UPDATE_SCRIPT_PS_PATH", tempFilePs.getPath());
+
+				logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource resourcePs:" + resourcePs
+						+ "  Temp file created: " + tempFilePs.getAbsolutePath() + "  Add variable " + BEFORE_UPDATE_SCRIPT_PS + ":" + tempFilePs.getName());
+
+				byte[] buffer = new byte[1024];
+				int len;
+				while ((len = substitutedStreamPs.read(buffer)) != -1) {
+					fos.write(buffer, 0, len);
+				}
+				substitutedStreamPs.close();
+				fos.flush();
+				fos.close();
+			}
+		}
+
 		String ext = OsVersion.IS_UNIX ? ".sh" : ".cmd";
 		InputStream stream = spechelper.getResource(resource);
 		if (stream != null) {
@@ -215,6 +255,9 @@ public class UpdateListener extends AbstractProgressInstallerListener { //  impl
 			FileOutputStream fos = null;
 			tempFile.deleteOnExit();
 			fos = new FileOutputStream(tempFile);
+
+			logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource resource:" + resource
+					+ "  Temp file created: " + tempFile.getAbsolutePath());
 
 			byte[] buffer = new byte[1024];
 			int len;
@@ -235,41 +278,39 @@ public class UpdateListener extends AbstractProgressInstallerListener { //  impl
 				procBuilder = new ProcessBuilder("cmd.exe", "/C", tempFile.getAbsolutePath());
 			}
 
+			logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource launching " + tempFile.getAbsolutePath());
 			// Debug.log("launching "+tempFile.getAbsolutePath());
 			Process p = procBuilder.start();
 			InputStream errorOutput = new BufferedInputStream(p.getErrorStream(), 10000);
 			InputStream consoleOutput = new BufferedInputStream(p.getInputStream(), 10000);
 
-			// Debug.log("errorOutput:");
+			logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource errorOutput:");
 
-			BufferedReader br = new BufferedReader(new InputStreamReader(errorOutput));
-			String read = br.readLine();
-			while (read != null) {
-				// Debug.log(read);
-				logger.log(Level.FINE, read);
-				read = br.readLine();
+			BufferedReader brErrorOutput = new BufferedReader(new InputStreamReader(errorOutput));
+			String readErrorOutput = brErrorOutput.readLine();
+			while (readErrorOutput != null) {
+				logger.log(Level.FINE, readErrorOutput);
+				readErrorOutput = brErrorOutput.readLine();
 			}
 
-			// Debug.log("consoleOutput:");
+			logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource consoleOutput:");
 
-			BufferedReader br2 = new BufferedReader(new InputStreamReader(consoleOutput));
-			String read2 = br2.readLine();
+			BufferedReader brOutput = new BufferedReader(new InputStreamReader(consoleOutput));
+			String read2 = brOutput.readLine();
 			while (read2 != null) {
 				logger.log(Level.FINE, read2);
-				// Debug.log(read2);
-				read2 = br2.readLine();
+				read2 = brOutput.readLine();
 			}
 
 			int exitCode = p.waitFor();
 
-			logger.log(Level.FINE, "exitCode: " + exitCode);
-			// Debug.log("exitCode: "+ exitCode);
+			logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource - ExitCode: " + exitCode);
 
 			if (exitCode != 0) {
 				// script doesn't return 0 = SUCCESS
 				// throw an exception
 				// Debug.log("Command failed: "+ String.join(",", procBuilder.command()));
-				logger.log(Level.FINE, "Command failed: " + procBuilder.command());
+				logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource - Command failed: " + procBuilder.command());
 				// Debug.log("Command failed: " + procBuilder.command());
 
 				throw new InstallerException(resource + " return code is " + exitCode + " !");

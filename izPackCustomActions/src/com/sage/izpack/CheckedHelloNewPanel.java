@@ -26,9 +26,8 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 	private static Logger logger = Logger.getLogger(CheckedHelloNewPanel.class.getName());
 
-	/**
-	 * 
-	 */
+	private ResourcesHelper _resourceHelper = null;
+
 	private static final long serialVersionUID = 1737042770727953387L; // 1737042770727953387L
 
 	private RegistryHelper _registryHelper;
@@ -37,8 +36,8 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			RegistryDefaultHandler handler, Log log) throws Exception {
 		super(panel, parent, installData, resources, handler, log);
 
-		ResourcesHelper resourceHelper = new ResourcesHelper(installData, resources);
-		resourceHelper.mergeCustomMessages();
+		_resourceHelper = new ResourcesHelper(installData, resources);
+		_resourceHelper.mergeCustomMessages();
 
 		_registryHelper = new RegistryHelper(handler, installData);
 		String path = _registryHelper.getInstallationPath();
@@ -128,16 +127,6 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			result = super.getString(key);
 		}
 		return result;
-
-		/*
-		 * customResourcesPath = "/com/sage/izpack/langpacks/" +
-		 * installData.getLocaleISO3() + ".xml"; String result = null; try { result =
-		 * customResources.get(key); } catch (Exception ex) { logger.log(Level.FINE,
-		 * "CheckedHelloNewPanel Cannot get resource " + key + " " +
-		 * customResourcesPath);
-		 * 
-		 * } if (result == null) { result = super.getString(key); } return result;
-		 */
 	}
 
 	/**

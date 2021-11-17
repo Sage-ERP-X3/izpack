@@ -123,7 +123,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		ResourcesHelper helper = new ResourcesHelper(this.installData, this.getResources());
 		String result = helper.getCustomString(key, true);
 
-		if (result == null) {
+		if (result == null || !result.equals(key)) {
 			result = super.getString(key);
 		}
 		return result;

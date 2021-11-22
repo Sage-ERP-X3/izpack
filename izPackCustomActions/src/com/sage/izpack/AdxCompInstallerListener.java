@@ -365,7 +365,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 					+ moduleType + " family: " + moduleFamily + " not found in xmlDocument " + xdoc);
 			// throw new Exception(ResourcesHelper.getCustomPropString("sectionNotFound", moduleName));
 			ResourcesHelper resourceHelper = new  ResourcesHelper(this.installData, this.resources);
-			throw new Exception(resourceHelper.getCustomString("sectionNotFound", moduleName, true));
+			throw new Exception(resourceHelper.getCustomString("sectionNotFound", moduleName));
 		}
 
 		Node status = module.getElementsByTagName("component." + moduleFamily.toLowerCase() + ".installstatus").item(0);

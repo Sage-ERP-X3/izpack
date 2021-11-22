@@ -15,7 +15,7 @@ import com.izforge.izpack.core.resource.DefaultLocales;
 
 public class ResourcesHelper {
 
-	private Resources resources;
+	private Resources resources = null;
 	private LocaleDatabase langpack = null;
 	private LocaleDatabase customResources = null;
 	private String customResourcesPath = null;
@@ -59,14 +59,16 @@ public class ResourcesHelper {
 	 */
 	public void mergeCustomMessages() {
 
-		if (this.customResourcesPath == null || this.customResources == null) {
-			getCustomString("TEST", true);
-		}
+		initializeResources();
+		// if (this.customResourcesPath == null || this.customResources == null) {
+		// getCustomString("TEST", true);
+		// }
 		logger.log(Level.FINE, "ResourcesHelper.mergeCustomMessages  from " + this.customResourcesPath
 				+ "  GetLocale():" + this.installData.getLocaleISO3());
 
 		Messages messagesM = installData.getMessages();
-		messagesM.add(customResources);
+		if (this.customResources != null)
+			messagesM.add(customResources);
 
 		/*
 		 * Map<String, String> newMessages = new HashMap<String, String>(); Map<String,
@@ -97,43 +99,62 @@ public class ResourcesHelper {
 	 * Get message from SAGE izpack custom library ex:
 	 * izPackCustomActions\src\com\sage\izpack\langpacks\eng.xml
 	 */
-	public String getCustomString(String key, boolean searchInProject) {
-		return getCustomString(key, null, searchInProject);
+	public String getCustomString(String key) {
+		return getCustomString(key, null);
 	}
 
-	public String getCustomString(String key, String arg1, boolean searchInProject) {
-		// customResourcesPath = "/com/sage/izpack/langpacks/" +
-		// * installData.getLocaleISO3() + ".xml"; String result = null; try { result =
-		String result = null;
-		if (searchInProject) {
-			// result = getProjectString(key);
-			// if (result != null && result!= key) {
-			// return result;
-			// }
-		}
+	public String getCustomString(String key, String arg1) {
 
-		this.customResourcesPath = "/com/sage/izpack/langpacks/" + this.installData.getLocaleISO3() + ".xml";
+		initializeResources();
+
+		String result = null;
+
+		// this.customResourcesPath = "/com/sage/izpack/langpacks/" +
+		// this.installData.getLocaleISO3() + ".xml";
 		try {
 
-			if (this.customResources == null) {
-				Locales locales = new DefaultLocales(this.resources, this.installData.getLocale());
-				this.customResources = new LocaleDatabase(getClass().getResourceAsStream(customResourcesPath), locales);
-			}
+			// if (this.customResources == null) {
+			// Locales locales = new DefaultLocales(this.resources,
+			// this.installData.getLocale());
+			// this.customResources = new
+			// LocaleDatabase(getClass().getResourceAsStream(customResourcesPath), locales);
+			// }
 
 			result = this.customResources.get(key);
 			if (result != null && arg1 != null) {
 				result = String.format(result, arg1);
 			}
 			logger.log(Level.FINE, "ResourcesHelper.getCustomString  get '" + key + "': '" + result + "'  from "
-					+ customResourcesPath + "  GetLocale():" + this.installData.getLocaleISO3());
+					+ this.customResourcesPath + "  GetLocale():" + this.installData.getLocaleISO3());
 
 		} catch (Exception ex) {
-			logger.log(Level.SEVERE, "ResourcesHelper Cannot get resource " + key + " " + customResourcesPath
+			logger.log(Level.SEVERE, "ResourcesHelper Cannot get resource " + key + " " + this.customResourcesPath
 					+ "GetLocale(): " + this.installData.getLocaleISO3() + " : " + ex);
 			ex.printStackTrace();
 		}
 
 		return result;
+	}
+
+	private void initializeResources() {
+		try {
+
+			if (this.customResourcesPath == null)
+				this.customResourcesPath = "/com/sage/izpack/langpacks/" + this.installData.getLocaleISO3() + ".xml";
+
+			if (this.customResources == null) {
+				Locales locales = new DefaultLocales(this.resources, this.installData.getLocale());
+				this.customResources = new LocaleDatabase(getClass().getResourceAsStream(customResourcesPath), locales);
+			}
+
+			logger.log(Level.FINE, "ResourcesHelper.getCustomString  initialized from " + customResourcesPath
+					+ "  GetLocale():" + this.installData.getLocaleISO3());
+
+		} catch (Exception ex) {
+			logger.log(Level.SEVERE, "ResourcesHelper Cannot be initialized " + customResourcesPath + "GetLocale(): "
+					+ this.installData.getLocaleISO3() + " : " + ex);
+			ex.printStackTrace();
+		}
 	}
 
 	/**

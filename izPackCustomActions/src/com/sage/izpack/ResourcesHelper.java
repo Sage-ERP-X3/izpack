@@ -137,22 +137,35 @@ public class ResourcesHelper {
 	}
 
 	private void initializeResources() {
+
+		String lang = this.installData.getLocaleISO3();
 		try {
 
-			if (this.customResourcesPath == null)
-				this.customResourcesPath = "/com/sage/izpack/langpacks/" + this.installData.getLocaleISO3() + ".xml";
-
+			if (this.customResourcesPath == null) {
+				if (lang == null) {
+					if (this.installData.getLocale() != null) {
+						lang = this.installData.getLocale().getISO3Language();
+					}
+					if (lang == null) {
+						lang = this.installData.getVariable("ISO3_LANG");
+					}
+					if (lang == null) {
+						lang = "ENG";
+					}
+				}
+				this.customResourcesPath = "/com/sage/izpack/langpacks/" + lang + ".xml";
+			}
 			if (this.customResources == null) {
 				Locales locales = new DefaultLocales(this.resources, this.installData.getLocale());
 				this.customResources = new LocaleDatabase(getClass().getResourceAsStream(customResourcesPath), locales);
 			}
 
 			logger.log(Level.FINE, "ResourcesHelper.getCustomString  initialized from " + customResourcesPath
-					+ "  GetLocale():" + this.installData.getLocaleISO3());
+					+ "  GetLocale():" + lang);
 
 		} catch (Exception ex) {
 			logger.log(Level.SEVERE, "ResourcesHelper Cannot be initialized " + customResourcesPath + "GetLocale(): "
-					+ this.installData.getLocaleISO3() + " : " + ex);
+					+ lang + " : " + ex);
 			ex.printStackTrace();
 		}
 	}

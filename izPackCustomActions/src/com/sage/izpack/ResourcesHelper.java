@@ -113,13 +113,6 @@ public class ResourcesHelper {
 		// this.installData.getLocaleISO3() + ".xml";
 		try {
 
-			// if (this.customResources == null) {
-			// Locales locales = new DefaultLocales(this.resources,
-			// this.installData.getLocale());
-			// this.customResources = new
-			// LocaleDatabase(getClass().getResourceAsStream(customResourcesPath), locales);
-			// }
-
 			result = this.customResources.get(key);
 			if (result != null && arg1 != null) {
 				result = String.format(result, arg1);
@@ -145,6 +138,7 @@ public class ResourcesHelper {
 				if (lang == null) {
 					if (this.installData.getLocale() != null) {
 						lang = this.installData.getLocale().getISO3Language();
+						// this.installData.setVariable(lang, lang);
 					}
 					if (lang == null) {
 						lang = this.installData.getVariable("ISO3_LANG");

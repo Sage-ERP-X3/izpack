@@ -50,6 +50,8 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		this.installData = installData;
 		this.resources = resources;
 
+		logger.log(Level.FINE, "CheckedHelloNewConsolePanel");
+
 		ResourcesHelper resourceHelper = new ResourcesHelper(installData, resources);
 		resourceHelper.mergeCustomMessages();
 

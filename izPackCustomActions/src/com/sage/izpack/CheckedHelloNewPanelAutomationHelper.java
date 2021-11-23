@@ -7,6 +7,7 @@ import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.exception.NativeLibException;
+import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.panels.checkedhello.CheckedHelloPanelAutomationHelper;
 import com.izforge.izpack.panels.checkedhello.RegistryHelper;
@@ -19,10 +20,13 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
     private final boolean registered;
     private InstallData installData;
     
-	public CheckedHelloNewPanelAutomationHelper(RegistryDefaultHandler handler, InstallData installData) throws NativeLibException
+	public CheckedHelloNewPanelAutomationHelper(RegistryDefaultHandler handler, InstallData installData, Resources resources) throws NativeLibException
     {
         super(handler, installData);
-        this.registryHelper = new RegistryHelper(handler, installData);
+
+		logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper");
+
+		this.registryHelper = new RegistryHelper(handler, installData);
         this.registered = registryHelper.isRegistered();
         this.installData = installData;
         
@@ -36,7 +40,6 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 			
 			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 			logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper Set " + InstallData.MODIFY_INSTALLATION + ": true");
-
 		}
     }
 	

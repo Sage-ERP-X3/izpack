@@ -1,5 +1,8 @@
 package com.sage.izpack;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.izforge.izpack.api.data.Panel;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.gui.log.Log;
@@ -16,13 +19,18 @@ public class FinishNewPanel extends FinishPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static Logger logger = Logger.getLogger(FinishNewPanel.class.getName());
+
 	public FinishNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			UninstallDataWriter uninstallDataWriter, UninstallData uninstallData, Log log) {
 		super(panel, parent, installData, resources, uninstallDataWriter, uninstallData, log);
 
-		ResourcesHelper resourceHelper = new ResourcesHelper(installData, resources);
-		 resourceHelper.mergeCustomMessages();
+		logger.log(Level.FINE, "FinishNewPanel instance. Init custom resources.");
 
+		ResourcesHelper resourceHelper = new ResourcesHelper(installData, resources);
+		resourceHelper.mergeCustomMessages();
+
+		logger.log(Level.FINE, "FinishNewPanel instance. Custom resources initialized");
 	}
 
 }

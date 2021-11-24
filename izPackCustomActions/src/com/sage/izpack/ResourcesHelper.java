@@ -1,11 +1,13 @@
 package com.sage.izpack;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.izforge.izpack.api.data.AutomatedInstallData;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.LocaleDatabase;
 import com.izforge.izpack.api.resource.Locales;
@@ -60,9 +62,7 @@ public class ResourcesHelper {
 	public void mergeCustomMessages() {
 
 		initializeResources();
-		// if (this.customResourcesPath == null || this.customResources == null) {
-		// getCustomString("TEST", true);
-		// }
+
 		logger.log(Level.FINE, "ResourcesHelper.mergeCustomMessages  from " + this.customResourcesPath
 				+ "  GetLocale():" + this.installData.getLocaleISO3());
 
@@ -108,9 +108,6 @@ public class ResourcesHelper {
 		initializeResources();
 
 		String result = null;
-
-		// this.customResourcesPath = "/com/sage/izpack/langpacks/" +
-		// this.installData.getLocaleISO3() + ".xml";
 		try {
 
 			result = this.customResources.get(key);
@@ -129,24 +126,49 @@ public class ResourcesHelper {
 		return result;
 	}
 
-	private void initializeResources() {
+	private String getSafeLocale() {
+
+		final String defaultLangISO3 = "eng";
+		final String defaultLangISO2 = "en";
 
 		String lang = this.installData.getLocaleISO3();
+
+		if (lang == null) {
+			if (this.installData.getLocale() != null) {
+				lang = this.installData.getLocale().getISO3Language();
+			}
+			if (lang == null) {
+				lang = this.installData.getVariable("ISO3_LANG");
+			}
+			if (lang == null) {
+				lang = defaultLangISO3;
+				logger.log(Level.FINE, "ResourcesHelper.getSafeLocale.  Force ISO3_LANG=" + lang);
+			}
+		}
+
+		if (this.installData.getVariable("ISO3_LANG") == null)
+			this.installData.setVariable("ISO3_LANG", lang);
+
+		if (this.installData.getVariable("ISO2_LANG") == null)
+			this.installData.setVariable("ISO2_LANG", defaultLangISO2);
+
+		if (this.installData.getLocale() == null) {
+			if (this.installData instanceof AutomatedInstallData) {
+				((AutomatedInstallData) this.installData).setLocale(Locale.ENGLISH, lang);
+			}
+
+			Locales locales = new DefaultLocales(resources, Locale.ENGLISH);
+		}
+
+		return lang;
+	}
+
+	private void initializeResources() {
+
+		String lang = getSafeLocale();// this.installData.getLocaleISO3();
 		try {
 
 			if (this.customResourcesPath == null) {
-				if (lang == null) {
-					if (this.installData.getLocale() != null) {
-						lang = this.installData.getLocale().getISO3Language();
-						// this.installData.setVariable(lang, lang);
-					}
-					if (lang == null) {
-						lang = this.installData.getVariable("ISO3_LANG");
-					}
-					if (lang == null) {
-						lang = "ENG";
-					}
-				}
 				this.customResourcesPath = "/com/sage/izpack/langpacks/" + lang + ".xml";
 			}
 			if (this.customResources == null) {
@@ -155,7 +177,7 @@ public class ResourcesHelper {
 			}
 
 			logger.log(Level.FINE, "ResourcesHelper.getCustomString  initialized from " + customResourcesPath
-					+ "  GetLocale():" + lang);
+					+ "  GetSafeLocale():" + lang);
 
 		} catch (Exception ex) {
 			logger.log(Level.SEVERE, "ResourcesHelper Cannot be initialized " + customResourcesPath + "GetLocale(): "

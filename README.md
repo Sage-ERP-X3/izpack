@@ -12,6 +12,13 @@ https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5<br/>
 
 <br/>
 
+# Version 5.2.0
+
+## Version 5.2.0.1: 2022-01
+
+- update to IZPACK 5.2.0 to fix uninstaller process. <br/>
+
+
 
 # Version 5.1.3
 

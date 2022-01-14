@@ -69,8 +69,8 @@
     <property name="debuglevel" value="lines,vars,source"/>
     <property name="compat.source" value="1.8"/>
     <property name="compat.target" value="1.8"/>
-	<property name="ant.build.javac.source" value="1.8"/>
-	<property name="ant.build.javac.target" value="1.8"/>
+    <property name="ant.build.javac.source" value="1.8"/>
+    <property name="ant.build.javac.target" value="1.8"/>
 
     <!-- paths -->
     <path id="classpath">
@@ -111,30 +111,14 @@
     <!-- Macro to compile a listener's classes and create its jar file -->
     <macrodef name="build-listener">
         <attribute name="name" description="The listener jar will get this name"/>
-        <attribute name="classpath-ext" description="An extension of the classpath required to build the listener"
-                   default=""/>
-        <attribute name="srcdir"
-                   default="${src.dir}"
-                   description="Source directory. Defaults to izpack src dir"/>
-        <element name="listener-fileset"
-                 implicit="yes"
-                 description="include and exclude elements indicating listener sources"/>
+        <attribute name="classpath-ext" description="An extension of the classpath required to build the listener" default=""/>
+        <attribute name="srcdir" default="${src.dir}" description="Source directory. Defaults to izpack src dir"/>
+        <element name="listener-fileset" implicit="yes" description="include and exclude elements indicating listener sources"/>
         <sequential>
             <echo message="build-listener: @{name}"/>
-            <mkdir dir="${bin.dir}/@{name}"/> 
+            <mkdir dir="${bin.dir}/@{name}"/>
             <!-- sourcepath is cleared so there's no mistaking what goes into the Listener -->
-            <javac srcdir="@{srcdir}"
-            	includeantruntime="yes"
-                   destdir="${bin.dir}/@{name}"
-                   classpath="${installer.jar};@{classpath-ext}"
-                   sourcepath=""
-                   optimize="on"
-                   deprecation="on"
-                   debug="${debug}"
-                   source="${compat.source}"
-                   target="${compat.target}"
-                   debuglevel="${debuglevel}"
-    		 	   encoding="utf-8">
+            <javac srcdir="@{srcdir}" includeantruntime="yes" destdir="${bin.dir}/@{name}" classpath="${installer.jar};@{classpath-ext}" sourcepath="" optimize="on" deprecation="on" debug="${debug}" source="${compat.source}" target="${compat.target}" debuglevel="${debuglevel}" encoding="utf-8">
                 <include name="com/sage/izpack/*.java"/>
                 <include name="com/sage/izpack/*.xml"/>
                 <include name="com/sage/izpack/*.properties"/>
@@ -143,33 +127,29 @@
                 <include name="com/izforge/izpack/*.properties"/>
                 <listener-fileset/>
             </javac>
-            <jar jarfile="${bin.dir}/@{name}.jar"
-                 basedir="${bin.dir}/@{name}">
+            <jar jarfile="${bin.dir}/@{name}.jar" basedir="${bin.dir}/@{name}">
 
-<fileset dir="${bin.dir}">
-      <include name="**/*.class"/>
-    </fileset>
-<fileset dir="${src.dir}">
-      <include name="**/*.properties"/>
-      <include name="**/*.xml"/>
-    </fileset>
-                    <!-- also include files from the previously built ${izevent.jar} -->
+                <fileset dir="${bin.dir}">
+                    <include name="**/*.class"/>
+                </fileset>
+                <fileset dir="${src.dir}">
+                    <include name="**/*.properties"/>
+                    <include name="**/*.xml"/>
+                </fileset>
+                <!-- also include files from the previously built ${izevent.jar} -->
                 <!-- <zipfileset src="${izevent.jar}" excludes="@{izeventExcludes}"/> -->
             </jar>
         </sequential>
     </macrodef>
 
-    
-    
+
+
     <!-- Convenience macro to call build-listener for installer listeners -->
     <macrodef name="build-installer-listener">
         <attribute name="name"/>
-        <attribute name="classpath-ext" description="An extension of the classpath required to build the listener"
-                   default=""/>
+        <attribute name="classpath-ext" description="An extension of the classpath required to build the listener" default=""/>
         <attribute name="srcdir" default="${src.dir}"/>
-        <element name="installer-fileset"
-                 implicit="yes"
-                 description="include and exclude elements indicating listener sources"/>
+        <element name="installer-fileset" implicit="yes" description="include and exclude elements indicating listener sources"/>
         <sequential>
             <build-listener name="@{name}" srcdir="@{srcdir}" classpath-ext="@{classpath-ext}">
                 <installer-fileset/>
@@ -177,7 +157,7 @@
         </sequential>
     </macrodef>
 
-    
+
     <!-- Compile all custom actions (listener) and put them at the right location -->
     <!--
          If you add a another, and the build fails because it can't find a class,
@@ -185,9 +165,8 @@
          This also acts as a check to help limit dependancies.
     -->
     <target name="build.com.sage.izpack">
-        
-        <build-installer-listener name="com.sage.izpack" 
-        classpath-ext="${basedir}/lib/izpack-core-5.1.3.jar;${basedir}/lib/izpack-uninstaller-5.1.3.jar;${basedir}/lib/izpack-util-5.1.3.jar;${basedir}/lib/izpack-api-5.1.3.jar;${basedir}/lib/izpack-tools-5.1.3.jar;${basedir}/lib/izpack-event-5.1.3.jar;${basedir}/lib/izpack-installer-5.1.3.jar;${basedir}/lib/izpack-panel-5.1.3.jar;${basedir}/lib/izpack-gui-5.1.3.jar;${basedir}/lib/jline-2.12.1.jar">
+
+        <build-installer-listener name="com.sage.izpack" classpath-ext="${basedir}/lib/izpack-core-5.2.0.M2.jar;${basedir}/lib/izpack-uninstaller-5.2.0.M2.jar;${basedir}/lib/izpack-util-5.2.0.M2.jar;${basedir}/lib/izpack-api-5.2.0.M2.jar;${basedir}/lib/izpack-tools-5.2.0.M2.jar;${basedir}/lib/izpack-event-5.2.0.M2.jar;${basedir}/lib/izpack-installer-5.2.0.M2.jar;${basedir}/lib/izpack-panel-5.2.0.M2.jar;${basedir}/lib/izpack-gui-5.2.0.M2.jar;${basedir}/lib/jline-2.12.1.jar">
             <include name="AdxCompHelper.java"/>
             <include name="AdxCompInstallerListener.java"/>
             <include name="AdxCompUninstallerListener.java"/>
@@ -197,7 +176,7 @@
             <include name="CheckProductAlreadyInstalled.java"/>
             <include name="PacksNewPanel.java"/>
             <include name="PacksNewPanelAutomationHelper.java"/>
-            <include name="PacksNewPanelValidator.java"/>           
+            <include name="PacksNewPanelValidator.java"/>
             <include name="RegistryHandlerX3.java"/>
             <include name="RegistryInstallerNewListener.java"/>
             <include name="TargetNewConsolePanel.java"/>
@@ -211,7 +190,7 @@
             <include name="fra.xml"/>
             <include name="messages_en.properties"/>
             <include name="messages_fr.properties"/>
-            
+
             <include name="Pack.java"/>
             <include name="OsConstraint.java"/>
 
@@ -242,9 +221,7 @@
     </target>
 
     <!-- Builds all compilation targets -->
-    <target name="all"
-            depends="clean, splashscreen, build.com.sage.izpack"
-            description="base: compiles a developer version"/>
+    <target name="all" depends="clean, splashscreen, build.com.sage.izpack" description="base: compiles a developer version"/>
 
     <!-- Builds the Javadoc -->
     <target name="build.javadoc" depends="prepare" description="Builds the javadoc">
@@ -284,9 +261,7 @@
         <delete dir="${basedir}/src/doc-reST/pdf"/>
     </target>
 
-    <target name="create.docu"
-            depends="build.javadoc, build.docu"
-            description="Creates the javadoc-api and customer documentation">
+    <target name="create.docu" depends="build.javadoc, build.docu" description="Creates the javadoc-api and customer documentation">
 
     </target>
 
@@ -344,13 +319,7 @@
 
         <!-- We call IzPack -->
         <echo message="Makes the installer using IzPack" level="verbose"/>
-        <izpack input="${dist.dir}/${installer.xmlfile}"
-                output="${dist.dir}/${installer.name}${ver}.${rel}.jar"
-                installerType="standard"
-                basedir="${dist.dir}"
-                izPackDir="${dist.dir}/"
-                compression="deflate"
-                compressionlevel="9"/>
+        <izpack input="${dist.dir}/${installer.xmlfile}" output="${dist.dir}/${installer.name}${ver}.${rel}.jar" installerType="standard" basedir="${dist.dir}" izPackDir="${dist.dir}/" compression="deflate" compressionlevel="9"/>
         <echo>
             sucessfully created:
             ${dist.dir}/${installer.name}${ver}.${rel}.jar
@@ -400,19 +369,13 @@
     </target>
 
     <!-- Makes everything, from compilation to generating an installer. -->
-    <target name="quickdist"
-            depends="all"
-            description="makes a installer without docu"/>
+    <target name="quickdist" depends="all" description="makes a installer without docu"/>
 
     <!-- Makes everything, from compilation, customer and javadoc to generating an installer. -->
-    <target name="dist"
-            depends="src.tar.gz, all, create.docu"
-            description="makes a complete installer"/>
+    <target name="dist" depends="src.tar.gz, all, create.docu" description="makes a complete installer"/>
 
     <!-- Makes everything, from Cleaning to generating both installers: normal and reg support. -->
-    <target name="cleandistreg"
-            depends="clean, splashscreen, dist"
-            description="creates a full dist with Win32 uninstall registry support"/>
+    <target name="cleandistreg" depends="clean, splashscreen, dist" description="creates a full dist with Win32 uninstall registry support"/>
 
     <!-- =================================
           target: clean.src.tar.gz
@@ -427,28 +390,20 @@
     <target name="src.tar.gz" description="--> creates a src.tar.gz ">
         <mkdir dir="${basedir}/_src${dist.subdir}"/>
         <property name="src.tar.gz" value="${basedir}/_src${dist.subdir}/${product}-src-${ver}.${rel}.tar.gz"/>
-        <tar compression="gzip" destfile="${src.tar.gz}" basedir="${basedir}"
-             excludes="_src${dist.subdir}/**, _dist/**, _build/**, bin/panels/**, bin/customActions/**, doc/izpack/**, eclipse-bin/**, lib/com.sage.izpack.jar, lib/uninstaller*, lib/installer.jar"/>
+        <tar compression="gzip" destfile="${src.tar.gz}" basedir="${basedir}" excludes="_src${dist.subdir}/**, _dist/**, _build/**, bin/panels/**, bin/customActions/**, doc/izpack/**, eclipse-bin/**, lib/com.sage.izpack.jar, lib/uninstaller*, lib/installer.jar"/>
     </target>
 
 
     <!-- convenient :) makes a quick dist (w/o docu), an installer and run them. -->
-    <target name="quickdist+run"
-            depends="quickdist, run.installer"
-            description="makes a quickdist installer and runs them"/>
+    <target name="quickdist+run" depends="quickdist, run.installer" description="makes a quickdist installer and runs them"/>
 
     <!-- convenient :) makes a complete dist an installer and run them. -->
-    <target name="dist+run"
-            depends="dist, run.installer"
-            description="makes a complete installer and runs them"/>
+    <target name="dist+run" depends="dist, run.installer" description="makes a complete installer and runs them"/>
 
     <!-- ** splashscreen **
 	  shows some ANT specific- and JAVA-
-	  but Platform and Project-independed Properties.
-	================================================================ -->
-    <target name="splashscreen"
-            depends="time"
-            description="shows the used environment and project settings">
+	  but Platform and Project-independed Properties. ================================================================ -->
+    <target name="splashscreen" depends="time" description="shows the used environment and project settings">
 
         <property name="console_line" value="**************************************************"/>
         <echo message="${console_line}"/>
@@ -479,8 +434,7 @@
           target: dump.properties - dumps the curent properties into the $os_$timestamp.properties file
          ================================= -->
     <target name="dump.properties" depends="time" description="dump.environment (for debug)">
-        <echoproperties
-                destfile="${basedir}/ant_properties_at_${os.name}-${os.arch}-${os.version}_at_${DSTAMP}-${TSTAMP}.txt"/>
+        <echoproperties destfile="${basedir}/ant_properties_at_${os.name}-${os.arch}-${os.version}_at_${DSTAMP}-${TSTAMP}.txt"/>
     </target>
 
 

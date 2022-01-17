@@ -6,6 +6,9 @@
 * X3-250275 : move prerequisites resources within the project
   Fix WinRegistry Java11API
 
+* X3-264457 : Wrong phrasing in last phase of IZpack installers
+  Former wording: "Automatic installation script"
+  New wording: "Save response file"
 
 ## Version 4.3.8 : 01.08.2020
 
@@ -25,12 +28,15 @@
 * X3-182904 : Error messages when using scripted install of Safe X3 V2 Print Server on blank machine
 * X3-146220 - Elastic Search 6.4 validator
 * Fix Registry read value DWord type
+  Add WinRegistry.java  and new Instruction <variable value="regkey[HKLM:RegistryPath:Key]">
 
 ## Version 4.3.6
 
-TODO
-
-
+* X3-129592 - Delete "!" after version number FR
+* X3-129592 - Delete "!" after version number
+* X3-120130 - Use openjdk 8, Ant 1.9
+* X3-93962 - Open license link
+* nodedbhome and nodedblink no more reset nor hardcoded in update mode - managed by console
 
 Community
 =========

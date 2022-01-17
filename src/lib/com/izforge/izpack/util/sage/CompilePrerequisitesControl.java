@@ -164,28 +164,34 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 * @return
 	 */
 	private boolean isConsoleMode(AutomatedInstallData aData) {
-
-		// condition A
-		String wInstaller = aData.getVariable("INSTALLER");
-		if (wInstaller != null && wInstaller.contains("console")) {
-			return true;
-		}
-
-		// condition B
-		String wJavaCommand = aData.getVariable("SYSTEM_sun_java_command");
-		if (wJavaCommand != null && wJavaCommand.contains("console")) {
-			return true;
-		}
-
-		return false;
+		return isMode(aData,"console");
 	}
 
+	
+	private boolean isBatchMode(AutomatedInstallData aData) {
+		return isMode(aData,"automated");
+	}
+
+	private boolean isMode(AutomatedInstallData aData, String occurrence) {
+
+		String wInstaller = aData.getVariable("INSTALLER");
+		if (wInstaller != null && wInstaller.contains(occurrence)) {
+			return true;
+		}
+		String wJavaCommand = aData.getVariable("SYSTEM_sun_java_command");
+		if (wJavaCommand != null && wJavaCommand.contains(occurrence)) {
+			return true;
+		}
+		return false;
+	}
+	
+	
 	/**
 	 * @param aData
 	 * @return
 	 */
 	private boolean isGuiMode(AutomatedInstallData aData) {
-		return !isConsoleMode(aData);
+		return !isConsoleMode(aData) && !isBatchMode(aData);
 	}
 
 	/**

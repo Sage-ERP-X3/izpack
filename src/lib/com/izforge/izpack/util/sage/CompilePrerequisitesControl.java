@@ -245,7 +245,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 	private void setProgress(final AutomatedInstallData aData, final String aInfos) throws Exception {
 
 		// if not in console mode,
-		if (!isGuiMode(aData)) { //  isConsoleMode(aData) && !isBatchMode(aData)) {
+		if (isGuiMode(aData)) { //  isConsoleMode(aData) && !isBatchMode(aData)) {
 
 			JTextPane wTextPaneResultLabel = searchJTextPaneProgress(retrieveCurrentPanel(aData));
 
@@ -260,7 +260,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 			}
 			wTextPaneResultLabel.setText(String.format("%s: %s", wText, aInfos));
 		}
-		// else, if in console mode
+		// else, if in "console" or "batch" mode
 		else {
 			CLoggerUtils.logInfo("Progress: %s", aInfos);
 			// LogInfo(aData, String.format("Progress: %s", aInfos));

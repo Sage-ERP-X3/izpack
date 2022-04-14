@@ -178,7 +178,7 @@ public class CTestReport {
 		wReport.appendEmpty();
 
 		CDevToolsInfosFinder wDevToolsInfosFinder = new CDevToolsInfosFinder(
-				wReport);
+				wReport, null);
 
 		wDevToolsInfosFinder.execute();
 

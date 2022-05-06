@@ -245,7 +245,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 
 				// rh.verify(idata);
 
-				// test adxadmin déjà installé avec registry
+				// test adxadmin already installed with registry
 				if (!rh.adxadminProductRegistered()) {
 					// nothing to do
 					return;
@@ -261,7 +261,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 					return;
 				}
 
-				// récup path
+				// get path
 				strAdxAdminPath = rh.getRegistryHandler().getValue(keyName, "ADXDIR").getStringData();
 
 				// free RegistryHandler

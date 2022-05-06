@@ -86,8 +86,9 @@ public final class InstallationInformationHelper {
 						+ e.getMessage());
 				informationloaded = false;
 			}
-			restoreNewVersion(installData);
 		}
+
+		restoreNewVersion(installData);
 
 		logger.log(Level.FINE, "After " + InstallData.INSTALLATION_INFORMATION + " component.node.name : "
 				+ installData.getVariable("component.node.name"));
@@ -99,12 +100,12 @@ public final class InstallationInformationHelper {
 
 	public static void restoreNewVersion(com.izforge.izpack.api.data.InstallData installData) {
 		String currentVersion = installData.getVariable("app-version");
-		String newCurrentVersion = installData.getVariable("app-version-new");
-		if (newCurrentVersion != null) {
-			logger.log(Level.FINE, "InstallationInformationHelper Set current version 'app-version' (" + currentVersion
-					+ ") from 'app-version-new' : " + newCurrentVersion);
-			installData.setVariable("app-version", newCurrentVersion);
-			installData.setVariable("APP_VER", newCurrentVersion);
+		// String newCurrentVersion = installData.getVariable("app-version-new");
+		if (currentVersion != null) {
+			logger.log(Level.FINE, "InstallationInformationHelper Set current version 'APP_VER' (" + currentVersion
+					+ ") from 'app-version' : " + currentVersion);
+			// installData.setVariable("app-version", newCurrentVersion);
+			installData.setVariable("APP_VER", currentVersion);
 		}
 	}
 

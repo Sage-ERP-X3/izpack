@@ -3,7 +3,7 @@
 
 
 ## Version 4.3.10 : 15.02.2022
-X3-270151 : inability to configure the  WebServer 2.40.0.1 with a response file.<br>
+- X3-270151 : inability to configure the  WebServer 2.40.0.1 with a response file.<br>
 java.lang.Exception: ERROR: Unable to set the final field [SimpleFormatter.format]
         at com.izforge.izpack.util.sage.CLoggerUtils.setPrivateStaticFinalString(CLoggerUtils.java:240)
 

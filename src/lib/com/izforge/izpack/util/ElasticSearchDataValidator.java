@@ -8,6 +8,7 @@ import java.net.URL;
 import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.DataValidator;
 import com.izforge.izpack.installer.DataValidator.Status;
+import com.izforge.izpack.rules.RulesEngine;
 
 
 public class ElasticSearchDataValidator implements DataValidator
@@ -17,18 +18,20 @@ public class ElasticSearchDataValidator implements DataValidator
     {
         Status bReturn = Status.ERROR;
         try
-        {
-        
+        {        
             String hostName = adata.getVariable("elasticsearch.url.hostname");
             String hostPort = adata.getVariable("elasticsearch.service.httpport");
-            
             String strurl = "http://"+hostName+":"+hostPort+"/_nodes";
             
-            String strHttpResult = getHTML(strurl);
+            String condition = adata.getVariable("elasticsearch.install.now"); // elasticsearch.install.now elasticsearch.install.later notInstallElasticSearchEnabled 
+            if (condition != null && !RulesEngine.getCondition(condition).isTrue()) {
+            	Debug.trace("Skip connection to " + strurl + " - elasticsearch.install.now=false");
+                    return Status.OK;
+            }            
             
+            String strHttpResult = getHTML(strurl);            
             if (strHttpResult.startsWith("{") && strHttpResult.endsWith("}"))
                 bReturn = Status.OK;
-
         }
         catch (Exception ex)
         {

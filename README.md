@@ -3,30 +3,32 @@
 
 
 ## Version 4.3.10 : 15.02.2022
-- X3-270151 : inability to configure the  WebServer 2.40.0.1 with a response file.<br>
+
+- X3-285099: Elastic Search as optional in Syracuse
+- X3-270151: inability to configure the  WebServer 2.40.0.1 with a response file.<br>
 java.lang.Exception: ERROR: Unable to set the final field [SimpleFormatter.format]
         at com.izforge.izpack.util.sage.CLoggerUtils.setPrivateStaticFinalString(CLoggerUtils.java:240)
 
 
 ## Version 4.3.9 : 05.11.2021
 
-* X3-250275 : move prerequisites resources within the project
+* X3-250275: move prerequisites resources within the project
   Fix WinRegistry Java11API
 
-* X3-264457 : Wrong phrasing in last phase of IZpack installers
+* X3-264457: Wrong phrasing in last phase of IZpack installers
   Former wording: "Automatic installation script"
   New wording: "Save response file"
 
 ## Version 4.3.8 : 01.08.2020
 
-* X3-233874 - Fix hostname redhat 8
-* X3-235605 - Fix hostname
-* X3-220056 - Create p12 from pem
+* X3-233874: Fix hostname redhat 8
+* X3-235605: Fix hostname
+* X3-220056: Create p12 from pem
 * X3-183609:Safe X3 V2 Console IZpack installer does not save option for shortcuts location in script file
-* X3-125503 : AdxAdmin uninstallation cryptic error message
+* X3-125503: AdxAdmin uninstallation cryptic error message
   Add missing resource "uninstaller.adxadmin.remainingmodules"
-* X3-203051 - Spelling
-* X3-196435 - Handle mongodb.ssl.pemkeypassword,  Update mongodb driver to 3.12.5,  Add dnsName
+* X3-203051: Spelling
+* X3-196435: Handle mongodb.ssl.pemkeypassword,  Update mongodb driver to 3.12.5,  Add dnsName
 
 
 ## Version 4.3.7 : 

@@ -25,6 +25,8 @@ public class ElasticSearchDataValidator implements DataValidator
             
             String condition = adata.getVariable("elasticsearch.install.now"); // elasticsearch.install.now elasticsearch.install.later notInstallElasticSearchEnabled 
             if (condition != null && !RulesEngine.getCondition(condition).isTrue()) {
+            	adata.setVariable("elasticsearch.url.hostname", "");
+            	adata.setVariable("elasticsearch.service.httpport", "");            	
             	Debug.trace("Skip connection to " + strurl + " - elasticsearch.install.now=false");
                     return Status.OK;
             }            

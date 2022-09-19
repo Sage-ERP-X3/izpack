@@ -239,6 +239,8 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 				substitutedStreamPs.close();
 				fos.flush();
 				fos.close();
+			} else {
+				logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource()  NO resource found for resourcePs:" + resourcePs);				
 			}
 		}
 
@@ -316,6 +318,9 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 				throw new InstallerException(resource + " return code is " + exitCode + " !");
 			}
 		}
+		 else {
+				logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource()  NO resource found for resource:" + resource);				
+			}
 
 	}
 }

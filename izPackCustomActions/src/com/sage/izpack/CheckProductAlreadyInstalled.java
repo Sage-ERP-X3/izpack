@@ -25,9 +25,11 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 
 	protected String errMessage = "";
 	protected String warnMessage = "";
+	private RegistryHandler registryHandler;
 
-	public CheckProductAlreadyInstalled() {
+	public CheckProductAlreadyInstalled(RegistryDefaultHandler handler) {
 		super();
+		this.registryHandler = handler.getInstance();
 	}
 
 	@Override
@@ -36,65 +38,41 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 		InputStream input = null;
 
 		try {
-			// this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
-
-			// logger.log(Level.FINE, "registryHandler:" + registryHandler);
-			// logger.info("registryHandler:" + registryHandler);
-
-			// if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT +
-			// installData.getVariable("APP_NAME"))) {
-			// logger.log(Level.FINE, "APP_NAME key " + RegistryHandler.UNINSTALL_ROOT +
-			// installData.getVariable("APP_NAME") + " found in registry. Set '" +
-			// InstallData.MODIFY_INSTALLATION + "': true");
-			// logger.info("APP_NAME key " + RegistryHandler.UNINSTALL_ROOT +
-			// installData.getVariable("APP_NAME") + " found in registry. Set '" +
-			// InstallData.MODIFY_INSTALLATION + "': true");
-
-			// installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-			// }
-
+			
 			input = new ResourceManager().getInputStream(SPEC_FILE_NAME);
 			logger.info("input: " + input);
 
 			if (input == null) {
 				// spec file is missing
 				errMessage = "specFileMissing";
-
-				// logger.log(Level.FINE, "input: " + errMessage);
-				logger.info("input: " + errMessage);
-
+				logger.log(Level.FINE, "input: " + errMessage);
 				return Status.ERROR;
-			} else {
-
+			} else 
+			{
 				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 				StringBuilder out = new StringBuilder();
 				String line;
 				while ((line = reader.readLine()) != null) {
 
-					// logger.log(Level.FINE, "line:" + line);
 					logger.info("line:" + line);
+					line = line.trim();
 
-					line = line.trim(); //
-
-					/*
-					 * if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT + line)) {
-					 * warnMessage = String.format(ResourceBundle.getBundle("messages",
-					 * installData.getLocale()) .getString("compFoundAskUpdate"), line);
-					 * 
-					 * RegDataContainer oldInstallPath =
-					 * registryHandler.getValue(RegistryHandler.UNINSTALL_ROOT + line,
-					 * "DisplayIcon");
-					 * installData.setInstallPath(oldInstallPath.getStringData().substring(0,
-					 * oldInstallPath.getStringData().indexOf("Uninstaller") - 1));
-					 * installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-					 * 
-					 * logger.log(Level.FINE, "old path applied: " + oldInstallPath);
-					 * logger.log(Level.FINE, "set variable " + InstallData.MODIFY_INSTALLATION +
-					 * ": true");
-					 * 
-					 * 
-					 * return Status.WARNING; }
-					 */
+					this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+					if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT + line)) {
+						logger.log(Level.FINE, "MODIFY_INSTALLATION=true - Registry key exists:" + RegistryHandler.UNINSTALL_ROOT
+								+ line);
+						RegDataContainer oldInstallPath = registryHandler.getValue(RegistryHandler.UNINSTALL_ROOT + line, "DisplayIcon");
+						String path = oldInstallPath.getStringData().substring(0, oldInstallPath.getStringData().indexOf("Uninstaller") - 1);
+						installData.setInstallPath(path);
+						this.warnMessage = "compFoundAskUpdate";
+						installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+						logger.log(Level.FINE, "Detected path: " + path);
+						return Status.WARNING;
+					} else {
+						logger.log(Level.FINE, "MODIFY_INSTALLATION=false - Registry key not found:"
+								+ RegistryHandler.UNINSTALL_ROOT + line);
+					}
+					
 				}
 				reader.close();
 			}

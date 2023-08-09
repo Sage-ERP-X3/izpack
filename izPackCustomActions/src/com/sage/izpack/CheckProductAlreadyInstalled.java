@@ -13,6 +13,7 @@ import com.izforge.izpack.api.installer.DataValidator;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.core.resource.ResourceManager;
+import com.izforge.izpack.installer.bootstrap.Installer;
 
 /*
 * @author Franck DEPOORTERE
@@ -40,7 +41,7 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 		try {
 			
 			input = new ResourceManager().getInputStream(SPEC_FILE_NAME);
-			logger.info("input: " + input);
+			logger.log(Level.FINE, "input: " + input);
 
 			if (input == null) {
 				// spec file is missing
@@ -54,7 +55,7 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 				String line;
 				while ((line = reader.readLine()) != null) {
 
-					logger.info("line:" + line);
+					logger.log(Level.FINE,"line:" + line);
 					line = line.trim();
 
 					this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
@@ -64,9 +65,16 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 						RegDataContainer oldInstallPath = registryHandler.getValue(RegistryHandler.UNINSTALL_ROOT + line, "DisplayIcon");
 						String path = oldInstallPath.getStringData().substring(0, oldInstallPath.getStringData().indexOf("Uninstaller") - 1);
 						installData.setInstallPath(path);
-						this.warnMessage = "compFoundAskUpdate";
 						installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 						logger.log(Level.FINE, "Detected path: " + path);
+						
+						//  INSTALLER_GUI = 0, INSTALLER_AUTO = 1, INSTALLER_CONSOLE = 2;
+						if (Installer.getInstallerMode() == Installer.INSTALLER_AUTO) {
+						// X3-301654: [ ERROR: compFoundAskUpdate ] We avoid any warning or Error in batch mode
+							return Status.OK;
+						}
+						// 	<str id="compFoundAskUpdate" txt="An earlier version of this component has been found on this host, do you want to update this installation ?"/>
+						this.warnMessage = "compFoundAskUpdate";
 						return Status.WARNING;
 					} else {
 						logger.log(Level.FINE, "MODIFY_INSTALLATION=false - Registry key not found:"

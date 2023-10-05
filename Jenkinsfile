@@ -1,5 +1,8 @@
 #!groovy
 
+// env.IZPACK_VERSION = '5.2.0.4'
+env.IZPACK_VERSION = 'X3_293748_AdxAdmin'
+
 node {
     withEnv(["CI_DEST=${WORKSPACE}/tmp/customer_image"]) {
         def tag
@@ -21,7 +24,7 @@ node {
         }
         
 
-/*
+
         stage("Build com.sage.izpack.jar ${IZPACK_VERSION}") {
             docker.withRegistry('https://repository.sagex3.com', 'jenkins_platform') {
                 env.kDevelopDrive  = "${WORKSPACE}"
@@ -68,7 +71,7 @@ node {
                 }
                 }
             }
-*/
+
 
         docker.withRegistry('https://repository.sagex3.com', 'jenkins_platform') {
             def izPackImage

@@ -1,17 +1,29 @@
 package com.sage.izpack;
 
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.installer.DataValidator;
+import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.panels.userinput.processorclient.ProcessingClient;
 
 public class PortValidator implements DataValidator, com.izforge.izpack.panels.userinput.validator.Validator {
 
 	private static final Logger logger = Logger.getLogger(PortValidator.class.getName());
 	private static final String PARAM_EXCLUDED_PORTS = "excluded";
-	 
+	
+	private InstallData installData;
+	
+	public PortValidator(InstallData installData) {
+		super();
+		this.installData = installData;
+	}
+	
 	@Override
 	public boolean validate(ProcessingClient client) {
 
@@ -20,8 +32,43 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
 
 		logger.log(Level.FINE, "PortValidator.validate  ModuleName: " + moduleName);
 		
+		InetAddress inet = null;
+        String host = "localhost";
+        int numfields = client.getNumFields();
+        List<String> exludedPorts = new ArrayList<String>();
+        
+		boolean modifyinstallation = Boolean.valueOf(this.installData.getVariable(InstallData.MODIFY_INSTALLATION));
+/*
+		if (client.hasParams())
+        {
+            String param = client.getValidatorParams().get(PARAM_EXCLUDED_PORTS);
+            
+            if (param!=null && !"".equals(param)) 
+            {
+                VariableSubstitutor vs = new VariableSubstitutor(adata.getVariables());
+                param = vs.substitute(param, null);
+                exludedPorts.addAll(Arrays.asList( param.split(";")));
+            }
+        }
+*/
+		
+        for (int i = 0; i < numfields; i++)
+        {
+            String value = client.getFieldContents(i);
+            if ((value == null) || (value.length() == 0))
+            {
+        		logger.log(Level.FINE, "PortValidator.validate  Port value is null");
+                return false;
+            }
+            else if (modifyinstallation && exludedPorts.contains(value.trim())) { 
+            	continue;
+            }
+
+        }
+		
 		return result;
 	}
+
 
 	@Override
 	public boolean getDefaultAnswer() {
@@ -44,8 +91,7 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
 
 	@Override
 	public Status validateData(InstallData arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		return DataValidator.Status.OK;
 	}
 
 }

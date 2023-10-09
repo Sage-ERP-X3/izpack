@@ -434,7 +434,6 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 		lstCompProps.clear();
 		loadComponents();
 
-		// boolean modifyinstallation =
 		// Boolean.valueOf(idata.getVariable(InstallData.MODIFY_INSTALLATION));
 		boolean modifyinstallation = Boolean.valueOf(this.installData.getVariable(InstallData.MODIFY_INSTALLATION));
 

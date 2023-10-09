@@ -359,5 +359,6 @@
     <str id="errIsProductFound" txt="A %1$s component is already installed ! You must uninstall this component to be able to continue this installation."/>
 	
 	<str id="X3NodeIdentifierValidator" txt="This node identifier is already used !"/>
-
+    <str id="portinuse" txt="This port is already in use !"/>
+	
 </izpack:langpack>

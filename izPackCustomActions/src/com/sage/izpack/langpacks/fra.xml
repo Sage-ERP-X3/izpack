@@ -360,6 +360,6 @@
 	<str id="errIsProductFound" txt="Un composant %1$s est déjà présent sur ce système ! Vous devez désinstaller ce composant avant de continuer cette installation." />
 	
 	<str id="X3NodeIdentifierValidator" txt="Cet identifiant est déjà utilisé !"/>
-
+    <str id="portinuse" txt="This port is already in use !"/>
 
 </izpack:langpack>

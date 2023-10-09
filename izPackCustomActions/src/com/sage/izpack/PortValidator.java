@@ -1,6 +1,7 @@
 package com.sage.izpack;
 
 import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +10,9 @@ import java.util.logging.Logger;
 
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.installer.DataValidator;
+import com.izforge.izpack.api.substitutor.VariableSubstitutor;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
+import com.izforge.izpack.core.substitutor.VariableSubstitutorImpl;
 import com.izforge.izpack.panels.userinput.processorclient.ProcessingClient;
 
 public class PortValidator implements DataValidator, com.izforge.izpack.panels.userinput.validator.Validator {
@@ -38,7 +41,10 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
         List<String> exludedPorts = new ArrayList<String>();
         
 		boolean modifyinstallation = Boolean.valueOf(this.installData.getVariable(InstallData.MODIFY_INSTALLATION));
-/*
+
+		// VariableSubstitutor substitutor = new VariableSubstitutorImpl(this.installData.getVariables());
+
+		/*
 		if (client.hasParams())
         {
             String param = client.getValidatorParams().get(PARAM_EXCLUDED_PORTS);
@@ -63,7 +69,21 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
             else if (modifyinstallation && exludedPorts.contains(value.trim())) { 
             	continue;
             }
-
+            
+            try
+            {
+                Socket socket = new Socket("localhost",Integer.parseInt(value));
+                socket.close();
+                // Someone responding on port - seems not open
+                logger.log(Level.FINE, "Someone responding on port - seems not open");
+                result = false;
+            }
+            catch (Exception ex)
+            {
+            	logger.log(Level.FINE, ex.getMessage());
+            	ex.printStackTrace();
+                result=true;
+            }
         }
 		
 		return result;
@@ -79,15 +99,13 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
 
 	@Override
 	public String getErrorMessageId() {
-		// TODO Auto-generated method stub
-		return null;
+		return "portinuse";	
 	}
 
 	@Override
 	public String getWarningMessageId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		return "portinuse";	
+		}
 
 	@Override
 	public Status validateData(InstallData arg0) {

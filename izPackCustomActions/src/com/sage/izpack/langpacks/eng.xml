@@ -147,7 +147,6 @@
     <str id="InstallPanel.progress" txt="Overall installation progress:"/>
     <str id="InstallPanel.overwrite.title" txt="File already exists"/>
     <str id="InstallPanel.overwrite.question" txt="The following file already exists. Should it be overwritten?"/>
-
 					
 		<!-- InstallationGroupPanel strings -->
 		<str id="InstallationGroupPanel.colNameSelected" txt="Selected"/>
@@ -155,12 +154,13 @@
     <str id="InstallationGroupPanel.colNameSize" txt="Size"/>
 
 		<!-- InstallationTypePanel strings -->
-    <str id="InstallationTypePanel.info" txt="Please choose the type of installation:"/>
-    <str id="InstallationTypePanel.normal" txt="New installation"/>
-    <str id="InstallationTypePanel.modify" txt="Modify installation"/>
-    <str id="InstallationTypePanel.asktype" txt="Press 1 for a new install, 2 to update, 3 to exit"/>
-    <str id="InstallationTypePanel.askUpdatePath" txt="Please choose installation to update :"/>
-	<str id="InstallationTypePanel.errNoCompFound" txt="No earlier version of this component has been found, this software can not be updated!"/>
+    <str id="InstallTypeNewPanel.info" txt="Please choose the type of installation:"/>
+    <str id="InstallTypeNewPanel.normal" txt="New installation"/>
+    <str id="InstallTypeNewPanel.modify" txt="Modify installation"/>
+    <str id="InstallTypeNewPanel.asktype" txt="Press 1 for a new install, 2 to update, 3 to exit"/>
+    <str id="InstallTypeNewPanel.askUpdatePath" txt="Please choose installation to update :"/>
+	<str id="InstallTypeNewPanel.errNoCompFound" txt="No earlier version of this component has been found, this software can not be updated!"/>
+
 
 		<!-- FinishPanel strings -->
 		<str id="FinishPanel.success" txt="Installation has completed successfully."/>

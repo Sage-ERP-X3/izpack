@@ -146,18 +146,21 @@
     <str id="InstallPanel.overwrite.title" txt="Le fichier existe déjà."/>
     <str id="InstallPanel.overwrite.question" txt="Le fichier suivant existe déjà. Faut-il l'écraser ?"/>
 
+
+
     <!-- InstallationGroupPanel strings -->
     <str id="InstallationGroupPanel.colNameSelected" txt="Groupe Ã  installer"/>
     <str id="InstallationGroupPanel.colNameInstallType" txt="Description"/>
     <str id="InstallationGroupPanel.colNameSize" txt="Taille"/>
 
     <!-- InstallationTypePanel strings -->
-    <str id="InstallationTypePanel.info" txt="Veuillez choisir le type d'installation:"/>
-    <str id="InstallationTypePanel.normal" txt="Nouvelle installation"/>
-    <str id="InstallationTypePanel.modify" txt="Mettre à jour une installation existante"/>
-    <str id="InstallationTypePanel.asktype" txt="appuyez sur 1 pour une nouvelle installation, 2 pour mettre à jour une installation existante , 3 pour quitter"/>
-    <str id="InstallationTypePanel.askUpdatePath" txt="Veuillez choisir l'installation à mettre à jour :"/>
-	<str id="InstallationTypePanel.errNoCompFound" txt="Aucune version antérieure de ce composant n'a été trouvée, ce logiciel ne peut pas être mis à jour !"/>
+    <str id="InstallTypeNewPanel.info" txt="Veuillez choisir le type d'installation:"/>
+    <str id="InstallTypeNewPanel.normal" txt="Nouvelle installation"/>
+    <str id="InstallTypeNewPanel.modify" txt="Mettre à jour une installation existante"/>
+    <str id="InstallTypeNewPanel.asktype" txt="appuyez sur 1 pour une nouvelle installation, 2 pour mettre à jour une installation existante , 3 pour quitter"/>
+    <str id="InstallTypeNewPanel.askUpdatePath" txt="Veuillez choisir l'installation à mettre à jour :"/>
+	<str id="InstallTypeNewPanel.errNoCompFound" txt="Aucune version antérieure de ce composant n'a été trouvée, ce logiciel ne peut pas être mis à jour !"/>
+
 
     <!-- FinishPanel strings -->
     <str id="FinishPanel.success" txt="L'installation est réussie !"/>

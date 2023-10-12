@@ -348,7 +348,6 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 						lstCompProps.put(key, new String[] { name, path, strversion });
 						// listItems.addElement(new String[] {moduleNode.getAttribute("name")+" "+
 						// strversion +" ("+path+")", path, strversion});
-
 					}
 				}
 			}
@@ -371,7 +370,8 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 
 //		topPanel.add(LabelFactory.create(ResourcesHelper.getCustomPropString("InstallationTypePanel.info"),
 //				ResourcesHelper.getCustomPropString("history"), LEADING));
-		topPanel.add(LabelFactory.create(ResourcesHelper.getCustomPropString("InstallationTypePanel.info"), LEADING));
+		// topPanel.add(LabelFactory.create(ResourcesHelper.getCustomPropString("InstallTypeNewPanel.info"), LEADING));
+		topPanel.add(LabelFactory.create(super.getString("InstallTypeNewPanel.info"), LEADING));
 
 		topPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
@@ -384,7 +384,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 		// normalinstall = new
 		// JRadioButton(parent.langpack.getString("InstallationTypePanel.normal"),
 		// !modifyinstallation);
-		normalinstall = new JRadioButton(super.getString("InstallationTypePanel.normal"), !modifyinstallation);
+		normalinstall = new JRadioButton(super.getString("InstallTypeNewPanel.normal"), !modifyinstallation);
 		normalinstall.addActionListener(this);
 		group.add(normalinstall);
 		// add(normalinstall, NEXT_LINE);
@@ -393,7 +393,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 		// modifyinstall = new
 		// JRadioButton(parent.langpack.getString("InstallationTypePanel.modify"),
 		// modifyinstallation);
-		modifyinstall = new JRadioButton(super.getString("InstallationTypePanel.modify"), modifyinstallation);
+		modifyinstall = new JRadioButton(super.getString("InstallTypeNewPanel.modify"), modifyinstallation);
 		modifyinstall.addActionListener(this);
 		group.add(modifyinstall);
 		// add(modifyinstall, NEXT_LINE);
@@ -480,6 +480,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 			// idata.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 			this.installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 
+
 			if (selectedKey != null) {
 				if (listItems.contains(selectedKey)) {
 					installedComponents.setSelectedValue(selectedKey, true);
@@ -564,10 +565,12 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 
 		// if (Boolean.parseBoolean(idata.getVariable(InstallData.MODIFY_INSTALLATION)))
 		if (Boolean.parseBoolean(this.installData.getVariable(InstallData.MODIFY_INSTALLATION))) {
-			return ResourcesHelper.getCustomPropString("InstallationTypePanel.modify");
+			// return ResourcesHelper.getCustomPropString("InstallTypeNewPanel.modify");
+			return super.getString("InstallTypeNewPanel.modify");
 			// return parent.langpack.getString("InstallationTypePanel.modify");
 		} else {
-			return ResourcesHelper.getCustomPropString("InstallationTypePanel.normal");
+			return super.getString("InstallTypeNewPanel.normal");
+			// return ResourcesHelper.getCustomPropString("InstallTypeNewPanel.normal");
 			// return parent.langpack.getString("InstallationTypePanel.normal");
 		}
 	}

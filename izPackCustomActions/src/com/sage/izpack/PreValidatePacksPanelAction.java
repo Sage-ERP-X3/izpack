@@ -6,8 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,17 +78,40 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
             	logger.log(Level.FINE,"Found " + packsinstalled.size() + " installed packs");
             	logger.log(Level.FINE,"Loading properties ...");
                 
+                Properties variables = (Properties) oin.readObject();
+                
+                Iterator iter = variables.keySet().iterator();
+                while (iter.hasNext())
+                {
+                    String key = (String) iter.next();
+                    if (Character.isLowerCase(key.charAt(0)) || "UNINSTALL_NAME".equals(key))
+                    {
+                    	installData.setVariable( key, (String) variables.get(key));
+                    	logger.log(Level.FINE,(String) key+"="+ (String) variables.get(key));
+                    }
+                    
+                    // TODO : verrue !
+                    // if (key.equals("syracuse.winservice.username"))
+                    //{
+                    //	installData.setVariable( "syracuse.winservice.username.oldvalue", (String) variables.get(key));
+                    //}
+                }                              
+                
+                fin.close();                
             	
             } catch (FileNotFoundException e)
             {
+            	logger.log(Level.WARNING,e.getMessage());
                 e.printStackTrace();
             }
             catch (java.io.IOException e)
             {
+            	logger.log(Level.WARNING,e.getMessage());
                 e.printStackTrace();
             }
             catch (ClassNotFoundException e)
             {
+            	logger.log(Level.WARNING,e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -95,7 +120,7 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
 
 	@Override
 	public void initialize(PanelActionConfiguration arg0) {
-		// FRDEPO : TODO
+		// nothing to do really
 	}
 
 	

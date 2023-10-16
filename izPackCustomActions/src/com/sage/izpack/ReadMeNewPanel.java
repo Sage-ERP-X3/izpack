@@ -1,9 +1,12 @@
 package com.sage.izpack;
 
+import java.awt.Checkbox;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -13,18 +16,23 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import com.izforge.izpack.gui.IzPanelLayout;
+import com.izforge.izpack.gui.LabelFactory;
 import com.izforge.izpack.api.data.Panel;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.gui.log.Log;
-// import com.izforge.izpack.installer.InstallData;
-// import com.izforge.izpack.installer.InstallerFrame;
-// import com.izforge.izpack.installer.IzPanel;
-// import com.izforge.izpack.installer.ResourceManager;
 import com.izforge.izpack.installer.gui.InstallerFrame;
 import com.izforge.izpack.installer.gui.IzPanel;
 
+/**
+ * Readme Panel: Html page + Checkbox to check
+ * 
+ * @author Franck DEPOORTERE
+ *
+ */
 public class ReadMeNewPanel extends IzPanel implements HyperlinkListener, ActionListener {
+
+	private static final Logger logger = Logger.getLogger(ReadMeNewPanel.class.getName());
 
 	/**
 	 *
@@ -47,7 +55,8 @@ public class ReadMeNewPanel extends IzPanel implements HyperlinkListener, Action
 	 * @param idata  The installation data.
 	 * @param parent Description of the Parameter
 	 */
-	public ReadMeNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources, Log log) {
+	public ReadMeNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
+			Log log) {
 		// public ReadMePanel(InstallerFrame parent, GUIInstallData idata) {
 		// super(parent, idata, new IzPanelLayout());
 		super(panel, parent, installData, new IzPanelLayout(log), resources);
@@ -56,8 +65,9 @@ public class ReadMeNewPanel extends IzPanel implements HyperlinkListener, Action
 
 		// We put our components
 
-		// @todo: frdepo
-		// add(LabelFactory.create(parent.langpack.getString("ReadMePanel.info"),
+		add(LabelFactory.create(super.getString("ReadMeNewPanel.info"), LEADING));
+
+		// add(LabelFactory.create(parent.langpack.getString("ReadMeNewPanel.info"),
 		// parent.icons.getImageIcon("history"), LEADING), NEXT_LINE);
 		try {
 			textArea = new JEditorPane();
@@ -66,19 +76,19 @@ public class ReadMeNewPanel extends IzPanel implements HyperlinkListener, Action
 			JScrollPane scroller = new JScrollPane(textArea);
 			textArea.setPage(loadReadMe());
 			add(scroller, NEXT_LINE);
+
+			ButtonGroup group = new ButtonGroup();
+			readCheckBox = new JCheckBox();
+			String agree = getString("ReadMeNewPanel.agree");
+			readCheckBox.setText(agree);
+			group.add(readCheckBox);
+			add(readCheckBox, NEXT_LINE);
+			readCheckBox.addActionListener(this);
+
 		} catch (Exception err) {
+			logger.log(Level.WARNING, "ReadMeNewPanel :" + err.getMessage());
 			err.printStackTrace();
 		}
-
-		ButtonGroup group = new ButtonGroup();
-
-		// @todo: frdepo
-		// readCheckBox = new JCheckBox(
-		// parent.langpack.getString("ReadMePanel.agree"), false);
-		group.add(readCheckBox);
-		add(readCheckBox, NEXT_LINE);
-		readCheckBox.addActionListener(this);
-
 		setInitialFocus(textArea);
 		getLayoutHelper().completeLayout();
 	}
@@ -113,7 +123,7 @@ public class ReadMeNewPanel extends IzPanel implements HyperlinkListener, Action
 				}
 			}
 		} catch (Exception err) {
-			// TODO: Extend exception handling.
+			err.printStackTrace();
 		}
 	}
 
@@ -137,10 +147,16 @@ public class ReadMeNewPanel extends IzPanel implements HyperlinkListener, Action
 	 * @return The license text URL.
 	 */
 	private URL loadReadMe() {
-		String resNamePrifix = "ReadMePanel.readme";
+		String resNamePrifix = "ReadMeNewPanel.readme";
 		try {
-			// @todo: frdepo
-			// return ResourceManager.getInstance().getURL(resNamePrifix);
+			logger.log(Level.FINE, "ReadMeNewPanel loadReadme: " + resNamePrifix);
+			URL url = getResources().getURL(resNamePrifix);
+			String debug = "NULL";
+			if (url != null) {
+				debug = url.getPath();
+			}
+			logger.log(Level.FINE, "ReadMeNewPanel loadReadme return " + debug);
+			return url;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

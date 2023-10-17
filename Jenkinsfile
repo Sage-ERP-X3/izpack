@@ -1,7 +1,7 @@
 #!groovy
 
-// env.IZPACK_VERSION = '5.2.0.4'
-env.IZPACK_VERSION = 'X3_293748_AdxAdmin'
+env.IZPACK_VERSION = '5.2.0.4'
+//env.IZPACK_VERSION = 'X3_293748_AdxAdmin'
 
 node {
     withEnv(["CI_DEST=${WORKSPACE}/tmp/customer_image"]) {

@@ -41,12 +41,12 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 		try {
 			
 			input = new ResourceManager().getInputStream(SPEC_FILE_NAME);
-			logger.log(Level.FINE, "input: " + input);
+			logger.log(Level.FINE, "CheckProductAlreadyInstalled input: " + input);
 
 			if (input == null) {
 				// spec file is missing
 				errMessage = "specFileMissing";
-				logger.log(Level.FINE, "input: " + errMessage);
+				logger.log(Level.FINE, "CheckProductAlreadyInstalled  input: " + errMessage);
 				return Status.ERROR;
 			} else 
 			{
@@ -60,24 +60,29 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 
 					this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
 					if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT + line)) {
-						logger.log(Level.FINE, "MODIFY_INSTALLATION=true - Registry key exists:" + RegistryHandler.UNINSTALL_ROOT
+						logger.log(Level.FINE, "CheckProductAlreadyInstalled  MODIFY_INSTALLATION=true - Registry key exists:" + RegistryHandler.UNINSTALL_ROOT
 								+ line);
 						RegDataContainer oldInstallPath = registryHandler.getValue(RegistryHandler.UNINSTALL_ROOT + line, "DisplayIcon");
 						String path = oldInstallPath.getStringData().substring(0, oldInstallPath.getStringData().indexOf("Uninstaller") - 1);
 						installData.setInstallPath(path);
 						installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-						logger.log(Level.FINE, "Detected path: " + path);
+						logger.log(Level.FINE, "CheckProductAlreadyInstalled  Detected path: " + path);
 						
 						//  INSTALLER_GUI = 0, INSTALLER_AUTO = 1, INSTALLER_CONSOLE = 2;
-						if (Installer.getInstallerMode() == Installer.INSTALLER_AUTO) {
+						// if (Installer.getInstallerMode() == Installer.INSTALLER_AUTO) {
 						// X3-301654: [ ERROR: compFoundAskUpdate ] We avoid any warning or Error in batch mode
-							return Status.OK;
-						}
+						//	return Status.OK;
+						//}
 						// 	<str id="compFoundAskUpdate" txt="An earlier version of this component has been found on this host, do you want to update this installation ?"/>
-						this.warnMessage = "compFoundAskUpdate";
-						return Status.WARNING;
+						// this.warnMessage = "compFoundAskUpdate";
+						// return Status.WARNING;
+						
+						// X3-302700: Print Server 2.29 installer displays message twice when updating
+						// This warning is already managed by CheckedHelloNewPanel.java
+						return Status.OK;
+						
 					} else {
-						logger.log(Level.FINE, "MODIFY_INSTALLATION=false - Registry key not found:"
+						logger.log(Level.FINE, "CheckProductAlreadyInstalled  MODIFY_INSTALLATION=false - Registry key not found:"
 								+ RegistryHandler.UNINSTALL_ROOT + line);
 					}
 					

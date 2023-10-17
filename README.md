@@ -14,6 +14,11 @@ https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5<br/>
 
 # Version 5.2.0
 
+## Version 5.2.0.4: 2023-11
+
+- Implement com.sage.izpack.jar to support X3 AdxAdmin & Runtime and IzPack 5
+
+
 ## Version 5.2.0.1: 2022-01
 
 - update to IZPACK 5.2.0 to fix uninstaller process. <br/>

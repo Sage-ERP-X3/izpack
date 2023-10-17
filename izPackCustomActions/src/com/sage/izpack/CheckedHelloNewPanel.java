@@ -11,6 +11,7 @@ import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.handler.AbstractUIHandler;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
+import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.core.resource.DefaultLocales;
 import com.izforge.izpack.gui.log.Log;
 import com.izforge.izpack.installer.data.GUIInstallData;
@@ -31,6 +32,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 	private static final long serialVersionUID = 1737042770727953387L; // 1737042770727953387L
 
 	private RegistryHelper _registryHelper;
+	private RegistryHandler _registryHandler;
 
 	public CheckedHelloNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			RegistryDefaultHandler handler, Log log) throws Exception {
@@ -38,8 +40,9 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 		_resourceHelper = new ResourcesHelper(installData, resources);
 		_resourceHelper.mergeCustomMessages();
-
 		_registryHelper = new RegistryHelper(handler, installData);
+		_registryHandler = handler.getInstance();
+
 		String path = _registryHelper.getInstallationPath();
 		// Update case :
 		if (path != null) {
@@ -72,26 +75,58 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 	@Override
 	public void panelActivate() {
 		if (abortInstallation) {
-			parent.lockNextButton();
-			try {
-				if (multipleInstall()) {
-					// setUniqueUninstallKey();
+
+			// test whether multiple install is allowed
+			// String disallowMultipleInstall =
+			// installData.getVariable("CheckedHelloNewPanel.disallowMultipleInstance");
+			String allowMultipleInstall = installData.getVariable("CheckedHelloNewPanel.allowMultipleInstance");
+
+			// multiple install is allowed
+			// <variable name="CheckedHelloNewPanel.allowMultipleInstance" value="true"/>
+			if (Boolean.TRUE.toString().equalsIgnoreCase(allowMultipleInstall)) {
+
+				logger.log(Level.FINE, "CheckedHelloNewPanel allowMultipleInstance=true");
+
+				parent.lockNextButton();
+				try {
+					// if (multipleInstall()) {
+					setUniqueUninstallKey();
 					abortInstallation = false;
 					parent.unlockNextButton();
+					// }
+				} catch (Exception exception) {
+					logger.log(Level.WARNING, exception.getMessage(), exception);
 				}
-				// if we let the "else", izpack create a unique Key after each installation, and
-				// the registry is not uninstalled
-				installData.getInfo().setUninstallerPath(null);
-				installData.getInfo().setUninstallerName(null);
-				installData.getInfo().setUninstallerCondition("uninstaller.nowrite");
-			} catch (Exception exception) {
-				logger.log(Level.WARNING, exception.getMessage(), exception);
+			}
+			// Default behavior: update mode
+			// or <variable name="CheckedHelloNewPanel.allowMultipleInstance"
+			// value="false"/>
+			else {
+				// String allowUpdateMode =
+				// installData.getVariable("CheckedHelloPanel.allowUpdateMode");
+				logger.log(Level.FINE, "CheckedHelloNewPanel allowMultipleInstance=false (updatemode)");
+
+				parent.lockNextButton();
+				try {
+					if (multipleInstall()) {
+						// setUniqueUninstallKey();
+						abortInstallation = false;
+						parent.unlockNextButton();
+					}
+					// if we let the "else", izpack create a unique Key after each installation, and
+					// the registry is not uninstalled
+					installData.getInfo().setUninstallerPath(null);
+					installData.getInfo().setUninstallerName(null);
+					installData.getInfo().setUninstallerCondition("uninstaller.nowrite");
+				} catch (Exception exception) {
+					logger.log(Level.WARNING, exception.getMessage(), exception);
+				}
+
 			}
 		}
 
 		Variables variables = this.installData.getVariables();
 		installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
-		// installData.setVariable("UNINSTALL_NAME",
 	}
 
 	/**
@@ -110,7 +145,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			// Set variable "modify.izpack.install"
 			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 		}
-		logger.log(Level.FINE, "CheckedHelloNewPanel Set " + InstallData.MODIFY_INSTALLATION + ": true");
+		logger.log(Level.FINE, "CheckedHelloNewPanel Set " + InstallData.MODIFY_INSTALLATION + ": " + result);
 		return result;
 	}
 
@@ -150,6 +185,49 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 		return (askQuestion(getString("installer.warning"), noLuck,
 				AbstractUIHandler.CHOICES_YES_NO) == AbstractUIHandler.ANSWER_YES);
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	private void setUniqueUninstallKey() throws Exception {
+		// Let us play a little bit with the registry again...
+		// Now we search for an unique uninstall key.
+		// First we need a handler. There is no overhead at a
+		// second call of getInstance, therefore we do not buffer
+		// the handler in this class.
+
+		// RegistryHandler rh = RegistryDefaultHandler.getInstance();
+		int oldVal = _registryHandler.getRoot(); // Only for security...
+		// We know, that the product is already installed, else we
+		// would not in this method. First we get the
+		// "default" uninstall key.
+		if (oldVal > 100) // Only to inhibit warnings about local variable never read.
+		{
+			return;
+		}
+		String uninstallName = _registryHelper.getUninstallName();
+		int uninstallModifier = 1;
+		while (true) {
+			if (uninstallName == null) {
+				break; // Should never be...
+			}
+			// Now we define a new uninstall name.
+			String newUninstallName = uninstallName + "(" + Integer.toString(uninstallModifier) + ")";
+			// Then we "create" the reg key with it.
+			String keyName = RegistryHandler.UNINSTALL_ROOT + newUninstallName;
+			_registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+			if (!_registryHandler.keyExist(keyName)) { // That's the name for which we searched.
+														// Change the uninstall name in the reg helper.
+				_registryHandler.setUninstallName(newUninstallName);
+				// Now let us inform the user.
+				emitNotification(getString("CheckedHelloNewPanel.infoOverUninstallKey") + newUninstallName);
+				// Now a little hack if the registry spec file contains
+				// the pack "UninstallStuff".
+				break;
+			}
+			uninstallModifier++;
+		}
 	}
 
 }

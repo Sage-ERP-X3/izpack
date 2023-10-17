@@ -33,6 +33,9 @@ import com.izforge.izpack.util.helper.SpecHelper;
     <res id="base_AfterUpdateScript_unix" src="updatescripts/afterbase.sh"/>
     <res id="base_AfterUpdateScript_windows" src="updatescripts/afterbase.cmd"/>
     <res id="productsSpec.txt" src="config/oldversions.txt"/>
+    
+	<res id="baseadxadminlinux64_BeforeUpdateScript_unix" src="updatescripts/beforepacks.sh" />
+	<res id="baseadxadminwin64_BeforeUpdateScript_windows" src="updatescripts/beforepacks.cmd" />
 
   @author Franck DEPOORTERE
 */

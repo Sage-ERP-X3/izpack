@@ -128,7 +128,7 @@ public class ReadMeNewPanel extends IzPanel implements HyperlinkListener, Action
 	}
 
 	/**
-	 * Indicates wether the panel has been validated or not.
+	 * Indicates whether the panel has been validated or not.
 	 *
 	 * @return true if the user agrees with the license, false otherwise.
 	 */

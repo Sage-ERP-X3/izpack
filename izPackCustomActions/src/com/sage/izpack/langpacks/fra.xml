@@ -283,11 +283,11 @@
     <str id="functionFailed.RegOpenKeyEx" txt="Impossible d'ouvrir la clé de registre {0}\\{1}."/>
 
     <!-- CheckedHelloPanel strings -->
-    <str id="CheckedHelloPanel.productAlreadyExist0"  txt="Ce logiciel a déjà été installé sur cet ordinateur depuis le chemin "/>
-	<str id="CheckedHelloPanel.productAlreadyExist1" txt=" Voulez-vous mettre à jour cette installation ?"/>
+    <str id="CheckedHelloNewPanel.productAlreadyExist0"  txt="Ce logiciel a déjà été installé sur cet ordinateur depuis le chemin "/>
+	<str id="CheckedHelloNewPanel.productAlreadyExist1" txt=" Voulez-vous mettre à jour cette installation ?"/>
 
-    <str id="CheckedHelloPanel.infoOverUninstallKey" txt="La clé de désinstallation sera : "/>
-	<str id="CheckedHelloPanel.infoMultipleInstallNotAllowed" txt="Ce produit est déjà installé. L'installation d'une autre instance de ce produit n'est pas autorisé."/>
+    <str id="CheckedHelloNewPanel.infoOverUninstallKey" txt="La clé de désinstallation sera : "/>
+	<str id="CheckedHelloNewPanel.infoMultipleInstallNotAllowed" txt="Ce produit est déjà installé. L'installation d'une autre instance de ce produit n'est pas autorisé."/>
 
 		<!-- Next Media Strings -->
 		<str id="nextmedia.title" txt="Prochain media d'installation"/>

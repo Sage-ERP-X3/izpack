@@ -28,6 +28,9 @@ import com.izforge.izpack.installer.util.PackHelper;
 import com.izforge.izpack.panels.packs.PacksModel;
 import com.izforge.izpack.panels.packs.PacksPanel;
 
+/*
+* @author Franck DEPOORTERE
+*/
 public class PacksNewPanel extends PacksPanel {
 
 	private static final long serialVersionUID = 2809544763635023846L;

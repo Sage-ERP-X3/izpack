@@ -93,6 +93,7 @@ node {
                 if (tag) {
                     stage('Push image') {
                         izPackImage.push(tag)
+                        sh("echo ${stageTag} image pushed")
                     }
                 }   
             }

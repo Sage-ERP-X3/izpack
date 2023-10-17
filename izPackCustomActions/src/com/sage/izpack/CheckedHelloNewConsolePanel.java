@@ -113,8 +113,8 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 			}
 			// X3-240420 : Wrong message when updating the console This method should only
 			ResourcesHelper resourcesHelper = new ResourcesHelper(this.installData, this.resources);
-			String noLuck = resourcesHelper.getCustomString("CheckedHelloPanel.productAlreadyExist0") + path
-					+ ". " + resourcesHelper.getCustomString("CheckedHelloPanel.productAlreadyExist1");
+			String noLuck = resourcesHelper.getCustomString("CheckedHelloNewPanel.productAlreadyExist0") + path
+					+ ". " + resourcesHelper.getCustomString("CheckedHelloNewPanel.productAlreadyExist1");
 
 			result = prompt.confirm(ERROR, noLuck, YES_NO) == YES;
 

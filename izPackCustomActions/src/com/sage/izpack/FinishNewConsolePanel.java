@@ -9,6 +9,9 @@ import com.izforge.izpack.installer.panel.PanelView;
 import com.izforge.izpack.panels.finish.FinishConsolePanel;
 import com.izforge.izpack.util.PlatformModelMatcher;
 
+/*
+* @author Franck DEPOORTERE
+*/
 public class FinishNewConsolePanel extends FinishConsolePanel {
 
 	public FinishNewConsolePanel(ObjectFactory factory, ConsoleInstaller parent, PlatformModelMatcher matcher,

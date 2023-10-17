@@ -177,8 +177,8 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			path = "<not found>";
 		}
 
-		String noLuck = getString("CheckedHelloPanel.productAlreadyExist0") + path + ". "
-				+ getString("CheckedHelloPanel.productAlreadyExist1");
+		String noLuck = getString("CheckedHelloNewPanel.productAlreadyExist0") + path + ". "
+				+ getString("CheckedHelloNewPanel.productAlreadyExist1");
 
 		return (askQuestion(getString("installer.warning"), noLuck,
 				AbstractUIHandler.CHOICES_YES_NO) == AbstractUIHandler.ANSWER_YES);
@@ -218,7 +218,8 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 														// Change the uninstall name in the reg helper.
 				_registryHandler.setUninstallName(newUninstallName);
 				// Now let us inform the user.
-				emitNotification(getString("CheckedHelloNewPanel.infoOverUninstallKey") + newUninstallName);
+				// emitNotification(getString("CheckedHelloNewPanel.infoOverUninstallKey") + newUninstallName);
+				logger.log(Level.FINE, "CheckedHelloNewPanel setUniqueUninstallKey() " + getString("CheckedHelloNewPanel.infoOverUninstallKey") + newUninstallName); 
 				// Now a little hack if the registry spec file contains
 				// the pack "UninstallStuff".
 				break;

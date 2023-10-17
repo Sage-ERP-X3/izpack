@@ -64,9 +64,7 @@ node {
                         wCmdeAll="${wCmde} all -buildfile build.xml"
                         ${wCmdeAll}
  
-                        mkdir izPackCustomActions
-                        cp -R /izpack/izPackCustomActions/bin/com.sage.izpack.jar izPackCustomActions/com.sage.izpack.jar
-
+                        cp /izpack/izPackCustomActions/bin/com.sage.izpack.jar /izpack/izPackCustomActions/com.sage.izpack.jar
                     '''
                 }
                 }

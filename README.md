@@ -2,9 +2,9 @@
 Wiki: <a href="https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5"> Izpack documentation </a><br/>
 
 
-Were're based on the original IzPack 5.1.3 binaries. <br/>
+Were're based on the original IzPack 5.2.0 binaries. <br/>
 Note that we have NOT modified any source in this version. <br/>
-Personnalization has exclusively been made in the library named `"com.sage.izpack.jar"` placed in directory ".\izPackCustomActions". <br/>
+Personnalization has exclusively been made in the library named `"com.sage.izpack.jar"` placed in directory "./izPackCustomActions". <br/>
 <br/>
 
 Official documentation izPack 5:<br/>
@@ -16,8 +16,18 @@ https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5<br/>
 
 ## Version 5.2.0.4: 2023-11
 
+- X3-293748: Upgrade from izpack 5.2.0 M2 to the official 5.2.0 release  (http://izpack.org/downloads/)
 - X3-293748: Implement com.sage.izpack.jar to support X3 AdxAdmin & Runtime and IzPack 5
 - X3-302700: Print Server 2.29 installer displays message twice when updating
+
+## Version 5.2.0.3: 2023-08
+
+- X3-301654: [ ERROR: compFoundAskUpdate ]
+- X3-287600 : Console update from 2.42.2.1  (so 19R3) to 2.56.0.19 (so 2022R4) doesn't detect the existing version
+
+## Version 5.2.0.2: 2023-05
+
+- X3-278420 : When updating print server to 2.26 with print-server-2.26.0.2-win.jar does not update record in Windows Programs and Features
 
 ## Version 5.2.0.1: 2022-01
 

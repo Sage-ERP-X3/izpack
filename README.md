@@ -16,8 +16,8 @@ https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5<br/>
 
 ## Version 5.2.0.4: 2023-11
 
-- Implement com.sage.izpack.jar to support X3 AdxAdmin & Runtime and IzPack 5
-
+- X3-293748: Implement com.sage.izpack.jar to support X3 AdxAdmin & Runtime and IzPack 5
+- X3-302700: Print Server 2.29 installer displays message twice when updating
 
 ## Version 5.2.0.1: 2022-01
 

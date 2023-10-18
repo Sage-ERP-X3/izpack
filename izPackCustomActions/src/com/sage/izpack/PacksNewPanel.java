@@ -17,14 +17,11 @@ import javax.swing.table.TableCellRenderer;
 
 import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.data.Panel;
-import com.izforge.izpack.api.exception.ResourceNotFoundException;
 import com.izforge.izpack.api.factory.ObjectFactory;
-import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.api.rules.RulesEngine;
 import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.installer.gui.InstallerFrame;
-import com.izforge.izpack.installer.util.PackHelper;
 import com.izforge.izpack.panels.packs.PacksModel;
 import com.izforge.izpack.panels.packs.PacksPanel;
 
@@ -44,7 +41,8 @@ public class PacksNewPanel extends PacksPanel {
 
 	public PacksNewPanel(Panel panel, InstallerFrame frame, GUIInstallData installData, Resources resources,
 			ObjectFactory factory, RulesEngine rules) {
-		super(panel, frame, installData, resources, factory, rules);
+		// super(panel, frame, installData, resources, factory, rules);
+		super(panel, frame, installData, resources, factory);
 	}
 
 	/**

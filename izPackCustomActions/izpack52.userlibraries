@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <eclipse-userlibraries version="2">
     <library name="IZPACK5" systemlibrary="false">
-        <archive path="../libs/izpack-ant-5.2.0.M2.jar"/>
-        <archive path="../libs/izpack-api-5.2.0.M2.jar"/>
-        <archive path="../libs/izpack-compiler-5.2.0.M2.jar"/>
-        <archive path="../libs/izpack-core-5.2.0.M2.jar"/>
-        <archive path="../libs/izpack-event-5.2.0.M2.jar"/>
-        <archive path="../libs/izpack-gui-5.2.0.M2.jar"/>
-        <archive path="../libs/izpack-installer-5.2.0.M2.jar"/>
-        <archive path="../libs/izpack-native-5.2.0.M2.jar"/>
-        <archive path="../libs/izpack-panel-5.2.0.M2.jar"/>
-        <archive path="../libs/izpack-tools-5.2.0.M2.jar"/>
-        <archive path="../libs/izpack-uninstaller-5.2.0.M2.jar"/>
-        <archive path="../libs/izpack-util-5.2.0.M2.jar"/>
+        <archive path="../libs/izpack-ant-5.2.0.jar"/>
+        <archive path="../libs/izpack-api-5.2.0.jar"/>
+        <archive path="../libs/izpack-compiler-5.2.0.jar"/>
+        <archive path="../libs/izpack-core-5.2.0.jar"/>
+        <archive path="../libs/izpack-event-5.2.0.jar"/>
+        <archive path="../libs/izpack-gui-5.2.0.jar"/>
+        <archive path="../libs/izpack-installer-5.2.0.jar"/>
+        <archive path="../libs/izpack-native-5.2.0.jar"/>
+        <archive path="../libs/izpack-panel-5.2.0.jar"/>
+        <archive path="../libs/izpack-tools-5.2.0.jar"/>
+        <archive path="../libs/izpack-uninstaller-5.2.0.jar"/>
+        <archive path="../libs/izpack-util-5.2.0.jar"/>
     </library>
 </eclipse-userlibraries>

@@ -282,8 +282,8 @@
     <str id="functionFailed.RegOpenKeyEx" txt="Cannot open registry key {0}\\{1}."/>
 
 		<!-- CheckedHelloPanel strings -->
-    <str id="CheckedHelloPanel.productAlreadyExist0" txt="This product is already installed on this computer under the path "/>
-    <str id="CheckedHelloPanel.productAlreadyExist1" txt=" Do you want to update this installation ?"/>
+    <str id="CheckedHelloNewPanel.productAlreadyExist0" txt="This product is already installed on this computer under the path "/>
+    <str id="CheckedHelloNewPanel.productAlreadyExist1" txt=" Do you want to update this installation ?"/>
 
     <!-- Next Media Strings -->
     <str id="nextmedia.title" txt="Next install media"/>

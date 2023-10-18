@@ -42,6 +42,7 @@ node {
                 docker.image("izpack:${IZPACK_VERSION}").inside('-u root') {
 
                     sh '''
+                        cd  /izpack/
                         git pull
                         cd  /izpack/izPackCustomActions
                         ls -Rla

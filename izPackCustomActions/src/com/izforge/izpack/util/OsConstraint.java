@@ -1,4 +1,4 @@
-package com.izforge.izpack;
+package com.izforge.izpack.util;
 // package com.sage.izpack;
 
 import java.util.ArrayList;

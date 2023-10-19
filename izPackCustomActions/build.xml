@@ -123,6 +123,7 @@
                 <include name="com/sage/izpack/*.xml"/>
                 <include name="com/sage/izpack/*.properties"/>
                 <include name="com/izforge/izpack/*.java"/>
+                <include name="com/izforge/izpack/util/*.java"/>
                 <include name="com/izforge/izpack/*.xml"/>
                 <include name="com/izforge/izpack/*.properties"/>
                 <listener-fileset/>

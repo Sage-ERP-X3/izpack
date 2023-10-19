@@ -403,9 +403,8 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 			throw new InstallerException("UpdateListener.fetchAndExecuteResource()  I/O error during writing resource "
 					+ resource + " to a temporary buildfile", ex);
 		} catch (Exception ex) {
-			logger.log(Level.WARNING, "UpdateListener.fetchAndExecuteResource()  Resource gerror: " + resource + " "
-					+ ex.getMessage());
-			ex.printStackTrace();
+			logger.log(Level.WARNING, "UpdateListener.fetchAndExecuteResource()  Resource gerror: " + resource + " " + ex.getMessage());
+			// ex.printStackTrace();
 			return null;
 		} finally {
 		}

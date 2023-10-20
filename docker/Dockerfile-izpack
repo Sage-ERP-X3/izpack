@@ -13,5 +13,9 @@ WORKDIR /izpack
 # No need to compile izpack.
 # RUN ant -file src/build.xml all
 
+RUN cd  /izpack/
+RUN git pull
+RUN cd  /izpack/izPackCustomActions
+						
 # We need to compile SAGE Custom actions
-# RUN ant -file izPackCustomActions/build.xml all 
+RUN ant -file izPackCustomActions/build.xml all 

@@ -10,8 +10,6 @@ COPY . izpack
 WORKDIR /izpack
 # RUN chmod 755 bin/compile.sh ==> Doesnt work
 
-# No need to compile izpack.
-# RUN ant -file src/build.xml all
 
 RUN cd  /izpack/
 RUN git pull
@@ -20,4 +18,4 @@ RUN cd  /izpack/izPackCustomActions
 # We need to compile SAGE Custom actions
 RUN ant -file izPackCustomActions/build.xml all 
 
-COPY /izpack/izPackCustomActions/bin/com.sage.izpack.jar /izpack/izPackCustomActions/com.sage.izpack.jar
+# COPY izPackCustomActions/bin/com.sage.izpack.jar /izpack/izPackCustomActions/com.sage.izpack.jar

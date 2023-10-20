@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.izforge.izpack.api.adaptator.IXMLElement;
-import com.izforge.izpack.util.OsVersion;
 
 /*
  * Former OsConstraint class, from IzPack 4.3, legacy version

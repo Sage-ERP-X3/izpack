@@ -13,7 +13,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.izforge.izpack.Pack;
+import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.data.AutomatedInstallData;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.PanelActionConfiguration;
@@ -35,7 +35,7 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
         {
             // installation shall be modified
             // load installation information
-			logger.log(Level.FINE, "Update mode, loading installed packs ...");
+			logger.log(Level.FINE, "PreValidatePacksPanelAction   Update mode, loading installed packs ...");
 			
             try
             {
@@ -46,16 +46,18 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
                 for (Object aPacksinstalled : packsinstalled)
                 {
                     Pack installedpack = (Pack) aPacksinstalled;
-                    if ((installedpack.id != null) && (installedpack.id.length() > 0))
+                    /*
+                    if ((installedpack.getImageId() != null) && (installedpack.getImageId().length() > 0))
                     {
-                        installedpacks.put(installedpack.id, installedpack);
-                        logger.log(Level.FINE, "Found " +installedpack.id);
+                        installedpacks.put(installedpack.getImageId(), installedpack);
+                        logger.log(Level.FINE, "PreValidatePacksPanelAction  Found " +installedpack.getImageId());
                     }
                     else
                     {
-                        installedpacks.put(installedpack.name, installedpack);
-                        logger.log(Level.FINE, "Found " +installedpack.name);
-                    }
+                    */
+                        installedpacks.put(installedpack.getName(), installedpack);
+                        logger.log(Level.FINE, "PreValidatePacksPanelAction  Found " +installedpack.getName());
+                    //}
                 }
                 
                 this.removeAlreadyInstalledPacks(installData.getSelectedPacks());
@@ -65,18 +67,18 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
                 
                 List<com.izforge.izpack.api.data.Pack> packages =  new ArrayList<com.izforge.izpack.api.data.Pack>();
                 for (Object aPack : installData.getAvailablePacks())
-                {
-                    if (installedpacks.containsKey( ((Pack)aPack).id ) || installedpacks.containsKey( ((Pack)aPack).name ) )
+                { // installedpacks.containsKey( ((Pack)aPack).getImageId() ) || 
+                    if (installedpacks.containsKey( ((Pack)aPack).getName()) )
                     {
-                    	((Pack)aPack).preselected = true;
-                        ((Pack)aPack).required = true;
+                    	((Pack)aPack).setPreselected(true);
+                        // ((Pack)aPack).set.required = true;
                     	packages.add((com.izforge.izpack.api.data.Pack)aPack);                
                     }
                 }
             	installData.setSelectedPacks(packages);
 
-            	logger.log(Level.FINE,"Found " + packsinstalled.size() + " installed packs");
-            	logger.log(Level.FINE,"Loading properties ...");
+            	logger.log(Level.FINE,"PreValidatePacksPanelAction  Found " + packsinstalled.size() + " installed packs");
+            	logger.log(Level.FINE,"PreValidatePacksPanelAction  Loading properties ...");
                 
                 Properties variables = (Properties) oin.readObject();
                 
@@ -131,15 +133,17 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
         for (Object selectedpack1 : selectedpacks)
         {
             Pack selectedpack = (Pack) selectedpack1;
-            String key = "";
-            if ((selectedpack.id != null) && (selectedpack.id.length() > 0))
+            String key = selectedpack.getName();
+            /*
+            if ((selectedpack.getImageId() != null) && (selectedpack.getImageId().length() > 0))
             {
-                key = selectedpack.id;
+                key = selectedpack.getImageId();
             }
             else
             {
-                key = selectedpack.name;
+                key = selectedpack.getName();
             }
+            */
             if (installedpacks.containsKey(key))
             {
                 // pack is already installed, remove it

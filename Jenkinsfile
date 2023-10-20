@@ -45,9 +45,12 @@ node {
                 env.kJavaTargetVersion = "1.8"
                 env.kDevelopHome = "/izpack"
 
-                docker.image("izpack:${IZPACK_VERSION}").pull()
+                def image
+                image = docker.image("izpack:${IZPACK_VERSION}")
+
+                image.pull()
                 sh('cp -r /var/jenkins_home/userContent/binary/ant-lib .')
-                docker.image("izpack:${IZPACK_VERSION}").inside('-u root') {
+                image.inside('-u root') {
 
                     sh '''
                         cd  /izpack/
@@ -83,7 +86,7 @@ node {
 
                  if (tag) {
                     // stage("Push image ${tag}") {
-                     docker.image("izpack:${IZPACK_VERSION}").push(tag)
+                     image.push(tag)
                 }
                
             }

@@ -19,3 +19,5 @@ RUN cd  /izpack/izPackCustomActions
 						
 # We need to compile SAGE Custom actions
 RUN ant -file izPackCustomActions/build.xml all 
+
+COPY /izpack/izPackCustomActions/bin/com.sage.izpack.jar /izpack/izPackCustomActions/com.sage.izpack.jar

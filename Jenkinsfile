@@ -81,12 +81,13 @@ node {
                     '''
                 }
 
-                if (tag) {
+                 if (tag) {
                     // stage("Push image ${tag}") {
-                        docker.image("izpack:${IZPACK_VERSION}").push(tag)
+                     docker.image("izpack:${IZPACK_VERSION}").push(tag)
                 }
+               
             }
-
+        }
 
         // docker.withRegistry('https://repository.sagex3.com', 'jenkins_platform') {
         //     def izPackImage

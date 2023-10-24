@@ -53,6 +53,16 @@ public final class InstallationInformationHelper {
 
 	public static boolean readInformation(com.izforge.izpack.api.data.InstallData installData, Resources resources) {
 
+		String osVersion = OsVersionHelper.OS_VERSION;
+		String osVersionDetails = OsVersionHelper.getOsDetails();
+		installData.setVariable("OS.VERSION", osVersion);
+		installData.setVariable("os.version", osVersion);
+		installData.setVariable("sageos.version", osVersion);
+		installData.setVariable("sageos.details", osVersionDetails);
+		
+		logger.log(Level.FINE, "InstallationInformationHelper set variables 'os.version', 'sageos.version': " + osVersion + "  'sageos.details':" + osVersionDetails);
+
+		
 		logger.log(Level.FINE, "InstallationInformationHelper Reading file " + InstallData.INSTALLATION_INFORMATION);
 
 		logger.log(Level.FINE, "InstallationInformationHelper Before " + InstallData.INSTALLATION_INFORMATION

@@ -13,7 +13,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.izforge.izpack.api.data.Pack;
+import com.izforge.izpack.api.data.Pack; // com.izforge.izpack.Pack; 
 import com.izforge.izpack.api.data.AutomatedInstallData;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.PanelActionConfiguration;
@@ -22,7 +22,7 @@ import com.izforge.izpack.api.handler.AbstractUIHandler;
 public class PreValidatePacksPanelAction implements com.izforge.izpack.data.PanelAction  {
 
 	private static final Logger logger = Logger.getLogger(PreValidatePacksPanelAction.class.getName());
-    private Map installedpacks = null;
+    private Map<String, com.izforge.izpack.Pack> installedpacks = null;
 
 	@Override
 	public void executeAction(InstallData installData, AbstractUIHandler arg1) {
@@ -30,7 +30,7 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
         // then we must select already installed packs
 		
 		boolean modifyinstallation = Boolean.valueOf(installData.getVariable(InstallData.MODIFY_INSTALLATION));
-		this.installedpacks = new HashMap();
+		this.installedpacks = new HashMap<String, com.izforge.izpack.Pack>();
 		if (modifyinstallation)
         {
             // installation shall be modified
@@ -42,10 +42,10 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
             	File file= new File(installData.getInstallPath() + File.separator + AutomatedInstallData.INSTALLATION_INFORMATION);
                 FileInputStream fin = new FileInputStream(file);
                 ObjectInputStream oin = new ObjectInputStream(fin);
-                List packsinstalled = (List) oin.readObject();
+                List<?> packsinstalled = (List<?>) oin.readObject();
                 for (Object aPacksinstalled : packsinstalled)
                 {
-                    Pack installedpack = (Pack) aPacksinstalled;
+                	com.izforge.izpack.Pack installedpack = (com.izforge.izpack.Pack) aPacksinstalled;
                     /*
                     if ((installedpack.getImageId() != null) && (installedpack.getImageId().length() > 0))
                     {
@@ -55,8 +55,8 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
                     else
                     {
                     */
-                        installedpacks.put(installedpack.getName(), installedpack);
-                        logger.log(Level.FINE, "PreValidatePacksPanelAction  Found " +installedpack.getName());
+                        installedpacks.put(installedpack.name, installedpack);
+                        logger.log(Level.FINE, "PreValidatePacksPanelAction  Found " +installedpack.name);
                     //}
                 }
                 
@@ -82,7 +82,7 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
                 
                 Properties variables = (Properties) oin.readObject();
                 
-                Iterator iter = variables.keySet().iterator();
+                Iterator<?> iter = variables.keySet().iterator();
                 while (iter.hasNext())
                 {
                     String key = (String) iter.next();

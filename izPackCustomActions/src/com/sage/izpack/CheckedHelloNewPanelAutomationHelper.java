@@ -21,7 +21,6 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 	private static Logger logger = Logger.getLogger(CheckedHelloNewPanelAutomationHelper.class.getName());
 
 	private final RegistryHelper registryHelper;
-	private final boolean registered;
 	private InstallData installData;
 	private RegistryHandler registryHandler;
 
@@ -33,11 +32,22 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 
 		this.registryHelper = new RegistryHelper(handler, installData);
 		this.registryHandler = handler != null ? handler.getInstance() : null;
-
-		this.registered = registryHelper.isRegistered();
 		this.installData = installData;
 
-		String path = registryHelper.getInstallationPath();
+		String path = installData.getInstallPath();
+		if (path == null && OsVersion.IS_WINDOWS)
+			path = this.registryHelper.getInstallationPath();
+
+		if (path == null) {
+			RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler, installData);
+			if (x3Handler.isAdminSetup()) {
+				path = x3Handler.getAdxAdminDirPath();
+			}
+			logger.log(Level.WARNING,
+					"Warning CheckedHelloNewPanelAutomationHelper Could not get InstallationPath() return NULL. path: "+ path);
+		}
+
+		
 		if (path != null) {
 			installData.setVariable("TargetPanel.dir.windows", path);
 			logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper Set TargetPanel.dir.windows: " + path);

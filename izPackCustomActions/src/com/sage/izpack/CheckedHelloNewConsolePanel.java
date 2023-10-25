@@ -66,7 +66,6 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		
 		if (path == null) {
 			RegistryHandlerX3 x3Handler = new RegistryHandlerX3(_registryHandler, installData);
-
 			if (x3Handler.isAdminSetup()) {
 				path = x3Handler.getAdxAdminDirPath();
 			}

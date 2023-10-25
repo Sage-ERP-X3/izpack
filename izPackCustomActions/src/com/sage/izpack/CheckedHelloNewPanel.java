@@ -117,8 +117,6 @@ if (path==null && OsVersion.IS_WINDOWS)
 			// or <variable name="CheckedHelloNewPanel.allowMultipleInstance"
 			// value="false"/>
 			else {
-				// String allowUpdateMode =
-				// installData.getVariable("CheckedHelloPanel.allowUpdateMode");
 				logger.log(Level.FINE, "CheckedHelloNewPanel allowMultipleInstance=false (updatemode)");
 
 				parent.lockNextButton();
@@ -226,7 +224,17 @@ if (path==null && OsVersion.IS_WINDOWS)
 	 */
 	@Override
 	protected boolean multipleInstall() throws NativeLibException {
-		String path = _registryHelper.getInstallationPath();
+
+		// String path = _registryHelper.getInstallationPath();
+		String path = _installData.getInstallPath();
+		if (path == null && OsVersion.IS_WINDOWS)
+			path = _registryHelper.getInstallationPath();
+
+		if (path == null) {
+			if (_x3Handler.isAdminSetup()) {
+				path = _x3Handler.getAdxAdminDirPath();
+			}
+		}
 		if (path == null) {
 			path = "<not found>";
 		}

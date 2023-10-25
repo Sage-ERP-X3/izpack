@@ -46,6 +46,7 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
                 List<?> packsinstalled = (List<?>) oin.readObject();
                 for (Object aPacksinstalled : packsinstalled)
                 {
+                	if (  aPacksinstalled instanceof com.izforge.izpack.Pack) {
                 	// com.izforge.izpack.api.data.Pack cannot be cast to com.izforge.izpack.Pack
                 	com.izforge.izpack.Pack installedpack = (com.izforge.izpack.Pack) aPacksinstalled;
                     /*
@@ -60,7 +61,16 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
                         installedpacks.put(installedpack.name, installedpack);
                         logger.log(Level.FINE, "PreValidatePacksPanelAction  Found " +installedpack.name);
                     //}
-                }
+                	}
+
+                	if (  aPacksinstalled instanceof com.izforge.izpack.api.data.Pack) {
+                	// com.izforge.izpack.api.data.Pack cannot be cast to com.izforge.izpack.Pack
+                		com.izforge.izpack.api.data.Pack installedpack = (com.izforge.izpack.api.data.Pack) aPacksinstalled;
+                		installedpack.setPreselected(true);
+                        // installedpacks.put(installedpack.getName(), installedpack);
+                        logger.log(Level.FINE, "PreValidatePacksPanelAction  Found " +installedpack.getName());
+                	}
+}
                 
                 this.removeAlreadyInstalledPacks(installData.getSelectedPacks());
                 // TODO: FRDEPO

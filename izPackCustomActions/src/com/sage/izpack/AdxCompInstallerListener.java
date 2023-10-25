@@ -360,10 +360,10 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			throw new Exception(resourceHelper.getCustomString("sectionNotFound", moduleName));
 		}
 
-		Node status = module.getElementsByTagName("component." + moduleFamily.toLowerCase() + ".installstatus").item(0);
+		String statusComponent = "component." + moduleFamily.toLowerCase() + ".installstatus";
+		Node status = module.getElementsByTagName(statusComponent).item(0);
 		if (status == null) {
-			status = module
-					.appendChild(xdoc.createElement("component." + moduleFamily.toLowerCase() + ".installstatus"));
+			status = module.appendChild(xdoc.createElement(statusComponent));
 		}
 		status.setTextContent("update");
 
@@ -372,15 +372,19 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			version = this.installData.getVariable("COMPONENT.VERSION");
 		}
 		if (version == null || version == "") {
-			version = this.installData.getVariable("app-version"); // APP_VER
+			version = this.installData.getVariable("APP_VER"); // app-version
 		}
-		Node nodeVersion = module.getElementsByTagName("component." + moduleFamily.toLowerCase() + ".version").item(0);
+		String versionComponent =  "component." + moduleFamily.toLowerCase() + ".version";
+		Node nodeVersion = module.getElementsByTagName(versionComponent).item(0);
 		if (nodeVersion == null) {
 			nodeVersion = module
-					.appendChild(xdoc.createElement("component." + moduleFamily.toLowerCase() + ".version"));
+					.appendChild(xdoc.createElement(versionComponent));
 		}
 		nodeVersion.setTextContent(version);
 
+		logger.log(Level.FINE, "AdxCompInstallerListener modifyXmlModule  saving XML '" + versionComponent + "': " + version);
+
+				
 		/*
 		 * module = (Element) xPath.compile( "/install/module[@name='" + name +
 		 * "' and @type='" + type + "' and @family='" + family + "']") .evaluate(xdoc,

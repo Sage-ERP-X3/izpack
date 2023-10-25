@@ -3,6 +3,8 @@ package com.sage.izpack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Panel;
 import com.izforge.izpack.api.data.Variables;
@@ -48,8 +50,8 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		_x3Handler = new RegistryHandlerX3(_registryHandler, installData);
 		
 		String path = _installData.getInstallPath();
-if (path==null && OsVersion.IS_WINDOWS)
-	path = _registryHelper.getInstallationPath();
+		if (path == null && OsVersion.IS_WINDOWS)
+			path = _registryHelper.getInstallationPath();
 		
 		if (path == null) {
 			if (_x3Handler.isAdminSetup()) {
@@ -89,6 +91,54 @@ if (path==null && OsVersion.IS_WINDOWS)
 	 */
 	@Override
 	public void panelActivate() {
+
+		if (_x3Handler.needAdmin()) {
+			try {
+				// Check presence of adxadmin
+				RegistryHandlerX3 rh = new RegistryHandlerX3(_registryHandler, this.installData);
+				if (_registryHandler != null && rh != null) {
+
+					boolean adxAdminRegistered = rh.adxadminProductRegistered();
+					// Test adxadmin already installer with registry
+					if (!rh.adxadminProductRegistered()) {
+						// No Adxadmin
+						logger.log(Level.FINE, getString("adxadminNotRegistered"));
+						JOptionPane.showMessageDialog(null, getString("adxadminNotRegistered"),
+								getString("installer.error"), JOptionPane.ERROR_MESSAGE);
+						parent.lockNextButton();
+						return;
+					}
+				} else {
+
+					// else we are on a os which has no registry or the
+					// needed dll was not bound to this installation. In
+					// both cases we forget the "already exist" check.
+
+					// test adxadmin sous unix avec /adonix/adxadm ?
+					if (OsVersion.IS_UNIX) {
+						java.io.File adxadmFile = new java.io.File("/sage/adxadm");
+						if (!adxadmFile.exists()) {
+							adxadmFile = new java.io.File("/adonix/adxadm");
+							if (!adxadmFile.exists()) {
+								// No adxadmin
+								JOptionPane.showMessageDialog(null, getString("adxadminNotRegistered"),
+										getString("installer.error"), JOptionPane.ERROR_MESSAGE);
+								parent.lockNextButton();
+								return;
+							}
+						}
+					}
+				}
+			} catch (Exception e) { // Will only be happen if registry handler is good, but an
+									// exception at performing was thrown. This is an error...
+				logger.log(Level.WARNING, getString("installer.error") + ":" + e.getMessage());
+				JOptionPane.showMessageDialog(null, e.getMessage(), getString("installer.error"),
+						JOptionPane.ERROR_MESSAGE);
+				parent.lockNextButton();
+				return;
+			}
+		}
+
 		if (abortInstallation) {
 
 			// test whether multiple install is allowed
@@ -128,10 +178,8 @@ if (path==null && OsVersion.IS_WINDOWS)
 					}
 					// if we let the "else", izpack create a unique Key after each installation, and
 					// the registry is not uninstalled
-					// if (OsVersion.IS_WINDOWS) {
-					 installData.getInfo().setUninstallerPath(null);
-					 installData.getInfo().setUninstallerName(null);
-					//}
+					installData.getInfo().setUninstallerPath(null);
+					installData.getInfo().setUninstallerName(null);
 					installData.getInfo().setUninstallerCondition("uninstaller.nowrite");
 				} catch (Exception exception) {
 					logger.log(Level.WARNING, exception.getMessage(), exception);
@@ -225,7 +273,6 @@ if (path==null && OsVersion.IS_WINDOWS)
 	@Override
 	protected boolean multipleInstall() throws NativeLibException {
 
-		// String path = _registryHelper.getInstallationPath();
 		String path = _installData.getInstallPath();
 		if (path == null && OsVersion.IS_WINDOWS)
 			path = _registryHelper.getInstallationPath();

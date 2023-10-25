@@ -43,7 +43,7 @@ public class RegistryHandlerX3 {
 		return this.registryHandler;
 	}
 	
-	
+
 	public boolean isAdminSetup() {
 		
 		String isAdxAdmin = this.installData!= null ?  this.installData.getVariable("is-adxadmin"): null;
@@ -55,7 +55,17 @@ public class RegistryHandlerX3 {
     	return false;
 	}
 
-        // return getAdxAdminDirPath();
+	
+	public boolean needAdmin() {
+		
+		String needAdxAdmin = this.installData!= null ?  this.installData.getVariable("need-adxadmin"): null;
+    	if (needAdxAdmin != null && needAdxAdmin.equalsIgnoreCase("true")) {
+
+    		return true;
+    	}
+
+    	return false;
+	}
 
 	
 	

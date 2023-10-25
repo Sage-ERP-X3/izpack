@@ -33,10 +33,12 @@ public class X3NodeIdentifierValidator
 	private static final String X3FAMILY = "X3FAMILY";
 	private static final String X3TYPE = "X3TYPE";
 	private RegistryHandler registryHandler;
+	private InstallData installData;
 
-	public X3NodeIdentifierValidator(RegistryDefaultHandler handler) {
+	public X3NodeIdentifierValidator(RegistryDefaultHandler handler, InstallData installData) {
 		super();
 		this.registryHandler = handler.getInstance();
+		this.installData = installData;	
 	}
 
 	@Override
@@ -105,7 +107,7 @@ public class X3NodeIdentifierValidator
 		logger.log(Level.FINE, "X3NodeIdentifierValidator.validateData");
 
 		boolean validateResult = false;
-		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler);
+		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler, installData);
 		if (this.registryHandler != null && rh != null) {
 
 			boolean adxAdminRegistered;

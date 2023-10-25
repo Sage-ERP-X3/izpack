@@ -98,7 +98,7 @@ public class AdxCompHelper {
 			logger.log(Level.FINE, "AdxCompHelper  Init registry getInstallPath: " + this.installData.getInstallPath());
 		}
 
-		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler);
+		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler, this.installData);
 		if (this.registryHandler != null && rh != null) {
 
 			boolean adxAdminRegistered = rh.adxadminProductRegistered();

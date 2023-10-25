@@ -237,7 +237,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 
 			} else {
 				// RegistryHandler rh = RegistryDefaultHandler.getInstance();
-				RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler);
+				RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler, installData);
 				if (rh == null) {
 					// nothing to do
 					return;

@@ -20,6 +20,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.exception.NativeLibException;
 
 /**
@@ -30,16 +31,34 @@ public class RegistryHandlerX3 {
 	private static final Logger logger = Logger.getLogger(RegistryHandlerX3.class.getName());
 
 	private RegistryHandler registryHandler;
+	private InstallData installData;
 
-	public RegistryHandlerX3(RegistryHandler registryHandler) {
+	public RegistryHandlerX3(RegistryHandler registryHandler, InstallData installData) {
 
 		this.registryHandler = registryHandler;
+		this.installData = installData;
 	}
 
 	public RegistryHandler getRegistryHandler() {
 		return this.registryHandler;
 	}
+	
+	
+	public boolean isAdminSetup() {
+		
+		String isAdxAdmin = this.installData!= null ?  this.installData.getVariable("is-adxadmin"): null;
+    	if (isAdxAdmin != null && isAdxAdmin.equalsIgnoreCase("true")) {
 
+    		return true;
+    	}
+
+    	return false;
+	}
+
+        // return getAdxAdminDirPath();
+
+	
+	
 	/**
 	 * Check if AdxAdmin is installed Check the Registry if Windows
 	 * 

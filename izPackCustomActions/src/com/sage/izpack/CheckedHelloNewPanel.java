@@ -16,6 +16,7 @@ import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.installer.gui.InstallerFrame;
 import com.izforge.izpack.panels.checkedhello.CheckedHelloPanel;
 import com.izforge.izpack.panels.checkedhello.RegistryHelper;
+import com.izforge.izpack.util.OsVersion;
 
 /*
 * @author Franck DEPOORTERE
@@ -28,8 +29,11 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 	private static final long serialVersionUID = 1737042770727953387L; // 1737042770727953387L
 
+	private RegistryDefaultHandler _handler;
 	private RegistryHelper _registryHelper;
 	private RegistryHandler _registryHandler;
+	private GUIInstallData _installData;
+	private RegistryHandlerX3 _x3Handler;
 
 	public CheckedHelloNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			RegistryDefaultHandler handler, Log log) throws Exception {
@@ -38,9 +42,23 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		_resourceHelper = new ResourcesHelper(installData, resources);
 		_resourceHelper.mergeCustomMessages();
 		_registryHelper = new RegistryHelper(handler, installData);
-		_registryHandler = handler.getInstance();
+		_registryHandler = handler != null ?  handler.getInstance(): null;
+		_handler = handler;
+		_installData = installData;
+		_x3Handler = new RegistryHandlerX3(_registryHandler, installData);
+		
+		String path = _installData.getInstallPath();
+if (path==null && OsVersion.IS_WINDOWS)
+	path = _registryHelper.getInstallationPath();
+		
+		if (path == null) {
+			if (_x3Handler.isAdminSetup()) {
+				path = _x3Handler.getAdxAdminDirPath();
+			}
+			logger.log(Level.FINE,
+					"Warning CheckedHelloNewPanel Could not get RegistryHandler.getInstallationPath() return NULL. path: "+ path);
+		}
 
-		String path = _registryHelper.getInstallationPath();
 		// Update case :
 		if (path != null) {
 			installData.setVariable("TargetPanel.dir.windows", path);
@@ -112,8 +130,10 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 					}
 					// if we let the "else", izpack create a unique Key after each installation, and
 					// the registry is not uninstalled
-					installData.getInfo().setUninstallerPath(null);
-					installData.getInfo().setUninstallerName(null);
+					// if (OsVersion.IS_WINDOWS) {
+					 installData.getInfo().setUninstallerPath(null);
+					 installData.getInfo().setUninstallerName(null);
+					//}
 					installData.getInfo().setUninstallerCondition("uninstaller.nowrite");
 				} catch (Exception exception) {
 					logger.log(Level.WARNING, exception.getMessage(), exception);
@@ -135,14 +155,48 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 	 */
 	@Override
 	protected boolean isRegistered() throws Exception {
-		boolean result = super.isRegistered();
+		boolean result = false;
 
-		// registryHelper.getInstallationPath();
+		if (OsVersion.IS_WINDOWS) {
+			result = super.isRegistered();
+		}
+
+		if (!result) {
+			logger.log(Level.FINE,
+					"CheckedHelloNewPanel isRegistered()  Could not get RegistryHandler.getInstallationPath() return NULL"
+							+ _registryHelper + " Unix: " + OsVersion.IS_UNIX);
+			if (OsVersion.IS_UNIX) {
+				// String isAdxAdmin = installData.getVariable("is-adxadmin");
+				if (_x3Handler == null)
+					_x3Handler = new RegistryHandlerX3(_registryHandler, installData);
+				logger.log(Level.FINE, "CheckedHelloNewPanel isRegistered()  is-adxdmin: " + _x3Handler.isAdminSetup());
+				if (_x3Handler.isAdminSetup() && _x3Handler.getAdxAdminDirPath() != null) {
+					result = true;
+				}
+
+				String appName = installData.getVariable("APP_NAME");
+				logger.log(Level.FINE, "CheckedHelloNewPanel isRegistered:"+result +" Set Uninstallname: " + appName);
+				if (_registryHandler == null)
+					_registryHandler = _handler != null ? _handler.getInstance() : null;
+				
+				if (_registryHandler != null) {
+					_registryHandler.setUninstallName(appName);
+				}
+				else { 
+					logger.log(Level.WARNING, "CheckedHelloNewPanel isRegistered() CANNOT set Uninstallname: " + appName);
+				}
+		        installData.setVariable("UNINSTALL_NAME", appName);
+			}
+		}
 		if (result) {
 			// Set variable "modify.izpack.install"
 			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 		}
-		logger.log(Level.FINE, "CheckedHelloNewPanel Set " + InstallData.MODIFY_INSTALLATION + ": " + result);
+		logger.log(Level.FINE,
+				"CheckedHelloNewPanel isRegistered()  Set " + InstallData.MODIFY_INSTALLATION + ": " + result);
+		// logger.log(Level.FINE, "CheckedHelloNewPanel isRegistered()
+		// _registryHandler.getUninstallName: " + _registryHandler.getUninstallName());
+
 		return result;
 	}
 
@@ -207,6 +261,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		int uninstallModifier = 1;
 		while (true) {
 			if (uninstallName == null) {
+				logger.log(Level.WARNING, "CheckedHelloNewPanel uninstallName returns NULL");
 				break; // Should never be...
 			}
 			// Now we define a new uninstall name.

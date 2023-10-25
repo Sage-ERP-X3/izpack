@@ -107,12 +107,12 @@ public class X3NodeIdentifierValidator
 		logger.log(Level.FINE, "X3NodeIdentifierValidator.validateData");
 
 		boolean validateResult = false;
-		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler, installData);
-		if (this.registryHandler != null && rh != null) {
 
-			boolean adxAdminRegistered;
+		RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler, installData);
+		String adxAdminPath = x3Handler.getAdxAdminDirPath();
+		boolean adxAdminRegistered = (adxAdminPath != null);
+		if (adxAdminRegistered) {
 			try {
-				adxAdminRegistered = rh.adxadminProductRegistered();
 
 				if (adxAdminRegistered) {
 					logger.log(Level.FINE,
@@ -122,7 +122,7 @@ public class X3NodeIdentifierValidator
 							"X3NodeIdentifierValidator : X3 AdxAdmin not installed or not found in registry.");
 				}
 
-				validateResult = checkXmlInstallNode(rh, nodeName, x3Family, x3Type);
+				validateResult = checkXmlInstallNode(adxAdminPath, nodeName, x3Family, x3Type);
 
 			} catch (NativeLibException e) {
 				e.printStackTrace();
@@ -149,11 +149,11 @@ public class X3NodeIdentifierValidator
 	 * @throws IOException
 	 * @throws XPathExpressionException
 	 */
-	private boolean checkXmlInstallNode(RegistryHandlerX3 rh, String nodename, String x3Family, String x3Type)
+	private boolean checkXmlInstallNode(String adminAdminPath, String nodename, String x3Family, String x3Type)
 			throws NativeLibException, ParserConfigurationException, SAXException, IOException,
 			XPathExpressionException {
 
-		String dir = rh.getAdxAdminDirPath();
+		String dir = adminAdminPath;
 		logger.log(Level.FINE, "X3NodeIdentifierValidator.checkXmlInstallNode  Check directory " + dir + " nodename: "
 				+ nodename + " strX3Family: " + x3Family + " strX3Type: " + x3Type);
 

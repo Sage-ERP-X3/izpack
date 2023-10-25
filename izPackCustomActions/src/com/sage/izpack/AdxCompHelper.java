@@ -1,9 +1,7 @@
 package com.sage.izpack;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -29,15 +27,11 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.coi.tools.os.win.MSWinConstants;
-import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.core.os.RegistryHandler;
-import com.izforge.izpack.util.OsVersion;
 
 /**
  *
@@ -90,88 +84,30 @@ public class AdxCompHelper {
 	 */
 	public String getAdxAdminPath() throws NativeLibException, Exception, FileNotFoundException, IOException {
 
-		String strAdxAdminPath = "";
-
 		if (this.installData != null) {
-			logger.log(Level.FINE,
-					"AdxCompHelper  Init registry installData Locale: " + this.installData.getLocaleISO2());
-			logger.log(Level.FINE, "AdxCompHelper  Init registry getInstallPath: " + this.installData.getInstallPath());
+			logger.log(Level.FINE, "AdxCompHelper  Init registry installData Locale: "
+					+ this.installData.getLocaleISO2() + " getInstallPath: " + this.installData.getInstallPath());
 		}
 
 		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler, this.installData);
-		if (this.registryHandler != null && rh != null) {
+		String adxAdminPath = rh.getAdxAdminDirPath();
+		logger.log(Level.FINE, "AdxCompHelper  Init RegistryHandlerX3. adxadminProductRegistered: " + adxAdminPath);
 
-			boolean adxAdminRegistered = rh.adxadminProductRegistered();
-			logger.log(Level.FINE,
-					"AdxCompHelper  Init RegistryHandlerX3. adxadminProductRegistered: " + adxAdminRegistered);
-
-			// Test adxadmin is already installed. Read registry
-			// String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
-			// String keyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
-			if (adxAdminRegistered) {
-
-				int oldVal = this.registryHandler.getRoot();
-				this.registryHandler.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
-
-				String keyName = ADXADMIN_REG_KeyName64Bits;
-				if (!this.registryHandler.valueExist(keyName, "ADXDIR"))
-					keyName = ADXADMIN_REG_KeyName32Bits;
-				if (!this.registryHandler.valueExist(keyName, "ADXDIR"))
-					// <str id="adxadminNoAdxDirReg" txt="A previous installation of the adxadmin
-					// administration runtime was detected in the registry but the setup is unable
-					// to find the installation path, some registry keys are missing !"/>
-					// throw new
-					// Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages").getString("adxadminNoAdxDirReg"));
-					throw new Exception(
-							"A previous installation of the adxadmin administration runtime was detected in the registry but the setup is unable to find the installation path, some registry keys are missing.");
-
-				// fetch ADXDIR path
-				strAdxAdminPath = this.registryHandler.getValue(keyName, "ADXDIR").getStringData();
-
-				logger.log(Level.FINE, "AdxCompHelper  ADXDIR path: " + strAdxAdminPath + "  Key: " + keyName);
-
-				// free RegistryHandler
-				this.registryHandler.setRoot(oldVal);
-			} else {
-				// else throw new Exception(langpack.getString("adxadminNotRegistered"));
-				// <str id="adxadminNotRegistered" txt="You must install an adxadmin
-				// administration runtime first. Exiting now."/>
-				// String warnMessage = String.format(ResourceBundle.getBundle("messages",
-				// installData.getLocale()).getString("adxadminNotRegistered"), line);
-				// throw new
-				// Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages").getString("adxadminNotRegistered"));
-				throw new Exception(ResourcesHelper.getCustomPropString("adxadminNotRegistered"));
-				// throw new Exception("You must install an adxadmin administration runtime
-				// first. Exiting now.");
-			}
-
-		} else {
-			logger.log(Level.FINE, "AdxCompHelper - Could not get RegistryHandler !");
-
-			// else we are on a os which has no registry or the needed dll was not bound to
-			// this installation.
-			// In both cases we forget the "already exist" check.
-
-			// test adxadmin sous unix avec /adonix/adxadm ?
-			if (OsVersion.IS_UNIX) {
-				java.io.File adxadmFile = new java.io.File("/sage/adxadm");
-				if (!adxadmFile.exists()) {
-					adxadmFile = new java.io.File("/adonix/adxadm");
-					if (!adxadmFile.exists()) {
-						// throw new Exception(langpack.getString("adxadminNotRegistered"));
-						throw new Exception(ResourcesHelper.getCustomPropString("adxadminNotRegistered"));
-						// ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages")
-						// .getString("adxadminNotRegistered"));
-					}
-				}
-
-				FileReader readerAdxAdmFile = new FileReader(adxadmFile);
-				BufferedReader buffread = new BufferedReader(readerAdxAdmFile);
-				strAdxAdminPath = buffread.readLine();
-			}
-
+		// Test AdxAdmin is already installed. Read registry
+		if (adxAdminPath == null)  {
+			// else throw new Exception(langpack.getString("adxadminNotRegistered"));
+			// <str id="adxadminNotRegistered" txt="You must install an adxadmin
+			// administration runtime first. Exiting now."/>
+			// String warnMessage = String.format(ResourceBundle.getBundle("messages",
+			// installData.getLocale()).getString("adxadminNotRegistered"), line);
+			// throw new
+			// Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages").getString("adxadminNotRegistered"));
+			throw new Exception(ResourcesHelper.getCustomPropString("adxadminNotRegistered"));
+			// throw new Exception("You must install an adxadmin administration runtime
+			// first. Exiting now.");
 		}
-		return strAdxAdminPath;
+
+		return adxAdminPath;
 	}
 
 	public static String asString(Element elementdoc, String encoding) throws TransformerException {

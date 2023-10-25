@@ -51,7 +51,6 @@ public class RegistryHandlerX3 {
 
     		return true;
     	}
-
     	return false;
 	}
 
@@ -63,10 +62,8 @@ public class RegistryHandlerX3 {
 
     		return true;
     	}
-
     	return false;
 	}
-
 	
 	
 	/**

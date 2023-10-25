@@ -144,8 +144,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			String moduleType = substitutor.substitute(moduleSpec.getAttribute("type"), SubstitutionType.TYPE_PLAIN);
 			if (moduleType == null)
 				moduleType = "";
-			String version = moduleSpec.getFirstChildNamed("component." + moduleFamily.toLowerCase() + ".version")
-					.getContent();
+			// String version = moduleSpec.getFirstChildNamed("component." + moduleFamily.toLowerCase() + ".version").getContent();
 
 			boolean modifyinstallation = Boolean.valueOf(installData.getVariable(InstallData.MODIFY_INSTALLATION));
 
@@ -155,7 +154,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			Element module = null;
 			if (modifyinstallation) {
 
-				module = modifyReportModule(adxInstallXmlDoc, moduleName, moduleFamily, moduleType);
+				module = modifyXmlModule(adxInstallXmlDoc, moduleName, moduleFamily, moduleType);
 
 			} else {
 
@@ -345,7 +344,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	 * Update module from adxInstall.xml, component.[report}.version and
 	 * component.[report].installstatus component.[report].installstatus: "update"
 	 */
-	private Element modifyReportModule(Document xdoc, String moduleName, String moduleFamily, String moduleType)
+	private Element modifyXmlModule(Document xdoc, String moduleName, String moduleFamily, String moduleType)
 			throws Exception {
 
 		XPath xPath = XPathFactory.newInstance().newXPath();
@@ -369,6 +368,12 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		status.setTextContent("update");
 
 		String version = this.installData.getVariable("component.version");
+		if (version == null || version == "") {
+			version = this.installData.getVariable("COMPONENT.VERSION");
+		}
+		if (version == null || version == "") {
+			version = this.installData.getVariable("app-version"); // APP_VER
+		}
 		Node nodeVersion = module.getElementsByTagName("component." + moduleFamily.toLowerCase() + ".version").item(0);
 		if (nodeVersion == null) {
 			nodeVersion = module

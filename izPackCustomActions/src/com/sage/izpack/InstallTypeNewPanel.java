@@ -1,24 +1,19 @@
 package com.sage.izpack;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -38,7 +33,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.izforge.izpack.api.adaptator.IXMLElement;
@@ -52,15 +46,6 @@ import com.izforge.izpack.gui.log.Log;
 import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.installer.gui.InstallerFrame;
 import com.izforge.izpack.installer.gui.IzPanel;
-import com.izforge.izpack.panels.target.TargetPanel;
-// import com.izforge.izpack.installer.AutomatedInstallData;
-// import com.izforge.izpack.installer.InstallData;
-// import com.izforge.izpack.installer.InstallerFrame;
-// import com.izforge.izpack.installer.IzPanel;
-// import com.izforge.izpack.installer.ResourceManager;
-// import com.izforge.izpack.installer.DataValidator.Status;
-import com.izforge.izpack.util.Debug;
-import com.izforge.izpack.util.OsVersion;
 // import com.izforge.izpack.util.os.RegistryDefaultHandler;
 // import com.izforge.izpack.util.os.RegistryHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
@@ -76,17 +61,15 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 	public static String ADX_NODE_FAMILY = "component.node.family";
 	private JRadioButton normalinstall;
 	private JRadioButton modifyinstall;
-	private DefaultListModel listItems;
-	private JList installedComponents;
-	private HashMap lstCompProps;
+	private DefaultListModel<String> listItems;
+	private JList<String> installedComponents;
+	private HashMap<String, String[]> lstCompProps;
 	private String selectedKey;
 	private RegistryHandler registryHandler;
 
 	public InstallTypeNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			RegistryDefaultHandler handler, Log log) {
 		super(panel, parent, installData, new IzPanelLayout(log), resources);
-
-		// super(parent, idata, new IzPanelLayout());
 		buildGUI();
 		this.registryHandler = handler.getInstance();
 	}
@@ -218,82 +201,33 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 	private void loadListFromAdxadmin() {
 		try {
 
-			String strAdxAdminPath = "";
-
-			if (OsVersion.IS_UNIX) {
-				java.io.File adxadmFile = new java.io.File("/sage/adxadm");
-				if (!adxadmFile.exists()) {
-					adxadmFile = new java.io.File("/adonix/adxadm");
-				}
-
-				if (!adxadmFile.exists()) {
-					// nothing to do
-					return;
-				}
-
-				FileReader readerAdxAdmFile = new FileReader(adxadmFile);
-				BufferedReader buffread = new BufferedReader(readerAdxAdmFile);
-				strAdxAdminPath = buffread.readLine();
-
-			} else {
-				// RegistryHandler rh = RegistryDefaultHandler.getInstance();
-				RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler, installData);
-				if (rh == null) {
-					// nothing to do
-					return;
-				}
-
-				// rh.verify(idata);
-
-				// test adxadmin already installed with registry
-				if (!rh.adxadminProductRegistered()) {
-					// nothing to do
-					return;
-				}
-
-				String keyName = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
-				int oldVal = rh.getRegistryHandler().getRoot();
-				rh.getRegistryHandler().setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
-				if (!rh.getRegistryHandler().valueExist(keyName, "ADXDIR"))
-					keyName = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
-				if (!rh.getRegistryHandler().valueExist(keyName, "ADXDIR")) {
-					// nothing to do
-					return;
-				}
-
-				// get path
-				strAdxAdminPath = rh.getRegistryHandler().getValue(keyName, "ADXDIR").getStringData();
-
-				// free RegistryHandler
-				rh.getRegistryHandler().setRoot(oldVal);
-
-			}
-
-			// check strAdxAdminPath
-
-			if (strAdxAdminPath == null || "".equals(strAdxAdminPath)) {
+			RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler, installData);
+			String adxAdminPath = x3Handler.getAdxAdminDirPath();
+			if (adxAdminPath == null || "".equals(adxAdminPath)) {
 				// nothing to do
+				logger.log(Level.WARNING, "InstallTypeNewPanel error while retrieve AdxAdminDirPath=" + adxAdminPath);
 				return;
 			}
 
-			java.io.File dirAdxDir = new java.io.File(strAdxAdminPath);
-
+			java.io.File dirAdxDir = new java.io.File(adxAdminPath);
 			if (!dirAdxDir.exists() || !dirAdxDir.isDirectory()) {
 				// nothing to do
+				logger.log(Level.WARNING, "InstallTypeNewPanel error while reading AdxAdminDirPath=" + dirAdxDir.getAbsolutePath());
 				return;
 			}
 
 			StringBuilder strBuilder = new StringBuilder();
 			strBuilder.append(dirAdxDir.getAbsolutePath());
-			strBuilder.append(dirAdxDir.separator);
+			strBuilder.append(File.separator);
 			strBuilder.append("inst");
-			strBuilder.append(dirAdxDir.separator);
+			strBuilder.append(File.separator);
 			strBuilder.append("adxinstalls.xml");
 
 			java.io.File fileAdxinstalls = new java.io.File(strBuilder.toString());
 
 			if (!fileAdxinstalls.exists()) {
 				// nothing to do
+				logger.log(Level.WARNING, "InstallTypeNewPanel error - File " + fileAdxinstalls.getAbsolutePath() + " doesn't exist.");
 				return;
 			}
 
@@ -353,7 +287,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 			}
 
 		} catch (Exception ex) {
-			logger.log(Level.ALL, "InstallTypeNewPanel error : " + ex);
+			logger.log(Level.WARNING, "InstallTypeNewPanel error : " + ex);
 		}
 
 	}
@@ -399,10 +333,10 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 		// add(modifyinstall, NEXT_LINE);
 		topPanel.add(modifyinstall);
 
-		lstCompProps = new HashMap();
+		lstCompProps = new HashMap<String, String[]>();
 
-		listItems = new DefaultListModel();
-		installedComponents = new JList(listItems);
+		listItems = new DefaultListModel<String>();
+		installedComponents = new JList<String>(listItems);
 		installedComponents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		installedComponents.setLayoutOrientation(JList.VERTICAL);
 		installedComponents.setVisibleRowCount(5);

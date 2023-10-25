@@ -95,39 +95,17 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		if (_x3Handler.needAdmin()) {
 			try {
 				// Check presence of adxadmin
-				RegistryHandlerX3 rh = new RegistryHandlerX3(_registryHandler, this.installData);
-				if (_registryHandler != null && rh != null) {
+				String adxAdminPath = _x3Handler.getAdxAdminDirPath();
+				boolean adxAdminInstalled = (adxAdminPath != null);
 
-					boolean adxAdminRegistered = rh.adxadminProductRegistered();
-					// Test adxadmin already installer with registry
-					if (!rh.adxadminProductRegistered()) {
-						// No Adxadmin
-						logger.log(Level.FINE, getString("adxadminNotRegistered"));
-						JOptionPane.showMessageDialog(null, getString("adxadminNotRegistered"),
-								getString("installer.error"), JOptionPane.ERROR_MESSAGE);
-						parent.lockNextButton();
-						return;
-					}
-				} else {
-
-					// else we are on a os which has no registry or the
-					// needed dll was not bound to this installation. In
-					// both cases we forget the "already exist" check.
-
-					// test adxadmin sous unix avec /adonix/adxadm ?
-					if (OsVersion.IS_UNIX) {
-						java.io.File adxadmFile = new java.io.File("/sage/adxadm");
-						if (!adxadmFile.exists()) {
-							adxadmFile = new java.io.File("/adonix/adxadm");
-							if (!adxadmFile.exists()) {
-								// No adxadmin
-								JOptionPane.showMessageDialog(null, getString("adxadminNotRegistered"),
-										getString("installer.error"), JOptionPane.ERROR_MESSAGE);
-								parent.lockNextButton();
-								return;
-							}
-						}
-					}
+				// No Adxadmin
+				if (!adxAdminInstalled) {
+					// No Adxadmin
+					logger.log(Level.FINE, getString("adxadminNotRegistered"));
+					JOptionPane.showMessageDialog(null, getString("adxadminNotRegistered"),
+							getString("installer.error"), JOptionPane.ERROR_MESSAGE);
+					parent.lockNextButton();
+					return;				
 				}
 			} catch (Exception e) { // Will only be happen if registry handler is good, but an
 									// exception at performing was thrown. This is an error...

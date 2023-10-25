@@ -13,7 +13,8 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.izforge.izpack.api.data.Pack; // com.izforge.izpack.Pack; 
+// import com.izforge.izpack.api.data.Pack; 
+// com.izforge.izpack.Pack; 
 import com.izforge.izpack.api.data.AutomatedInstallData;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.PanelActionConfiguration;
@@ -45,6 +46,7 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
                 List<?> packsinstalled = (List<?>) oin.readObject();
                 for (Object aPacksinstalled : packsinstalled)
                 {
+                	// com.izforge.izpack.api.data.Pack cannot be cast to com.izforge.izpack.Pack
                 	com.izforge.izpack.Pack installedpack = (com.izforge.izpack.Pack) aPacksinstalled;
                     /*
                     if ((installedpack.getImageId() != null) && (installedpack.getImageId().length() > 0))
@@ -66,13 +68,13 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
 
                 
                 List<com.izforge.izpack.api.data.Pack> packages =  new ArrayList<com.izforge.izpack.api.data.Pack>();
-                for (Object aPack : installData.getAvailablePacks())
+                for (com.izforge.izpack.api.data.Pack aPack : installData.getAvailablePacks())
                 { // installedpacks.containsKey( ((Pack)aPack).getImageId() ) || 
-                    if (installedpacks.containsKey( ((Pack)aPack).getName()) )
+                    if (installedpacks.containsKey( aPack.getName() ))
                     {
-                    	((Pack)aPack).setPreselected(true);
-                        // ((Pack)aPack).set.required = true;
-                    	packages.add((com.izforge.izpack.api.data.Pack)aPack);                
+                    	aPack.setPreselected(true);
+                    	// aPack.setRequired()= true;
+                    	packages.add(aPack);                
                     }
                 }
             	installData.setSelectedPacks(packages);
@@ -128,21 +130,16 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
 	
 	private void removeAlreadyInstalledPacks(List<com.izforge.izpack.api.data.Pack> selectedpacks)
     {
-        List<Pack> removepacks = new ArrayList<Pack>();
+        List<com.izforge.izpack.api.data.Pack> removepacks = new ArrayList<com.izforge.izpack.api.data.Pack>();
 
-        for (Object selectedpack1 : selectedpacks)
+        for (com.izforge.izpack.api.data.Pack selectedpack : selectedpacks)
         {
-            Pack selectedpack = (Pack) selectedpack1;
             String key = selectedpack.getName();
             /*
             if ((selectedpack.getImageId() != null) && (selectedpack.getImageId().length() > 0))
-            {
                 key = selectedpack.getImageId();
-            }
             else
-            {
                 key = selectedpack.getName();
-            }
             */
             if (installedpacks.containsKey(key))
             {
@@ -150,7 +147,7 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
                 removepacks.add(selectedpack);
             }
         }
-        for (Pack removepack : removepacks)
+        for (com.izforge.izpack.api.data.Pack removepack : removepacks)
         {
             selectedpacks.remove(removepack);
         }

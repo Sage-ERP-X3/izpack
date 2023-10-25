@@ -414,6 +414,9 @@ public final class InstallationInformationHelper {
 				logger.log(Level.FINE,
 						"InstallationInformationHelper.loadLegacyInstallationInformation  writeInstallationInformation to fix legacy issue");
 
+// X3-256055: Uninstaller (izpack 5.2)
+				installData.setVariable("force-generate-uninstaller", "true");
+				
 				writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
 						resources, true);
 

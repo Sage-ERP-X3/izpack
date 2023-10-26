@@ -76,8 +76,9 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
             }
             catch (Exception ex)
             {
+                logger.log(Level.FINE, "No answer on port " + value+ " - seems available");
             	logger.log(Level.FINE, ex.getMessage());
-            	ex.printStackTrace();
+            	// ex.printStackTrace();
                 result=true;
             }
         }

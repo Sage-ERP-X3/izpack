@@ -15,7 +15,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.event.AbstractUninstallerListener;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.InstallerException;
@@ -28,7 +27,6 @@ import com.izforge.izpack.util.helper.SpecHelper;
 import com.izforge.izpack.core.handler.PromptUIHandler;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
-import com.izforge.izpack.installer.data.UninstallData;
 
 /*
  * @author Franck DEPOORTERE
@@ -44,12 +42,14 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	private Messages messages;
 	private SpecHelper specHelper = null;
 
-	public AdxCompUninstallerListener(RegistryDefaultHandler handler,InstallData installData, UninstallData uninstallData, Resources resources, Messages messages, Prompt prompt) {
+	public AdxCompUninstallerListener(RegistryDefaultHandler handler, Resources resources, Messages messages, Prompt prompt) {
 
+		// Doesn't seem to be possible to get InstallData installData, UninstallData uninstallData in this type of class
+		
 		super();
 
 		this.registryHandler = handler.getInstance();
-		this.installData = installData;
+		// this.installData = installData;
 		this.prompt = prompt;
 		this.resources = resources;
 		this.messages = messages;
@@ -116,7 +116,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 			// Load the defined adx module to be deleted.
 
-			// No actions, nothing todo.
+			// No actions, nothing to do.
 			if (elemSpecDoc == null) {
 				System.out.println("AdxCompUninstallerListener.beforeDeletion(). " + SPEC_FILE_NAME + " not found.");
 				return;
@@ -136,6 +136,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			// we need to find adxadmin path
 
 			// verify adxAdminPath
+			
 			AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, this.installData);
 			String adxAdminPath = adxCompHelper.getAdxAdminPath();
 			if (adxAdminPath == null || "".equals(adxAdminPath)) {
@@ -167,7 +168,10 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 						+ fileAdxinstalls.getAbsolutePath() + " read.");
 			}
 
-			if (adxCompHelper.isAdminSetup()) {
+			 com.izforge.izpack.api.data.Variables variables = (com.izforge.izpack.api.data.Variables) resources.getObject("variables");
+			 String isAdxAdmin = (variables != null) ?  variables.get("is-adxadmin") : null;
+				//  if (adxCompHelper.isAdminSetup()) {
+			 if (isAdxAdmin != null && isAdxAdmin.equalsIgnoreCase("true")) {
 				
 				NodeList listAdxInstallsNodes = adxInstallXmlDoc.getDocumentElement().getElementsByTagName("module");
 				if (listAdxInstallsNodes != null && listAdxInstallsNodes.getLength() > 0) {

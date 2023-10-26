@@ -57,7 +57,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 	@Override
 	public void initialise() {
-		// logger.log(Level.FINE, "AdxCompUninstallerListener.initialise");
+		System.out.println("AdxCompUninstallerListener  initialise");
 
 	}
 
@@ -168,10 +168,15 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 						+ fileAdxinstalls.getAbsolutePath() + " read.");
 			}
 
-			 com.izforge.izpack.api.data.Variables variables = (com.izforge.izpack.api.data.Variables) resources.getObject("variables");
-			 String isAdxAdmin = (variables != null) ?  variables.get("is-adxadmin") : null;
-				//  if (adxCompHelper.isAdminSetup()) {
-			 if (isAdxAdmin != null && isAdxAdmin.equalsIgnoreCase("true")) {
+			com.izforge.izpack.api.data.Variables variables = null;
+			Object varObject = null; // resources.getObject("variables");
+			// TODO: FRDEPO => how to debug ?
+			// Object varObject = resources.getObject("variables");
+			//if (varObject!= null && varObject instanceof com.izforge.izpack.api.data.Variables)
+			//	variables = (com.izforge.izpack.api.data.Variables) varObject;
+			String isAdxAdmin = (variables != null) ? variables.get("is-adxadmin") : null;
+			// if (adxCompHelper.isAdminSetup()) {
+			if (isAdxAdmin != null && isAdxAdmin.equalsIgnoreCase("true")) {
 				
 				NodeList listAdxInstallsNodes = adxInstallXmlDoc.getDocumentElement().getElementsByTagName("module");
 				if (listAdxInstallsNodes != null && listAdxInstallsNodes.getLength() > 0) {

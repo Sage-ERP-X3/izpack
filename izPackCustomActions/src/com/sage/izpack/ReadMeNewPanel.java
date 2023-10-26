@@ -1,6 +1,5 @@
 package com.sage.izpack;
 
-import java.awt.Checkbox;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

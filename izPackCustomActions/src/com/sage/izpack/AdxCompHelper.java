@@ -79,6 +79,10 @@ public class AdxCompHelper {
 		return new java.io.File(adxInstallBuilder.toString());
 	}
 
+	public boolean isAdminSetup() {
+		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler, this.installData);
+		return rh.isAdminSetup();		
+	}
 	/*
 	 * we need to find adxadmin path
 	 */
@@ -91,7 +95,7 @@ public class AdxCompHelper {
 
 		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler, this.installData);
 		String adxAdminPath = rh.getAdxAdminDirPath();
-		logger.log(Level.FINE, "AdxCompHelper  Init RegistryHandlerX3. adxadminProductRegistered: " + adxAdminPath);
+		logger.log(Level.FINE, "AdxCompHelper  Init RegistryHandlerX3. adxAdminPath: " + adxAdminPath);
 
 		// Test AdxAdmin is already installed. Read registry
 		if (adxAdminPath == null)  {

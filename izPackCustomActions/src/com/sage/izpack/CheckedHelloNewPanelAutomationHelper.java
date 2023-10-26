@@ -46,15 +46,24 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 			logger.log(Level.WARNING,
 					"Warning CheckedHelloNewPanelAutomationHelper Could not get InstallationPath() return NULL. path: "+ path);
 		}
-
 		
 		if (path != null) {
-			installData.setVariable("TargetPanel.dir.windows", path);
-			logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper Set TargetPanel.dir.windows: " + path);
-
+			String targetPanelDir = "TargetPanel.dir.windows";
+			if (OsVersion.IS_LINUX) {
+				targetPanelDir = "TargetPanel.dir.unix";
+				installData.setVariable(targetPanelDir, path);				
+			} else {
+				installData.setVariable(targetPanelDir, path);				
+			}
+			logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper Set "+targetPanelDir+": " + path);
+			
 			installData.setVariable(InstallData.INSTALL_PATH, path);
 			logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper Set INSTALL_PATH", path);
 
+			installData.setVariable("UNINSTALL_NAME", installData.getVariable("APP_NAME"));
+			logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper Set UNINSTALL_NAME: " + path);
+
+			
 			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 			logger.log(Level.FINE,
 					"CheckedHelloNewPanelAutomationHelper Set " + InstallData.MODIFY_INSTALLATION + ": true");

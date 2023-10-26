@@ -134,7 +134,6 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			Document adxInstallXmlDoc = getXml(fileAdxinstalls);
 
 			// adxinstalls.xml read or created
-			// il faut ajouter le module
 			IXMLElement elemSpec = this.specHelper.getSpec(); // AdxCompSpec.xml
 			IXMLElement moduleSpec = elemSpec.getFirstChildNamed("module");
 			VariableSubstitutor substitutor = new VariableSubstitutorImpl(this.installData.getVariables());
@@ -144,6 +143,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			String moduleType = substitutor.substitute(moduleSpec.getAttribute("type"), SubstitutionType.TYPE_PLAIN);
 			if (moduleType == null)
 				moduleType = "";
+	        String version = substitutor.substitute(moduleSpec.getFirstChildNamed("component."+moduleFamily.toLowerCase()+".version").getContent(), SubstitutionType.TYPE_PLAIN);
 			// String version = moduleSpec.getFirstChildNamed("component." + moduleFamily.toLowerCase() + ".version").getContent();
 
 			boolean modifyinstallation = Boolean.valueOf(installData.getVariable(InstallData.MODIFY_INSTALLATION));
@@ -154,7 +154,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			Element module = null;
 			if (modifyinstallation) {
 
-				module = modifyXmlModule(adxInstallXmlDoc, moduleName, moduleFamily, moduleType);
+				module = modifyXmlModule(adxInstallXmlDoc, moduleName, moduleFamily, moduleType, version);
 
 			} else {
 
@@ -344,7 +344,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	 * Update module from adxInstall.xml, component.[report}.version and
 	 * component.[report].installstatus component.[report].installstatus: "update"
 	 */
-	private Element modifyXmlModule(Document xdoc, String moduleName, String moduleFamily, String moduleType)
+	private Element modifyXmlModule(Document xdoc, String moduleName, String moduleFamily, String moduleType, String version)
 			throws Exception {
 
 		XPath xPath = XPathFactory.newInstance().newXPath();
@@ -367,6 +367,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		}
 		status.setTextContent("update");
 
+		/*
 		String version = this.installData.getVariable("component.version");
 		if (version == null || version == "") {
 			version = this.installData.getVariable("COMPONENT.VERSION");
@@ -374,6 +375,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		if (version == null || version == "") {
 			version = this.installData.getVariable("APP_VER"); // app-version
 		}
+		*/
 		String versionComponent =  "component." + moduleFamily.toLowerCase() + ".version";
 		Node nodeVersion = module.getElementsByTagName(versionComponent).item(0);
 		if (nodeVersion == null) {

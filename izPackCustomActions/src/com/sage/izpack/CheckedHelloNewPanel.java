@@ -63,8 +63,14 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 		// Update case :
 		if (path != null) {
-			installData.setVariable("TargetPanel.dir.windows", path);
-			logger.log(Level.FINE, "CheckedHelloNewPanel Set TargetPanel.dir.windows: " + path);
+			String targetPanelDir = "TargetPanel.dir.windows";
+			if (OsVersion.IS_LINUX) {
+				targetPanelDir = "TargetPanel.dir.unix";
+				installData.setVariable(targetPanelDir, path);				
+			} else {
+				installData.setVariable(targetPanelDir, path);				
+			}
+			logger.log(Level.FINE, "CheckedHelloNewPanel Set "+targetPanelDir+": " + path);
 
 			installData.setVariable(InstallData.INSTALL_PATH, path);
 			logger.log(Level.FINE, "CheckedHelloNewPanel Set INSTALL_PATH: " + path);

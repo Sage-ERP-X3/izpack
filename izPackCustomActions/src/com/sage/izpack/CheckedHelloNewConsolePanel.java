@@ -77,8 +77,14 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		if (path != null) {
 			registered = true;
 			
-			installData.setVariable("TargetPanel.dir.windows", path);
-			logger.log(Level.FINE, "CheckedHelloNewConsolePanel  Set TargetPanel.dir.windows: " + path);
+			String targetPanelDir = "TargetPanel.dir.windows";
+			if (OsVersion.IS_LINUX) {
+				targetPanelDir = "TargetPanel.dir.unix";
+				installData.setVariable(targetPanelDir, path);				
+			} else {
+				installData.setVariable(targetPanelDir, path);				
+			}
+			logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set "+targetPanelDir+": " + path);
 
 			installData.setVariable(InstallData.INSTALL_PATH, path);
 			logger.log(Level.FINE, "CheckedHelloNewConsolePanel  Set INSTALL_PATH: " + path);

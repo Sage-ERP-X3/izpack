@@ -39,20 +39,23 @@ import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Panel;
 import com.izforge.izpack.api.resource.Resources;
-// import com.izforge.izpack.adaptator.IXMLElement;
 import com.izforge.izpack.gui.IzPanelLayout;
 import com.izforge.izpack.gui.LabelFactory;
 import com.izforge.izpack.gui.log.Log;
 import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.installer.gui.InstallerFrame;
 import com.izforge.izpack.installer.gui.IzPanel;
-// import com.izforge.izpack.util.os.RegistryDefaultHandler;
-// import com.izforge.izpack.util.os.RegistryHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.core.resource.ResourceManager;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 
 public class InstallTypeNewPanel extends IzPanel implements ActionListener, ListSelectionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7778360562175088671L;
+
 	private static Logger logger = Logger.getLogger(InstallTypeNewPanel.class.getName());
 
 	private static final String SPEC_FILE_NAME = "productsSpec.txt";

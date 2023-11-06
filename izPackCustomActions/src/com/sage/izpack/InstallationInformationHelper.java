@@ -36,7 +36,7 @@ public final class InstallationInformationHelper {
 	private static final Logger logger = Logger.getLogger(InstallationInformationHelper.class.getName());
 
 	private static List<String> VariablesExceptions = new ArrayList<String>(
-			Arrays.asList("app-version", "APP_VER", "app-version-new", "APP_VER_NEW", "ISO2_LANG", "ISO3_LANG"));
+			Arrays.asList("app-version", "APP_VER", "app-version-new", "APP_VER_NEW", "ISO2_LANG", "ISO3_LANG", "COMPONENT.VERSION"));
 
 	public static boolean hasAlreadyReadInformation(com.izforge.izpack.api.data.InstallData installData) {
 
@@ -109,11 +109,16 @@ public final class InstallationInformationHelper {
 	}
 
 	public static void restoreNewVersion(com.izforge.izpack.api.data.InstallData installData) {
-		String currentVersion = installData.getVariable("app-version");
+		String paramName = "COMPONENT.VERSION"; // "app-version"
+		String currentVersion = installData.getVariable(paramName);
 		// String newCurrentVersion = installData.getVariable("app-version-new");
+		if (currentVersion == null || currentVersion == "") {
+			paramName = "app-version";
+			currentVersion = installData.getVariable(paramName);
+		}
 		if (currentVersion != null) {
 			logger.log(Level.FINE, "InstallationInformationHelper Set current version 'APP_VER' (" + currentVersion
-					+ ") from 'app-version' : " + currentVersion);
+					+ ") from '"+paramName+"' : " + currentVersion);
 			// installData.setVariable("app-version", newCurrentVersion);
 			installData.setVariable("APP_VER", currentVersion);
 		}

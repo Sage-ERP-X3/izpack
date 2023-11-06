@@ -160,7 +160,10 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 				module = createModule(adxInstallXmlDoc, moduleSpec, substitutor, moduleName, moduleFamily, moduleType);
 			}
-
+			Element moduleToAdd = null;
+			if (module != null) {
+			moduleToAdd = (Element) module.cloneNode(true);
+			}
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  saving XML xdoc:"
 					+ adxInstallXmlDoc.getDocumentElement().getNodeName());
 
@@ -168,9 +171,13 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			AdxCompHelper.saveXml(fileAdxinstalls, adxInstallXmlDoc, transformer);
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  XML doc saved");
 
-			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  Add data to uninstaller");
-			addDataToUninstaller(transformer, adxCompHelper, module);
-
+			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  Add data to uninstaller " + moduleToAdd);
+			if (moduleToAdd== null) {
+				logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  Error - module is NULL - Cannot add data to uninstaller");				
+			}
+			else {
+			addDataToUninstaller(transformer, adxCompHelper, moduleToAdd);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

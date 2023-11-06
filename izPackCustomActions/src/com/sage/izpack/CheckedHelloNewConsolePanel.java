@@ -59,7 +59,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		resourceHelper.mergeCustomMessages();
 		
 		_registryHelper = new RegistryHelper(handler, installData);
-
+		
 		String path = installData.getInstallPath();
 		if (path == null && OsVersion.IS_WINDOWS)
 			path = _registryHelper.getInstallationPath();
@@ -70,7 +70,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 				path = x3Handler.getAdxAdminDirPath();
 			}
 			logger.log(Level.FINE,
-					"Warning CheckedHelloNewPanel Could not get RegistryHandler.getInstallationPath() return NULL. path: "+ path);
+					"Warning CheckedHelloNewConsolePanel Could not get RegistryHandler.getInstallationPath() return NULL. path: "+ path);
 		}
 
 		// Update case :

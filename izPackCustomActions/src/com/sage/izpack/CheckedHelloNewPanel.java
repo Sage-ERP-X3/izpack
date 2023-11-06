@@ -98,7 +98,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 	@Override
 	public void panelActivate() {
 
-		if (_x3Handler.needAdmin()) {
+		if (_x3Handler.needAdxAdmin()) {
 			try {
 				// Check presence of adxadmin
 				String adxAdminPath = _x3Handler.getAdxAdminDirPath();

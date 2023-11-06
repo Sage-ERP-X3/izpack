@@ -20,13 +20,16 @@ public class FinishNewPanel extends FinishPanel {
 	private static final long serialVersionUID = 1L;
 
 	private static Logger logger = Logger.getLogger(FinishNewPanel.class.getName());
-
+	private UninstallDataWriter uninstallDataWriter;
+	
 	public FinishNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			UninstallDataWriter uninstallDataWriter, UninstallData uninstallData, Log log) {
+
 		super(panel, parent, installData, resources, uninstallDataWriter, uninstallData, log);
 
 		logger.log(Level.FINE, "FinishNewPanel instance. Init custom resources.");
 
+		this.uninstallDataWriter = uninstallDataWriter;
 		ResourcesHelper resourceHelper = new ResourcesHelper(installData, resources);
 		resourceHelper.mergeCustomMessages();
 

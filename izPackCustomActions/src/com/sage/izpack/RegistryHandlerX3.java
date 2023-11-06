@@ -1,15 +1,23 @@
 package com.sage.izpack;
 
 import com.izforge.izpack.core.os.RegistryHandler;
+import com.izforge.izpack.core.resource.ResourceManager;
 import com.izforge.izpack.util.OsVersion;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.DefaultListModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -19,6 +27,7 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.exception.NativeLibException;
@@ -32,7 +41,11 @@ public class RegistryHandlerX3 {
 
 	private RegistryHandler registryHandler;
 	private InstallData installData;
-
+	public static String ADX_NODE_TYPE = "component.node.type";
+	public static String ADX_NODE_FAMILY = "component.node.family";
+	private static final String SPEC_FILE_NAME = "productsSpec.txt";
+	
+	
 	public RegistryHandlerX3(RegistryHandler registryHandler, InstallData installData) {
 
 		this.registryHandler = registryHandler;
@@ -43,6 +56,9 @@ public class RegistryHandlerX3 {
 		return this.registryHandler;
 	}
 	
+public InstallData getInstallData() {
+	return this.installData;
+}
 
 	public boolean isAdminSetup() {
 		
@@ -55,7 +71,7 @@ public class RegistryHandlerX3 {
 	}
 
 	
-	public boolean needAdmin() {
+	public boolean needAdxAdmin() {
 		
 		String needAdxAdmin = this.installData!= null ?  this.installData.getVariable("need-adxadmin"): null;
     	if (needAdxAdmin != null && needAdxAdmin.equalsIgnoreCase("true")) {
@@ -144,6 +160,230 @@ public class RegistryHandlerX3 {
 		}
 
 		return adxAdminPath;
+
+	}
+
+
+	public HashMap<String, String[]> loadComponentsList(DefaultListModel<String> listItemsParam) throws Exception {
+
+        if (needAdxAdmin())
+        {
+        	return loadListFromAdxadmin(listItemsParam);
+        }
+        else  if (OsVersion.IS_WINDOWS)
+        {
+        	return loadListFromRegistry(listItemsParam);
+        }
+        else {
+    		// ResourcesHelper resourcesHelper = new ResourcesHelper(installData, this.resources);
+            // throw new Exception(resourcesHelper.getCustomString("installer.error"), resourcesHelper.getCustomString("InstallationTypePanel.errNoCompFound"));
+            // maybe we can find a service ??                                 
+            throw new Exception( "installer.error" + "InstallationTypePanel.errNoCompFound");
+        }
+	}
+		
+	private HashMap<String, String[]> loadListFromAdxadmin(DefaultListModel<String> listItemsParam) {
+		
+		HashMap<String, String[]> lstCompPropsParam = new HashMap<String, String[]>();
+		
+		try {
+			RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler, this.installData);
+			String adxAdminPath = x3Handler.getAdxAdminDirPath();
+			if (adxAdminPath == null || "".equals(adxAdminPath)) {
+				// nothing to do
+				logger.log(Level.WARNING, "loadListFromAdxadmin error while retrieve AdxAdminDirPath=" + adxAdminPath);
+				return lstCompPropsParam;
+			}
+
+			java.io.File dirAdxDir = new java.io.File(adxAdminPath);
+			if (!dirAdxDir.exists() || !dirAdxDir.isDirectory()) {
+				// nothing to do
+				logger.log(Level.WARNING, "loadListFromAdxadmin error while reading AdxAdminDirPath=" + dirAdxDir.getAbsolutePath());
+				return lstCompPropsParam;
+			}
+
+			StringBuilder strBuilder = new StringBuilder();
+			strBuilder.append(dirAdxDir.getAbsolutePath());
+			strBuilder.append(File.separator);
+			strBuilder.append("inst");
+			strBuilder.append(File.separator);
+			strBuilder.append("adxinstalls.xml");
+
+			java.io.File fileAdxinstalls = new java.io.File(strBuilder.toString());
+
+			if (!fileAdxinstalls.exists()) {
+				// nothing to do
+				logger.log(Level.WARNING, "loadListFromAdxadmin error - File " + fileAdxinstalls.getAbsolutePath() + " doesn't exist.");
+				return lstCompPropsParam;
+			}
+
+			// we need to know type and family
+			String strComponentType = x3Handler.getInstallData().getVariable(ADX_NODE_TYPE);
+			String strComponentFamily = x3Handler.getInstallData().getVariable(ADX_NODE_FAMILY);
+
+			// do nothing if we don't know family
+			if (strComponentFamily == null)
+				return lstCompPropsParam;
+
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(fileAdxinstalls);
+
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			String expression = "//module[@family='" + strComponentFamily + "'";
+
+			if (strComponentType != null)
+				expression += " and @type='" + strComponentType + "'";
+
+			expression += "]";
+
+			NodeList nodeLst = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
+
+			// NodeList nodeLst = doc.getElementsByTagName("module");
+
+			for (int i = 0; i < nodeLst.getLength(); i++) {
+
+				Element moduleNode = (Element) nodeLst.item(i);
+				String path = xPath.evaluate("./component." + strComponentFamily.toLowerCase() + ".path", moduleNode);
+				String strversion = xPath.evaluate("./component." + strComponentFamily.toLowerCase() + ".version",
+						moduleNode);
+				String name = moduleNode.getAttribute("name");
+
+				File installInformation = new File(path + File.separator + InstallData.INSTALLATION_INFORMATION);
+
+				if (installInformation.exists()) {
+					String key = name + " " + strversion + " (" + path + ")";
+					listItemsParam.addElement(key);
+					lstCompPropsParam.put(key, new String[] { name, path, strversion });
+					// listItems.addElement(new String[] {moduleNode.getAttribute("name")+" "+
+					// strversion +" ("+path+")", path, strversion});
+
+				} else if (path.endsWith(File.separator + "tool")) {
+					path = path.substring(0, path.length() - 5);
+					installInformation = new File(path + File.separator + InstallData.INSTALLATION_INFORMATION);
+
+					if (installInformation.exists()) {
+						String key = name + " " + strversion + " (" + path + ")";
+						listItemsParam.addElement(key);
+						lstCompPropsParam.put(key, new String[] { name, path, strversion });
+						// listItems.addElement(new String[] {moduleNode.getAttribute("name")+" "+
+						// strversion +" ("+path+")", path, strversion});
+					}
+				}
+			}
+		} catch (Exception ex) {
+			logger.log(Level.WARNING, "loadListFromAdxadmin error : " + ex);
+		}
+		return lstCompPropsParam;
+
+	}
+
+
+	private HashMap<String, String[]> loadListFromRegistry(DefaultListModel<String> listItemsParam) {
+
+		HashMap<String, String[]> lstCompPropsParam = new HashMap<String, String[]>();
+		try {
+			// need to process prefix
+
+			String uninstallName = this.installData.getVariable("UNINSTALL_NAME");
+			String uninstallKeySuffix = this.installData.getVariable("UninstallKeySuffix");
+			String uninstallKeyPrefix = new String(uninstallName);
+			ArrayList<String> uninstallKeyPrefixList = new ArrayList<String>();
+
+			if (uninstallKeySuffix != null && !"".equals(uninstallKeySuffix)) {
+				uninstallKeyPrefix = uninstallKeyPrefix.substring(0,
+						uninstallKeyPrefix.length() - uninstallKeySuffix.length());
+			}
+
+			uninstallKeyPrefixList.add(uninstallKeyPrefix);
+
+			// load additionnal prefix from resource
+
+			try {
+				InputStream input = new ResourceManager().getInputStream(SPEC_FILE_NAME);
+
+				if (input != null) {
+
+					BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+					StringBuilder out = new StringBuilder();
+					String line;
+					while ((line = reader.readLine()) != null) {
+						uninstallKeyPrefixList.add(line.trim());
+					}
+					reader.close();
+				}
+
+			} catch (Exception ex) {
+				// Debug.log(ex);
+				logger.log(Level.FINE, "Error while loading " + SPEC_FILE_NAME + " : " + ex);
+			}
+
+			// load registry
+			RegistryHandler rh = registryHandler; // RegistryDefaultHandler.getInstance();
+			if (rh == null) {
+				// nothing to do
+				return lstCompPropsParam;
+			}
+
+			// rh.verify(idata);
+
+			String UninstallKeyName = RegistryHandler.UNINSTALL_ROOT; // "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
+			int oldVal = rh.getRoot();
+			rh.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+
+			List<String> lstSubKeys = Arrays.asList(rh.getSubkeys(UninstallKeyName));
+
+			for (String uninstallKey : lstSubKeys) {
+
+				for (String keyToSearchFor : uninstallKeyPrefixList) {
+					if (uninstallKey.startsWith(keyToSearchFor)) {
+						// read path from uninstall string :((
+						String productPath = null;
+						try {
+							productPath = rh.getValue(UninstallKeyName + "\\" + uninstallKey, "UninstallString")
+									.getStringData();
+						} catch (Exception ex) {
+							continue;
+						}
+
+						String productVersion = null;
+						try {
+							productVersion = rh.getValue(UninstallKeyName + "\\" + uninstallKey, "DisplayVersion")
+									.getStringData();
+						} catch (Exception ex) {
+							continue;
+						}
+
+						productPath = productPath.substring(productPath.lastIndexOf("\"", productPath.length() - 2) + 1,
+								productPath.length() - 29);
+						String name = uninstallKey;
+						if (name.indexOf(" - ") > 0) {
+							name = name.substring(name.indexOf(" - ") + 3);
+						}
+
+						File installInformation = new File(
+								productPath + File.separator + InstallData.INSTALLATION_INFORMATION);
+
+						if (installInformation.exists()) {
+							String key = name + " " + productVersion + " (" + productPath + ")";
+							listItemsParam.addElement(key);
+							// listItems.addElement(new String[] {name+""+ productVersion +"
+							// ("+productPath+")", productPath, productVersion});
+							lstCompPropsParam.put(key, new String[] { name, productPath, productVersion });
+						}
+
+					}
+				}
+			}
+
+			// free RegistryHandler
+			rh.setRoot(oldVal);
+			
+		} catch (Exception ex) {
+			logger.log(Level.ALL, "loadListFromRegistry error : " + ex);
+			// Debug.trace(ex);
+		}
+		return lstCompPropsParam;
 
 	}
 

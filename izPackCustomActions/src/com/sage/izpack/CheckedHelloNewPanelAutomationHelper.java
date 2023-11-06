@@ -77,7 +77,7 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 	public void runAutomated(InstallData installData, IXMLElement panelRoot) {
 		RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler, installData);
 
-		if (x3Handler.needAdmin()) {
+		if (x3Handler.needAdxAdmin()) {
 			try {
 				// Check presence of adxadmin
 				String adxAdminPath = x3Handler.getAdxAdminDirPath();

@@ -28,7 +28,6 @@ import com.izforge.izpack.panels.checkedhello.RegistryHelper;
 public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.console.AbstractTextConsolePanel {
 
 	private static Logger logger = Logger.getLogger(InstallTypeNewConsolePanel.class.getName());
-	// private static final long serialVersionUID = 8430577231809871725L;
 	private Resources resources;
 	private PromptUIHandler handler;
 	private RegistryHelper registryHelper;
@@ -175,7 +174,7 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 
 		logger.log(Level.FINE, "InstallTypeNewConsolePanel handlePanelValidationResult.");
 
-		return false;
+		return true;
 	}
 
 	@Override

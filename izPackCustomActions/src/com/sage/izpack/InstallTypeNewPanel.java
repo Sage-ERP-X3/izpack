@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,7 +74,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 		this.registryHandler = handler.getInstance();
 	}
 
-	private void loadComponents() {
+	// private void loadComponents() {
 		// if (idata.info.needAdxAdmin()) {
 
 		// if (this.installData.getInfo()..isReadInstallationInformation()) {
@@ -83,21 +84,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 		// we can read pathes from adxinstalls.xml
 		// RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler,
 		// installData);
-		RegistryHandlerX3 helper = new RegistryHandlerX3(this.registryHandler, installData);
-		try {
-			lstCompProps = helper.loadComponentsList();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// } else {
-		// if (OsVersion.IS_WINDOWS) {
-		// we can read from registry
-		// loadListFromRegistry();
-
-		// }
-		// }
-	}
+	// }
 
 	private void buildGUI() {
 
@@ -174,7 +161,18 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 	public void panelActivate() {
 		listItems.clear();
 		lstCompProps.clear();
-		loadComponents();
+
+		RegistryHandlerX3 helper = new RegistryHandlerX3(this.registryHandler, installData);
+		try {
+			this.lstCompProps = helper.loadComponentsList();
+			for (Map.Entry<String, String[]> pair : this.lstCompProps.entrySet()) {
+				listItems.addElement(pair.getKey());
+			}
+			
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Error in InstallTypeNewPanel panelActivate: " + e.getMessage());
+			e.printStackTrace();
+		}
 
 		boolean modifyinstallation = Boolean.valueOf(this.installData.getVariable(InstallData.MODIFY_INSTALLATION));
 

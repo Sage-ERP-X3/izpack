@@ -38,7 +38,8 @@ import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.core.os.RegistryHandler;
 
 /**
- *
+ * Read/Save/Update Xml file adxinstalls.xml
+ * 
  * @author Franck DEPOORTERE
  */
 public class AdxCompHelper {

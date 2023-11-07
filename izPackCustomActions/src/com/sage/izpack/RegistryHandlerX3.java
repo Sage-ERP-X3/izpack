@@ -33,7 +33,7 @@ import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.exception.NativeLibException;
 
 /**
- *
+ * Class Helper about AdxAdmin, Registry, and xml file adxInstall.xml
  * @author Franck DEPOORTERE
  */
 public class RegistryHandlerX3 {
@@ -183,10 +183,7 @@ public InstallData getInstallData() {
 	}
 		
 	private HashMap<String, String[]> loadListFromAdxadmin() {
-		
-		// if (listItemsParam == null)
-		//	listItemsParam = new DefaultListModel<String>();
-		
+				
 		HashMap<String, String[]> lstCompPropsParam = new HashMap<String, String[]>();
 		
 		try {

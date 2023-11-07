@@ -58,8 +58,6 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 
 	private static Logger logger = Logger.getLogger(InstallTypeNewPanel.class.getName());
 
-
-
 	private JRadioButton normalinstall;
 	private JRadioButton modifyinstall;
 	private DefaultListModel<String> listItems;
@@ -81,26 +79,25 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 		// if (this.installData.getInfo()..isReadInstallationInformation()) {
 
 		// if (installData.info.needAdxAdmin()) {
-			// Component is registered in adxadmin service
-			// we can read pathes from adxinstalls.xml
-		// RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler, installData);
-		RegistryHandlerX3 helper =  new RegistryHandlerX3(this.registryHandler, installData);
+		// Component is registered in adxadmin service
+		// we can read pathes from adxinstalls.xml
+		// RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler,
+		// installData);
+		RegistryHandlerX3 helper = new RegistryHandlerX3(this.registryHandler, installData);
 		try {
-			lstCompProps = helper.loadComponentsList(listItems);
+			lstCompProps = helper.loadComponentsList();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	//	} else {
-		//	if (OsVersion.IS_WINDOWS) {
-				// we can read from registry
-		//		loadListFromRegistry();
+		// } else {
+		// if (OsVersion.IS_WINDOWS) {
+		// we can read from registry
+		// loadListFromRegistry();
 
-			//}
-		//}
+		// }
+		// }
 	}
-
-	
 
 	private void buildGUI() {
 
@@ -114,7 +111,8 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 
 //		topPanel.add(LabelFactory.create(ResourcesHelper.getCustomPropString("InstallationTypePanel.info"),
 //				ResourcesHelper.getCustomPropString("history"), LEADING));
-		// topPanel.add(LabelFactory.create(ResourcesHelper.getCustomPropString("InstallTypeNewPanel.info"), LEADING));
+		// topPanel.add(LabelFactory.create(ResourcesHelper.getCustomPropString("InstallTypeNewPanel.info"),
+		// LEADING));
 		topPanel.add(LabelFactory.create(super.getString("InstallTypeNewPanel.info"), LEADING));
 
 		topPanel.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -223,7 +221,6 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 			// idata.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 			this.installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 
-
 			if (selectedKey != null) {
 				if (listItems.contains(selectedKey)) {
 					installedComponents.setSelectedValue(selectedKey, true);
@@ -260,9 +257,6 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 	public boolean isValidated() {
 		// we must ensure .installinformation is present if in modification mode
 		// then set install_path
-
-		// Boolean modifyinstallation =
-		// Boolean.valueOf(idata.getVariable(InstallData.MODIFY_INSTALLATION));
 		Boolean modifyinstallation = Boolean.valueOf(this.installData.getVariable(InstallData.MODIFY_INSTALLATION));
 
 		if (modifyinstallation) {

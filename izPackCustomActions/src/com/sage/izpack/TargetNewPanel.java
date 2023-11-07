@@ -1,6 +1,5 @@
 package com.sage.izpack;
 
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.izforge.izpack.api.data.Panel;
@@ -9,7 +8,6 @@ import com.izforge.izpack.gui.log.Log;
 import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.installer.gui.InstallerFrame;
 import com.izforge.izpack.panels.target.TargetPanel;
-import com.izforge.izpack.util.OsVersion;
 
 /*
  *  @author Franck DEPOORTERE

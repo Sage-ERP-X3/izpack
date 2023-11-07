@@ -164,15 +164,15 @@ public InstallData getInstallData() {
 	}
 
 
-	public HashMap<String, String[]> loadComponentsList(DefaultListModel<String> listItemsParam) throws Exception {
+	public HashMap<String, String[]> loadComponentsList() throws Exception {
 
         if (needAdxAdmin())
         {
-        	return loadListFromAdxadmin(listItemsParam);
+        	return loadListFromAdxadmin();
         }
         else  if (OsVersion.IS_WINDOWS)
         {
-        	return loadListFromRegistry(listItemsParam);
+        	return loadListFromRegistry();
         }
         else {
     		// ResourcesHelper resourcesHelper = new ResourcesHelper(installData, this.resources);
@@ -182,13 +182,15 @@ public InstallData getInstallData() {
         }
 	}
 		
-	private HashMap<String, String[]> loadListFromAdxadmin(DefaultListModel<String> listItemsParam) {
+	private HashMap<String, String[]> loadListFromAdxadmin() {
+		
+		// if (listItemsParam == null)
+		//	listItemsParam = new DefaultListModel<String>();
 		
 		HashMap<String, String[]> lstCompPropsParam = new HashMap<String, String[]>();
 		
 		try {
-			RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler, this.installData);
-			String adxAdminPath = x3Handler.getAdxAdminDirPath();
+			String adxAdminPath = this.getAdxAdminDirPath();
 			if (adxAdminPath == null || "".equals(adxAdminPath)) {
 				// nothing to do
 				logger.log(Level.WARNING, "loadListFromAdxadmin error while retrieve AdxAdminDirPath=" + adxAdminPath);
@@ -218,8 +220,8 @@ public InstallData getInstallData() {
 			}
 
 			// we need to know type and family
-			String strComponentType = x3Handler.getInstallData().getVariable(ADX_NODE_TYPE);
-			String strComponentFamily = x3Handler.getInstallData().getVariable(ADX_NODE_FAMILY);
+			String strComponentType = this.getInstallData().getVariable(ADX_NODE_TYPE);
+			String strComponentFamily = this.getInstallData().getVariable(ADX_NODE_FAMILY);
 
 			// do nothing if we don't know family
 			if (strComponentFamily == null)
@@ -253,7 +255,7 @@ public InstallData getInstallData() {
 
 				if (installInformation.exists()) {
 					String key = name + " " + strversion + " (" + path + ")";
-					listItemsParam.addElement(key);
+					// listItemsParam.addElement(key);
 					lstCompPropsParam.put(key, new String[] { name, path, strversion });
 					// listItems.addElement(new String[] {moduleNode.getAttribute("name")+" "+
 					// strversion +" ("+path+")", path, strversion});
@@ -264,7 +266,7 @@ public InstallData getInstallData() {
 
 					if (installInformation.exists()) {
 						String key = name + " " + strversion + " (" + path + ")";
-						listItemsParam.addElement(key);
+						// listItemsParam.addElement(key);
 						lstCompPropsParam.put(key, new String[] { name, path, strversion });
 						// listItems.addElement(new String[] {moduleNode.getAttribute("name")+" "+
 						// strversion +" ("+path+")", path, strversion});
@@ -273,13 +275,14 @@ public InstallData getInstallData() {
 			}
 		} catch (Exception ex) {
 			logger.log(Level.WARNING, "loadListFromAdxadmin error : " + ex);
+			ex.printStackTrace();
 		}
 		return lstCompPropsParam;
 
 	}
 
 
-	private HashMap<String, String[]> loadListFromRegistry(DefaultListModel<String> listItemsParam) {
+	private HashMap<String, String[]> loadListFromRegistry() {
 
 		HashMap<String, String[]> lstCompPropsParam = new HashMap<String, String[]>();
 		try {
@@ -366,7 +369,7 @@ public InstallData getInstallData() {
 
 						if (installInformation.exists()) {
 							String key = name + " " + productVersion + " (" + productPath + ")";
-							listItemsParam.addElement(key);
+							// listItemsParam.addElement(key);
 							// listItems.addElement(new String[] {name+""+ productVersion +"
 							// ("+productPath+")", productPath, productVersion});
 							lstCompPropsParam.put(key, new String[] { name, productPath, productVersion });

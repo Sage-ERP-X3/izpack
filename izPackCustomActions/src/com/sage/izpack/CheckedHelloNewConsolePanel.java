@@ -41,31 +41,31 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 	 */
 	private boolean registered;
 	private InstallData installData;
-	private RegistryHandler _registryHandler;
-	private RegistryHelper _registryHelper;
+	private RegistryHandler registryHandler;
+	private RegistryHelper registryHelper;
 	
 	public CheckedHelloNewConsolePanel(RegistryDefaultHandler handler, InstallData installData, Resources resources,
 			Prompt prompt, PanelView<ConsolePanel> panel) throws NativeLibException {
 		super(handler, installData, prompt, panel);
-		_registryHelper = new RegistryHelper(handler, installData);
+		this.registryHelper = new RegistryHelper(handler, installData);
 		this.prompt = prompt;
 		this.installData = installData;
 		this.resources = resources;
-		_registryHandler = handler != null ?  handler.getInstance(): null;
+		this.registryHandler = handler != null ?  handler.getInstance(): null;
 
 		logger.log(Level.FINE, "CheckedHelloNewConsolePanel");
 
 		ResourcesHelper resourceHelper = new ResourcesHelper(installData, resources);
 		resourceHelper.mergeCustomMessages();
 		
-		_registryHelper = new RegistryHelper(handler, installData);
+		this.registryHelper = new RegistryHelper(handler, installData);
 		
 		String path = installData.getInstallPath();
 		if (path == null && OsVersion.IS_WINDOWS)
-			path = _registryHelper.getInstallationPath();
+			path = this.registryHelper.getInstallationPath();
 		
 		if (path == null) {
-			RegistryHandlerX3 x3Handler = new RegistryHandlerX3(_registryHandler, installData);
+			RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler, installData);
 			if (x3Handler.isAdminSetup()) {
 				path = x3Handler.getAdxAdminDirPath();
 			}
@@ -130,7 +130,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		try {
 			path = installData.getInstallPath();
 			if (path == null && OsVersion.IS_WINDOWS)
-				path = _registryHelper.getInstallationPath();
+				path = this.registryHelper.getInstallationPath();
 			
 			if (path == null) {
 				path = "<not found>";

@@ -126,7 +126,7 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 
 			while (true) {
 
-				int j = console.prompt(strQuestion, 1, installedProducts.size() - 1, installedProducts.size());
+				int j = console.prompt(strQuestion, 0, installedProducts.size() - 1, installedProducts.size());
 
 				if (j > -1 && j < installedProducts.size()) {
 					String key = keysArray.get(j);

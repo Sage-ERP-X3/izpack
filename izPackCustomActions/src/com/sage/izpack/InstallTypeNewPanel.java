@@ -74,17 +74,6 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 		this.registryHandler = handler.getInstance();
 	}
 
-	// private void loadComponents() {
-		// if (idata.info.needAdxAdmin()) {
-
-		// if (this.installData.getInfo()..isReadInstallationInformation()) {
-
-		// if (installData.info.needAdxAdmin()) {
-		// Component is registered in adxadmin service
-		// we can read pathes from adxinstalls.xml
-		// RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler,
-		// installData);
-	// }
 
 	private void buildGUI() {
 

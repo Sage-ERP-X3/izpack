@@ -74,7 +74,6 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 		this.registryHandler = handler.getInstance();
 	}
 
-
 	private void buildGUI() {
 
 		JPanel topPanel = new JPanel();
@@ -157,7 +156,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 			for (Map.Entry<String, String[]> pair : this.lstCompProps.entrySet()) {
 				listItems.addElement(pair.getKey());
 			}
-			
+
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Error in InstallTypeNewPanel panelActivate: " + e.getMessage());
 			e.printStackTrace();

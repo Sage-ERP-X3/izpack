@@ -3,7 +3,10 @@ package com.sage.izpack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
 import com.izforge.izpack.api.data.Panel;
+import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.gui.log.Log;
 import com.izforge.izpack.installer.data.GUIInstallData;
@@ -21,19 +24,66 @@ public class FinishNewPanel extends FinishPanel {
 
 	private static Logger logger = Logger.getLogger(FinishNewPanel.class.getName());
 	private UninstallDataWriter uninstallDataWriter;
-	
+	private Resources resources;
+	private ResourcesHelper resourceHelper;
+
 	public FinishNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			UninstallDataWriter uninstallDataWriter, UninstallData uninstallData, Log log) {
 
 		super(panel, parent, installData, resources, uninstallDataWriter, uninstallData, log);
 
 		logger.log(Level.FINE, "FinishNewPanel instance. Init custom resources.");
-
+		// this.installData = installData;
 		this.uninstallDataWriter = uninstallDataWriter;
-		ResourcesHelper resourceHelper = new ResourcesHelper(installData, resources);
+		this.resources = resources;
+		this.resourceHelper = new ResourcesHelper(installData, resources);
 		resourceHelper.mergeCustomMessages();
 
 		logger.log(Level.FINE, "FinishNewPanel instance. Custom resources initialized");
+
 	}
 
+	@Override
+	public void panelActivate() {
+
+		boolean uninstallRequired = this.uninstallDataWriter.isUninstallRequired();
+		logger.log(Level.FINE, "FinishNewPanel instance. uninstallRequired:" + uninstallRequired);
+		logger.log(Level.FINE,
+				"FinishNewPanel instance. getUninstallerPath:" + installData.getInfo().getUninstallerPath());
+
+		super.panelActivate();
+
+	}
+
+	@Override
+	protected void saveData() {
+		super.saveData();
+		// Save Data
+		writeUninstallData();
+	}
+
+	private boolean writeUninstallData() {
+		
+		boolean result = true;
+
+		// X3-256055: Uninstaller (izpack 5.2)
+		installData.setVariable("force-generate-uninstaller", "true");
+		// installData.getInfo().setUninstallerCondition("uninstaller.write");
+
+		boolean uninstallRequired = this.uninstallDataWriter.isUninstallRequired();
+		logger.log(Level.FINE, "FinishNewPanel writeUninstallData. uninstallRequired:" + uninstallRequired);
+
+		if (!uninstallDataWriter.isUninstallRequired()) {
+			result = uninstallDataWriter.write();		
+			logger.log(Level.FINE, "FinishNewPanel force writeUninstallData. uninstallDataWriter.write() returns " + result);
+
+			if (!result) {
+				// Messages messages = locales.getMessages();
+				String title = this.resourceHelper.getCustomString("installer.error");
+				String message = this.resourceHelper.getCustomString("installer.uninstall.writefailed");
+				JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		return result;
+	}
 }

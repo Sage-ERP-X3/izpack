@@ -43,7 +43,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 	private InstallData installData;
 	private RegistryHandler registryHandler;
 	private RegistryHelper registryHelper;
-	
+
 	public CheckedHelloNewConsolePanel(RegistryDefaultHandler handler, InstallData installData, Resources resources,
 			Prompt prompt, PanelView<ConsolePanel> panel) throws NativeLibException {
 		super(handler, installData, prompt, panel);
@@ -51,50 +51,56 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		this.prompt = prompt;
 		this.installData = installData;
 		this.resources = resources;
-		this.registryHandler = handler != null ?  handler.getInstance(): null;
+		this.registryHandler = handler != null ? handler.getInstance() : null;
 
 		logger.log(Level.FINE, "CheckedHelloNewConsolePanel");
 
 		ResourcesHelper resourceHelper = new ResourcesHelper(installData, resources);
 		resourceHelper.mergeCustomMessages();
-		
+
 		this.registryHelper = new RegistryHelper(handler, installData);
-		
+
+		// init(installData, resources);
+	}
+
+	private void init(InstallData installData, Resources resources) throws NativeLibException {
+
+		String prefixLabel = "CheckedHelloNewConsolePanel - ";
 		String path = installData.getInstallPath();
 		if (path == null && OsVersion.IS_WINDOWS)
 			path = this.registryHelper.getInstallationPath();
-		
+
 		if (path == null) {
 			RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler, installData);
 			if (x3Handler.isAdminSetup()) {
 				path = x3Handler.getAdxAdminDirPath();
 			}
-			logger.log(Level.FINE,
-					"Warning CheckedHelloNewConsolePanel Could not get RegistryHandler.getInstallationPath() return NULL. path: "+ path);
+			logger.log(Level.FINE, prefixLabel
+					+ "Warning Could not get RegistryHandler.getInstallationPath() return NULL. path: " + path);
 		}
 
 		// Update case :
 		if (path != null) {
 			registered = true;
-			
+
 			String targetPanelDir = "TargetPanel.dir.windows";
 			if (OsVersion.IS_LINUX) {
 				targetPanelDir = "TargetPanel.dir.unix";
-				installData.setVariable(targetPanelDir, path);				
+				installData.setVariable(targetPanelDir, path);
 			} else {
-				installData.setVariable(targetPanelDir, path);				
+				installData.setVariable(targetPanelDir, path);
 			}
-			logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set "+targetPanelDir+": " + path);
+			logger.log(Level.FINE, prefixLabel + "Set " + targetPanelDir + ": " + path);
 
 			installData.setVariable(InstallData.INSTALL_PATH, path);
-			logger.log(Level.FINE, "CheckedHelloNewConsolePanel  Set INSTALL_PATH: " + path);
+			logger.log(Level.FINE, prefixLabel + "Set INSTALL_PATH: " + path);
 
 			Variables variables = this.installData.getVariables();
 			installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
 
 			// Set variable "modify.izpack.install"
 			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-			logger.log(Level.FINE, "CheckedHelloNewConsolePanel  Registered: " + registered);
+			logger.log(Level.FINE, prefixLabel + "Registered: " + registered);
 		}
 
 		// Update case : read .installationinformation
@@ -104,51 +110,11 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 				InstallationInformationHelper.readInformation(installData, resources);
 			} else {
 				logger.log(Level.FINE,
-						"CheckedHelloNewConsolePanel ReadInstallationInformation: "
+						prefixLabel + "ReadInstallationInformation: "
 								+ this.installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
 								+ InstallationInformationHelper.hasAlreadyReadInformation(this.installData));
 			}
 		}
-	}
-
-	/**
-	 * X3-240420 : Wrong message when updating the console This method should only
-	 * be called if this product was already installed. It resolves the install path
-	 * of the first already installed product and asks the user whether to install
-	 * twice or not.
-	 *
-	 * @return whether a multiple Install should be performed or not.
-	 * @throws NativeLibException for any native library error
-	 */
-	@Override
-	protected boolean multipleInstall(InstallData installData) {
-
-		logger.log(Level.FINE, "CheckedHelloNewConsolePanel.multipleInstall()");
-
-		boolean result;
-		String path;
-		try {
-			path = installData.getInstallPath();
-			if (path == null && OsVersion.IS_WINDOWS)
-				path = this.registryHelper.getInstallationPath();
-			
-			if (path == null) {
-				path = "<not found>";
-			}
-			// X3-240420 : Wrong message when updating the console This method should only
-			ResourcesHelper resourcesHelper = new ResourcesHelper(this.installData, this.resources);
-			String noLuck = resourcesHelper.getCustomString("CheckedHelloNewPanel.productAlreadyExist0") + path
-					+ ". " + resourcesHelper.getCustomString("CheckedHelloNewPanel.productAlreadyExist1");
-
-			result = prompt.confirm(ERROR, noLuck, YES_NO) == YES;
-
-		} catch (NativeLibException e) {
-
-			result = false;
-			e.printStackTrace();
-		}
-
-		return result;
 	}
 
 	/**
@@ -165,6 +131,12 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 
 		printHeadLine(installData, console);
 
+		try {
+			init(installData, resources);
+		} catch (NativeLibException e) {
+			e.printStackTrace();
+		}
+		
 		boolean result = true;
 		if (registered) {
 			result = multipleInstall(installData);
@@ -197,19 +169,62 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		}
 		return result;
 	}
+
+
+	/**
+	 * X3-240420 : Wrong message when updating the console This method should only
+	 * be called if this product was already installed. It resolves the install path
+	 * of the first already installed product and asks the user whether to install
+	 * twice or not.
+	 *
+	 * @return whether a multiple Install should be performed or not.
+	 * @throws NativeLibException for any native library error
+	 */
+	@Override
+	protected boolean multipleInstall(InstallData installData) {
+
+		logger.log(Level.FINE, "CheckedHelloNewConsolePanel.multipleInstall()");
+
+		boolean result;
+		String path;
+		try {
+			path = installData.getInstallPath();
+			if (path == null && OsVersion.IS_WINDOWS)
+				path = this.registryHelper.getInstallationPath();
+
+			if (path == null) {
+				path = "<not found>";
+			}
+			// X3-240420 : Wrong message when updating the console This method should only
+			ResourcesHelper resourcesHelper = new ResourcesHelper(this.installData, this.resources);
+			String noLuck = resourcesHelper.getCustomString("CheckedHelloNewPanel.productAlreadyExist0") + path + ". "
+					+ resourcesHelper.getCustomString("CheckedHelloNewPanel.productAlreadyExist1");
+
+			result = prompt.confirm(ERROR, noLuck, YES_NO) == YES;
+
+		} catch (NativeLibException e) {
+
+			result = false;
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
 	
 	/**
 	 * Returns the text to display.
+	 * 
 	 * @return the text
 	 */
 	/*
-	@Override
-	protected String getText() {
-		ResourcesHelper resourcesHelper = new ResourcesHelper(this.installData, this.resources);
-        String str = resourcesHelper.getCustomString("HelloPanel.welcome1") + this.installData.getInfo().getAppName() + " "
-                + this.installData.getInfo().getAppVersion() + resourcesHelper.getCustomString("HelloPanel.welcome2");
-        return str;
-		// return resources.getString(panelResourceName, "Error : could not load the info text!");
-	}
-	*/
+	 * @Override protected String getText() { ResourcesHelper resourcesHelper = new
+	 * ResourcesHelper(this.installData, this.resources); String str =
+	 * resourcesHelper.getCustomString("HelloPanel.welcome1") +
+	 * this.installData.getInfo().getAppName() + " " +
+	 * this.installData.getInfo().getAppVersion() +
+	 * resourcesHelper.getCustomString("HelloPanel.welcome2"); return str; // return
+	 * resources.getString(panelResourceName,
+	 * "Error : could not load the info text!"); }
+	 */
 }

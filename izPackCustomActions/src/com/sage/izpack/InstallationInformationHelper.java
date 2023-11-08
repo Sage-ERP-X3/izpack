@@ -35,8 +35,8 @@ public final class InstallationInformationHelper {
 
 	private static final Logger logger = Logger.getLogger(InstallationInformationHelper.class.getName());
 
-	private static List<String> VariablesExceptions = new ArrayList<String>(
-			Arrays.asList("app-version", "APP_VER", "app-version-new", "APP_VER_NEW", "ISO2_LANG", "ISO3_LANG", "COMPONENT.VERSION"));
+	private static List<String> VariablesExceptions = new ArrayList<String>(Arrays.asList("app-version", "APP_VER",
+			"app-version-new", "APP_VER_NEW", "ISO2_LANG", "ISO3_LANG", "COMPONENT.VERSION"));
 
 	public static boolean hasAlreadyReadInformation(com.izforge.izpack.api.data.InstallData installData) {
 
@@ -59,10 +59,10 @@ public final class InstallationInformationHelper {
 		installData.setVariable("os.version", osVersion);
 		installData.setVariable("sageos.version", osVersion);
 		installData.setVariable("sageos.details", osVersionDetails);
-		
-		logger.log(Level.FINE, "InstallationInformationHelper set variables 'os.version', 'sageos.version': " + osVersion + "  'sageos.details':" + osVersionDetails);
 
-		
+		logger.log(Level.FINE, "InstallationInformationHelper set variables 'os.version', 'sageos.version': "
+				+ osVersion + "  'sageos.details':" + osVersionDetails);
+
 		logger.log(Level.FINE, "InstallationInformationHelper Reading file " + InstallData.INSTALLATION_INFORMATION);
 
 		logger.log(Level.FINE, "InstallationInformationHelper Before " + InstallData.INSTALLATION_INFORMATION
@@ -118,7 +118,7 @@ public final class InstallationInformationHelper {
 		}
 		if (currentVersion != null) {
 			logger.log(Level.FINE, "InstallationInformationHelper Set current version 'APP_VER' (" + currentVersion
-					+ ") from '"+paramName+"' : " + currentVersion);
+					+ ") from '" + paramName + "' : " + currentVersion);
 			// installData.setVariable("app-version", newCurrentVersion);
 			installData.setVariable("APP_VER", currentVersion);
 		}
@@ -131,19 +131,12 @@ public final class InstallationInformationHelper {
 			logger.log(Level.FINE,
 					"InstallationInformationHelper save current version 'app-version-new' : " + currentVersion);
 		}
-		/*
-		 * String currentAPPVER = installData.getVariable("APP_VER"); if (currentAPPVER
-		 * != null) { installData.setVariable("APP_VER_NEW", currentAPPVER);
-		 * logger.log(Level.FINE,
-		 * "InstallationInformationHelper save current version 'APP_VER_NEW' : " +
-		 * currentAPPVER); }
-		 */
 	}
 
 	static boolean isIncompatibleInstallation(String installPath, boolean isReadInstallationInformation) {
 
 		boolean result = false;
-
+		String logHeader = "InstallationInformationHelper.isIncompatibleInstallation - ";
 		if (isReadInstallationInformation) {
 
 			ObjectInputStream oin = null;
@@ -158,17 +151,13 @@ public final class InstallationInformationHelper {
 					packsinstalled = (List<Pack>) oin.readObject();
 
 					for (Pack installedpack : packsinstalled) {
-						logger.log(Level.FINE, "InstallationInformationHelper.isIncompatibleInstallation pack "
-								+ installedpack.getName() + "");
+						logger.log(Level.FINE, logHeader + "pack " + installedpack.getName() + "");
 
 					}
-					logger.log(Level.FINE, "InstallationInformationHelper.isIncompatibleInstallation  Found "
-							+ packsinstalled.size() + " installed packs");
+					logger.log(Level.FINE, logHeader + "Found " + packsinstalled.size() + " installed packs");
 				} catch (Exception e) {
 					result = true;
-					logger.warning(
-							"InstallationInformationHelper.isIncompatibleInstallation  Could not read Pack installation information: "
-									+ e.getMessage());
+					logger.warning(logHeader + "Could not read Pack installation information: " + e.getMessage());
 					// e.printStackTrace();
 				}
 
@@ -176,16 +165,12 @@ public final class InstallationInformationHelper {
 					if (oin != null) {
 						Properties variables = (Properties) oin.readObject();
 						for (Object key : variables.keySet()) {
-							logger.log(Level.FINE,
-									"InstallationInformationHelper.isIncompatibleInstallation  Read variable " + key
-											+ ": " + variables.get(key));
+							logger.log(Level.FINE, logHeader + "Read variable " + key + ": " + variables.get(key));
 						}
 					}
 				} catch (Exception e) {
 					result = true;
-					logger.warning(
-							"InstallationInformationHelper.isIncompatibleInstallation   Could not read Properties installation information: "
-									+ e.getMessage());
+					logger.warning(logHeader + "Could not read Properties installation information: " + e.getMessage());
 				}
 
 				// Previous version of izPack 4.3
@@ -198,18 +183,14 @@ public final class InstallationInformationHelper {
 								.readObject();
 
 						for (com.izforge.izpack.Pack installedpack : packsinstalled2) {
-							logger.log(Level.FINE,
-									"InstallationInformationHelper.isIncompatibleInstallation - installedpack: "
-											+ installedpack.name);
+							logger.log(Level.FINE, logHeader + "installedpack: " + installedpack.name);
 						}
 						logger.log(Level.FINE,
-								"InstallationInformationHelper.isIncompatibleInstallation - Found Legacy "
-										+ packsinstalled.size() + " installed packs");
+								logHeader + "Found Legacy " + packsinstalled.size() + " installed packs");
 
 					} catch (Exception e) {
 						logger.warning(
-								"InstallationInformationHelper.isIncompatibleInstallation  Could not read Legacy 'Pack' installation information: "
-										+ e.getMessage());
+								logHeader + "Could not read Legacy 'Pack' installation information: " + e.getMessage());
 						// e.printStackTrace();
 					} finally {
 
@@ -222,18 +203,15 @@ public final class InstallationInformationHelper {
 							for (Object key : variables.keySet()) {
 
 								logger.log(Level.FINE,
-										"InstallationInformationHelper.isIncompatibleInstallation  Legacy variable : "
-												+ key + ": " + variables.get(key));
+										logHeader + "Legacy variable : " + key + ": " + variables.get(key));
 							}
 
-							logger.log(Level.FINE,
-									"InstallationInformationHelper.isIncompatibleInstallation  InstallationInformation legacy read");
+							logger.log(Level.FINE, logHeader + "InstallationInformation legacy read");
 						}
 					} catch (Exception e) {
 						result = true;
-						logger.warning(
-								"InstallationInformationHelper.isIncompatibleInstallation  Could not read Legacy 'Properties' installation information: "
-										+ e.getMessage());
+						logger.warning(logHeader + "Could not read Legacy 'Properties' installation information: "
+								+ e.getMessage());
 					}
 				}
 			}
@@ -332,7 +310,7 @@ public final class InstallationInformationHelper {
 			Resources resources) {
 
 		Map<String, com.izforge.izpack.Pack> readPacks = new HashMap<String, com.izforge.izpack.Pack>();
-
+		String logHeader = "InstallationInformationHelper.loadLegacyInstallationInformation - ";
 		ObjectInputStream oin = null;
 		File installInfo = new File(installData.getInstallPath(), InstallData.INSTALLATION_INFORMATION);
 		if (installInfo.exists()) {
@@ -361,34 +339,23 @@ public final class InstallationInformationHelper {
 							installedpack.dependencies, installedpack.required, installedpack.preselected,
 							installedpack.loose, installedpack.excludeGroup, installedpack.uninstall, 0));
 
-					logger.log(Level.FINE,
-							"InstallationInformationHelper.loadLegacyInstallationInformation - installedpack: "
-									+ installedpack.name);
+					logger.log(Level.FINE, logHeader + "Installedpack: " + installedpack.name);
 				}
 				// removeAlreadyInstalledPacks(installData.getSelectedPacks(), readPacks);
 
 				// installData.setSelectedPacks(new ArrayList<Pack>());
-				logger.log(Level.FINE, "InstallationInformationHelper.loadLegacyInstallationInformation - Found Legacy "
-						+ packsinstalled.size() + " installed packs");
+				logger.log(Level.FINE, logHeader + "Found Legacy " + packsinstalled.size() + " installed packs");
 			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
-				logger.warning(
-						"InstallationInformationHelper.loadLegacyInstallationInformation  Could not read Legacy 'Pack' installation information: "
-								+ e1.getMessage());
+				logger.warning(logHeader + "Could not read Legacy 'Pack' installation information: " + e1.getMessage());
 			} catch (IOException e1) {
 				e1.printStackTrace();
-				logger.warning(
-						"InstallationInformationHelper.loadLegacyInstallationInformation  Could not read Legacy 'Pack' installation information: "
-								+ e1.getMessage());
+				logger.warning(logHeader + "Could not read Legacy 'Pack' installation information: " + e1.getMessage());
 			} catch (Exception e) {
-				logger.warning(
-						"InstallationInformationHelper.loadLegacyInstallationInformation  Could not read Legacy 'Pack' installation information: "
-								+ e.getMessage());
+				logger.warning(logHeader + "Could not read Legacy 'Pack' installation information: " + e.getMessage());
 			} finally {
 				installData.setSelectedPacks(packLists);
-				logger.log(Level.FINE,
-						"InstallationInformationHelper.loadLegacyInstallationInformation - setSelectedPacks: "
-								+ packLists);
+				logger.log(Level.FINE, logHeader + "setSelectedPacks: " + packLists);
 			}
 
 			try {
@@ -405,30 +372,27 @@ public final class InstallationInformationHelper {
 							|| envvariables.containsOverride((String) key)
 							|| VariablesExceptions.contains((String) key)) {
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
-						logger.log(Level.FINE,
-								"InstallationInformationHelper.loadLegacyInstallationInformation  Skip variable : "
-										+ key + ": " + variables.get(key));
+						logger.log(Level.FINE, logHeader + "Skip variable : " + key + ": " + variables.get(key));
 					} else {
 						installData.setVariable((String) key, (String) variables.get(key));
-						logger.log(Level.FINE,
-								"InstallationInformationHelper.loadLegacyInstallationInformation  Set Legacy variable : "
-										+ key + ": " + variables.get(key));
+						logger.log(Level.FINE, logHeader + "Set Legacy variable : " + key + ": " + variables.get(key));
 					}
 				}
 
-				logger.log(Level.FINE,
-						"InstallationInformationHelper.loadLegacyInstallationInformation  writeInstallationInformation to fix legacy issue");
+				logger.log(Level.FINE, logHeader + "writeInstallationInformation to fix legacy issue");
 
-// X3-256055: Uninstaller (izpack 5.2)
+				// X3-256055: Uninstaller (izpack 5.2)
 				installData.setVariable("force-generate-uninstaller", "true");
-				
+				logger.log(Level.FINE, logHeader + "force-generate-uninstaller set to true");
+				installData.getInfo().setUninstallerName("uninstaller.jar");
+				installData.getInfo().setUninstallerCondition("uninstaller.write");
+
 				writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
 						resources, true);
 
 			} catch (Exception e) {
 				logger.warning(
-						"InstallationInformationHelper.loadLegacyInstallationInformation  Could not read Legacy 'Properties' installation information: "
-								+ e.getMessage());
+						logHeader + "Could not read Legacy 'Properties' installation information: " + e.getMessage());
 			}
 		}
 	}

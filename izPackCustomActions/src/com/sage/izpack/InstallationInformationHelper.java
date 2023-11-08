@@ -384,8 +384,8 @@ public final class InstallationInformationHelper {
 				// X3-256055: Uninstaller (izpack 5.2)
 				installData.setVariable("force-generate-uninstaller", "true");
 				logger.log(Level.FINE, logHeader + "force-generate-uninstaller set to true");
-				installData.getInfo().setUninstallerName("uninstaller.jar");
-				installData.getInfo().setUninstallerCondition("uninstaller.write");
+				// installData.getInfo().setUninstallerName("uninstaller.jar");
+				// installData.getInfo().setUninstallerCondition("uninstaller.write");
 
 				writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
 						resources, true);

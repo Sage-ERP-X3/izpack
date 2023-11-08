@@ -164,7 +164,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 					// the registry is not uninstalled
 					installData.getInfo().setUninstallerPath(null);
 					installData.getInfo().setUninstallerName(null);
-					installData.getInfo().setUninstallerCondition("uninstaller.nowrite");
+					// installData.getInfo().setUninstallerCondition("uninstaller.nowrite");
 				} catch (Exception exception) {
 					logger.log(Level.WARNING, exception.getMessage(), exception);
 				}

@@ -104,19 +104,20 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			 * e.printStackTrace(); }
 			 */
 			System.out.println(logPrefix + "");
+			Element elemSpecDoc = null;
+			try {
+				InputStream in = resources.getInputStream(SPEC_FILE_NAME);
+				ObjectInputStream objIn = new ObjectInputStream(in);
+				String obj = (String) objIn.readObject();
+				System.out.println(" obj: " + obj + " type: " + obj.getClass().getTypeName());
+				this.prompt.error(logPrefix + "obj: " + obj + " type: " + obj.getClass().getTypeName());
 
-			InputStream in = resources.getInputStream(SPEC_FILE_NAME);
-			ObjectInputStream objIn = new ObjectInputStream(in);
-
-			String obj = (String) objIn.readObject();
-			System.out.println(" obj: " + obj + " type: " + obj.getClass().getTypeName());
-
-			this.prompt.error(logPrefix + "obj: " + obj + " type: " + obj.getClass().getTypeName());
-
-			Element elemSpecDoc = AdxCompHelper.asXml(obj);
-			objIn.close();
-			in.close();
-
+				elemSpecDoc = AdxCompHelper.asXml(obj);
+				objIn.close();
+				in.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			// Load the defined adx module to be deleted.
 
 			// No actions, nothing to do.
@@ -130,9 +131,10 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			// this.specHelper.getSpec: " +
 			// AdxCompHelper.asByteString((Element)this.specHelper.getSpec().getElement(),
 			// null));
-			System.out.println(logPrefix + SPEC_FILE_NAME + " : " + AdxCompHelper.asString(elemSpecDoc, null));
+			// System.out.println(logPrefix + SPEC_FILE_NAME + " : " +
+			// AdxCompHelper.asString(elemSpecDoc, null));
 
-			this.prompt.error(logPrefix + SPEC_FILE_NAME + " : " + AdxCompHelper.asString(elemSpecDoc, null));
+			this.prompt.error(logPrefix + SPEC_FILE_NAME + " : " +  AdxCompHelper.asString(elemSpecDoc, null));
 
 			// get file adxinstalls
 

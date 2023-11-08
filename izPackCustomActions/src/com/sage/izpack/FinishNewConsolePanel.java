@@ -24,18 +24,21 @@ public class FinishNewConsolePanel extends FinishConsolePanel {
 	private static final Logger logger = Logger.getLogger(FinishNewConsolePanel.class.getName());
 
 	private UninstallDataWriter uninstallDataWriter;
-	// private ResourcesHelper resourceHelper;
+	private UninstallData uninstallData;
 	private Prompt prompt;
+	private InstallData installData;
+	private ResourcesHelper resourceHelper;
 
-	public FinishNewConsolePanel(ObjectFactory factory, ConsoleInstaller parent, PlatformModelMatcher matcher,
-			UninstallDataWriter uninstallDataWriter, UninstallData uninstallData, Resources resources, Prompt prompt,
-			PanelView<ConsolePanel> panel) {
+	public FinishNewConsolePanel(InstallData installData, ObjectFactory factory, ConsoleInstaller parent,
+			PlatformModelMatcher matcher, UninstallDataWriter uninstallDataWriter, UninstallData uninstallData,
+			Resources resources, Prompt prompt, PanelView<ConsolePanel> panel) {
 		super(factory, parent, matcher, uninstallData, prompt, panel);
 
 		this.uninstallDataWriter = uninstallDataWriter;
 		this.prompt = prompt;
-		// this.resourceHelper = new ResourcesHelper(uninstallData, resources);
-		// resourceHelper.mergeCustomMessages();
+		this.uninstallData = uninstallData;
+		this.resourceHelper = new ResourcesHelper(installData, resources);
+		resourceHelper.mergeCustomMessages();
 
 	}
 
@@ -60,8 +63,9 @@ public class FinishNewConsolePanel extends FinishConsolePanel {
 		boolean uninstallRequired = this.uninstallDataWriter.isUninstallRequired();
 		logger.log(Level.FINE, "FinishNewPanel writeUninstallData. uninstallRequired:" + uninstallRequired);
 
-// We force the Uninstaller to be generated
+		// We force the Uninstaller to be generated
 		if (!uninstallDataWriter.isUninstallRequired()) {
+			FinishNewPanelAutomationHelper.initUninstallPath(this.installData);
 			result = uninstallDataWriter.write();
 			logger.log(Level.FINE,
 					"FinishNewPanel force writeUninstallData. uninstallDataWriter.write() returns " + result);
@@ -69,9 +73,8 @@ public class FinishNewConsolePanel extends FinishConsolePanel {
 			if (!result) {
 				// Messages messages = locales.getMessages();
 				// String title = this.resourceHelper.getCustomString("installer.error");
-				// String message =
-				// this.resourceHelper.getCustomString("installer.uninstall.writefailed");
-				logger.warning("installer.uninstall.writefailed");
+				 String message = this.resourceHelper.getCustomString("installer.uninstall.writefailed");
+				logger.warning(message);
 			}
 		}
 		return result;

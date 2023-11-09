@@ -28,6 +28,7 @@ public class FinishNewConsolePanel extends FinishConsolePanel {
 	private Prompt prompt;
 	private InstallData installData;
 	private ResourcesHelper resourceHelper;
+	private Resources resources;
 
 	public FinishNewConsolePanel(InstallData installData, ObjectFactory factory, ConsoleInstaller parent,
 			PlatformModelMatcher matcher, UninstallDataWriter uninstallDataWriter, UninstallData uninstallData,
@@ -37,6 +38,7 @@ public class FinishNewConsolePanel extends FinishConsolePanel {
 		this.uninstallDataWriter = uninstallDataWriter;
 		this.prompt = prompt;
 		this.uninstallData = uninstallData;
+		this.resources= resources;
 		this.resourceHelper = new ResourcesHelper(installData, resources);
 		resourceHelper.mergeCustomMessages();
 
@@ -63,7 +65,7 @@ public class FinishNewConsolePanel extends FinishConsolePanel {
 
 		// We force the Uninstaller to be generated
 		if (!uninstallRequired) {
-			FinishNewPanelAutomationHelper.initUninstallPath(this.installData);
+			FinishNewPanelAutomationHelper.initUninstallPath(this.resources, this.installData);
 			result = uninstallDataWriter.write();
 			logger.log(Level.FINE,
 					logPrefix + "force writeUninstallData. uninstallDataWriter.write() returns " + result);

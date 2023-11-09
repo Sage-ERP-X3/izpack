@@ -66,6 +66,8 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 	public static final String AFTER_INSTALL_SCRIPT = "AfterInstallScript";
 	public static final String PLATFORM = OsVersion.IS_UNIX ? "unix" : "windows";
 
+	private static String prefixLabel = "UpdateListener.fetchAndExecuteResource ";
+
 	private static final Logger logger = Logger.getLogger(UpdateListener.class.getName());
 
 	public void cleanUp() {
@@ -166,7 +168,7 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 	// public void beforePack(Pack pack, Integer i, AbstractUIProgressHandler
 	// handler) throws Exception
 	public void beforePack(Pack pack) {
-		try { // super.beforePack(pack, i, handler);
+		try {
 
 			super.beforePack(pack);
 
@@ -224,20 +226,17 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 	public void fetchAndExecuteResource(String resource, String resourcePs,
 			com.izforge.izpack.api.data.InstallData installData) throws Exception {
 
-		logger.log(Level.FINE,
-				"UpdateListener.fetchAndExecuteResource( resource: " + resource + " resourcePs:" + resourcePs + ")");
+		logger.log(Level.FINE, prefixLabel + "( resource: " + resource + " resourcePs:" + resourcePs + ")");
 
 		File tempFilePs = createTempFile(installData, resourcePs, resourcePs, ".ps1");
 		if (tempFilePs != null) {
 			installData.setVariable("BEFORE_UPDATE_SCRIPT_PS", tempFilePs.getName());
 			installData.setVariable("BEFORE_UPDATE_SCRIPT_PS_PATH", tempFilePs.getPath());
 			logger.log(Level.FINE,
-					"UpdateListener.fetchAndExecuteResource resourcePs:" + resourcePs + "  Temp file created: "
-							+ tempFilePs.getAbsolutePath() + "  Add variable " + BEFORE_UPDATE_SCRIPT_PS + ":"
-							+ tempFilePs.getName());
+					prefixLabel + "resourcePs:" + resourcePs + "  Temp file created: " + tempFilePs.getAbsolutePath()
+							+ "  Add variable " + BEFORE_UPDATE_SCRIPT_PS + ":" + tempFilePs.getName());
 		} else {
-			logger.log(Level.FINE,
-					"UpdateListener.fetchAndExecuteResource()  NO resource found for resourcePs:" + resourcePs);
+			logger.log(Level.FINE, prefixLabel + "NO resource found for resourcePs:" + resourcePs);
 		}
 
 		/*
@@ -250,9 +249,12 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 		 * substitutorPs.setBracesRequired(true); String result =
 		 * substitutorPs.substitute(streamPs, SubstitutionType.TYPE_PLAIN);
 		 * 
-		 * File tempFilePs = File.createTempFile(resource, ".ps1"); FileOutputStream fos
-		 * = new FileOutputStream(tempFilePs); tempFilePs.deleteOnExit();
-		 * fos.write(result.getBytes()); fos.flush(); fos.close();
+		 * File tempFilePs = File.createTempFile(resource, ".ps1"); 
+		 * FileOutputStream fos = new FileOutputStream(tempFilePs); 
+		 * tempFilePs.deleteOnExit();
+		 * fos.write(result.getBytes()); 
+		 * fos.flush(); 
+		 * fos.close();
 		 * 
 		 * installData.setVariable("BEFORE_UPDATE_SCRIPT_PS", tempFilePs.getName());
 		 * installData.setVariable("BEFORE_UPDATE_SCRIPT_PS_PATH",
@@ -281,8 +283,8 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 			 * new FileOutputStream(tempFile); tempFile.deleteOnExit();
 			 * fos.write(result.getBytes()); fos.flush(); fos.close();
 			 */
-			logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource resource:" + resource
-					+ "  Temp file created: " + tempFile.getAbsolutePath());
+			logger.log(Level.FINE,
+					prefixLabel + "resource:" + resource + "  Temp file created: " + tempFile.getAbsolutePath());
 
 			// ok now we have to execute
 			ProcessBuilder procBuilder = null;
@@ -293,12 +295,12 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 				procBuilder = new ProcessBuilder("cmd.exe", "/C", tempFile.getAbsolutePath());
 			}
 
-			logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource launching " + tempFile.getAbsolutePath());
+			logger.log(Level.FINE, prefixLabel + "launching " + tempFile.getAbsolutePath());
 			Process p = procBuilder.start();
 			InputStream errorOutput = new BufferedInputStream(p.getErrorStream(), 10000);
 			InputStream consoleOutput = new BufferedInputStream(p.getInputStream(), 10000);
 
-			logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource errorOutput:");
+			logger.log(Level.FINE, prefixLabel + "errorOutput:");
 
 			BufferedReader brErrorOutput = new BufferedReader(new InputStreamReader(errorOutput));
 			String readErrorOutput = brErrorOutput.readLine();
@@ -307,7 +309,7 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 				readErrorOutput = brErrorOutput.readLine();
 			}
 
-			logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource consoleOutput:");
+			logger.log(Level.FINE, prefixLabel + "consoleOutput:");
 
 			BufferedReader brOutput = new BufferedReader(new InputStreamReader(consoleOutput));
 			String read2 = brOutput.readLine();
@@ -318,21 +320,19 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 
 			int exitCode = p.waitFor();
 
-			logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource - ExitCode: " + exitCode);
+			logger.log(Level.FINE, prefixLabel + "ExitCode: " + exitCode);
 
 			if (exitCode != 0) {
 				// script doesn't return 0 = SUCCESS
 				// throw an exception
 				// Debug.log("Command failed: "+ String.join(",", procBuilder.command()));
-				logger.log(Level.FINE,
-						"UpdateListener.fetchAndExecuteResource - Command failed: " + procBuilder.command());
+				logger.log(Level.FINE, prefixLabel + "Command failed: " + procBuilder.command());
 				// Debug.log("Command failed: " + procBuilder.command());
 
 				throw new InstallerException(resource + " return code is " + exitCode + " !");
 			}
 		} else {
-			logger.log(Level.FINE,
-					"UpdateListener.fetchAndExecuteResource()  NO resource found for resource:" + resource);
+			logger.log(Level.FINE, prefixLabel + "NO resource found for resource:" + resource);
 		}
 
 	}
@@ -344,28 +344,17 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 			// Object obj = this.resources.getObject(resource);
 			InputStream inputStream = this.spec.getResource(resource);
 
-			// BufferedInputStream stream = new BufferedInputStream(inputStream);
-
 			if (inputStream == null) {
-				logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource()  Cannot createTempFile(" + resource
-						+ ", " + fileName + ext + ") ");
+				logger.log(Level.FINE,
+						prefixLabel + "Cannot createTempFile(" + resource + ", " + fileName + ext + ") ");
 				return null;
 			}
 
-			logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource()  createTempFile(" + resource + ", "
-					+ fileName + ext + ") ");
+			logger.log(Level.FINE, prefixLabel + "createTempFile(" + resource + ", " + fileName + ext + ") ");
 
 			tempFile = File.createTempFile(fileName, ext);
 			tempFile.deleteOnExit();
 			FileOutputStream fos = new FileOutputStream(tempFile);
-
-			// int aByte; while (-1 != (aByte = stream.read())) { fos.write(aByte); }
-
-			// VariableSubstitutorInputStream substitutedStream = new
-			// VariableSubstitutorInputStream(inputStream,
-			// installData.getVariables(), SubstitutionType.TYPE_PLAIN, true);
-			// int aByte; while (-1 != (aByte = substitutedStream.read())) {
-			// fos.write(aByte); }
 
 			VariableSubstitutor substitutor = new VariableSubstitutorImpl(installData.getVariables());
 			substitutor.substitute(inputStream, fos, SubstitutionType.TYPE_PLAIN, "UTF-8");
@@ -391,19 +380,17 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 
 			fos.close();
 		} catch (com.izforge.izpack.api.exception.ResourceNotFoundException resNotFound) {
-			logger.log(Level.WARNING, "UpdateListener.fetchAndExecuteResource()  Resource not found: " + resource + " "
-					+ resNotFound.getMessage());
+			logger.log(Level.WARNING, prefixLabel + "Resource not found: " + resource + " " + resNotFound.getMessage());
 			return null;
 		} catch (com.izforge.izpack.api.exception.ResourceException resEx) {
-			logger.log(Level.WARNING,
-					"UpdateListener.fetchAndExecuteResource()  Resource error: " + resource + " " + resEx.getMessage());
+			logger.log(Level.WARNING, prefixLabel + "Resource error: " + resource + " " + resEx.getMessage());
 			return null;
 		} catch (IOException ex) {
-			logger.log(Level.WARNING, "UpdateListener.fetchAndExecuteResource()  " + ex.getMessage());
-			throw new InstallerException("UpdateListener.fetchAndExecuteResource()  I/O error during writing resource "
-					+ resource + " to a temporary buildfile", ex);
+			logger.log(Level.WARNING, prefixLabel + "" + ex.getMessage());
+			throw new InstallerException(
+					prefixLabel + "I/O error during writing resource " + resource + " to a temporary buildfile", ex);
 		} catch (Exception ex) {
-			logger.log(Level.WARNING, "UpdateListener.fetchAndExecuteResource()  Resource gerror: " + resource + " " + ex.getMessage());
+			logger.log(Level.WARNING, prefixLabel + "Resource gerror: " + resource + " " + ex.getMessage());
 			// ex.printStackTrace();
 			return null;
 		} finally {

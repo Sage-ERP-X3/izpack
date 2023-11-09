@@ -49,7 +49,7 @@ public class FinishNewPanel extends FinishPanel {
 		boolean uninstallRequired = this.uninstallDataWriter.isUninstallRequired();
 		logger.log(Level.FINE, logPrefix+"uninstallRequired:" + uninstallRequired);
 
-		FinishNewPanelAutomationHelper.initUninstallPath(this.installData);
+		FinishNewPanelAutomationHelper.initUninstallPath(this.resources, this.installData);
 		logger.log(Level.FINE, logPrefix + "getUninstallerPath:" + installData.getInfo().getUninstallerPath());
 
 		writeUninstallData();

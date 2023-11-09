@@ -27,27 +27,28 @@ public class FinishNewPanelAutomationHelper extends FinishPanelAutomation {
 	private UninstallDataWriter uninstallDataWriter;
 	private UninstallData uninstallData;
 	private static String logPrefix = "FinishNewPanelAutomationHelper instance. ";
+	private Resources resources;
 
-	public FinishNewPanelAutomationHelper(InstallData installData, Resources resources, UninstallDataWriter uninstallDataWriter, UninstallData uninstallData) throws NativeLibException {
+	public FinishNewPanelAutomationHelper(InstallData installData, Resources resources,
+			UninstallDataWriter uninstallDataWriter, UninstallData uninstallData) throws NativeLibException {
 		super();
 
-		logger.log(Level.FINE, logPrefix+"Init custom resources");
+		logger.log(Level.FINE, logPrefix + "Init custom resources");
 
 		this.installData = installData;
+		this.resources = resources;
 		this.uninstallDataWriter = uninstallDataWriter;
 		this.uninstallData = uninstallData;
 		this.resourceHelper = new ResourcesHelper(installData, resources);
 		this.resourceHelper.mergeCustomMessages();
 
-		logger.log(Level.FINE, logPrefix+"Custom resources initialized");
+		logger.log(Level.FINE, logPrefix + "Custom resources initialized");
 	}
 
-    @Override
-    public void runAutomated(InstallData installData, IXMLElement panelRoot)
-    {
-    	writeUninstallData();
-    }
-    
+	@Override
+	public void runAutomated(InstallData installData, IXMLElement panelRoot) {
+		writeUninstallData();
+	}
 
 	private boolean writeUninstallData() {
 
@@ -58,7 +59,7 @@ public class FinishNewPanelAutomationHelper extends FinishPanelAutomation {
 
 		// We force the Uninstaller to be generated
 		if (!uninstallRequired) {
-			initUninstallPath(this.installData);
+			initUninstallPath(this.resources, this.installData);
 			result = uninstallDataWriter.write();
 			logger.log(Level.FINE,
 					logPrefix + "force writeUninstallData. uninstallDataWriter.write() returns " + result);
@@ -69,9 +70,8 @@ public class FinishNewPanelAutomationHelper extends FinishPanelAutomation {
 		}
 		return result;
 	}
-	
-    
-	public static void initUninstallPath(InstallData installData) {
+
+	public static void initUninstallPath(Resources resources, InstallData installData) {
 		Info info = installData.getInfo();
 		if (info.getUninstallerPath() == null) {
 			String uninstallPath = info.getInstallationSubPath();
@@ -87,16 +87,65 @@ public class FinishNewPanelAutomationHelper extends FinishPanelAutomation {
 		if (info.getUninstallerName() == null) {
 			info.setUninstallerName("uninstaller.jar");
 		}
-		
+
 		// We need to clean up the uninstaller.jar to be able to regenerate it
 		Path path = Paths.get(info.getUninstallerPath() + File.separator + info.getUninstallerName());
 		try {
 			Files.deleteIfExists(path);
-			logger.log(Level.FINE, logPrefix+"Old uninstaller file " + path.toAbsolutePath() + " deleted");
+			logger.log(Level.FINE, logPrefix + "Old uninstaller file " + path.toAbsolutePath() + " deleted");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-	}
 
+		// createUninstallerIcon(resources, installData, "UninstallerIcon", "UninstallerIcon", ".ico");
+
+	}
+/*
+	private static File createUninstallerIcon(Resources resources, InstallData installData, String resource,
+			String targetfileName, String ext) {
+
+		SpecHelper helper = new SpecHelper(resources);
+
+		File tempFile = null;
+		try {
+			InputStream inputStream = helper.getResource(resource);
+
+			if (inputStream == null) {
+				logger.log(Level.FINE, logPrefix + "Cannot createTempFile(" + resource + ", " + targetfileName + ") ");
+				return null;
+			}
+
+			logger.log(Level.FINE, logPrefix + "createTempFile(" + resource + ", " + targetfileName + ") ");
+
+			tempFile = File.createTempFile(targetfileName, ext);
+			tempFile.deleteOnExit();
+			FileOutputStream fos = new FileOutputStream(tempFile);
+			int a;
+			while ((a = inputStream.read()) != -1)
+				fos.write(a);
+			fos.close();
+			Path source =Paths.get(tempFile.getAbsolutePath()); 
+			Path dest = Paths.get(installData.getInstallPath() + File.separator + "Uninstaller" + targetfileName + ext);
+			logger.log(Level.FINE, logPrefix + "copy " + source + " to " + dest + "");
+			Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING);
+			
+		} catch (com.izforge.izpack.api.exception.ResourceNotFoundException resNotFound) {
+			logger.log(Level.WARNING, logPrefix + "Resource not found: " + resource + " " + resNotFound.getMessage());
+			return null;
+		} catch (com.izforge.izpack.api.exception.ResourceException resEx) {
+			logger.log(Level.WARNING, logPrefix + "Resource error: " + resource + " " + resEx.getMessage());
+			return null;
+		} catch (IOException ex) {
+			logger.log(Level.WARNING, logPrefix + "" + ex.getMessage());
+			throw new InstallerException(
+					logPrefix + "I/O error during writing resource " + resource + " to a temporary buildfile", ex);
+		} catch (Exception ex) {
+			logger.log(Level.WARNING, logPrefix + "Resource gerror: " + resource + " " + ex.getMessage());
+			return null;
+		} finally {
+		}
+
+		return tempFile;
+	}
+*/
 }

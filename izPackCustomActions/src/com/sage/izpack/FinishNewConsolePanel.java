@@ -57,24 +57,20 @@ public class FinishNewConsolePanel extends FinishConsolePanel {
 		boolean result = true;
 
 		// X3-256055: Uninstaller (izpack 5.2)
-		// installData.setVariable("force-generate-uninstaller", "true");
-		// installData.getInfo().setUninstallerCondition("uninstaller.write");
-
+		String logPrefix = "FinishNewPanel writeUninstallData - ";
 		boolean uninstallRequired = this.uninstallDataWriter.isUninstallRequired();
-		logger.log(Level.FINE, "FinishNewPanel writeUninstallData. uninstallRequired:" + uninstallRequired);
+		logger.log(Level.FINE, logPrefix + "uninstallRequired:" + uninstallRequired);
 
 		// We force the Uninstaller to be generated
-		if (!uninstallDataWriter.isUninstallRequired()) {
+		if (!uninstallRequired) {
 			FinishNewPanelAutomationHelper.initUninstallPath(this.installData);
 			result = uninstallDataWriter.write();
 			logger.log(Level.FINE,
-					"FinishNewPanel force writeUninstallData. uninstallDataWriter.write() returns " + result);
+					logPrefix + "force writeUninstallData. uninstallDataWriter.write() returns " + result);
 
 			if (!result) {
-				// Messages messages = locales.getMessages();
 				// String title = this.resourceHelper.getCustomString("installer.error");
-				 String message = this.resourceHelper.getCustomString("installer.uninstall.writefailed");
-				logger.warning(message);
+				logger.warning(this.resourceHelper.getCustomString("installer.uninstall.writefailed"));
 			}
 		}
 		return result;

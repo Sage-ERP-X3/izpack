@@ -8,10 +8,13 @@ import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.data.Info;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.resource.Resources;
+import com.izforge.izpack.installer.data.UninstallData;
+import com.izforge.izpack.installer.data.UninstallDataWriter;
 import com.izforge.izpack.panels.finish.FinishPanelAutomation;
 import com.izforge.izpack.util.OsVersion;
 
@@ -19,19 +22,55 @@ public class FinishNewPanelAutomationHelper extends FinishPanelAutomation {
 
 	private static Logger logger = Logger.getLogger(FinishNewPanelAutomationHelper.class.getName());
 
-	private ResourcesHelper _resourceHelper;
+	private ResourcesHelper resourceHelper;
+	private InstallData installData;
+	private UninstallDataWriter uninstallDataWriter;
+	private UninstallData uninstallData;
+	private static String logPrefix = "FinishNewPanelAutomationHelper instance. ";
 
-	public FinishNewPanelAutomationHelper(InstallData installData, Resources resources) throws NativeLibException {
+	public FinishNewPanelAutomationHelper(InstallData installData, Resources resources, UninstallDataWriter uninstallDataWriter, UninstallData uninstallData) throws NativeLibException {
 		super();
 
-		logger.log(Level.FINE, "FinishNewPanelAutomationHelper instance. Init custom resources");
+		logger.log(Level.FINE, logPrefix+"Init custom resources");
 
-		_resourceHelper = new ResourcesHelper(installData, resources);
-		_resourceHelper.mergeCustomMessages();
+		this.installData = installData;
+		this.uninstallDataWriter = uninstallDataWriter;
+		this.uninstallData = uninstallData;
+		this.resourceHelper = new ResourcesHelper(installData, resources);
+		this.resourceHelper.mergeCustomMessages();
 
-		logger.log(Level.FINE, "FinishNewPanelAutomationHelper instance. Custom resources initialized");
+		logger.log(Level.FINE, logPrefix+"Custom resources initialized");
 	}
 
+    @Override
+    public void runAutomated(InstallData installData, IXMLElement panelRoot)
+    {
+    	writeUninstallData();
+    }
+    
+
+	private boolean writeUninstallData() {
+
+		boolean result = true;
+
+		boolean uninstallRequired = this.uninstallDataWriter.isUninstallRequired();
+		logger.log(Level.FINE, logPrefix + "uninstallRequired:" + uninstallRequired);
+
+		// We force the Uninstaller to be generated
+		if (!uninstallRequired) {
+			initUninstallPath(this.installData);
+			result = uninstallDataWriter.write();
+			logger.log(Level.FINE,
+					logPrefix + "force writeUninstallData. uninstallDataWriter.write() returns " + result);
+
+			if (!result) {
+				logger.warning(this.resourceHelper.getCustomString("installer.uninstall.writefailed"));
+			}
+		}
+		return result;
+	}
+	
+    
 	public static void initUninstallPath(InstallData installData) {
 		Info info = installData.getInfo();
 		if (info.getUninstallerPath() == null) {
@@ -49,10 +88,11 @@ public class FinishNewPanelAutomationHelper extends FinishPanelAutomation {
 			info.setUninstallerName("uninstaller.jar");
 		}
 		
+		// We need to clean up the uninstaller.jar to be able to regenerate it
 		Path path = Paths.get(info.getUninstallerPath() + File.separator + info.getUninstallerName());
 		try {
 			Files.deleteIfExists(path);
-			logger.log(Level.FINE, "Old uninstaller file " + path.toAbsolutePath() + " deleted");
+			logger.log(Level.FINE, logPrefix+"Old uninstaller file " + path.toAbsolutePath() + " deleted");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

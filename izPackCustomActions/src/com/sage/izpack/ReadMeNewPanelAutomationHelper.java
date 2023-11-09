@@ -32,19 +32,19 @@ public class ReadMeNewPanelAutomationHelper implements com.izforge.izpack.instal
 
 	@Override
 	public void createInstallationRecord(InstallData arg0, IXMLElement arg1) {
-		// TODO Auto-generated method stub
+		// Nothing to do
 		
 	}
 
 	@Override
 	public void processOptions(InstallData arg0, Overrides arg1) {
-		// TODO Auto-generated method stub
+		// Nothing to do
 		
 	}
 
 	@Override
 	public void runAutomated(InstallData arg0, IXMLElement arg1) throws InstallerException {
-		// TODO Auto-generated method stub
+		// Nothing to do
 		
 	}		
 

@@ -1,12 +1,15 @@
 package com.sage.izpack;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.util.List;
+import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -15,18 +18,23 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.izforge.izpack.api.data.AutomatedInstallData;
+import com.izforge.izpack.api.data.InstallData;
+import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.event.AbstractUninstallerListener;
 import com.izforge.izpack.api.event.ProgressListener;
-import com.izforge.izpack.api.exception.InstallerException;
 import com.izforge.izpack.api.exception.IzPackException;
+import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.handler.AbstractUIHandler;
 import com.izforge.izpack.api.handler.Prompt;
 import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.util.helper.SpecHelper;
+import com.izforge.izpack.core.data.DefaultVariables;
 import com.izforge.izpack.core.handler.PromptUIHandler;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
+import com.izforge.izpack.util.Platform;
 
 /*
  * @author Franck DEPOORTERE
@@ -35,7 +43,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
 
-	private com.izforge.izpack.api.data.InstallData installData;
+	// private com.izforge.izpack.api.data.InstallData installData;
 	private RegistryHandler registryHandler;
 	private Prompt prompt;
 	private Resources resources;
@@ -96,151 +104,82 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 	private void beforeDeletion() {
 		try {
-
 			String logPrefix = "AdxCompUninstallerListener.beforeDeletion - ";
-			this.specHelper = new SpecHelper(this.resources);
-			/*
-			 * try { this.specHelper.readSpec(SPEC_FILE_NAME); } catch (Exception e) {
-			 * e.printStackTrace(); }
-			 */
 			System.out.println(logPrefix + "");
-			Element elemSpecDoc = null;
-			try {
-				InputStream in = resources.getInputStream(SPEC_FILE_NAME);
-				ObjectInputStream objIn = new ObjectInputStream(in);
-				String obj = (String) objIn.readObject();
-				System.out.println(" obj: " + obj + " type: " + obj.getClass().getTypeName());
-				this.prompt.error(logPrefix + "obj: " + obj + " type: " + obj.getClass().getTypeName());
+			this.specHelper = new SpecHelper(this.resources);
 
-				elemSpecDoc = AdxCompHelper.asXml(obj);
-				objIn.close();
-				in.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			// Load the defined adx module to be deleted.
-
+			Element elemSpecDoc = readAdxIzInstaller();
 			// No actions, nothing to do.
 			if (elemSpecDoc == null) {
-				System.out.println(logPrefix + SPEC_FILE_NAME + " not found.");
-				this.prompt.error(logPrefix + SPEC_FILE_NAME + " not found.");
+				System.out.println(logPrefix + SPEC_FILE_NAME + " not found. Nothing to do.");
+				// this.prompt.error(logPrefix + SPEC_FILE_NAME + " not found.");
 				return;
 			}
-
-			// System.out.println("AdxCompUninstallerListener.beforeDeletion().
-			// this.specHelper.getSpec: " +
-			// AdxCompHelper.asByteString((Element)this.specHelper.getSpec().getElement(),
-			// null));
-			// System.out.println(logPrefix + SPEC_FILE_NAME + " : " +
+			// this.prompt.error(logPrefix + SPEC_FILE_NAME + " : " +
 			// AdxCompHelper.asString(elemSpecDoc, null));
+			// we need to update adxinstalls.xml to remove the XML module: Runtime,
+			// PrintServer, ...
+			cleanAdxInstallXml(logPrefix, elemSpecDoc);
 
-			this.prompt.error(logPrefix + SPEC_FILE_NAME + " : " +  AdxCompHelper.asString(elemSpecDoc, null));
-
-			// get file adxinstalls
-
-			// here we need to update adxinstalls.xml
-
-			// we need to find adxadmin path
-
-			// verify adxAdminPath
-
-			AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, this.installData);
-			String adxAdminPath = adxCompHelper.getAdxAdminPath();
-			if (adxAdminPath == null || "".equals(adxAdminPath)) {
-
-				System.out.println(logPrefix + "OK => AdxAdmin not found.");
-				return;
+			boolean isAdxAdminB = isAdxAdminFromVariables();
+			if (!isAdxAdminB) {
+				InstallData installData = isAdxAdminFromInformations();
+				String isAdxAdmin = installData.getVariable("is-adxadmin");
+				isAdxAdminB = ((isAdxAdmin != null) ? isAdxAdmin.compareToIgnoreCase("true") >= 0 : false);
 			}
-
-			java.io.File dirAdxDir = new java.io.File(adxAdminPath);
-			if (!dirAdxDir.exists() || !dirAdxDir.isDirectory())
-				// throw new Exception(langpack.getString("adxadminParseError"));
-				throw new Exception(ResourcesHelper.getCustomPropString("adxadminParseError"));
-			// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
-
-			java.io.File fileAdxinstalls = adxCompHelper.getAdxInstallFile(dirAdxDir);
-			System.out.println(logPrefix + "Reading XML file fileAdxinstalls: " + fileAdxinstalls.getAbsolutePath());
-
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document adxInstallXmlDoc = null;
-
-			if (!fileAdxinstalls.exists()) {
-				System.out.println(logPrefix + fileAdxinstalls.getAbsolutePath() + " doesn't exist.");
-				return;
-			} else {
-				adxInstallXmlDoc = dBuilder.parse(fileAdxinstalls);
-				System.out.println(logPrefix + "FileAdxinstalls: " + fileAdxinstalls.getAbsolutePath() + " read.");
-			}
-
-			boolean isAdxAdminB = false;
-			try {
-				Object varObject = resources.getObject("variables");
-				if (varObject != null && (varObject instanceof com.izforge.izpack.api.data.Variables)) {
-					com.izforge.izpack.api.data.Variables variables = (com.izforge.izpack.api.data.Variables) varObject;
-					String isAdxAdmin = (variables != null) ? variables.get("is-adxadmin") : null;
-					isAdxAdminB = isAdxAdmin != null && isAdxAdmin.equalsIgnoreCase("true");
-				}
-			} catch (Exception e) {
-				throw new InstallerException(e);
-			}
-			// TODO: FRDEPO => how to debug ?
-			// this.specHelper.getResource(adxAdminPath)
-			// Object varObject = resources.getObject("variables");
-			// if (varObject!= null && varObject instanceof
-			// com.izforge.izpack.api.data.Variables)
-			// variables = (com.izforge.izpack.api.data.Variables) varObject;
-			// if (adxCompHelper.isAdminSetup()) {
 			if (isAdxAdminB) {
-
-				NodeList listAdxInstallsNodes = adxInstallXmlDoc.getDocumentElement().getElementsByTagName("module");
-				if (listAdxInstallsNodes != null && listAdxInstallsNodes.getLength() > 0) {
-					// remaining modules children // cancel installation !
-					System.out.println(logPrefix + "uninstaller.adxadmin.remainingmodules ");
-					throw new InstallerException(
-							ResourcesHelper.getCustomPropString("uninstaller.adxadmin.remainingmodules"));
-					// JOptionPane.showMessageDialog(thisJframe,
-					// "uninstaller.adxadmin.remainingmodules", title, JOptionPane.ERROR_MESSAGE );
-					// destroyButton.setEnabled(false);
-				}
-
-				// if (data.hasChildren() && data.getFirstChildNamed("module")!=null) { //
-				// JOptionPane.showMessageDialog(thisJframe,
-				// langpack.getString("uninstaller.adxadmin.remainingmodules"), title,
-				// JOptionPane.ERROR_MESSAGE ); destroyButton.setEnabled(false); return; } }
-				// catch (Exception ex) { JOptionPane.showMessageDialog(thisJframe,
-				// langpack.getString("uninstaller.adxadmin.errparseadxinstall"), title,
-				// JOptionPane.ERROR_MESSAGE ); destroyButton.setEnabled(false); return; } } }
-				//
-
-			} else {
-
-				String moduleName = elemSpecDoc.getAttribute("name");
-				String moduleFamily = elemSpecDoc.getAttribute("family");
-
-				System.out.println(logPrefix + "moduleSpec 0: + " + AdxCompHelper.asString(elemSpecDoc, "utf-8")
-						+ "  moduleName found: " + moduleName + "   moduleFamily found: " + moduleFamily);
-
-				// Get current module: Report, Runtime ...
-				Element adxXmlModule = getModule(adxInstallXmlDoc, elemSpecDoc, moduleName, moduleFamily);
-
-				// module not found :(
-				if (adxXmlModule == null) {
-					System.out.println(logPrefix + "module " + moduleName + "/" + moduleFamily + " not in "
-							+ fileAdxinstalls.getAbsolutePath() + ". Check finished.");
-					return;
-				}
-
-				System.out.println(logPrefix + "module " + moduleName + "/" + moduleFamily + " found in "
-						+ fileAdxinstalls.getAbsolutePath() + " Remove XML and document.");
-
-				cleanAndSave(fileAdxinstalls, adxInstallXmlDoc, moduleName, moduleFamily, adxXmlModule);
+// TODO
 			}
+
 		} catch (IzPackException exception) {
 			throw exception;
 		} catch (Exception exception) {
 			throw new IzPackException(exception);
 		}
+	}
+
+	private Element readAdxIzInstaller() {
+		Element elemSpecDoc = null;
+		try {
+			InputStream in = resources.getInputStream(SPEC_FILE_NAME);
+			ObjectInputStream objIn = new ObjectInputStream(in);
+			String obj = (String) objIn.readObject();
+			// this.prompt.error(logPrefix + "obj: " + obj + " type: " +
+			// obj.getClass().getTypeName());
+			elemSpecDoc = AdxCompHelper.asXml(obj);
+			objIn.close();
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return elemSpecDoc;
+	}
+
+	private void cleanAdxInstallXml(String logPrefix, Element elemSpecDoc) throws TransformerFactoryConfigurationError,
+			FileNotFoundException, NativeLibException, IOException, Exception {
+		String moduleName = elemSpecDoc.getAttribute("name");
+		String moduleFamily = elemSpecDoc.getAttribute("family");
+
+		AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, null);
+		Document adxInstallXmlDoc = adxCompHelper.getAdxInstallDoc();
+		java.io.File dirAdxDir = new java.io.File(adxCompHelper.getAdxAdminPath());
+		System.out.println(logPrefix + "moduleSpec 0: + " + AdxCompHelper.asString(elemSpecDoc, "utf-8")
+				+ "  moduleName found: " + moduleName + "   moduleFamily found: " + moduleFamily);
+
+		// Get current module: Report, Runtime ...
+		Element adxXmlModule = getModule(adxInstallXmlDoc, elemSpecDoc, moduleName, moduleFamily);
+
+		// module not found :(
+		if (adxXmlModule == null) {
+			System.out.println(logPrefix + "module " + moduleName + "/" + moduleFamily + " not in "
+					+ dirAdxDir.getAbsolutePath() + ". Check finished.");
+			return;
+		}
+
+		System.out.println(logPrefix + "module " + moduleName + "/" + moduleFamily + " found in "
+				+ dirAdxDir.getAbsolutePath() + " Remove XML and document.");
+
+		cleanAndSave(dirAdxDir, adxInstallXmlDoc, moduleName, moduleFamily, adxXmlModule);
 	}
 
 	private void cleanAndSave(java.io.File fileAdxinstalls, Document adxInstallXmlDoc, String moduleName,
@@ -287,6 +226,46 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			}
 		}
 		return reportModule;
+	}
+
+	private boolean isAdxAdminFromVariables() {
+		boolean isAdxAdminB = false;
+		try {
+			Object varObject = resources.getObject("variables");
+			if (varObject != null && (varObject instanceof com.izforge.izpack.api.data.Variables)) {
+				com.izforge.izpack.api.data.Variables variables = (com.izforge.izpack.api.data.Variables) varObject;
+				String isAdxAdmin = (variables != null) ? variables.get("is-adxadmin") : null;
+				isAdxAdminB = isAdxAdmin != null && isAdxAdmin.equalsIgnoreCase("true");
+			}
+		} catch (Exception e) {
+			return false;
+			// throw new InstallerException(e);
+		}
+		return isAdxAdminB;
+	}
+
+	private String getInstallPath() {
+		String result = null;
+		try {
+			InputStream in = getClass().getResourceAsStream("/install.log");
+			InputStreamReader inReader = new InputStreamReader(in);
+			BufferedReader reader = new BufferedReader(inReader);
+			result = reader.readLine();
+			reader.close();
+		} catch (IOException exception) {
+			System.err
+					.println("AdxCompUninstallerListener: unable to determine install path: " + exception.getMessage());
+		}
+		return result;
+	}
+
+	private InstallData isAdxAdminFromInformations() throws Exception {
+
+		AutomatedInstallData installData = new AutomatedInstallData(new DefaultVariables(),
+				new Platform(Platform.Name.WINDOWS));
+		Map<String, Pack> result = InstallationInformationHelper.loadInstallationInformation(getInstallPath(),
+				installData, resources);
+		return installData;
 	}
 
 	@Override

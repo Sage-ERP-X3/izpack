@@ -84,6 +84,41 @@ public class AdxCompHelper {
 		return new java.io.File(adxInstallBuilder.toString());
 	}
 
+	public Document getAdxInstallDoc() throws FileNotFoundException, NativeLibException, IOException, Exception {
+		String logPrefix = "AdxCompHelper - ";
+		String adxAdminPath = this.getAdxAdminPath();
+		if (adxAdminPath == null || "".equals(adxAdminPath)) {
+
+			System.out.println(logPrefix + "OK => AdxAdmin not found.");
+			return null;
+		}
+
+		java.io.File dirAdxDir = new java.io.File(adxAdminPath);
+		if (!dirAdxDir.exists() || !dirAdxDir.isDirectory()) {
+			// throw new Exception(langpack.getString("adxadminParseError"));
+			System.out.println(logPrefix + ResourcesHelper.getCustomPropString("adxadminParseError"));
+		// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
+			return null;
+		}
+		java.io.File fileAdxinstalls = this.getAdxInstallFile(dirAdxDir);
+		System.out.println(logPrefix + "Reading XML file fileAdxinstalls: " + fileAdxinstalls.getAbsolutePath());
+
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document adxInstallXmlDoc = null;
+
+		if (!fileAdxinstalls.exists()) {
+			System.out.println(logPrefix + fileAdxinstalls.getAbsolutePath() + " doesn't exist.");
+			return null;
+		} else {
+			adxInstallXmlDoc = dBuilder.parse(fileAdxinstalls);
+			System.out.println(logPrefix + "FileAdxinstalls: " + fileAdxinstalls.getAbsolutePath() + " read.");
+		}
+		
+		return adxInstallXmlDoc;
+	}
+	
+	
 	public boolean isAdminSetup() {
 		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler, this.installData);
 		return rh.isAdminSetup();		

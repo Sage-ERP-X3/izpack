@@ -23,12 +23,13 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 	private final RegistryHelper registryHelper;
 	private InstallData installData;
 	private RegistryHandler registryHandler;
+	private static String logPrefix = "CheckedHelloNewPanelAutomationHelper ";
 
 	public CheckedHelloNewPanelAutomationHelper(RegistryDefaultHandler handler, InstallData installData,
 			Resources resources) throws NativeLibException {
 		super(handler, installData);
 
-		logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper");
+		logger.log(Level.FINE, logPrefix);
 
 		this.registryHelper = new RegistryHelper(handler, installData);
 		this.registryHandler = handler != null ? handler.getInstance() : null;
@@ -43,30 +44,27 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 			if (x3Handler.isAdminSetup()) {
 				path = x3Handler.getAdxAdminDirPath();
 			}
-			logger.log(Level.WARNING,
-					"Warning CheckedHelloNewPanelAutomationHelper Could not get InstallationPath() return NULL. path: "+ path);
+			logger.log(Level.WARNING, logPrefix + "Could not get InstallationPath() return NULL. path: " + path);
 		}
-		
+
 		if (path != null) {
 			String targetPanelDir = "TargetPanel.dir.windows";
 			if (OsVersion.IS_LINUX) {
 				targetPanelDir = "TargetPanel.dir.unix";
-				installData.setVariable(targetPanelDir, path);				
+				installData.setVariable(targetPanelDir, path);
 			} else {
-				installData.setVariable(targetPanelDir, path);				
+				installData.setVariable(targetPanelDir, path);
 			}
-			logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper Set "+targetPanelDir+": " + path);
-			
+			logger.log(Level.FINE, logPrefix + "Set " + targetPanelDir + ": " + path);
+
 			installData.setVariable(InstallData.INSTALL_PATH, path);
-			logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper Set INSTALL_PATH", path);
+			logger.log(Level.FINE, logPrefix + "Set INSTALL_PATH", path);
 
 			installData.setVariable("UNINSTALL_NAME", installData.getVariable("APP_NAME"));
-			logger.log(Level.FINE, "CheckedHelloNewPanelAutomationHelper Set UNINSTALL_NAME: " + path);
+			logger.log(Level.FINE, logPrefix + "Set UNINSTALL_NAME: " + path);
 
-			
 			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-			logger.log(Level.FINE,
-					"CheckedHelloNewPanelAutomationHelper Set " + InstallData.MODIFY_INSTALLATION + ": true");
+			logger.log(Level.FINE, logPrefix + "Set " + InstallData.MODIFY_INSTALLATION + ": true");
 		}
 	}
 

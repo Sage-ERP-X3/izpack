@@ -75,7 +75,7 @@ public final class InstallationInformationHelper {
 
 			saveNewAppVersion(installData);
 
-			loadInstallationInformation(installData, resources);
+			loadInstallationInformation(installData.getInstallPath(), installData, resources);
 			informationloaded = true;
 			logger.log(Level.FINE, "InstallationInformationHelper Installation information loaded");
 		} catch (Exception e) {
@@ -228,14 +228,14 @@ public final class InstallationInformationHelper {
 		return result;
 	}
 
-	private static Map<String, Pack> loadInstallationInformation(com.izforge.izpack.api.data.InstallData installData,
-			Resources resources) throws Exception {
+	public static Map<String, Pack> loadInstallationInformation(String installPath,
+			com.izforge.izpack.api.data.InstallData installData, Resources resources) throws Exception {
 		Map<String, Pack> readPacks = new HashMap<String, Pack>();
-
+		String logPrefix = "InstallationInformationHelper ";
 		// installation shall be modified
 		// load installation information
 		ObjectInputStream oin = null;
-		File installInfo = new File(installData.getInstallPath(), InstallData.INSTALLATION_INFORMATION);
+		File installInfo = new File(installPath, InstallData.INSTALLATION_INFORMATION);
 		if (installInfo.exists()) {
 			FileInputStream fin = new FileInputStream(installInfo);
 			oin = new ObjectInputStream(fin);
@@ -247,19 +247,16 @@ public final class InstallationInformationHelper {
 				for (com.izforge.izpack.api.data.Pack installedpack : packsinstalled) {
 					if (!readPacks.containsKey(installedpack.getName())) {
 						readPacks.put(installedpack.getName(), installedpack);
-						logger.log(Level.FINE,
-								"InstallationInformationHelper Add pack " + installedpack.getName() + "");
+						logger.log(Level.FINE, logPrefix + "Add pack " + installedpack.getName() + "");
 					}
 				}
 				installData.setSelectedPacks(packsinstalled);
 				// removeAlreadyInstalledPacks(installData.getSelectedPacks(), readPacks);
 				// installData.setSelectedPacks(new ArrayList<Pack>());
-				logger.log(Level.FINE,
-						"InstallationInformationHelper Found " + packsinstalled.size() + " installed packs");
+				logger.log(Level.FINE, logPrefix + "Found " + packsinstalled.size() + " installed packs");
 			} catch (Exception e) {
-				logger.warning(
-						"InstallationInformationHelper Could not read Pack installation information in current izPack version: "
-								+ e.getMessage());
+				logger.warning(logPrefix + "Could not read Pack installation information in current izPack version: "
+						+ e.getMessage());
 				throw e;
 			}
 
@@ -276,19 +273,16 @@ public final class InstallationInformationHelper {
 							|| envvariables.containsOverride((String) key)
 							|| VariablesExceptions.contains((String) key)) {
 						installData.setVariable((String) key + "-old", (String) variables.get(key));
-						logger.log(Level.FINE,
-								"InstallationInformationHelper Skip variable : " + key + ": " + variables.get(key));
+						logger.log(Level.FINE, logPrefix + "Skip variable : " + key + ": " + variables.get(key));
 					} else {
 						installData.setVariable((String) key, (String) variables.get(key));
-						logger.log(Level.FINE,
-								"InstallationInformationHelper  Set variable " + key + ": " + variables.get(key));
+						logger.log(Level.FINE, logPrefix + "Set variable " + key + ": " + variables.get(key));
 					}
 				}
 				installData.setVariable("information-read", "true");
 
 			} catch (Exception e) {
-				logger.warning("InstallationInformationHelper Could not read Properties installation information: "
-						+ e.getMessage());
+				logger.warning(logPrefix + "Could not read Properties installation information: " + e.getMessage());
 				throw e;
 			}
 

@@ -57,7 +57,7 @@ public class AdxCompHelper {
 	/*
 	 * SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN
 	 */
-	public static final String ADXADMIN_REG_KeyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
+	// public static final String ADXADMIN_REG_KeyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
 
 	private com.izforge.izpack.api.data.InstallData installData;
 	private RegistryHandler registryHandler;

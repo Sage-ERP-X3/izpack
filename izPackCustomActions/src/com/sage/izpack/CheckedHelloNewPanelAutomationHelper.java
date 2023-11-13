@@ -38,7 +38,8 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 		this.installData = installData;
 		this.x3Handler = new RegistryHandlerX3(registryHandler, installData);
 
-		initPath(installData, resources, registryHelper, x3Handler);
+		CheckedHelloNewPanel.initPath(installData, resources, registryHelper, x3Handler);
+		// initPath(installData, resources, registryHelper, x3Handler);
 	}
 
 	/**
@@ -76,36 +77,8 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 		installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
 	}
 
-	/*
-	 * public static String initInstallationPath(InstallData installData,
-	 * RegistryHelper registryHelper, RegistryHandler registryHandler) throws
-	 * NativeLibException { String path = installData.getInstallPath(); if (path ==
-	 * null && OsVersion.IS_WINDOWS) path = registryHelper.getInstallationPath();
-	 * 
-	 * if (path == null) { RegistryHandlerX3 x3Handler = new
-	 * RegistryHandlerX3(registryHandler, installData); if
-	 * (x3Handler.isAdminSetup()) { path = x3Handler.getAdxAdminDirPath(); }
-	 * logger.log(Level.WARNING, logPrefix +
-	 * "Could not get InstallationPath() return NULL. path: " + path); }
-	 * 
-	 * if (path != null) { String targetPanelDir = "TargetPanel.dir.windows"; if
-	 * (OsVersion.IS_LINUX) { targetPanelDir = "TargetPanel.dir.unix";
-	 * installData.setVariable(targetPanelDir, path); } else {
-	 * installData.setVariable(targetPanelDir, path); } logger.log(Level.FINE,
-	 * logPrefix + "Set " + targetPanelDir + ": " + path);
-	 * 
-	 * installData.setVariable(InstallData.INSTALL_PATH, path);
-	 * logger.log(Level.FINE, logPrefix + "Set INSTALL_PATH", path);
-	 * 
-	 * installData.setVariable("UNINSTALL_NAME",
-	 * installData.getVariable("APP_NAME")); logger.log(Level.FINE, logPrefix +
-	 * "Set UNINSTALL_NAME: " + installData.getVariable("APP_NAME"));
-	 * 
-	 * installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-	 * logger.log(Level.FINE, logPrefix + "Set " + InstallData.MODIFY_INSTALLATION +
-	 * ": true"); } return path; }
-	 */
-	public static String initPath(InstallData installData, Resources resources, RegistryHelper registryHelper,
+/*
+	private static String initPath(InstallData installData, Resources resources, RegistryHelper registryHelper,
 			RegistryHandlerX3 x3Handler) throws NativeLibException {
 
 		// String prefixLabel = "CheckedHelloNewPanel Init - ";
@@ -156,6 +129,7 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 		logger.log(Level.FINE, logPrefix + "InitPath returned path:" + path);
 		return path;
 	}
+	*/
 
 	/**
 	 * @throws Exception
@@ -206,7 +180,6 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 
 	public static String getString(String key, ResourcesHelper resourcesHelper) {
 
-		// ResourcesHelper helper = new ResourcesHelper(this.installData,
 		String result = resourcesHelper.getCustomString(key);
 		return result;
 	}

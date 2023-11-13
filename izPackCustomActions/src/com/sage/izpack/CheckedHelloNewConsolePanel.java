@@ -3,22 +3,17 @@ package com.sage.izpack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// import javax.swing.JOptionPane;
-
 import static com.izforge.izpack.api.handler.Prompt.Option.YES;
 import static com.izforge.izpack.api.handler.Prompt.Options.YES_NO;
 import static com.izforge.izpack.api.handler.Prompt.Type.ERROR;
 
 import com.izforge.izpack.api.data.InstallData;
-import com.izforge.izpack.api.data.LocaleDatabase;
 import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.handler.Prompt;
-import com.izforge.izpack.api.resource.Locales;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
-import com.izforge.izpack.core.resource.DefaultLocales;
 import com.izforge.izpack.installer.console.ConsolePanel;
 import com.izforge.izpack.installer.panel.PanelView;
 import com.izforge.izpack.panels.checkedhello.CheckedHelloConsolePanel;
@@ -65,55 +60,13 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 
 		this.registryHelper = new RegistryHelper(handler, installData);
 
-		this.installPath = CheckedHelloNewPanelAutomationHelper.initPath(installData, resources,
-				this.registryHelper, this.x3Handler);
+		this.installPath = CheckedHelloNewPanel.initPath(installData, resources, registryHelper, x3Handler);
+		//this.installPath = CheckedHelloNewPanelAutomationHelper.initPath(installData, resources,
+		//		this.registryHelper, this.x3Handler);
 		// init(installData, resources);
 	}
 
-	/*
-	 * private void init(InstallData installData, Resources resources) throws
-	 * NativeLibException {
-	 * 
-	 * String prefixLabel = "CheckedHelloNewConsolePanel - "; String path =
-	 * installData.getInstallPath(); if (path == null && OsVersion.IS_WINDOWS) path
-	 * = this.registryHelper.getInstallationPath();
-	 * 
-	 * if (path == null) { RegistryHandlerX3 x3Handler = new
-	 * RegistryHandlerX3(this.registryHandler, installData); if
-	 * (x3Handler.isAdminSetup()) { path = x3Handler.getAdxAdminDirPath(); }
-	 * logger.log(Level.FINE, prefixLabel +
-	 * "Warning Could not get RegistryHandler.getInstallationPath() return NULL. path: "
-	 * + path); }
-	 * 
-	 * // Update case : if (path != null) { registered = true;
-	 * 
-	 * String targetPanelDir = "TargetPanel.dir.windows"; if (OsVersion.IS_LINUX) {
-	 * targetPanelDir = "TargetPanel.dir.unix";
-	 * installData.setVariable(targetPanelDir, path); } else {
-	 * installData.setVariable(targetPanelDir, path); } logger.log(Level.FINE,
-	 * prefixLabel + "Set " + targetPanelDir + ": " + path);
-	 * 
-	 * installData.setVariable(InstallData.INSTALL_PATH, path);
-	 * logger.log(Level.FINE, prefixLabel + "Set INSTALL_PATH: " + path);
-	 * 
-	 * Variables variables = this.installData.getVariables();
-	 * installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
-	 * 
-	 * // Set variable "modify.izpack.install"
-	 * installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-	 * logger.log(Level.FINE, prefixLabel + "Registered: " + registered); }
-	 * 
-	 * // Update case : read .installationinformation if (path != null &&
-	 * installData.getInfo().isReadInstallationInformation()) {
-	 * 
-	 * if
-	 * (!InstallationInformationHelper.hasAlreadyReadInformation(this.installData))
-	 * { InstallationInformationHelper.readInformation(installData, resources); }
-	 * else { logger.log(Level.FINE, prefixLabel + "ReadInstallationInformation: " +
-	 * this.installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
-	 * + InstallationInformationHelper.hasAlreadyReadInformation(this.installData));
-	 * } } }
-	 */
+
 	/**
 	 * Runs the panel using the specified console.
 	 *
@@ -124,7 +77,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 	@Override
 	public boolean run(InstallData installData, Console console) {
 
-		logger.log(Level.FINE, "CheckedHelloNewConsolePanel.run()");
+		logger.log(Level.FINE, "CheckedHelloNewConsolePanel.run()  installPath: " + this.installPath);
 
 		printHeadLine(installData, console);
 
@@ -139,7 +92,6 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 					// No Adxadmin
 					logger.log(Level.FINE, this.resourceHelper.getCustomString("adxadminNotRegistered"));
 					console.println(this.resourceHelper.getCustomString("adxadminNotRegistered"));
-					// parent.lockNextButton();
 					return false;
 				}
 			} catch (Exception e) { // Will only be happen if registry handler is good, but an

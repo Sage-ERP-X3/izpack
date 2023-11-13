@@ -43,30 +43,42 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		_resourceHelper = new ResourcesHelper(installData, resources);
 		_resourceHelper.mergeCustomMessages();
 		_registryHelper = new RegistryHelper(handler, installData);
-		_registryHandler = handler != null ?  handler.getInstance(): null;
+		_registryHandler = handler != null ? handler.getInstance() : null;
 		_handler = handler;
 		_resources = resources;
 		_x3Handler = new RegistryHandlerX3(_registryHandler, installData);
-		
-		initPath(resources);
-		// CheckedHelloNewPanelAutomationHelper.initPath(installData, _resources, _registryHelper, _x3Handler);
+
+		initPath(this.installData, resources, _registryHelper, _x3Handler);
+		// CheckedHelloNewPanelAutomationHelper.initPath(this.installData, _resources,
+		// _registryHelper, _x3Handler);
 	}
 
-	
-	private void initPath(Resources resources) throws NativeLibException {
-		
-		String prefixLabel = "CheckedHelloNewPanel Init - ";
-		
-		String path = this.installData.getInstallPath();
-		if (path == null && OsVersion.IS_WINDOWS)
-			path = _registryHelper.getInstallationPath();
-		
-		if (path == null) {
-			if (_x3Handler.isAdminSetup()) {
-				path = _x3Handler.getAdxAdminDirPath();
+	public static String initPath(InstallData installData, Resources resources, RegistryHelper registryHelper,
+			RegistryHandlerX3 x3Handler) throws NativeLibException {
+
+		String logPrefix = "CheckedHelloNewPanel Init - ";
+
+		String path = installData.getInstallPath();
+		if (path != null) {
+			logger.log(Level.FINE, logPrefix + "path: " + path + " init from installData.getInstallPath()");
+		}
+
+		if (path == null && OsVersion.IS_WINDOWS) {
+			path = registryHelper.getInstallationPath();
+			if (path != null) {
+				logger.log(Level.FINE, logPrefix + "path: " + path + " init from registryHelper.getInstallationPath()");
 			}
-			logger.log(Level.FINE,
-					prefixLabel+"Warning: Could not get RegistryHandler.getInstallationPath() return NULL. path: "+ path);
+		}
+
+		if (path == null) {
+			if (x3Handler.isAdminSetup()) {
+				path = x3Handler.getAdxAdminDirPath();
+				if (path != null) {
+					logger.log(Level.FINE, logPrefix + "path: " + path + " init from x3Handler.getAdxAdminDirPath()");
+				}
+			}
+			logger.log(Level.FINE, logPrefix
+					+ "Warning: Could not get RegistryHandler.getInstallationPath() return NULL. path: " + path);
 		}
 
 		// Update case :
@@ -74,29 +86,31 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			String targetPanelDir = "TargetPanel.dir.windows";
 			if (OsVersion.IS_LINUX) {
 				targetPanelDir = "TargetPanel.dir.unix";
-				installData.setVariable(targetPanelDir, path);				
+				installData.setVariable(targetPanelDir, path);
 			} else {
-				installData.setVariable(targetPanelDir, path);				
+				installData.setVariable(targetPanelDir, path);
 			}
-			logger.log(Level.FINE, prefixLabel+"Set "+targetPanelDir+": " + path);
+			logger.log(Level.FINE, logPrefix + "Set " + targetPanelDir + ": " + path);
 
 			installData.setVariable(InstallData.INSTALL_PATH, path);
-			logger.log(Level.FINE, prefixLabel+"Set INSTALL_PATH: " + path);
+			logger.log(Level.FINE, logPrefix + "Set INSTALL_PATH: " + path);
 		}
 
 		// Update case : read .installationinformation
 		if (path != null && installData.getInfo().isReadInstallationInformation()) {
 
-			if (!InstallationInformationHelper.hasAlreadyReadInformation(this.installData)) {
+			if (!InstallationInformationHelper.hasAlreadyReadInformation(installData)) {
 				InstallationInformationHelper.readInformation(installData, resources);
 			} else {
 				logger.log(Level.FINE,
-						prefixLabel+"ReadInstallationInformation: "
-								+ this.installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
-								+ InstallationInformationHelper.hasAlreadyReadInformation(this.installData));
+						logPrefix + "ReadInstallationInformation: "
+								+ installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
+								+ InstallationInformationHelper.hasAlreadyReadInformation(installData));
 			}
 
 		}
+		logger.log(Level.FINE, logPrefix + "InitPath returned path:" + path);
+		return path;
 	}
 
 	/*
@@ -119,7 +133,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 					JOptionPane.showMessageDialog(null, getString("adxadminNotRegistered"),
 							getString("installer.error"), JOptionPane.ERROR_MESSAGE);
 					parent.lockNextButton();
-					return;				
+					return;
 				}
 			} catch (Exception e) { // Will only be happen if registry handler is good, but an
 									// exception at performing was thrown. This is an error...
@@ -147,7 +161,8 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 				parent.lockNextButton();
 				try {
 					// if (multipleInstall()) {
-					CheckedHelloNewPanelAutomationHelper.setUniqueUninstallKey(_registryHandler, _registryHelper, _resourceHelper);
+					CheckedHelloNewPanelAutomationHelper.setUniqueUninstallKey(_registryHandler, _registryHelper,
+							_resourceHelper);
 					// setUniqueUninstallKey();
 					abortInstallation = false;
 					parent.unlockNextButton();
@@ -214,17 +229,18 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 				}
 
 				String appName = installData.getVariable("APP_NAME");
-				logger.log(Level.FINE, "CheckedHelloNewPanel isRegistered:"+result +" Set Uninstallname: " + appName);
+				logger.log(Level.FINE,
+						"CheckedHelloNewPanel isRegistered:" + result + " Set Uninstallname: " + appName);
 				if (_registryHandler == null)
 					_registryHandler = _handler != null ? _handler.getInstance() : null;
-				
+
 				if (_registryHandler != null) {
 					_registryHandler.setUninstallName(appName);
+				} else {
+					logger.log(Level.WARNING,
+							"CheckedHelloNewPanel isRegistered() CANNOT set Uninstallname: " + appName);
 				}
-				else { 
-					logger.log(Level.WARNING, "CheckedHelloNewPanel isRegistered() CANNOT set Uninstallname: " + appName);
-				}
-		        installData.setVariable("UNINSTALL_NAME", appName);
+				installData.setVariable("UNINSTALL_NAME", appName);
 			}
 		}
 		if (result) {
@@ -283,52 +299,6 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 		return (askQuestion(getString("installer.warning"), noLuck,
 				AbstractUIHandler.CHOICES_YES_NO) == AbstractUIHandler.ANSWER_YES);
-	}
-
-	
-/**
-	 * @throws Exception
-	 */
-	private void setUniqueUninstallKey() throws Exception {
-		// Let us play a little bit with the registry again...
-		// Now we search for an unique uninstall key.
-		// First we need a handler. There is no overhead at a
-		// second call of getInstance, therefore we do not buffer
-		// the handler in this class.
-
-		// RegistryHandler rh = RegistryDefaultHandler.getInstance();
-		int oldVal = _registryHandler.getRoot(); // Only for security...
-		// We know, that the product is already installed, else we
-		// would not in this method. First we get the
-		// "default" uninstall key.
-		if (oldVal > 100) // Only to inhibit warnings about local variable never read.
-		{
-			return;
-		}
-		String uninstallName = _registryHelper.getUninstallName();
-		int uninstallModifier = 1;
-		while (true) {
-			if (uninstallName == null) {
-				logger.log(Level.WARNING, "CheckedHelloNewPanel uninstallName returns NULL");
-				break; // Should never be...
-			}
-			// Now we define a new uninstall name.
-			String newUninstallName = uninstallName + "(" + Integer.toString(uninstallModifier) + ")";
-			// Then we "create" the reg key with it.
-			String keyName = RegistryHandler.UNINSTALL_ROOT + newUninstallName;
-			_registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
-			if (!_registryHandler.keyExist(keyName)) { // That's the name for which we searched.
-														// Change the uninstall name in the reg helper.
-				_registryHandler.setUninstallName(newUninstallName);
-				// Now let us inform the user.
-				// emitNotification(getString("CheckedHelloNewPanel.infoOverUninstallKey") + newUninstallName);
-				logger.log(Level.FINE, "CheckedHelloNewPanel setUniqueUninstallKey() " + getString("CheckedHelloNewPanel.infoOverUninstallKey") + newUninstallName); 
-				// Now a little hack if the registry spec file contains
-				// the pack "UninstallStuff".
-				break;
-			}
-			uninstallModifier++;
-		}
 	}
 
 }

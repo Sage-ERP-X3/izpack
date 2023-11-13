@@ -3,6 +3,8 @@ package com.sage.izpack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// import javax.swing.JOptionPane;
+
 import static com.izforge.izpack.api.handler.Prompt.Option.YES;
 import static com.izforge.izpack.api.handler.Prompt.Options.YES_NO;
 import static com.izforge.izpack.api.handler.Prompt.Type.ERROR;
@@ -39,10 +41,12 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 	/**
 	 * Determines if the application is already installed.
 	 */
-	private boolean registered;
 	private InstallData installData;
 	private RegistryHandler registryHandler;
 	private RegistryHelper registryHelper;
+	private RegistryHandlerX3 x3Handler;
+	private ResourcesHelper resourceHelper;
+	private String installPath;
 
 	public CheckedHelloNewConsolePanel(RegistryDefaultHandler handler, InstallData installData, Resources resources,
 			Prompt prompt, PanelView<ConsolePanel> panel) throws NativeLibException {
@@ -52,71 +56,64 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		this.installData = installData;
 		this.resources = resources;
 		this.registryHandler = handler != null ? handler.getInstance() : null;
+		this.x3Handler = new RegistryHandlerX3(registryHandler, installData);
 
 		logger.log(Level.FINE, "CheckedHelloNewConsolePanel");
 
-		ResourcesHelper resourceHelper = new ResourcesHelper(installData, resources);
+		this.resourceHelper = new ResourcesHelper(installData, resources);
 		resourceHelper.mergeCustomMessages();
 
 		this.registryHelper = new RegistryHelper(handler, installData);
 
+		this.installPath = CheckedHelloNewPanelAutomationHelper.initPath(installData, resources,
+				this.registryHelper, this.x3Handler);
 		// init(installData, resources);
 	}
 
-	private void init(InstallData installData, Resources resources) throws NativeLibException {
-
-		String prefixLabel = "CheckedHelloNewConsolePanel - ";
-		String path = installData.getInstallPath();
-		if (path == null && OsVersion.IS_WINDOWS)
-			path = this.registryHelper.getInstallationPath();
-
-		if (path == null) {
-			RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler, installData);
-			if (x3Handler.isAdminSetup()) {
-				path = x3Handler.getAdxAdminDirPath();
-			}
-			logger.log(Level.FINE, prefixLabel
-					+ "Warning Could not get RegistryHandler.getInstallationPath() return NULL. path: " + path);
-		}
-
-		// Update case :
-		if (path != null) {
-			registered = true;
-
-			String targetPanelDir = "TargetPanel.dir.windows";
-			if (OsVersion.IS_LINUX) {
-				targetPanelDir = "TargetPanel.dir.unix";
-				installData.setVariable(targetPanelDir, path);
-			} else {
-				installData.setVariable(targetPanelDir, path);
-			}
-			logger.log(Level.FINE, prefixLabel + "Set " + targetPanelDir + ": " + path);
-
-			installData.setVariable(InstallData.INSTALL_PATH, path);
-			logger.log(Level.FINE, prefixLabel + "Set INSTALL_PATH: " + path);
-
-			Variables variables = this.installData.getVariables();
-			installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
-
-			// Set variable "modify.izpack.install"
-			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-			logger.log(Level.FINE, prefixLabel + "Registered: " + registered);
-		}
-
-		// Update case : read .installationinformation
-		if (path != null && installData.getInfo().isReadInstallationInformation()) {
-
-			if (!InstallationInformationHelper.hasAlreadyReadInformation(this.installData)) {
-				InstallationInformationHelper.readInformation(installData, resources);
-			} else {
-				logger.log(Level.FINE,
-						prefixLabel + "ReadInstallationInformation: "
-								+ this.installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
-								+ InstallationInformationHelper.hasAlreadyReadInformation(this.installData));
-			}
-		}
-	}
-
+	/*
+	 * private void init(InstallData installData, Resources resources) throws
+	 * NativeLibException {
+	 * 
+	 * String prefixLabel = "CheckedHelloNewConsolePanel - "; String path =
+	 * installData.getInstallPath(); if (path == null && OsVersion.IS_WINDOWS) path
+	 * = this.registryHelper.getInstallationPath();
+	 * 
+	 * if (path == null) { RegistryHandlerX3 x3Handler = new
+	 * RegistryHandlerX3(this.registryHandler, installData); if
+	 * (x3Handler.isAdminSetup()) { path = x3Handler.getAdxAdminDirPath(); }
+	 * logger.log(Level.FINE, prefixLabel +
+	 * "Warning Could not get RegistryHandler.getInstallationPath() return NULL. path: "
+	 * + path); }
+	 * 
+	 * // Update case : if (path != null) { registered = true;
+	 * 
+	 * String targetPanelDir = "TargetPanel.dir.windows"; if (OsVersion.IS_LINUX) {
+	 * targetPanelDir = "TargetPanel.dir.unix";
+	 * installData.setVariable(targetPanelDir, path); } else {
+	 * installData.setVariable(targetPanelDir, path); } logger.log(Level.FINE,
+	 * prefixLabel + "Set " + targetPanelDir + ": " + path);
+	 * 
+	 * installData.setVariable(InstallData.INSTALL_PATH, path);
+	 * logger.log(Level.FINE, prefixLabel + "Set INSTALL_PATH: " + path);
+	 * 
+	 * Variables variables = this.installData.getVariables();
+	 * installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
+	 * 
+	 * // Set variable "modify.izpack.install"
+	 * installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+	 * logger.log(Level.FINE, prefixLabel + "Registered: " + registered); }
+	 * 
+	 * // Update case : read .installationinformation if (path != null &&
+	 * installData.getInfo().isReadInstallationInformation()) {
+	 * 
+	 * if
+	 * (!InstallationInformationHelper.hasAlreadyReadInformation(this.installData))
+	 * { InstallationInformationHelper.readInformation(installData, resources); }
+	 * else { logger.log(Level.FINE, prefixLabel + "ReadInstallationInformation: " +
+	 * this.installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
+	 * + InstallationInformationHelper.hasAlreadyReadInformation(this.installData));
+	 * } } }
+	 */
 	/**
 	 * Runs the panel using the specified console.
 	 *
@@ -131,45 +128,96 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 
 		printHeadLine(installData, console);
 
-		try {
-			init(installData, resources);
-		} catch (NativeLibException e) {
-			e.printStackTrace();
+		if (this.x3Handler.needAdxAdmin()) {
+			try {
+				// Check presence of adxadmin
+				String adxAdminPath = this.x3Handler.getAdxAdminDirPath();
+				boolean adxAdminInstalled = (adxAdminPath != null);
+
+				// No Adxadmin
+				if (!adxAdminInstalled) {
+					// No Adxadmin
+					logger.log(Level.FINE, this.resourceHelper.getCustomString("adxadminNotRegistered"));
+					console.println(this.resourceHelper.getCustomString("adxadminNotRegistered"));
+					// parent.lockNextButton();
+					return false;
+				}
+			} catch (Exception e) { // Will only be happen if registry handler is good, but an
+									// exception at performing was thrown. This is an error...
+				logger.log(Level.WARNING,
+						this.resourceHelper.getCustomString("installer.error") + ":" + e.getMessage());
+				console.println(this.resourceHelper.getCustomString("installer.error"));
+				// parent.lockNextButton();
+				return false;
+			}
 		}
-		
+
 		boolean result = true;
-		if (registered) {
-			result = multipleInstall(installData);
-			if (result) {
-				// try {
-				// _registryHelper.updateUninstallName();
-				// registered = false;
-				// } catch (NativeLibException exception) {
-				// result = false;
-				// logger.log(Level.SEVERE, "CheckedHelloNewConsolePanel " +
-				// exception.getMessage(), exception);
-				// }
+		// Update mode
+		if (this.installPath != null) {
+			String allowMultipleInstall = installData.getVariable("CheckedHelloNewPanel.allowMultipleInstance");
+			// multiple install is allowed
+			// <variable name="CheckedHelloNewPanel.allowMultipleInstance" value="true"/>
+			if (Boolean.TRUE.toString().equalsIgnoreCase(allowMultipleInstall)) {
+				try {
+					CheckedHelloNewPanelAutomationHelper.setUniqueUninstallKey(this.registryHandler,
+							this.registryHelper, this.resourceHelper);
+				} catch (Exception e) {
+					logger.log(Level.WARNING, e.getMessage(), e);
+					e.printStackTrace();
+				}
+
+				// We had to override this method to remove APP_VER
+				// return variables.get("APP_NAME") + " " + variables.get("APP_VER");
+				Variables variables = this.installData.getVariables();
+				installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
+				logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set UNINSTALL_NAME: " + variables.get("APP_NAME"));
+				// installData.setVariable("UNINSTALL_NAME", registryHelper.getUninstallName());
+				if (result) {
+					display(installData, console);
+					result = promptEndPanel(installData, console);
+				}
+
+				// Default behavior: update mode
+				// or <variable name="CheckedHelloNewPanel.allowMultipleInstance"
+				// value="false"/>
+			} else {
+				logger.log(Level.FINE, "CheckedHelloNewPanel allowMultipleInstance=false (updatemode)");
+
+				result = multipleInstall(installData);
+				if (result) {
+					installData.getInfo().setUninstallerPath(null);
+					installData.getInfo().setUninstallerName(null);
+					// try {
+					// _registryHelper.updateUninstallName();
+					// registered = false;
+					// } catch (NativeLibException exception) {
+					// result = false;
+					// logger.log(Level.SEVERE, "CheckedHelloNewConsolePanel " +
+					// exception.getMessage(), exception);
+					// }
+				}
+
+				// Set variable "modify.izpack.install"
+				// installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+				// logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set " +
+				// InstallData.MODIFY_INSTALLATION + ": true");
+
+				// We had to override this method to remove APP_VER
+				// return variables.get("APP_NAME") + " " + variables.get("APP_VER");
+				Variables variables = this.installData.getVariables();
+				// installData.setVariable("UNINSTALL_NAME", registryHelper.getUninstallName());
+				installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
+				logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set UNINSTALL_NAME: " + variables.get("APP_NAME"));
+				if (result) {
+					display(installData, console);
+					result = promptEndPanel(installData, console);
+				}
+
 			}
-
-			// Set variable "modify.izpack.install"
-			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-			logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set " + InstallData.MODIFY_INSTALLATION + ": true");
-
-			// We had to override this method to remove APP_VER
-			// return variables.get("APP_NAME") + " " + variables.get("APP_VER");
-			Variables variables = this.installData.getVariables();
-			installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
-			logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set UNINSTALL_NAME: " + variables.get("APP_NAME"));
-			// installData.setVariable("UNINSTALL_NAME", registryHelper.getUninstallName());
-			if (result) {
-				display(installData, console);
-				result = promptEndPanel(installData, console);
-			}
-
 		}
 		return result;
 	}
-
 
 	/**
 	 * X3-240420 : Wrong message when updating the console This method should only
@@ -196,9 +244,10 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 				path = "<not found>";
 			}
 			// X3-240420 : Wrong message when updating the console This method should only
-			ResourcesHelper resourcesHelper = new ResourcesHelper(this.installData, this.resources);
-			String noLuck = resourcesHelper.getCustomString("CheckedHelloNewPanel.productAlreadyExist0") + path + ". "
-					+ resourcesHelper.getCustomString("CheckedHelloNewPanel.productAlreadyExist1");
+			// ResourcesHelper resourcesHelper = new ResourcesHelper(this.installData,
+			// this.resources);
+			String noLuck = this.resourceHelper.getCustomString("CheckedHelloNewPanel.productAlreadyExist0") + path
+					+ ". " + this.resourceHelper.getCustomString("CheckedHelloNewPanel.productAlreadyExist1");
 
 			result = prompt.confirm(ERROR, noLuck, YES_NO) == YES;
 
@@ -211,7 +260,6 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		return result;
 	}
 
-	
 	/**
 	 * Returns the text to display.
 	 * 

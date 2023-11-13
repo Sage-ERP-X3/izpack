@@ -27,14 +27,14 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 	private static Logger logger = Logger.getLogger(CheckedHelloNewPanel.class.getName());
 
-	private ResourcesHelper _resourceHelper = null;
-
 	private static final long serialVersionUID = 1737042770727953387L; // 1737042770727953387L
 
+	private ResourcesHelper _resourceHelper = null;
 	private RegistryDefaultHandler _handler;
 	private RegistryHelper _registryHelper;
 	private RegistryHandler _registryHandler;
 	private GUIInstallData _installData;
+	private Resources _resources;
 	private RegistryHandlerX3 _x3Handler;
 
 	public CheckedHelloNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
@@ -47,9 +47,19 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		_registryHandler = handler != null ?  handler.getInstance(): null;
 		_handler = handler;
 		_installData = installData;
+		_resources = resources;
 		_x3Handler = new RegistryHandlerX3(_registryHandler, installData);
 		
-		String path = _installData.getInstallPath();
+		initPath(installData, resources);
+		// CheckedHelloNewPanelAutomationHelper.initPath(installData, this.resources,this.registryHelper, this.x3Handler);
+	}
+
+	
+	private void initPath(GUIInstallData installData, Resources resources) throws NativeLibException {
+		
+		String prefixLabel = "CheckedHelloNewPanel Init - ";
+		
+		String path = this.installData.getInstallPath();
 		if (path == null && OsVersion.IS_WINDOWS)
 			path = _registryHelper.getInstallationPath();
 		
@@ -58,7 +68,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 				path = _x3Handler.getAdxAdminDirPath();
 			}
 			logger.log(Level.FINE,
-					"Warning CheckedHelloNewPanel Could not get RegistryHandler.getInstallationPath() return NULL. path: "+ path);
+					prefixLabel+"Warning: Could not get RegistryHandler.getInstallationPath() return NULL. path: "+ path);
 		}
 
 		// Update case :
@@ -70,10 +80,10 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			} else {
 				installData.setVariable(targetPanelDir, path);				
 			}
-			logger.log(Level.FINE, "CheckedHelloNewPanel Set "+targetPanelDir+": " + path);
+			logger.log(Level.FINE, prefixLabel+"Set "+targetPanelDir+": " + path);
 
 			installData.setVariable(InstallData.INSTALL_PATH, path);
-			logger.log(Level.FINE, "CheckedHelloNewPanel Set INSTALL_PATH: " + path);
+			logger.log(Level.FINE, prefixLabel+"Set INSTALL_PATH: " + path);
 		}
 
 		// Update case : read .installationinformation
@@ -83,7 +93,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 				InstallationInformationHelper.readInformation(installData, resources);
 			} else {
 				logger.log(Level.FINE,
-						"CheckedHelloNewPanel ReadInstallationInformation: "
+						prefixLabel+"ReadInstallationInformation: "
 								+ this.installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
 								+ InstallationInformationHelper.hasAlreadyReadInformation(this.installData));
 			}
@@ -139,7 +149,8 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 				parent.lockNextButton();
 				try {
 					// if (multipleInstall()) {
-					setUniqueUninstallKey();
+					CheckedHelloNewPanelAutomationHelper.setUniqueUninstallKey(_registryHandler, _registryHelper, _resourceHelper);
+					// setUniqueUninstallKey();
 					abortInstallation = false;
 					parent.unlockNextButton();
 					// }
@@ -238,7 +249,6 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 		ResourcesHelper helper = new ResourcesHelper(this.installData, this.getResources());
 		String result = helper.getCustomString(key);
-
 		if (result == null || !result.equals(key)) {
 			result = super.getString(key);
 		}
@@ -257,7 +267,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 	@Override
 	protected boolean multipleInstall() throws NativeLibException {
 
-		String path = _installData.getInstallPath();
+		String path = this.installData.getInstallPath();
 		if (path == null && OsVersion.IS_WINDOWS)
 			path = _registryHelper.getInstallationPath();
 
@@ -277,7 +287,8 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 				AbstractUIHandler.CHOICES_YES_NO) == AbstractUIHandler.ANSWER_YES);
 	}
 
-	/**
+	
+/**
 	 * @throws Exception
 	 */
 	private void setUniqueUninstallKey() throws Exception {

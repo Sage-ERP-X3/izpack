@@ -33,7 +33,6 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 	private RegistryDefaultHandler _handler;
 	private RegistryHelper _registryHelper;
 	private RegistryHandler _registryHandler;
-	private GUIInstallData _installData;
 	private Resources _resources;
 	private RegistryHandlerX3 _x3Handler;
 
@@ -46,16 +45,15 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		_registryHelper = new RegistryHelper(handler, installData);
 		_registryHandler = handler != null ?  handler.getInstance(): null;
 		_handler = handler;
-		_installData = installData;
 		_resources = resources;
 		_x3Handler = new RegistryHandlerX3(_registryHandler, installData);
 		
-		initPath(installData, resources);
-		// CheckedHelloNewPanelAutomationHelper.initPath(installData, this.resources,this.registryHelper, this.x3Handler);
+		initPath(resources);
+		// CheckedHelloNewPanelAutomationHelper.initPath(installData, _resources, _registryHelper, _x3Handler);
 	}
 
 	
-	private void initPath(GUIInstallData installData, Resources resources) throws NativeLibException {
+	private void initPath(Resources resources) throws NativeLibException {
 		
 		String prefixLabel = "CheckedHelloNewPanel Init - ";
 		

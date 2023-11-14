@@ -9,7 +9,6 @@ import com.izforge.izpack.api.data.Overrides;
 import com.izforge.izpack.api.exception.InstallerException;
 import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.resource.Resources;
-import com.izforge.izpack.panels.finish.FinishPanelAutomation;
 
 public class ReadMeNewPanelAutomationHelper implements com.izforge.izpack.installer.automation.PanelAutomation{
 

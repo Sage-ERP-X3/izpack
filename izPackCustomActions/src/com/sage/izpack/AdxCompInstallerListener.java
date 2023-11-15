@@ -143,8 +143,11 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			String moduleType = substitutor.substitute(moduleSpec.getAttribute("type"), SubstitutionType.TYPE_PLAIN);
 			if (moduleType == null)
 				moduleType = "";
-	        String version = substitutor.substitute(moduleSpec.getFirstChildNamed("component."+moduleFamily.toLowerCase()+".version").getContent(), SubstitutionType.TYPE_PLAIN);
-			// String version = moduleSpec.getFirstChildNamed("component." + moduleFamily.toLowerCase() + ".version").getContent();
+			String version = substitutor.substitute(
+					moduleSpec.getFirstChildNamed("component." + moduleFamily.toLowerCase() + ".version").getContent(),
+					SubstitutionType.TYPE_PLAIN);
+			// String version = moduleSpec.getFirstChildNamed("component." +
+			// moduleFamily.toLowerCase() + ".version").getContent();
 
 			boolean modifyinstallation = Boolean.valueOf(installData.getVariable(InstallData.MODIFY_INSTALLATION));
 
@@ -162,21 +165,21 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			}
 			Element moduleToAdd = null;
 			if (module != null) {
-			moduleToAdd = (Element) module.cloneNode(true);
+				moduleToAdd = (Element) module.cloneNode(true);
 			}
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  saving XML xdoc:"
 					+ adxInstallXmlDoc.getDocumentElement().getNodeName());
 
-			Transformer transformer = AdxCompHelper.getTransformer(null);
+			Transformer transformer = AdxCompHelper.getTransformer("UTF-8");
 			AdxCompHelper.saveXml(fileAdxinstalls, adxInstallXmlDoc, transformer);
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  XML doc saved");
 
 			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  Add data to uninstaller " + moduleToAdd);
-			if (moduleToAdd== null) {
-				logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  Error - module is NULL - Cannot add data to uninstaller");				
-			}
-			else {
-			addDataToUninstaller(transformer, adxCompHelper, moduleToAdd);
+			if (moduleToAdd == null) {
+				logger.log(Level.FINE,
+						"AdxCompInstallerListener.afterPacks  Error - module is NULL - Cannot add data to uninstaller");
+			} else {
+				addDataToUninstaller(transformer, adxCompHelper, moduleToAdd);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -351,8 +354,8 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	 * Update module from adxInstall.xml, component.[report}.version and
 	 * component.[report].installstatus component.[report].installstatus: "update"
 	 */
-	private Element modifyXmlModule(Document xdoc, String moduleName, String moduleFamily, String moduleType, String version)
-			throws Exception {
+	private Element modifyXmlModule(Document xdoc, String moduleName, String moduleFamily, String moduleType,
+			String version) throws Exception {
 
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		String filter = "/install/module[@name='" + moduleName + "' and @type='" + moduleType + "' and @family='"
@@ -362,8 +365,9 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		if (module == null) {
 			logger.log(Level.FINE, "AdxCompInstallerListener.modifyReportModule  name: " + moduleName + " type: "
 					+ moduleType + " family: " + moduleFamily + " not found in xmlDocument " + xdoc);
-			// throw new Exception(ResourcesHelper.getCustomPropString("sectionNotFound", moduleName));
-			ResourcesHelper resourceHelper = new  ResourcesHelper(this.installData, this.resources);
+			// throw new Exception(ResourcesHelper.getCustomPropString("sectionNotFound",
+			// moduleName));
+			ResourcesHelper resourceHelper = new ResourcesHelper(this.installData, this.resources);
 			throw new Exception(resourceHelper.getCustomString("sectionNotFound", moduleName));
 		}
 
@@ -375,25 +379,22 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		status.setTextContent("update");
 
 		/*
-		String version = this.installData.getVariable("component.version");
-		if (version == null || version == "") {
-			version = this.installData.getVariable("COMPONENT.VERSION");
-		}
-		if (version == null || version == "") {
-			version = this.installData.getVariable("APP_VER"); // app-version
-		}
-		*/
-		String versionComponent =  "component." + moduleFamily.toLowerCase() + ".version";
+		 * String version = this.installData.getVariable("component.version"); if
+		 * (version == null || version == "") { version =
+		 * this.installData.getVariable("COMPONENT.VERSION"); } if (version == null ||
+		 * version == "") { version = this.installData.getVariable("APP_VER"); //
+		 * app-version }
+		 */
+		String versionComponent = "component." + moduleFamily.toLowerCase() + ".version";
 		Node nodeVersion = module.getElementsByTagName(versionComponent).item(0);
 		if (nodeVersion == null) {
-			nodeVersion = module
-					.appendChild(xdoc.createElement(versionComponent));
+			nodeVersion = module.appendChild(xdoc.createElement(versionComponent));
 		}
 		nodeVersion.setTextContent(version);
 
-		logger.log(Level.FINE, "AdxCompInstallerListener modifyXmlModule  saving XML '" + versionComponent + "': " + version);
+		logger.log(Level.FINE,
+				"AdxCompInstallerListener modifyXmlModule  saving XML '" + versionComponent + "': " + version);
 
-				
 		/*
 		 * module = (Element) xPath.compile( "/install/module[@name='" + name +
 		 * "' and @type='" + type + "' and @family='" + family + "']") .evaluate(xdoc,

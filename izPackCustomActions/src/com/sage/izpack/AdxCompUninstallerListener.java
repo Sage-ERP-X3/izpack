@@ -43,7 +43,6 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
 
-	// private com.izforge.izpack.api.data.InstallData installData;
 	private RegistryHandler registryHandler;
 	private Prompt prompt;
 	private Resources resources;
@@ -109,10 +108,9 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			this.specHelper = new SpecHelper(this.resources);
 
 			Element elemSpecDoc = readAdxIzInstaller();
-			// No actions, nothing to do.
+			// If there is no XML component linked to AdxAdmin, there is nothing to do.
 			if (elemSpecDoc == null) {
 				System.out.println(logPrefix + SPEC_FILE_NAME + " not found. Nothing to do.");
-				// this.prompt.error(logPrefix + SPEC_FILE_NAME + " not found.");
 				return;
 			}
 			// this.prompt.error(logPrefix + SPEC_FILE_NAME + " : " +
@@ -138,6 +136,9 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 		}
 	}
 
+	/*
+	 * AdxAdmin XML component
+	 */
 	private Element readAdxIzInstaller() {
 		Element elemSpecDoc = null;
 		try {
@@ -162,7 +163,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 		AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, null);
 		Document adxInstallXmlDoc = adxCompHelper.getAdxInstallDoc();
-		java.io.File dirAdxDir = new java.io.File(adxCompHelper.getAdxAdminPath());
+		java.io.File adxAdminDir = new java.io.File(adxCompHelper.getAdxAdminPath());
 		System.out.println(logPrefix + "moduleSpec 0: + " + AdxCompHelper.asString(elemSpecDoc, "utf-8")
 				+ "  moduleName found: " + moduleName + "   moduleFamily found: " + moduleFamily);
 
@@ -172,14 +173,15 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 		// module not found :(
 		if (adxXmlModule == null) {
 			System.out.println(logPrefix + "module " + moduleName + "/" + moduleFamily + " not in "
-					+ dirAdxDir.getAbsolutePath() + ". Check finished.");
+					+ adxAdminDir.getAbsolutePath() + ". Check finished.");
 			return;
 		}
 
 		System.out.println(logPrefix + "module " + moduleName + "/" + moduleFamily + " found in "
-				+ dirAdxDir.getAbsolutePath() + " Remove XML and document.");
+				+ adxAdminDir.getAbsolutePath() + " Remove XML and document.");
 
-		cleanAndSave(dirAdxDir, adxInstallXmlDoc, moduleName, moduleFamily, adxXmlModule);
+		cleanAndSave(adxCompHelper.getAdxInstallFile(adxAdminDir), adxInstallXmlDoc, moduleName, moduleFamily,
+				adxXmlModule);
 	}
 
 	private void cleanAndSave(java.io.File fileAdxinstalls, Document adxInstallXmlDoc, String moduleName,
@@ -209,7 +211,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 		moduleToRemove.getParentNode().removeChild(moduleToRemove);
 
-		AdxCompHelper.saveXml(fileAdxinstalls, adxInstallXmlDoc, AdxCompHelper.getTransformer(null));
+		AdxCompHelper.saveXml(fileAdxinstalls, adxInstallXmlDoc, AdxCompHelper.getTransformer("UTF-8"));
 	}
 
 	private Element getModule(Document adxInstallXmlDoc, Element moduleSpec, String moduleName, String moduleFamily) {

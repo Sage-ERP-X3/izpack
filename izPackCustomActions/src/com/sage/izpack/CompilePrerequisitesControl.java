@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -20,6 +21,7 @@ import com.izforge.izpack.api.data.Panel;
 import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.installer.DataValidator;
 import com.izforge.izpack.api.resource.Resources;
+import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.installer.gui.IzPanel;
 import com.izforge.izpack.panels.userinput.UserInputPanel;
 import com.izforge.izpack.util.Debug;
@@ -44,13 +46,15 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 	private static final int RESULT_FONT_SIZE_9 = 9;
 	private Resources resources;
+	private GUIInstallData guiInstallData;
 
 	/**
 	 * 
 	 */
-	public CompilePrerequisitesControl(Resources resources) {
+	public CompilePrerequisitesControl(GUIInstallData installData, Resources resources) {
 		super();
 		this.resources = resources;
+		this.guiInstallData = installData;
 	}
 
 	/**
@@ -205,25 +209,50 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 * @return
 	 * @throws Exception
 	 */
-	private IzPanel retrieveCurrentPanel(InstallData installData) throws Exception {
+	private IzPanel retrieveCurrentPanel(GUIInstallData guiInstallData, InstallData installData) throws Exception {
+
+		Panel panelFound = null;
+		String panelValidator = null;
+		for (Panel panel : installData.getPanelsOrder()) {
+			List<String> validators = panel.getValidators();
+			logger.log(Level.FINE, "Panel: " + panel.getClassName() + " validators: " + validators + " this.classname: "
+					+ this.getClass().getName());
+			for (String validator : validators) {
+				logger.log(Level.FINE, "validators: " + validator + " classname: " + this.getClass().getName());
+				if (validator == this.getClass().getName()) {
+					panelFound = panel;
+					panelValidator = validator;
+				}
+			}
+		}
+		logger.log(Level.FINE, " panelFound:" + panelFound + " panelFound.getClassName():" + panelFound.getClassName());
 
 		// test each panel of the installer
-		for (Panel wPanel : installData.getPanelsOrder()) {
-			// if (wPanel instanceof UserInputPanel) {
+		// for (Panel wPanel : installData.getPanelsOrder()) {
+		for (IzPanel wPanel : guiInstallData.getPanels()) {
 
+			logger.log(Level.FINE, "wPanel: " + wPanel + " wPanel.getName(): " + wPanel.getName() + " panelFound:"
+					+ panelFound + " panelFound.getClassName():" + panelFound.getClassName());
+
+			if (panelFound != null) {
+				if (wPanel.getName() == panelFound.getClassName()) {
+					return wPanel;
+				}
+			}
+			// if (wPanel instanceof UserInputPanel) {
 			// its the current panel if the validation service of the panel
 			// is this instance of CompilePrerequisitesControl
 			// boolean wIsCurrentPanel = (wPanel.getValidationService() == this);
-			boolean wIsCurrentPanel = (wPanel.getValidators().contains(this.getClass().getName()));
-			logger.log(Level.FINE, wPanel.getValidators() + "  contains  " + this.getClass().getName());
-			
-			/* TODO: FRDEPO
-			if (wIsCurrentPanel) {
-				return wPanel;
-			}
-			*/
-			// }
+			// boolean wIsCurrentPanel =
+			// (wPanel.getValidators().contains(this.getClass().getName()));
+			// logger.log(Level.FINE, wPanel.getValidators() + " contains " +
+			// this.getClass().getName());
+
+			/*
+			 * TODO: FRDEPO if (wIsCurrentPanel) { return wPanel; }
+			 */
 		}
+
 		throw new Exception("Unable to retrieve the current panel");
 	}
 
@@ -257,7 +286,8 @@ public class CompilePrerequisitesControl implements DataValidator {
 		// if not in console mode,
 		if (isGuiMode(installData)) { // isConsoleMode(aData) && !isBatchMode(aData)) {
 
-			JTextPane wTextPaneResultLabel = searchJTextPaneProgress(retrieveCurrentPanel(installData));
+			JTextPane wTextPaneResultLabel = searchJTextPaneProgress(
+					retrieveCurrentPanel(this.guiInstallData, installData));
 
 			String wText = wTextPaneResultLabel.getText();
 			if (wText != null) {
@@ -283,9 +313,9 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 * @param aReport
 	 * @throws Exception
 	 */
-	private void setResult(InstallData aData, final boolean aIsOK, final CReport aReport) throws Exception {
+	private void setResult(InstallData installData, final boolean aIsOK, final CReport aReport) throws Exception {
 
-		IzPanel wPanel = retrieveCurrentPanel(aData);
+		IzPanel wPanel = retrieveCurrentPanel(this.guiInstallData, installData);
 		CLoggerUtils.logInfo("Components of the panel:%s", dumpComponents(wPanel));
 		JTextPane wJTextPaneResult = searchJTextPaneResult(wPanel);
 		wJTextPaneResult.setForeground(aIsOK ? Color.BLACK : Color.BLUE);

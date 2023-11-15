@@ -119,8 +119,10 @@ public class AdxCompHelper {
 		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler, this.installData);
 		return rh.isAdminSetup();		
 	}
+	
 	/*
-	 * we need to find adxadmin path
+	 * We need to find adxadmin path directory: 
+	 * Ex: directory "C:\Sage\SafeX3\ADXADMIN"
 	 */
 	public String getAdxAdminPath() throws NativeLibException, Exception, FileNotFoundException, IOException {
 
@@ -135,12 +137,6 @@ public class AdxCompHelper {
 
 		// Test AdxAdmin is already installed. Read registry
 		if (adxAdminPath == null)  {
-			// else throw new Exception(langpack.getString("adxadminNotRegistered"));
-			// <str id="adxadminNotRegistered" txt="You must install an adxadmin
-			// administration runtime first. Exiting now."/>
-			// String warnMessage = String.format(ResourceBundle.getBundle("messages",
-			// installData.getLocale()).getString("adxadminNotRegistered"), line);
-			// throw new
 			// Exception(ResourceBundle.getBundle("com/izforge/izpack/ant/langpacks/messages").getString("adxadminNotRegistered"));
 			throw new Exception(ResourcesHelper.getCustomPropString("adxadminNotRegistered"));
 			// throw new Exception("You must install an adxadmin administration runtime

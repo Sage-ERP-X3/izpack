@@ -141,9 +141,9 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 	/**
 	 * <pre>
-	 * -  56[SYSTEM_os_arch                                              ]=[x86_64]
-	 * -  57[SYSTEM_os_name                                              ]=[Mac OS X]
-	 * -  58[SYSTEM_os_version                                           ]=[10.15.7]
+	 * 56[SYSTEM_os_arch]=[x86_64]
+	 * 57[SYSTEM_os_name]=[MacOSX]
+	 * 58[SYSTEM_os_version]=[10.15.7]
 	 * </pre>
 	 * 
 	 * @return

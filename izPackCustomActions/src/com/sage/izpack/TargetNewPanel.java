@@ -14,6 +14,10 @@ import com.izforge.izpack.panels.target.TargetPanel;
  */
 public class TargetNewPanel extends TargetPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4462248660406450482L;
 	private static Logger logger = Logger.getLogger(TargetNewPanel.class.getName());
 
 	public TargetNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
@@ -22,30 +26,6 @@ public class TargetNewPanel extends TargetPanel {
 	}
 
 	
-
-	// TODO: FRDEPO => check if necessary
-    // public static String loadDefaultDirFromVariables(Properties vars)
-    //{
-    	// Version 5.2: Seems Equivalent to 
-    	// String path = InstallPathHelper.getPath(installData);
-    	
-		// Version 4.3:
-        //String os = System.getProperty("os.name").replace(' ', '_').toLowerCase();        
-        // String path = vars.getProperty("TargetPanel.dir.".concat(os));
-        
-        // if (path == null) {
-        //    path = vars.getProperty("TargetPanel.dir." + (OsVersion.IS_WINDOWS ? "windows" : (OsVersion.IS_OSX ? "macosx" : "unix")));
-        //    if (path == null) {
-        //        path = vars.getProperty("TargetPanel.dir");
-        //    }
-        //}
-        // if (path != null) {
-        //    path = new VariableSubstitutor(vars).substitute(path, null);
-        //}
-        
-       // return path;
-    //}
-    
 	/**
 	 * Called when the panel becomes active.
 	 */

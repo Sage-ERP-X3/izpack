@@ -394,6 +394,8 @@ public final class InstallationInformationHelper {
 	private static DynamicVariable getDynamicVariable(List<DynamicVariable> dynamicVariables, String name) {
 		if (name == null)
 			return null;
+		if (dynamicVariables == null)
+			return null;
 
 		DynamicVariable result = null;
 		for (DynamicVariable dynamic : dynamicVariables) {

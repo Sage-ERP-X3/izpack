@@ -44,6 +44,7 @@ public class OsVersionHelper {
 
     public static final boolean IS_REDHAT_9_MIN = OsVersion.IS_LINUX && OsVersion.IS_REDHAT_LINUX && (getOsVersionFl() >= 9.0);
 
+    public static final boolean IS_REDHAT_10_MIN = OsVersion.IS_LINUX && OsVersion.IS_REDHAT_LINUX && (getOsVersionFl() >= 10.0);
     
 	/**
 	 * Oracle = "Oracle"

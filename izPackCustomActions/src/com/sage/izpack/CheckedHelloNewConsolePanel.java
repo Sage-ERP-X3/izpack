@@ -107,7 +107,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		boolean result = true;
 		// Update mode
 		if (this.installPath != null) {
-			String allowMultipleInstall = installData.getVariable("CheckedHelloNewPanel.allowMultipleInstance");
+			String allowMultipleInstall = installData.getVariable("allow-multiple-instance");
 			// multiple install is allowed
 			// <variable name="CheckedHelloNewPanel.allowMultipleInstance" value="true"/>
 			if (Boolean.TRUE.toString().equalsIgnoreCase(allowMultipleInstall)) {
@@ -134,7 +134,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 				// or <variable name="CheckedHelloNewPanel.allowMultipleInstance"
 				// value="false"/>
 			} else {
-				logger.log(Level.FINE, "CheckedHelloNewPanel allowMultipleInstance=false (updatemode)");
+				logger.log(Level.FINE, "CheckedHelloNewPanel allow-multiple-instance=false (updatemode)");
 
 				result = multipleInstall(installData);
 				if (result) {

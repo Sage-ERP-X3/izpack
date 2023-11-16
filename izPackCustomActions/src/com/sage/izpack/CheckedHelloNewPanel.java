@@ -150,13 +150,13 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			// test whether multiple install is allowed
 			// String disallowMultipleInstall =
 			// installData.getVariable("CheckedHelloNewPanel.disallowMultipleInstance");
-			String allowMultipleInstall = installData.getVariable("CheckedHelloNewPanel.allowMultipleInstance");
+			String allowMultipleInstall = installData.getVariable("allow-multiple-instance");
 
 			// multiple install is allowed
 			// <variable name="CheckedHelloNewPanel.allowMultipleInstance" value="true"/>
 			if (Boolean.TRUE.toString().equalsIgnoreCase(allowMultipleInstall)) {
 
-				logger.log(Level.FINE, "CheckedHelloNewPanel allowMultipleInstance=true");
+				logger.log(Level.FINE, "CheckedHelloNewPanel allow-multiple-instance=true");
 
 				parent.lockNextButton();
 				try {

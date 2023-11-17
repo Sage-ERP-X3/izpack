@@ -114,6 +114,8 @@ public class AdxCompHelper {
 		return adxInstallXmlDoc;
 	}
 	
+
+	
 	
 	public boolean isAdminSetup() {
 		RegistryHandlerX3 rh = new RegistryHandlerX3(this.registryHandler, this.installData);

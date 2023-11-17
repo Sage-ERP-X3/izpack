@@ -34,6 +34,7 @@ import com.izforge.izpack.api.exception.NativeLibException;
 
 /**
  * Class Helper about AdxAdmin, Registry, and xml file adxInstall.xml
+ * 
  * @author Franck DEPOORTERE
  */
 public class RegistryHandlerX3 {
@@ -44,8 +45,7 @@ public class RegistryHandlerX3 {
 	public static String ADX_NODE_TYPE = "component.node.type";
 	public static String ADX_NODE_FAMILY = "component.node.family";
 	private static final String SPEC_FILE_NAME = "productsSpec.txt";
-	
-	
+
 	public RegistryHandlerX3(RegistryHandler registryHandler, InstallData installData) {
 
 		this.registryHandler = registryHandler;
@@ -55,33 +55,31 @@ public class RegistryHandlerX3 {
 	public RegistryHandler getRegistryHandler() {
 		return this.registryHandler;
 	}
-	
-public InstallData getInstallData() {
-	return this.installData;
-}
+
+	public InstallData getInstallData() {
+		return this.installData;
+	}
 
 	public boolean isAdminSetup() {
-		
-		String isAdxAdmin = this.installData!= null ?  this.installData.getVariable("is-adxadmin"): null;
-    	if (isAdxAdmin != null && isAdxAdmin.equalsIgnoreCase("true")) {
 
-    		return true;
-    	}
-    	return false;
+		String isAdxAdmin = this.installData != null ? this.installData.getVariable("is-adxadmin") : null;
+		if (isAdxAdmin != null && isAdxAdmin.equalsIgnoreCase("true")) {
+
+			return true;
+		}
+		return false;
 	}
 
-	
 	public boolean needAdxAdmin() {
-		
-		String needAdxAdmin = this.installData!= null ?  this.installData.getVariable("need-adxadmin"): null;
-    	if (needAdxAdmin != null && needAdxAdmin.equalsIgnoreCase("true")) {
 
-    		return true;
-    	}
-    	return false;
+		String needAdxAdmin = this.installData != null ? this.installData.getVariable("need-adxadmin") : null;
+		if (needAdxAdmin != null && needAdxAdmin.equalsIgnoreCase("true")) {
+
+			return true;
+		}
+		return false;
 	}
-	
-	
+
 	/**
 	 * Check if AdxAdmin is installed Check the Registry if Windows
 	 * 
@@ -91,7 +89,8 @@ public InstallData getInstallData() {
 	public boolean adxadminProductRegistered() throws NativeLibException {
 
 		String adxAdminPath = getAdxAdminDirPath();
-		logger.log(Level.FINE, "RegistryHandlerX3.adxadminProductRegistered. adxAdminPath: " + adxAdminPath + "  result: " + (adxAdminPath != null));
+		logger.log(Level.FINE, "RegistryHandlerX3.adxadminProductRegistered. adxAdminPath: " + adxAdminPath
+				+ "  result: " + (adxAdminPath != null));
 		return (adxAdminPath != null);
 	}
 
@@ -106,88 +105,106 @@ public InstallData getInstallData() {
 		}
 		return getAdxAdminPathWin();
 	}
-	
 
 	/**
-	 * String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN";
-	 * String keyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
-	 * @return  C:\Sage\SafeX3\ADXADMIN
+	 * String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN"; String
+	 * keyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
+	 * 
+	 * @return C:\Sage\SafeX3\ADXADMIN
 	 * @throws NativeLibException
 	 */
 	private String getAdxAdminPathWin() throws NativeLibException {
+
 		String adxAdminPath = null;
+
+		java.io.File adxadmFile = getWinPath();
+		if (adxadmFile != null)
+			adxAdminPath = readAdxAdmFile(adxadmFile);
+
+		if (adxAdminPath != null) {
+			return adxAdminPath;
+		}
+
 		int oldVal = this.registryHandler.getRoot();
 		this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
 		boolean exists64bits = this.registryHandler.keyExist(AdxCompHelper.ADXADMIN_REG_KeyName64Bits);
-		// boolean exists32bits = this.registryHandler.keyExist(AdxCompHelper.ADXADMIN_REG_KeyName32Bits);
+		// boolean exists32bits =
+		// this.registryHandler.keyExist(AdxCompHelper.ADXADMIN_REG_KeyName32Bits);
 
 		if (exists64bits) {
-			adxAdminPath = this.registryHandler
-					.getValue(AdxCompHelper.ADXADMIN_REG_KeyName64Bits, "ADXDIR").getStringData();
+			adxAdminPath = this.registryHandler.getValue(AdxCompHelper.ADXADMIN_REG_KeyName64Bits, "ADXDIR")
+					.getStringData();
 		}
 		// 32 bits is deprecated.
-			//} else if (exists32bits){
-		//	adxAdminPath = this.registryHandler
-		//			.getValue(AdxCompHelper.ADXADMIN_REG_KeyName32Bits, "ADXDIR").getStringData();
-		//}
+		// } else if (exists32bits){
+		// adxAdminPath = this.registryHandler
+		// .getValue(AdxCompHelper.ADXADMIN_REG_KeyName32Bits,
+		// "ADXDIR").getStringData();
+		// }
 		this.registryHandler.setRoot(oldVal);
 
 		logger.log(Level.FINE, "RegistryHandlerX3.getAdxAdminPathWin. adxAdminPath: " + adxAdminPath);
 		return adxAdminPath;
 	}
 
-	
 	private String getAdxAdminPathUnix() {
-		String adxAdminPath = null;
+		java.io.File adxadmFile = getUnixPath();
+		return readAdxAdmFile(adxadmFile);
+	}
 
-		java.io.File adxadmFile = new java.io.File("/sage/adxadm");
+	private java.io.File getWinPath() {
+		String path = "c:\\sage\\adxadm";
+		return getFile(path);
+	}
+
+	private java.io.File getUnixPath() {
+		String path = "/sage/adxadm";
+		return getFile(path);
+	}
+
+	private java.io.File getFile(String path) {
+		java.io.File adxadmFile = new java.io.File(path);
 		if (!adxadmFile.exists()) {
-			adxadmFile = new java.io.File("/adonix/adxadm");
-			if (!adxadmFile.exists()) {
-				return null;
-			}
+			return null;
 		}
+		return adxadmFile;
+	}
 
+	private String readAdxAdmFile(java.io.File adxadmFile) {
+		String adxAdminPath = null;
 		FileReader readerAdxAdmFile;
 		try {
 			readerAdxAdmFile = new FileReader(adxadmFile);
 			BufferedReader buffread = new BufferedReader(readerAdxAdmFile);
 			adxAdminPath = buffread.readLine();
 			buffread.close();
-
 			logger.log(Level.FINE, "RegistryHandlerX3.getAdxAdminPathUnix. adxAdminPath: " + adxAdminPath);
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return adxAdminPath;
-
 	}
-
 
 	public HashMap<String, String[]> loadComponentsList() throws Exception {
 
-        if (needAdxAdmin())
-        {
-        	return loadListFromAdxadmin();
-        }
-        else  if (OsVersion.IS_WINDOWS)
-        {
-        	return loadListFromRegistry();
-        }
-        else {
-    		// ResourcesHelper resourcesHelper = new ResourcesHelper(installData, this.resources);
-            // throw new Exception(resourcesHelper.getCustomString("installer.error"), resourcesHelper.getCustomString("InstallationTypePanel.errNoCompFound"));
-            // maybe we can find a service ??                                 
-            throw new Exception( "installer.error" + "InstallationTypePanel.errNoCompFound");
-        }
+		if (needAdxAdmin()) {
+			return loadListFromAdxadmin();
+		} else if (OsVersion.IS_WINDOWS) {
+			return loadListFromRegistry();
+		} else {
+			// ResourcesHelper resourcesHelper = new ResourcesHelper(installData,
+			// this.resources);
+			// throw new Exception(resourcesHelper.getCustomString("installer.error"),
+			// resourcesHelper.getCustomString("InstallationTypePanel.errNoCompFound"));
+			// maybe we can find a service ??
+			throw new Exception("installer.error" + "InstallationTypePanel.errNoCompFound");
+		}
 	}
-		
+
 	private HashMap<String, String[]> loadListFromAdxadmin() {
-				
+
 		HashMap<String, String[]> lstCompPropsParam = new HashMap<String, String[]>();
-		
+
 		try {
 			String adxAdminPath = this.getAdxAdminDirPath();
 			if (adxAdminPath == null || "".equals(adxAdminPath)) {
@@ -199,7 +216,8 @@ public InstallData getInstallData() {
 			java.io.File dirAdxDir = new java.io.File(adxAdminPath);
 			if (!dirAdxDir.exists() || !dirAdxDir.isDirectory()) {
 				// nothing to do
-				logger.log(Level.WARNING, "loadListFromAdxadmin error while reading AdxAdminDirPath=" + dirAdxDir.getAbsolutePath());
+				logger.log(Level.WARNING,
+						"loadListFromAdxadmin error while reading AdxAdminDirPath=" + dirAdxDir.getAbsolutePath());
 				return lstCompPropsParam;
 			}
 
@@ -214,7 +232,8 @@ public InstallData getInstallData() {
 
 			if (!fileAdxinstalls.exists()) {
 				// nothing to do
-				logger.log(Level.WARNING, "loadListFromAdxadmin error - File " + fileAdxinstalls.getAbsolutePath() + " doesn't exist.");
+				logger.log(Level.WARNING,
+						"loadListFromAdxadmin error - File " + fileAdxinstalls.getAbsolutePath() + " doesn't exist.");
 				return lstCompPropsParam;
 			}
 
@@ -279,7 +298,6 @@ public InstallData getInstallData() {
 		return lstCompPropsParam;
 
 	}
-
 
 	private HashMap<String, String[]> loadListFromRegistry() {
 
@@ -380,7 +398,7 @@ public InstallData getInstallData() {
 
 			// free RegistryHandler
 			rh.setRoot(oldVal);
-			
+
 		} catch (Exception ex) {
 			logger.log(Level.ALL, "loadListFromRegistry error : " + ex);
 			// Debug.trace(ex);

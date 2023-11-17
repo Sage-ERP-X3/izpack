@@ -2,6 +2,7 @@ package com.sage.izpack;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +19,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.izforge.izpack.api.adaptator.IXMLElement;
+import com.izforge.izpack.api.adaptator.IXMLParser;
+import com.izforge.izpack.api.adaptator.impl.XMLParser;
 import com.izforge.izpack.api.data.AutomatedInstallData;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Pack;
@@ -119,14 +123,23 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			// PrintServer, ...
 			cleanAdxInstallXml(logPrefix, elemSpecDoc);
 
-			boolean isAdxAdminB = isAdxAdminFromVariables();
-			if (!isAdxAdminB) {
-				InstallData installData = isAdxAdminFromInformations();
-				String isAdxAdmin = installData.getVariable("is-adxadmin");
-				isAdxAdminB = ((isAdxAdmin != null) ? isAdxAdmin.compareToIgnoreCase("true") >= 0 : false);
-			}
-			if (isAdxAdminB) {
-// TODO
+			boolean isAdxAdmin = isAdxAdmin();
+			if (isAdxAdmin) {
+				AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, null);
+				Document adxInstallXmlDoc = adxCompHelper.getAdxInstallDoc();
+				if (adxInstallXmlDoc == null) {
+					System.out.println(adxCompHelper.getAdxAdminPath() + " doesn't exist or cannot be opened.");
+					return;
+				}
+				NodeList listAdxInstallsNodes = adxInstallXmlDoc.getDocumentElement().getElementsByTagName("module");
+				int nodes = listAdxInstallsNodes.getLength();
+				if (nodes > 0) {
+					// remaining modules children: cancel installation !
+					String remaining = this.resources.getString("uninstaller.adxadmin.remainingmodules");
+					System.out.println(remaining);
+					GetPromptUIHandler().emitError("Error", remaining);
+					return;
+				}
 			}
 
 		} catch (IzPackException exception) {
@@ -215,7 +228,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	}
 
 	private Element getModule(Document adxInstallXmlDoc, Element moduleSpec, String moduleName, String moduleFamily) {
-		Element reportModule = null;
+		Element result = null;
 		NodeList listAdxInstallsNodes = adxInstallXmlDoc.getDocumentElement().getElementsByTagName("module");
 		for (int i = 0; i < listAdxInstallsNodes.getLength(); i++) {
 			Element aNode = (Element) listAdxInstallsNodes.item(i);
@@ -223,11 +236,24 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			if (aNode.getAttribute("name").equals(moduleName)
 					&& aNode.getAttribute("type").equals(moduleSpec.getAttribute("type"))
 					&& aNode.getAttribute("family").equals(moduleFamily)) {
-				reportModule = aNode;
+				result = aNode;
 				break;
 			}
 		}
-		return reportModule;
+		return result;
+	}
+
+	private boolean isAdxAdmin() throws Exception {
+		boolean isAdxAdminB = isAdxAdminFromVariables();
+		if (!isAdxAdminB) {
+			InstallData installData = isAdxAdminFromInformations();
+			String isAdxAdmin = installData.getVariable("is-adxadmin");
+			isAdxAdminB = ((isAdxAdmin != null) ? isAdxAdmin.compareToIgnoreCase("true") >= 0 : false);
+			if (!isAdxAdminB) {
+				isAdxAdminB = isAdxAdminFromPath();
+			}
+		}
+		return isAdxAdminB;
 	}
 
 	private boolean isAdxAdminFromVariables() {
@@ -268,6 +294,26 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 		Map<String, Pack> result = InstallationInformationHelper.loadInstallationInformation(getInstallPath(),
 				installData, resources);
 		return installData;
+	}
+
+	private boolean isAdxAdminFromPath() {
+
+		String installPath = getInstallPath();
+		AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, null);
+		String adxAdminPath = null;
+		try {
+			adxAdminPath = adxCompHelper.getAdxAdminPath();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (installPath != null && adxAdminPath != null && installPath.equalsIgnoreCase(adxAdminPath)) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

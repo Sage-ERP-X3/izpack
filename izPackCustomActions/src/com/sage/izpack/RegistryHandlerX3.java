@@ -45,6 +45,7 @@ public class RegistryHandlerX3 {
 	public static String ADX_NODE_TYPE = "component.node.type";
 	public static String ADX_NODE_FAMILY = "component.node.family";
 	private static final String SPEC_FILE_NAME = "productsSpec.txt";
+	private static final String LogPrefix = "RegistryHandlerX3 - ";
 
 	public RegistryHandlerX3(RegistryHandler registryHandler, InstallData installData) {
 
@@ -89,8 +90,8 @@ public class RegistryHandlerX3 {
 	public boolean adxadminProductRegistered() throws NativeLibException {
 
 		String adxAdminPath = getAdxAdminDirPath();
-		logger.log(Level.FINE, "RegistryHandlerX3.adxadminProductRegistered. adxAdminPath: " + adxAdminPath
-				+ "  result: " + (adxAdminPath != null));
+		logger.log(Level.FINE, LogPrefix + "adxadminProductRegistered. adxAdminPath: " + adxAdminPath + "  result: "
+				+ (adxAdminPath != null));
 		return (adxAdminPath != null);
 	}
 
@@ -122,6 +123,8 @@ public class RegistryHandlerX3 {
 			adxAdminPath = readAdxAdmFile(adxadmFile);
 
 		if (adxAdminPath != null) {
+			logger.log(Level.FINE, LogPrefix + "getAdxAdminPathWin. adxAdminPath from " + adxadmFile.getAbsolutePath()
+					+ ": '" + adxAdminPath + "'");
 			return adxAdminPath;
 		}
 
@@ -143,7 +146,7 @@ public class RegistryHandlerX3 {
 		// }
 		this.registryHandler.setRoot(oldVal);
 
-		logger.log(Level.FINE, "RegistryHandlerX3.getAdxAdminPathWin. adxAdminPath: " + adxAdminPath);
+		logger.log(Level.FINE, LogPrefix + "getAdxAdminPathWin. adxAdminPath: '" + adxAdminPath + "'");
 		return adxAdminPath;
 	}
 
@@ -177,8 +180,10 @@ public class RegistryHandlerX3 {
 			readerAdxAdmFile = new FileReader(adxadmFile);
 			BufferedReader buffread = new BufferedReader(readerAdxAdmFile);
 			adxAdminPath = buffread.readLine();
+			if (adxAdminPath != null)
+				adxAdminPath = adxAdminPath.trim();
 			buffread.close();
-			logger.log(Level.FINE, "RegistryHandlerX3.getAdxAdminPathUnix. adxAdminPath: " + adxAdminPath);
+			logger.log(Level.FINE, "RegistryHandlerX3.readAdxAdmFile. adxAdminPath: '" + adxAdminPath + "'");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.DefaultListModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -26,7 +25,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.izforge.izpack.api.data.InstallData;
@@ -146,7 +144,7 @@ public class RegistryHandlerX3 {
 		// }
 		this.registryHandler.setRoot(oldVal);
 
-		logger.log(Level.FINE, LogPrefix + "getAdxAdminPathWin. adxAdminPath: '" + adxAdminPath + "'");
+		logger.log(Level.FINE, LogPrefix + "getAdxAdminPathWin. adxAdminPath from registry: '" + adxAdminPath + "'");
 		return adxAdminPath;
 	}
 

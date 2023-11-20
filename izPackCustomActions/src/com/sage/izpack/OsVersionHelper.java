@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.util.OsVersion;
-import com.izforge.izpack.util.OsVersionConstants;
 import com.izforge.izpack.util.StringTool;
 
 public class OsVersionHelper {

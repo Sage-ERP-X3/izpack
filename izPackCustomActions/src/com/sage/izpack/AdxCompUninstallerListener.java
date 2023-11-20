@@ -2,7 +2,6 @@ package com.sage.izpack;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,9 +18,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.izforge.izpack.api.adaptator.IXMLElement;
-import com.izforge.izpack.api.adaptator.IXMLParser;
-import com.izforge.izpack.api.adaptator.impl.XMLParser;
 import com.izforge.izpack.api.data.AutomatedInstallData;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Pack;
@@ -132,10 +128,14 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 					return;
 				}
 				NodeList listAdxInstallsNodes = adxInstallXmlDoc.getDocumentElement().getElementsByTagName("module");
-				int nodes = listAdxInstallsNodes.getLength();
+				int nodes = 0;
+				if (listAdxInstallsNodes != null)
+					nodes = listAdxInstallsNodes.getLength();
 				if (nodes > 0) {
 					// remaining modules children: cancel installation !
-					String remaining = this.resources.getString("uninstaller.adxadmin.remainingmodules");
+					String remaining = "remaining modules children: cancel installation !";
+					if (this.resources != null)
+						remaining = this.resources.getString("uninstaller.adxadmin.remainingmodules");
 					System.out.println(remaining);
 					GetPromptUIHandler().emitError("Error", remaining);
 					return;

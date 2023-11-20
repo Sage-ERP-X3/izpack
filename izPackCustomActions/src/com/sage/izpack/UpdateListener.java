@@ -1,7 +1,6 @@
 package com.sage.izpack;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,9 +17,7 @@ import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.InstallerException;
 import com.izforge.izpack.api.substitutor.SubstitutionType;
 import com.izforge.izpack.api.substitutor.VariableSubstitutor;
-import com.izforge.izpack.core.resource.ResourceManager;
 import com.izforge.izpack.core.substitutor.VariableSubstitutorImpl;
-import com.izforge.izpack.core.substitutor.VariableSubstitutorInputStream;
 import com.izforge.izpack.event.AbstractProgressInstallerListener;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.helper.SpecHelper;

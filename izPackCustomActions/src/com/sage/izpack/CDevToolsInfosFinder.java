@@ -1,6 +1,5 @@
 package com.sage.izpack;
 
-import com.izforge.izpack.api.data.AutomatedInstallData;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.resource.Resources;
 

@@ -1,7 +1,5 @@
 package com.sage.izpack;
 
-import java.io.File;
-
 import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.adaptator.impl.XMLElementImpl;
 import com.izforge.izpack.api.data.AutomatedInstallData;
@@ -15,31 +13,30 @@ public class InstallTypeNewPanelAutomationHelper extends PanelAutomationHelper
 
     public void startAction(String name, int no_of_steps)
     {
-        // TODO Auto-generated method stub
-
+        // Nothing to do
     }
 
     public void stopAction()
     {
-        // TODO Auto-generated method stub
+        // Nothing to do
 
     }
 
     public void nextStep(String step_name, int step_no, int no_of_substeps)
     {
-        // TODO Auto-generated method stub
+        // Nothing to do
 
     }
 
     public void setSubStepNo(int no_of_substeps)
     {
-        // TODO Auto-generated method stub
+        // Nothing to do
 
     }
 
     public void progress(int substep_no, String message)
     {
-        // TODO Auto-generated method stub
+        // Nothing to do
 
     }
 

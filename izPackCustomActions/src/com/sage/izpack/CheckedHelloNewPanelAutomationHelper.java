@@ -3,8 +3,6 @@ package com.sage.izpack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JOptionPane;
-
 import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Variables;
@@ -12,10 +10,8 @@ import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
-import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.panels.checkedhello.CheckedHelloPanelAutomationHelper;
 import com.izforge.izpack.panels.checkedhello.RegistryHelper;
-import com.izforge.izpack.util.OsVersion;
 
 public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutomationHelper {
 

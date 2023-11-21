@@ -28,8 +28,8 @@ import com.izforge.izpack.panels.checkedhello.RegistryHelper;
 public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.console.AbstractTextConsolePanel {
 
 	private static Logger logger = Logger.getLogger(InstallTypeNewConsolePanel.class.getName());
-	private Resources resources;
-	private PromptUIHandler handler;
+	private final Resources resources;
+	private final PromptUIHandler handler;
 	private RegistryHelper registryHelper;
 	private RegistryHandler registryHandler;
 

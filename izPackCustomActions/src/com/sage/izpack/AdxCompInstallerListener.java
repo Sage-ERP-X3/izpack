@@ -62,9 +62,9 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	private Resources resources = null;
 	private VariableSubstitutor variableSubstitutor;
 
-	private com.izforge.izpack.api.data.InstallData installData;
-	private com.izforge.izpack.installer.data.UninstallData uninstallData;
-	private RegistryHandler registryHandler;
+	private final com.izforge.izpack.api.data.InstallData installData;
+	private final com.izforge.izpack.installer.data.UninstallData uninstallData;
+	private final RegistryHandler registryHandler;
 
 	public AdxCompInstallerListener(com.izforge.izpack.api.data.InstallData installData, UninstallData uninstallData,
 			VariableSubstitutor variableSubstitutor, Resources resources, RegistryDefaultHandler handler) {

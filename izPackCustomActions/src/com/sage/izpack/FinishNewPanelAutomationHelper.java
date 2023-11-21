@@ -23,11 +23,11 @@ public class FinishNewPanelAutomationHelper extends FinishPanelAutomation {
 	private static Logger logger = Logger.getLogger(FinishNewPanelAutomationHelper.class.getName());
 
 	private ResourcesHelper resourceHelper;
-	private InstallData installData;
-	private UninstallDataWriter uninstallDataWriter;
-	private UninstallData uninstallData;
+	private final InstallData installData;
+	private final UninstallDataWriter uninstallDataWriter;
+	private final UninstallData uninstallData;
 	private static String logPrefix = "FinishNewPanelAutomationHelper instance. ";
-	private Resources resources;
+	private final Resources resources;
 
 	public FinishNewPanelAutomationHelper(InstallData installData, Resources resources,
 			UninstallDataWriter uninstallDataWriter, UninstallData uninstallData) throws NativeLibException {

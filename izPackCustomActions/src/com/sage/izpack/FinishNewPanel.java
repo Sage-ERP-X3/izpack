@@ -23,9 +23,9 @@ public class FinishNewPanel extends FinishPanel {
 
 	private static Logger logger = Logger.getLogger(FinishNewPanel.class.getName());
 	private static String logPrefix = "FinishNewPanel instance. ";
-	private UninstallDataWriter uninstallDataWriter;
-	private Resources resources;
-	private ResourcesHelper resourceHelper;
+	private final UninstallDataWriter uninstallDataWriter;
+	private final Resources resources;
+	private final ResourcesHelper resourceHelper;
 
 	public FinishNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			UninstallDataWriter uninstallDataWriter, UninstallData uninstallData, Log log) {

@@ -57,6 +57,8 @@ public class ResourcesHelper {
 		return result;
 	}
 
+
+	
 	private String getLocaleIso3() {
 		if (this.installData != null)
 			return this.installData.getLocaleISO3();

@@ -51,7 +51,6 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	private static String LogPrefix = "AdxCompUninstallerListener - ";
 	public static String PrivilegesFriendlyMessage = "It looks that you don't have enough rights. You need to launch the 'Uninstaller' program from 'Add or remove programs' to get all privileges. ";
 
-	
 	public AdxCompUninstallerListener(RegistryDefaultHandler handler, Resources resources, Messages messages,
 			Prompt prompt) {
 
@@ -136,9 +135,9 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 					nodes = listAdxInstallsNodes.getLength();
 				if (nodes > 0) {
 					// remaining modules children: cancel installation !
-					String remaining = "remaining modules children: cancel installation !";
-					if (this.resources != null)
-						remaining = this.resources.getString("uninstaller.adxadmin.remainingmodules");
+					// this.resources.getString("uninstaller.adxadmin.remainingmodules");
+					String remaining = this.getString("uninstaller.adxadmin.remainingmodules",
+							"remaining modules children: cancel installation !"); 
 					System.out.println(remaining);
 					GetPromptUIHandler().emitError("Error", remaining);
 					System.exit(1);
@@ -146,8 +145,9 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			}
 
 		} catch (IzPackException exception) {
-			if (exception.getMessage().indexOf("Access is denied") >=0) {
-				GetPromptUIHandler().emitWarning("Error", PrivilegesFriendlyMessage);
+			String errorMesg = exception.getMessage();
+			if (errorMesg.indexOf("Access is denied") >= 0 || errorMesg.indexOf("Accès refusé") >= 0) {
+				GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", PrivilegesFriendlyMessage));
 			}
 			throw exception;
 		} catch (Exception exception) {
@@ -201,13 +201,15 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 				adxXmlModule);
 	}
 
-	private String getString(String resourceId) {
+	private String getString(String resourceId, String defaultTranslation) {
 		ResourcesHelper helper = new ResourcesHelper(null, resources);
 		helper.mergeCustomMessages(messages);
-		return helper.getCustomString(resourceId);
+		String result = helper.getCustomString(resourceId);
+		if (result == null)
+			result = defaultTranslation;
+		return result;
 	}
 
-	
 	private void cleanAndSave(java.io.File fileAdxinstalls, Document adxInstallXmlDoc, String moduleName,
 			String moduleFamily, Element moduleToRemove) throws TransformerFactoryConfigurationError,
 			TransformerConfigurationException, TransformerException, ParserConfigurationException {
@@ -220,12 +222,10 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 				String modstatus = elem.getTextContent();
 
 				if (!"idle".equalsIgnoreCase(modstatus)) {
-
 					String errorMsg = "Error";
 					String notidleMsg = "notidle";
-					String friendlyMsg = this.getString(notidleMsg);
-					if (friendlyMsg == null)
-						friendlyMsg = errorMsg + ": module not idle (Status: " + modstatus + ") " + notidleMsg;
+					String friendlyMsg = this.getString(notidleMsg,
+							errorMsg + ": module not idle (Status: " + modstatus + ") " + notidleMsg);
 					GetPromptUIHandler().emitWarning(errorMsg, friendlyMsg);
 					System.exit(1);
 				}

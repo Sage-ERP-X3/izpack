@@ -369,5 +369,6 @@
 	
 	<str id="X3NodeIdentifierValidator" txt="Cet identifiant est déjà utilisé !"/>
     <str id="portinuse" txt="This port is already in use !"/>
+    <str id="privilegesIssue" txt="Il semble que vous n'ayez pas suffisamment de droits. Vous devez lancer le programme 'Uninstaller' à partir de la fonction 'Ajouter ou supprimer des programmes' pour obtenir tous les privilèges."/>		
 
 </izpack:langpack>

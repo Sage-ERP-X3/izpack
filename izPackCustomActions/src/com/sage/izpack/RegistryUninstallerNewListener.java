@@ -30,12 +30,17 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 
 	private RegistryDefaultHandler myhandler;
 	private Prompt prompt;
+	private Resources resources;
+	private Messages messages;
+	private static String PrefixLabel = "RegistryUninstallerNewListener - ";
 
 	public RegistryUninstallerNewListener(RegistryDefaultHandler handler, Resources resources, Messages messages,
 			Prompt prompt) {
 		super(handler, resources, messages);
 
-		myhandler = handler;
+		this.myhandler = handler;
+		this.resources = resources;
+		this.messages = messages;
 		this.prompt = prompt;
 
 	}
@@ -55,7 +60,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	@Override
 	public void afterDelete(File file) {
 
-		logger.log(Level.FINE, "RegistryUninstallerNewListener.afterDelete. File : " + file);
+		logger.log(Level.FINE, PrefixLabel + "afterDelete. File : " + file);
 
 		super.afterDelete(file);
 	}
@@ -64,13 +69,14 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	public void beforeDelete(List<File> files, ProgressListener listener) {
 
 		// deleteRegistry();
-		logger.log(Level.FINE, "RegistryUninstallerNewListener.beforeDelete.  ");
+		logger.log(Level.FINE, PrefixLabel + "beforeDelete.  ");
 		try {
 			super.beforeDelete(files, listener);
 		} catch (Exception exception) {
 			String errorMesg = exception.getMessage();
 			if (errorMesg.indexOf("Access is denied") >= 0 || errorMesg.indexOf("Accès refusé") >= 0) {
-				GetPromptUIHandler().emitWarning("Error", AdxCompUninstallerListener.PrivilegesFriendlyMessage);
+				GetPromptUIHandler().emitWarning("Error",
+						getString("privilegesIssue", AdxCompUninstallerListener.PrivilegesFriendlyMessage));
 			}
 			throw exception;
 		}
@@ -86,7 +92,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	@Override
 	public void afterDelete(List<File> files, ProgressListener listener) {
 
-		logger.log(Level.FINE, "RegistryUninstallerNewListener.afterDelete.  ");
+		logger.log(Level.FINE, PrefixLabel + "afterDelete.  ");
 
 		super.afterDelete(files, listener);
 
@@ -123,6 +129,15 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 			e.printStackTrace();
 			logger.log(Level.FINE, "Error, registry key " + keyName + " NOT deleted");
 		}
+	}
+
+	private String getString(String resourceId, String defaultTranslation) {
+		ResourcesHelper helper = new ResourcesHelper(null, resources);
+		helper.mergeCustomMessages(messages);
+		String result = helper.getCustomString(resourceId);
+		if (result == null)
+			result = defaultTranslation;
+		return result;
 	}
 
 }

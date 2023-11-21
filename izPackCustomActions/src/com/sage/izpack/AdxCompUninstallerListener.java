@@ -48,6 +48,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	private Resources resources;
 	private Messages messages;
 	private SpecHelper specHelper = null;
+	private static String LogPrefix = "AdxCompUninstallerListener - ";
 
 	public AdxCompUninstallerListener(RegistryDefaultHandler handler, Resources resources, Messages messages,
 			Prompt prompt) {
@@ -66,7 +67,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 	@Override
 	public void initialise() {
-		System.out.println("AdxCompUninstallerListener  initialise");
+		System.out.println(LogPrefix + "initialise");
 
 	}
 
@@ -79,7 +80,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	@Override
 	public void beforeDelete(List<File> arg0) {
 
-		System.out.println("AdxCompUninstallerListener.beforeDelete(List<File>arg0: " + arg0 + ")");
+		System.out.println(LogPrefix + ".beforeDelete(List<File>arg0: " + arg0 + ")");
 
 		beforeDeletion();
 
@@ -88,7 +89,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	@Override
 	public void beforeDelete(List<File> arg0, ProgressListener arg1) {
 
-		System.out.println("AdxCompUninstallerListener.beforeDelete(List<File> arg0, ProgressListener arg1)");
+		System.out.println(LogPrefix + ".beforeDelete(List<File> arg0, ProgressListener arg1)");
 
 		beforeDeletion();
 
@@ -97,7 +98,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	@Override
 	public void beforeDelete(File arg0) {
 
-		System.out.println("AdxCompUninstallerListener.beforeDelete(File arg0:" + arg0 + ")");
+		System.out.println(LogPrefix + ".beforeDelete(File arg0:" + arg0 + ")");
 
 	}
 
@@ -138,7 +139,8 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 						remaining = this.resources.getString("uninstaller.adxadmin.remainingmodules");
 					System.out.println(remaining);
 					GetPromptUIHandler().emitError("Error", remaining);
-					return;
+					System.exit(1);
+					//return;
 				}
 			}
 
@@ -210,13 +212,14 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 				if (!"idle".equalsIgnoreCase(modstatus)) {
 
-					// ResourcesHelper helper = new ResourcesHelper(installData, resources);
-					String errorMsg = "Error"; // ResourcesHelper.getCustomPropString("installer.error"); //
-												// ResourceBundle.getBundle("com/sage/izpack/messages").getString("installer.error");
-					// String notidleMsg = helper.getCustomString("notidle", false);
+					ResourcesHelper helper = new ResourcesHelper(null, resources);
+					helper.mergeCustomMessages(messages);
+					String errorMsg = "Error";
 					String notidleMsg = "notidle";
-					String friendlyMsg = errorMsg + ": module not idle (Status: " + modstatus + ") " + notidleMsg;
-					GetPromptUIHandler().emitError(errorMsg, friendlyMsg);
+					String friendlyMsg = helper.getCustomString(notidleMsg);
+					if (friendlyMsg == null)
+						friendlyMsg = errorMsg + ": module not idle (Status: " + modstatus + ") " + notidleMsg;
+					GetPromptUIHandler().emitWarning(errorMsg, friendlyMsg);
 					System.exit(1);
 				}
 			}

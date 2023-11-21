@@ -13,6 +13,9 @@ import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.core.resource.DefaultLocales;
 
+/*
+ * @author Franck DEPOORTERE
+ */
 public class ResourcesHelper {
 
 	private Resources resources = null;
@@ -54,42 +57,42 @@ public class ResourcesHelper {
 		return result;
 	}
 
+	private String getLocaleIso3() {
+		if (this.installData != null)
+			return this.installData.getLocaleISO3();
+		return getLocale().getISO3Language();
+	}
+
+	private Locale getLocale() {
+
+		Locale result = null;
+		if (this.installData != null)
+			result = installData.getLocale();
+		if (result == null)
+			result = Locale.getDefault();
+		if (result == null)
+			result = Locale.ENGLISH;
+		return result;
+
+	}
+
 	/*
 	 * Merge customized resources with the standard resources
 	 */
 	public void mergeCustomMessages() {
+		mergeCustomMessages(installData.getMessages());
+	}
+
+	public void mergeCustomMessages(Messages messages) {
 
 		initializeResources();
 
 		logger.log(Level.FINE, "ResourcesHelper.mergeCustomMessages  from " + this.customResourcesPath
-				+ "  GetLocale():" + this.installData.getLocaleISO3());
+				+ "  GetLocale():" + getLocaleIso3());
 
-		Messages messagesM = installData.getMessages();
+		Messages messagesM = messages;
 		if (this.customResources != null)
 			messagesM.add(customResources);
-
-		/*
-		 * Map<String, String> newMessages = new HashMap<String, String>(); Map<String,
-		 * String> messages = messagesM.getMessages(); messages.forEach((mesgKey,
-		 * mesgValue) -> {
-		 * 
-		 * String customMesg = getCustomString(mesgKey, true); if (customMesg != null) {
-		 * // messages.replace(mesgKey, customMesg); // newMessages.put(mesgKey,
-		 * customMesg);
-		 * 
-		 * logger.log(Level.FINE,
-		 * "ResourcesHelper.mergeCustomMessages  replace custom '" + mesgKey + "': '" +
-		 * customMesg + "'  from " + this.customResourcesPath + "  GetLocale():" +
-		 * this.installData.getLocaleISO3()); } else { newMessages.put(mesgKey,
-		 * mesgValue);
-		 * 
-		 * logger.log(Level.FINE, "ResourcesHelper.mergeCustomMessages  keep '" +
-		 * mesgKey + "': '" + mesgValue + "'  from " + this.customResourcesPath +
-		 * "  GetLocale():" + this.installData.getLocaleISO3());
-		 * 
-		 * } });
-		 * 
-		 */
 
 	}
 
@@ -113,11 +116,11 @@ public class ResourcesHelper {
 				result = String.format(result, arg1);
 			}
 			logger.log(Level.FINE, "ResourcesHelper.getCustomString  get '" + key + "': '" + result + "'  from "
-					+ this.customResourcesPath + "  GetLocale():" + this.installData.getLocaleISO3());
+					+ this.customResourcesPath + "  GetLocale():" + getLocaleIso3());
 
 		} catch (Exception ex) {
 			logger.log(Level.SEVERE, "ResourcesHelper Cannot get resource " + key + " " + this.customResourcesPath
-					+ "GetLocale(): " + this.installData.getLocaleISO3() + " : " + ex);
+					+ "GetLocale(): " + getLocaleIso3() + " : " + ex);
 			ex.printStackTrace();
 		}
 
@@ -126,16 +129,18 @@ public class ResourcesHelper {
 
 	private String getSafeLocale() {
 
-		final String defaultLangISO3 = "eng";
-		final String defaultLangISO2 = "en";
+		final String defaultLangISO3 = getLocale().getISO3Language(); //  "eng";
+		final String defaultLangISO2 = getLocale().getLanguage(); //  "en";
 
-		String lang = this.installData.getLocaleISO3();
+		String lang = defaultLangISO3;
+		if (this.installData != null)
+			lang = this.installData.getLocaleISO3();
 
 		if (lang == null) {
-			if (this.installData.getLocale() != null) {
+			if (this.installData != null && this.installData.getLocale() != null) {
 				lang = this.installData.getLocale().getISO3Language();
 			}
-			if (lang == null) {
+			if (lang == null && this.installData != null) {
 				lang = this.installData.getVariable("ISO3_LANG");
 			}
 			if (lang == null) {
@@ -144,18 +149,20 @@ public class ResourcesHelper {
 			}
 		}
 
-		if (this.installData.getVariable("ISO3_LANG") == null)
-			this.installData.setVariable("ISO3_LANG", lang);
+		if (this.installData != null) {
+			if (this.installData.getVariable("ISO3_LANG") == null)
+				this.installData.setVariable("ISO3_LANG", lang);
 
-		if (this.installData.getVariable("ISO2_LANG") == null)
-			this.installData.setVariable("ISO2_LANG", defaultLangISO2);
+			if (this.installData.getVariable("ISO2_LANG") == null)
+				this.installData.setVariable("ISO2_LANG", defaultLangISO2);
 
-		if (this.installData.getLocale() == null) {
-			if (this.installData instanceof AutomatedInstallData) {
-				((AutomatedInstallData) this.installData).setLocale(Locale.ENGLISH, lang);
+			if (this.installData.getLocale() == null) {
+				if (this.installData instanceof AutomatedInstallData) {
+					((AutomatedInstallData) this.installData).setLocale(Locale.ENGLISH, lang);
+				}
+
+				// Locales locales = new DefaultLocales(resources, Locale.ENGLISH);
 			}
-
-			Locales locales = new DefaultLocales(resources, Locale.ENGLISH);
 		}
 
 		return lang;
@@ -170,7 +177,7 @@ public class ResourcesHelper {
 				this.customResourcesPath = "/com/sage/izpack/langpacks/" + lang + ".xml";
 			}
 			if (this.customResources == null) {
-				Locales locales = new DefaultLocales(this.resources, this.installData.getLocale());
+				Locales locales = new DefaultLocales(this.resources, getLocale());
 				this.customResources = new LocaleDatabase(getClass().getResourceAsStream(customResourcesPath), locales);
 			}
 

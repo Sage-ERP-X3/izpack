@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -41,6 +43,10 @@ import com.izforge.izpack.util.Platform;
  */
 public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
+	private static final Logger logger = Logger.getLogger(AdxCompUninstallerListener.class.getName());
+	private static String LogPrefix = "AdxCompUninstallerListener - ";
+	public static String PrivilegesFriendlyMessage = "It looks that you don't have enough rights. You need to launch the 'Uninstaller' program from 'Add or remove programs' to get all privileges. ";
+
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
 
 	private RegistryHandler registryHandler;
@@ -48,8 +54,6 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	private Resources resources;
 	private Messages messages;
 	private SpecHelper specHelper = null;
-	private static String LogPrefix = "AdxCompUninstallerListener - ";
-	public static String PrivilegesFriendlyMessage = "It looks that you don't have enough rights. You need to launch the 'Uninstaller' program from 'Add or remove programs' to get all privileges. ";
 
 	public AdxCompUninstallerListener(RegistryDefaultHandler handler, Resources resources, Messages messages,
 			Prompt prompt) {
@@ -68,7 +72,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 	@Override
 	public void initialise() {
-		System.out.println(LogPrefix + "initialise");
+		logger.log(Level.FINE, LogPrefix + "initialise");
 
 	}
 
@@ -81,7 +85,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	@Override
 	public void beforeDelete(List<File> arg0) {
 
-		System.out.println(LogPrefix + ".beforeDelete(List<File>arg0: " + arg0 + ")");
+		logger.log(Level.FINE, LogPrefix + ".beforeDelete(List<File>arg0: " + arg0 + ")");
 
 		beforeDeletion();
 
@@ -90,7 +94,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	@Override
 	public void beforeDelete(List<File> arg0, ProgressListener arg1) {
 
-		System.out.println(LogPrefix + ".beforeDelete(List<File> arg0, ProgressListener arg1)");
+		logger.log(Level.FINE, LogPrefix + ".beforeDelete(List<File> arg0, ProgressListener arg1)");
 
 		beforeDeletion();
 
@@ -99,20 +103,20 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	@Override
 	public void beforeDelete(File arg0) {
 
-		System.out.println(LogPrefix + ".beforeDelete(File arg0:" + arg0 + ")");
+		logger.log(Level.FINE, LogPrefix + ".beforeDelete(File arg0:" + arg0 + ")");
 
 	}
 
 	private void beforeDeletion() {
 		try {
 			String logPrefix = "AdxCompUninstallerListener.beforeDeletion - ";
-			System.out.println(logPrefix + "");
+			logger.log(Level.FINE, logPrefix + "");
 			this.specHelper = new SpecHelper(this.resources);
 
 			Element elemSpecDoc = readAdxIzInstaller();
 			// If there is no XML component linked to AdxAdmin, there is nothing to do.
 			if (elemSpecDoc == null) {
-				System.out.println(logPrefix + SPEC_FILE_NAME + " not found. Nothing to do.");
+				logger.log(Level.FINE, logPrefix + SPEC_FILE_NAME + " not found. Nothing to do.");
 				return;
 			}
 			// this.prompt.error(logPrefix + SPEC_FILE_NAME + " : " +
@@ -126,7 +130,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 				AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, null);
 				Document adxInstallXmlDoc = adxCompHelper.getAdxInstallDoc();
 				if (adxInstallXmlDoc == null) {
-					System.out.println(adxCompHelper.getAdxAdminPath() + " doesn't exist or cannot be opened.");
+					logger.log(Level.FINE, adxCompHelper.getAdxAdminPath() + " doesn't exist or cannot be opened.");
 					return;
 				}
 				NodeList listAdxInstallsNodes = adxInstallXmlDoc.getDocumentElement().getElementsByTagName("module");
@@ -146,7 +150,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 		} catch (IzPackException exception) {
 			String errorMesg = exception.getMessage();
-			if (errorMesg.indexOf("Access is denied") >= 0 || errorMesg.indexOf("Accès refusé") >= 0) {
+			if (errorMesg.indexOf("Access is denied") >= 0 || errorMesg.indexOf("AccÃ©s refusÃ©") >= 0) {
 				GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", PrivilegesFriendlyMessage));
 			}
 			throw exception;
@@ -181,7 +185,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 		AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, null);
 		Document adxInstallXmlDoc = adxCompHelper.getAdxInstallDoc();
 		java.io.File adxAdminDir = new java.io.File(adxCompHelper.getAdxAdminPath());
-		System.out.println(logPrefix + "moduleSpec 0: + " + AdxCompHelper.asString(elemSpecDoc, "utf-8")
+		logger.log(Level.FINE, logPrefix + "moduleSpec 0: + " + AdxCompHelper.asString(elemSpecDoc, "utf-8")
 				+ "  moduleName found: " + moduleName + "   moduleFamily found: " + moduleFamily);
 
 		// Get current module: Report, Runtime ...
@@ -194,7 +198,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			return;
 		}
 
-		System.out.println(logPrefix + "module " + moduleName + "/" + moduleFamily + " found in "
+		logger.log(Level.FINE, logPrefix + "module " + moduleName + "/" + moduleFamily + " found in "
 				+ adxAdminDir.getAbsolutePath() + " Remove XML and document.");
 
 		cleanAndSave(adxCompHelper.getAdxInstallFile(adxAdminDir), adxInstallXmlDoc, moduleName, moduleFamily,

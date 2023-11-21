@@ -73,7 +73,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 			super.beforeDelete(files, listener);
 		} catch (Exception exception) {
 			String errorMesg = exception.getMessage();
-			if (errorMesg.indexOf("Access is denied") >= 0 || errorMesg.indexOf("Accès refusé") >= 0) {
+			if (errorMesg.indexOf("Access is denied") >= 0 || errorMesg.indexOf("AccÃ©s refusÃ©") >= 0) {
 				GetPromptUIHandler().emitWarning("Error",
 						getString("privilegesIssue", AdxCompUninstallerListener.PrivilegesFriendlyMessage));
 			}

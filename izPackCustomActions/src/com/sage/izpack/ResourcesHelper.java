@@ -23,8 +23,8 @@ public class ResourcesHelper {
 	private LocaleDatabase customResources = null;
 	private String customResourcesPath = null;
 	private InstallData installData;
-
 	private static Logger logger = Logger.getLogger(ResourcesHelper.class.getName());
+	private static String LogPrefix = "ResourcesHelper - ";
 
 	public ResourcesHelper(InstallData installData, Resources resources) {
 		this.installData = installData;
@@ -43,10 +43,10 @@ public class ResourcesHelper {
 
 			result = ResourceBundle.getBundle("/com/sage/izpack/messages").getString(key);
 
-			logger.log(Level.FINE, "ResourcesHelper.getCustomPropString  get '" + key + "': '" + result + "'  ");
+			logger.log(Level.FINE, LogPrefix + "getCustomPropString  get '" + key + "': '" + result + "'  ");
 
 		} catch (Exception exception) {
-			logger.log(Level.SEVERE, "ResourcesHelper Cannot get resource " + key + " : " + exception);
+			logger.log(Level.SEVERE, LogPrefix + "Cannot get resource " + key + " : " + exception);
 			exception.printStackTrace();
 		}
 
@@ -57,8 +57,6 @@ public class ResourcesHelper {
 		return result;
 	}
 
-
-	
 	private String getLocaleIso3() {
 		if (this.installData != null)
 			return this.installData.getLocaleISO3();
@@ -89,8 +87,8 @@ public class ResourcesHelper {
 
 		initializeResources();
 
-		logger.log(Level.FINE, "ResourcesHelper.mergeCustomMessages  from " + this.customResourcesPath
-				+ "  GetLocale():" + getLocaleIso3());
+		logger.log(Level.FINE, LogPrefix + "mergeCustomMessages  from " + this.customResourcesPath + "  GetLocale():"
+				+ getLocaleIso3());
 
 		Messages messagesM = messages;
 		if (this.customResources != null)
@@ -117,11 +115,11 @@ public class ResourcesHelper {
 			if (result != null && arg1 != null) {
 				result = String.format(result, arg1);
 			}
-			logger.log(Level.FINE, "ResourcesHelper.getCustomString  get '" + key + "': '" + result + "'  from "
+			logger.log(Level.FINE, LogPrefix + "getCustomString  get '" + key + "': '" + result + "'  from "
 					+ this.customResourcesPath + "  GetLocale():" + getLocaleIso3());
 
 		} catch (Exception ex) {
-			logger.log(Level.SEVERE, "ResourcesHelper Cannot get resource " + key + " " + this.customResourcesPath
+			logger.log(Level.SEVERE, LogPrefix + "Cannot get resource " + key + " " + this.customResourcesPath
 					+ "GetLocale(): " + getLocaleIso3() + " : " + ex);
 			ex.printStackTrace();
 		}
@@ -131,8 +129,8 @@ public class ResourcesHelper {
 
 	private String getSafeLocale() {
 
-		final String defaultLangISO3 = getLocale().getISO3Language(); //  "eng";
-		final String defaultLangISO2 = getLocale().getLanguage(); //  "en";
+		final String defaultLangISO3 = getLocale().getISO3Language(); // "eng";
+		final String defaultLangISO2 = getLocale().getLanguage(); // "en";
 
 		String lang = defaultLangISO3;
 		if (this.installData != null)
@@ -147,7 +145,7 @@ public class ResourcesHelper {
 			}
 			if (lang == null) {
 				lang = defaultLangISO3;
-				logger.log(Level.FINE, "ResourcesHelper.getSafeLocale.  Force ISO3_LANG=" + lang);
+				logger.log(Level.FINE, LogPrefix + "getSafeLocale.  Force ISO3_LANG=" + lang);
 			}
 		}
 
@@ -183,12 +181,12 @@ public class ResourcesHelper {
 				this.customResources = new LocaleDatabase(getClass().getResourceAsStream(customResourcesPath), locales);
 			}
 
-			logger.log(Level.FINE, "ResourcesHelper.getCustomString  initialized from " + customResourcesPath
+			logger.log(Level.FINE, LogPrefix + "getCustomString  initialized from " + customResourcesPath
 					+ "  GetSafeLocale():" + lang);
 
 		} catch (Exception ex) {
-			logger.log(Level.SEVERE, "ResourcesHelper Cannot be initialized " + customResourcesPath + "GetLocale(): "
-					+ lang + " : " + ex);
+			logger.log(Level.SEVERE,
+					LogPrefix + "Cannot be initialized " + customResourcesPath + "GetLocale(): " + lang + " : " + ex);
 			ex.printStackTrace();
 		}
 	}
@@ -211,10 +209,10 @@ public class ResourcesHelper {
 						.getResourceAsStream("/langpack" + this.installData.getLocaleISO3() + ".xml"), locales);
 			}
 			result = this.langpack.get(key);
-			logger.log(Level.FINE, "ResourcesHelper.getProjectString  get '" + key + "': '" + result + "'  ");
+			logger.log(Level.FINE, LogPrefix + "getProjectString  get '" + key + "': '" + result + "'  ");
 
 		} catch (Exception exception) {
-			logger.log(Level.SEVERE, "ResourcesHelper Cannot get resource " + key + " : " + exception);
+			logger.log(Level.SEVERE, LogPrefix + "Cannot get resource " + key + " : " + exception);
 		}
 
 		return result;

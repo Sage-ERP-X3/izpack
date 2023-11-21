@@ -27,12 +27,11 @@ import com.izforge.izpack.event.RegistryUninstallerListener;
 public class RegistryUninstallerNewListener extends RegistryUninstallerListener {
 
 	private static final Logger logger = Logger.getLogger(RegistryUninstallerNewListener.class.getName());
-
+	private static String LogPrefix = "RegistryUninstallerNewListener - ";
 	private RegistryDefaultHandler myhandler;
 	private Prompt prompt;
 	private Resources resources;
 	private Messages messages;
-	private static String PrefixLabel = "RegistryUninstallerNewListener - ";
 
 	public RegistryUninstallerNewListener(RegistryDefaultHandler handler, Resources resources, Messages messages,
 			Prompt prompt) {
@@ -60,7 +59,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	@Override
 	public void afterDelete(File file) {
 
-		logger.log(Level.FINE, PrefixLabel + "afterDelete. File : " + file);
+		logger.log(Level.FINE, LogPrefix + "afterDelete. File : " + file);
 
 		super.afterDelete(file);
 	}
@@ -69,7 +68,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	public void beforeDelete(List<File> files, ProgressListener listener) {
 
 		// deleteRegistry();
-		logger.log(Level.FINE, PrefixLabel + "beforeDelete.  ");
+		logger.log(Level.FINE, LogPrefix + "beforeDelete.  ");
 		try {
 			super.beforeDelete(files, listener);
 		} catch (Exception exception) {
@@ -92,7 +91,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	@Override
 	public void afterDelete(List<File> files, ProgressListener listener) {
 
-		logger.log(Level.FINE, PrefixLabel + "afterDelete.  ");
+		logger.log(Level.FINE, LogPrefix + "afterDelete.  ");
 
 		super.afterDelete(files, listener);
 
@@ -109,12 +108,12 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		// "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
 		String keyName = RegistryHandler.UNINSTALL_ROOT + unInstallName;
 		if (unInstallName == null) {
-			logger.log(Level.FINE, "Error in deleteRegistry: getUninstallName() is empty");
+			logger.log(Level.FINE, LogPrefix + "Error in deleteRegistry: getUninstallName() is empty");
 			// myHandlerInstance.setUninstallName("Sage X3 Management Console");
 			return;
 		}
 
-		logger.log(Level.ALL, "UninstallName Registry key " + keyName);
+		logger.log(Level.ALL, LogPrefix + "UninstallName Registry key " + keyName);
 
 		try {
 			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
@@ -123,11 +122,11 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 				myHandlerInstance.deleteValue(keyName, "DisplayVersion");
 				// myHandlerInstance.deleteKey(keyName + "\\DisplayVersion");
 				myHandlerInstance.deleteKey(keyName);
-				logger.log(Level.FINE, "Registry key " + keyName + " deleted");
+				logger.log(Level.FINE, LogPrefix + "Registry key " + keyName + " deleted");
 			}
 		} catch (NativeLibException e) {
 			e.printStackTrace();
-			logger.log(Level.FINE, "Error, registry key " + keyName + " NOT deleted");
+			logger.log(Level.FINE, LogPrefix + "Error, registry key " + keyName + " NOT deleted");
 		}
 	}
 

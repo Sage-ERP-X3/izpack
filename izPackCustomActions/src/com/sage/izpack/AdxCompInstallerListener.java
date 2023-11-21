@@ -54,6 +54,7 @@ import com.izforge.izpack.api.data.InstallData;
 public class AdxCompInstallerListener extends AbstractInstallerListener implements CleanupClient {
 
 	private static final Logger logger = Logger.getLogger(AdxCompInstallerListener.class.getName());
+	private static String LogPrefix = "AdxCompInstallerListener - ";
 
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
 
@@ -99,12 +100,12 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 				InstallationInformationHelper.readInformation(this.installData, this.resources);
 			else
 				logger.log(Level.FINE,
-						"AdxCompInstallerListener.beforePacks  ReadInstallationInformation: "
+						LogPrefix + "beforePacks  ReadInstallationInformation: "
 								+ this.installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
 								+ InstallationInformationHelper.hasAlreadyReadInformation(this.installData));
 
 		} else {
-			logger.log(Level.FINE, "AdxCompInstallerListener.beforePacks  ReadInstallationInformation: "
+			logger.log(Level.FINE, LogPrefix + "beforePacks  ReadInstallationInformation: "
 					+ this.installData.getInfo().isReadInstallationInformation());
 		}
 	}
@@ -128,8 +129,8 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			// ResourceBundle.getBundle("com/sage/izpack/messages").getString("adxadminParseError"));
 
 			java.io.File fileAdxinstalls = adxCompHelper.getAdxInstallFile(dirAdxDir);
-			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  Reading XML file fileAdxinstalls: "
-					+ fileAdxinstalls.getAbsolutePath());
+			logger.log(Level.FINE,
+					LogPrefix + "afterPacks  Reading XML file fileAdxinstalls: " + fileAdxinstalls.getAbsolutePath());
 
 			Document adxInstallXmlDoc = getXml(fileAdxinstalls);
 
@@ -151,7 +152,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 			boolean modifyinstallation = Boolean.valueOf(installData.getVariable(InstallData.MODIFY_INSTALLATION));
 
-			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  moduleName: " + moduleName + " moduleFamily: "
+			logger.log(Level.FINE, LogPrefix + "afterPacks  moduleName: " + moduleName + " moduleFamily: "
 					+ moduleFamily + " modifyinstallation: " + modifyinstallation);
 
 			Element module = null;
@@ -167,17 +168,17 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			if (module != null) {
 				moduleToAdd = (Element) module.cloneNode(true);
 			}
-			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  saving XML xdoc:"
-					+ adxInstallXmlDoc.getDocumentElement().getNodeName());
+			logger.log(Level.FINE,
+					LogPrefix + "afterPacks  saving XML xdoc:" + adxInstallXmlDoc.getDocumentElement().getNodeName());
 
 			Transformer transformer = AdxCompHelper.getTransformer("UTF-8");
 			AdxCompHelper.saveXml(fileAdxinstalls, adxInstallXmlDoc, transformer);
-			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  XML doc saved");
+			logger.log(Level.FINE, LogPrefix + "afterPacks  XML doc saved");
 
-			logger.log(Level.FINE, "AdxCompInstallerListener.afterPacks  Add data to uninstaller " + moduleToAdd);
+			logger.log(Level.FINE, LogPrefix + "afterPacks  Add data to uninstaller " + moduleToAdd);
 			if (moduleToAdd == null) {
 				logger.log(Level.FINE,
-						"AdxCompInstallerListener.afterPacks  Error - module is NULL - Cannot add data to uninstaller");
+						LogPrefix + "afterPacks  Error - module is NULL - Cannot add data to uninstaller");
 			} else {
 				addDataToUninstaller(transformer, adxCompHelper, moduleToAdd);
 			}
@@ -199,7 +200,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 		try {
 
-			logger.log(Level.FINE, "AdxCompInstallerListener  Add data " + SPEC_FILE_NAME + ": " + module);
+			logger.log(Level.FINE, LogPrefix + "Add data " + SPEC_FILE_NAME + ": " + module);
 
 			// specHelper.setSpec((IXMLElement) module);
 
@@ -363,8 +364,8 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		Element module = (Element) xPath.compile(filter).evaluate(xdoc, XPathConstants.NODE);
 
 		if (module == null) {
-			logger.log(Level.FINE, "AdxCompInstallerListener.modifyReportModule  name: " + moduleName + " type: "
-					+ moduleType + " family: " + moduleFamily + " not found in xmlDocument " + xdoc);
+			logger.log(Level.FINE, LogPrefix + "modifyReportModule  name: " + moduleName + " type: " + moduleType
+					+ " family: " + moduleFamily + " not found in xmlDocument " + xdoc);
 			// throw new Exception(ResourcesHelper.getCustomPropString("sectionNotFound",
 			// moduleName));
 			ResourcesHelper resourceHelper = new ResourcesHelper(this.installData, this.resources);
@@ -392,8 +393,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		}
 		nodeVersion.setTextContent(version);
 
-		logger.log(Level.FINE,
-				"AdxCompInstallerListener modifyXmlModule  saving XML '" + versionComponent + "': " + version);
+		logger.log(Level.FINE, LogPrefix + "modifyXmlModule  saving XML '" + versionComponent + "': " + version);
 
 		/*
 		 * module = (Element) xPath.compile( "/install/module[@name='" + name +
@@ -451,8 +451,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 		if (!fileAdxinstalls.exists()) {
 
-			logger.log(Level.FINE,
-					"AdxCompInstallerListener.getXml  Creating file " + fileAdxinstalls.getAbsolutePath());
+			logger.log(Level.FINE, LogPrefix + "getXml  Creating file " + fileAdxinstalls.getAbsolutePath());
 
 			fileAdxinstalls.createNewFile();
 
@@ -483,16 +482,15 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 		} else {
 
-			logger.log(Level.FINE,
-					"AdxCompInstallerListener.getXml  Parsing file " + fileAdxinstalls.getAbsolutePath());
+			logger.log(Level.FINE, LogPrefix + "getXml  Parsing file " + fileAdxinstalls.getAbsolutePath());
 			xdoc = dBuilder.parse(fileAdxinstalls);
 			xdoc.getDocumentElement().normalize();
 		}
 
 		XMLHelper.cleanEmptyTextNodes((Node) xdoc);
 
-		logger.log(Level.FINE, "AdxCompInstallerListener.getXml  Xml file: " + fileAdxinstalls.getPath()
-				+ ". Root element: " + xdoc.getDocumentElement().getNodeName());
+		logger.log(Level.FINE, LogPrefix + "getXml  Xml file: " + fileAdxinstalls.getPath() + ". Root element: "
+				+ xdoc.getDocumentElement().getNodeName());
 		return xdoc;
 	}
 

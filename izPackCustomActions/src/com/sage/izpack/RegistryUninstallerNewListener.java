@@ -6,9 +6,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.izforge.izpack.api.event.ProgressListener;
+import com.izforge.izpack.api.exception.IzPackException;
 import com.izforge.izpack.api.exception.NativeLibException;
+import com.izforge.izpack.api.handler.AbstractUIHandler;
+import com.izforge.izpack.api.handler.Prompt;
 import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
+import com.izforge.izpack.core.handler.PromptUIHandler;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.event.RegistryUninstallerListener;
@@ -25,11 +29,21 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	private static final Logger logger = Logger.getLogger(RegistryUninstallerNewListener.class.getName());
 
 	private RegistryDefaultHandler myhandler;
+	private Prompt prompt;
 
-	public RegistryUninstallerNewListener(RegistryDefaultHandler handler, Resources resources, Messages messages) {
+	public RegistryUninstallerNewListener(RegistryDefaultHandler handler, Resources resources, Messages messages,
+			Prompt prompt) {
 		super(handler, resources, messages);
 
 		myhandler = handler;
+		this.prompt = prompt;
+
+	}
+
+	private AbstractUIHandler GetPromptUIHandler() {
+
+		AbstractUIHandler handler = new PromptUIHandler(this.prompt);
+		return handler;
 	}
 
 	/**
@@ -51,8 +65,15 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 
 		// deleteRegistry();
 		logger.log(Level.FINE, "RegistryUninstallerNewListener.beforeDelete.  ");
-
-		super.beforeDelete(files, listener);
+		try {
+			super.beforeDelete(files, listener);
+		} catch (Exception exception) {
+			String errorMesg = exception.getMessage();
+			if (errorMesg.indexOf("Access is denied") >= 0 || errorMesg.indexOf("Accès refusé") >= 0) {
+				GetPromptUIHandler().emitWarning("Error", AdxCompUninstallerListener.PrivilegesFriendlyMessage);
+			}
+			throw exception;
+		}
 	}
 
 	/**

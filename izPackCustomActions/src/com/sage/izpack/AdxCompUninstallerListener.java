@@ -49,7 +49,9 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 	private Messages messages;
 	private SpecHelper specHelper = null;
 	private static String LogPrefix = "AdxCompUninstallerListener - ";
+	public static String PrivilegesFriendlyMessage = "It looks that you don't have enough rights. You need to launch the 'Uninstaller' program from 'Add or remove programs' to get all privileges. ";
 
+	
 	public AdxCompUninstallerListener(RegistryDefaultHandler handler, Resources resources, Messages messages,
 			Prompt prompt) {
 
@@ -140,11 +142,13 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 					System.out.println(remaining);
 					GetPromptUIHandler().emitError("Error", remaining);
 					System.exit(1);
-					//return;
 				}
 			}
 
 		} catch (IzPackException exception) {
+			if (exception.getMessage().indexOf("Access is denied") >=0) {
+				GetPromptUIHandler().emitWarning("Error", PrivilegesFriendlyMessage);
+			}
 			throw exception;
 		} catch (Exception exception) {
 			throw new IzPackException(exception);
@@ -160,8 +164,6 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			InputStream in = resources.getInputStream(SPEC_FILE_NAME);
 			ObjectInputStream objIn = new ObjectInputStream(in);
 			String obj = (String) objIn.readObject();
-			// this.prompt.error(logPrefix + "obj: " + obj + " type: " +
-			// obj.getClass().getTypeName());
 			elemSpecDoc = AdxCompHelper.asXml(obj);
 			objIn.close();
 			in.close();
@@ -199,6 +201,13 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 				adxXmlModule);
 	}
 
+	private String getString(String resourceId) {
+		ResourcesHelper helper = new ResourcesHelper(null, resources);
+		helper.mergeCustomMessages(messages);
+		return helper.getCustomString(resourceId);
+	}
+
+	
 	private void cleanAndSave(java.io.File fileAdxinstalls, Document adxInstallXmlDoc, String moduleName,
 			String moduleFamily, Element moduleToRemove) throws TransformerFactoryConfigurationError,
 			TransformerConfigurationException, TransformerException, ParserConfigurationException {
@@ -212,11 +221,9 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 
 				if (!"idle".equalsIgnoreCase(modstatus)) {
 
-					ResourcesHelper helper = new ResourcesHelper(null, resources);
-					helper.mergeCustomMessages(messages);
 					String errorMsg = "Error";
 					String notidleMsg = "notidle";
-					String friendlyMsg = helper.getCustomString(notidleMsg);
+					String friendlyMsg = this.getString(notidleMsg);
 					if (friendlyMsg == null)
 						friendlyMsg = errorMsg + ": module not idle (Status: " + modstatus + ") " + notidleMsg;
 					GetPromptUIHandler().emitWarning(errorMsg, friendlyMsg);
@@ -284,8 +291,7 @@ public class AdxCompUninstallerListener extends AbstractUninstallerListener {
 			result = reader.readLine();
 			reader.close();
 		} catch (IOException exception) {
-			System.err
-					.println("AdxCompUninstallerListener: unable to determine install path: " + exception.getMessage());
+			System.err.println(LogPrefix + "unable to determine install path: " + exception.getMessage());
 		}
 		return result;
 	}

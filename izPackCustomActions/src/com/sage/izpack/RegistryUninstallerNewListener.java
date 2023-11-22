@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.IzPackException;
 import com.izforge.izpack.api.exception.NativeLibException;
+import com.izforge.izpack.api.exception.WrappedNativeLibException;
 import com.izforge.izpack.api.handler.AbstractUIHandler;
 import com.izforge.izpack.api.handler.Prompt;
 import com.izforge.izpack.api.resource.Messages;
@@ -18,7 +19,7 @@ import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.event.RegistryUninstallerListener;
 
 /*
- * This class fix the bug when un-installing a product, sometimes, the Registry is not cleaned (Ex: X3-237732)
+ * This class fixes the bug when un-installing a product, sometimes, the Registry is not cleaned (Ex: X3-237732)
  *  
  *  Ex: Delete HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + getUninstallName();
  *  
@@ -27,11 +28,11 @@ import com.izforge.izpack.event.RegistryUninstallerListener;
 public class RegistryUninstallerNewListener extends RegistryUninstallerListener {
 
 	private static final Logger logger = Logger.getLogger(RegistryUninstallerNewListener.class.getName());
-	private static String LogPrefix = "RegistryUninstallerNewListener - ";
+	private static final String LogPrefix = "RegistryUninstallerNewListener - ";
 	private RegistryDefaultHandler myhandler;
-	private Prompt prompt;
-	private Resources resources;
-	private Messages messages;
+	private final Prompt prompt;
+	private final Resources resources;
+	private final Messages messages;
 
 	public RegistryUninstallerNewListener(RegistryDefaultHandler handler, Resources resources, Messages messages,
 			Prompt prompt) {
@@ -41,7 +42,6 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		this.resources = resources;
 		this.messages = messages;
 		this.prompt = prompt;
-
 	}
 
 	private AbstractUIHandler GetPromptUIHandler() {
@@ -71,12 +71,10 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		logger.log(Level.FINE, LogPrefix + "beforeDelete.  ");
 		try {
 			super.beforeDelete(files, listener);
+		} catch (WrappedNativeLibException exception) {
+			GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", AdxCompUninstallerListener.PrivilegesFriendlyMessage));
+			throw exception;
 		} catch (Exception exception) {
-			String errorMesg = exception.getMessage();
-			if (errorMesg.indexOf("Access is denied") >= 0 || errorMesg.indexOf("Accés refusé") >= 0) {
-				GetPromptUIHandler().emitWarning("Error",
-						getString("privilegesIssue", AdxCompUninstallerListener.PrivilegesFriendlyMessage));
-			}
 			throw exception;
 		}
 	}

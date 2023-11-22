@@ -21,8 +21,6 @@ public class AdxCompUninstallerListenerLinux  extends AdxCompUninstallerListener
 	
 	public AdxCompUninstallerListenerLinux(Resources resources, Messages messages, Prompt prompt) {
 		super(resources, messages, prompt);
-	}
-
-	
+	}	
 
 }

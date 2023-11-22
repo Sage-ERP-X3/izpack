@@ -61,9 +61,6 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		this.registryHelper = new RegistryHelper(handler, installData);
 
 		this.installPath = CheckedHelloNewPanel.initPath(installData, resources, registryHelper, x3Handler);
-		//this.installPath = CheckedHelloNewPanelAutomationHelper.initPath(installData, resources,
-		//		this.registryHelper, this.x3Handler);
-		// init(installData, resources);
 	}
 
 

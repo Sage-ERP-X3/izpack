@@ -28,14 +28,14 @@ import com.izforge.izpack.api.rules.RulesEngine;
 import com.izforge.izpack.core.data.DefaultVariables;
 
 /*
- * 
+ * Read/Write .installationInformation file
  * @author Franck DEPOORTERE
  */
 public final class InstallationInformationHelper {
 
 	private static final Logger logger = Logger.getLogger(InstallationInformationHelper.class.getName());
 
-	private static List<String> VariablesExceptions = new ArrayList<String>(Arrays.asList("app-version", "APP_VER",
+	private static final List<String> VariablesExceptions = new ArrayList<String>(Arrays.asList("app-version", "APP_VER",
 			"app-version-new", "APP_VER_NEW", "ISO2_LANG", "ISO3_LANG", "COMPONENT.VERSION"));
 
 	public static boolean hasAlreadyReadInformation(com.izforge.izpack.api.data.InstallData installData) {

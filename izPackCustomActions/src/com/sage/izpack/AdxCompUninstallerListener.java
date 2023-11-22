@@ -14,8 +14,8 @@ import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 
 /*
- * Note this class work on Linux for the moment, due to a reference to the RegistryDefaultHandler class 
- * Version: IzPack 5.2.0 - 2023.12.01
+ * Note this class DOES NOT work on Linux for the moment, due to a reference to the RegistryDefaultHandler class 
+ * Version: IzPack 5.2.0 - 2024.01.01
  * Caused by: java.lang.ClassNotFoundException: com.coi.tools.os.win.MSWinConstants
  * We need to use AdxCompUninstallerListenerLinux for the moment
  * 
@@ -24,12 +24,12 @@ import com.izforge.izpack.core.os.RegistryHandler;
 public class AdxCompUninstallerListener extends AdxCompUninstallerListenerCommon {
 
 	private static final Logger logger = Logger.getLogger(AdxCompUninstallerListener.class.getName());
-	private static String LogPrefix = "AdxCompUninstallerListener - ";
+	private static final String LogPrefix = "AdxCompUninstallerListener - ";
 	private final RegistryHandler registryHandler;
 
 	public AdxCompUninstallerListener(RegistryDefaultHandler handler, Resources resources, Messages messages, Prompt prompt) {
 
-		// Doesn't seem to be possible to get InstallData installData, UninstallData
+		// Doesn't seem to be possible to reference and use InstallData installData, UninstallData
 		// uninstallData in this type of class: the Uninstall.jar program will crash during launch.
 		super(resources, messages, prompt);
 		this.registryHandler = handler.getInstance();

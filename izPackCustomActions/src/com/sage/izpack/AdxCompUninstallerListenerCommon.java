@@ -28,6 +28,7 @@ import com.izforge.izpack.api.event.AbstractUninstallerListener;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.IzPackException;
 import com.izforge.izpack.api.exception.NativeLibException;
+import com.izforge.izpack.api.exception.WrappedNativeLibException;
 import com.izforge.izpack.api.handler.AbstractUIHandler;
 import com.izforge.izpack.api.handler.Prompt;
 import com.izforge.izpack.api.resource.Messages;
@@ -38,7 +39,10 @@ import com.izforge.izpack.util.Platform;
 import com.izforge.izpack.util.helper.SpecHelper;
 
 /*
- * Manage file 
+ * Manage XML file 'inst\adxinstalls.xml' while uninstalling the product
+ * C:\Sage\SafeX3\ADXADMIN\inst\adxinstalls.xml
+ * 
+ * @author Franck DEPOORTERE
  */
 public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstallerListener {
 
@@ -189,8 +193,6 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 				if (listAdxInstallsNodes != null)
 					nodes = listAdxInstallsNodes.getLength();
 				if (nodes > 0) {
-					// remaining modules children: cancel installation !
-					// this.resources.getString("uninstaller.adxadmin.remainingmodules");
 					String remaining = this.getString("uninstaller.adxadmin.remainingmodules",
 							"remaining modules children: cancel installation !");
 					System.out.println(remaining);
@@ -199,11 +201,10 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 				}
 			}
 
+		} catch (WrappedNativeLibException exception) {
+			GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", PrivilegesFriendlyMessage));
+			throw exception;
 		} catch (IzPackException exception) {
-			String errorMesg = exception.getMessage();
-			if (errorMesg.indexOf("Access is denied") >= 0 || errorMesg.indexOf("Accés refusé") >= 0) {
-				GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", PrivilegesFriendlyMessage));
-			}
 			throw exception;
 		} catch (Exception exception) {
 			throw new IzPackException(exception);

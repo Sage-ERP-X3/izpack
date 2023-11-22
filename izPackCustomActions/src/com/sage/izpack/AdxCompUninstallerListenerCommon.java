@@ -185,10 +185,11 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 				logger.log(Level.FINE, logPrefix + SPEC_FILE_NAME + " not found. Nothing to do.");
 			} else {
 				// we need to update adxinstalls.xml to remove the XML module: Runtime,
-				// PrintServer, ...
+				// PrintServer, DbOra, DbSql...
 				cleanAdxInstallXml(logPrefix, elemSpecDoc);
 			}
 
+			// The current uninstaller setup is AdxAdmin ?
 			boolean isAdxAdmin = isAdxAdmin();
 			if (isAdxAdmin) {
 
@@ -211,12 +212,11 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 				}
 			}
 			this.processDone = true;
-		} catch (FileNotFoundException exception) {
-			GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", PrivilegesFriendlyMessage));
 		} catch (WrappedNativeLibException exception) {
 			GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", PrivilegesFriendlyMessage));
 			throw exception;
 		} catch (Exception exception) {
+			GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", PrivilegesFriendlyMessage));
 			throw new IzPackException(exception);
 		}
 	}
@@ -288,7 +288,7 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 			if (result != null)
 				result = result.trim();
 			reader.close();
-		} catch (IOException exception) {
+		} catch (Exception exception) {
 			System.err.println(LogPrefix + "unable to determine install path: " + exception.getMessage());
 		}
 		return result;

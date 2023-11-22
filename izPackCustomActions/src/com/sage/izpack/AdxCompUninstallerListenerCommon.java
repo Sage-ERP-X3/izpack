@@ -37,6 +37,9 @@ import com.izforge.izpack.core.handler.PromptUIHandler;
 import com.izforge.izpack.util.Platform;
 import com.izforge.izpack.util.helper.SpecHelper;
 
+/*
+ * Manage file 
+ */
 public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstallerListener {
 
 	public static final String PrivilegesFriendlyMessage = "It looks that you don't have enough rights. You need to launch the 'Uninstaller' program from 'Add or remove programs' to get all privileges. ";
@@ -177,8 +180,6 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 			if (isAdxAdmin) {
 
 				Document adxInstallXmlDoc = this.getAdxInstallDocument();
-				// AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, null);
-				// Document adxInstallXmlDoc = adxCompHelper.getAdxInstallDocument();
 				if (adxInstallXmlDoc == null) {
 					logger.log(Level.FINE, this.getAdxAdminPath() + " doesn't exist or cannot be opened.");
 					return;

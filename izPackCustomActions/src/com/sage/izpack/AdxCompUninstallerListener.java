@@ -15,7 +15,7 @@ import com.izforge.izpack.core.os.RegistryHandler;
 
 /*
  * Note this class work on Linux for the moment, due to a reference to the RegistryDefaultHandler class 
- * Version: IzPack 5.2.0
+ * Version: IzPack 5.2.0 - 2023.12.01
  * Caused by: java.lang.ClassNotFoundException: com.coi.tools.os.win.MSWinConstants
  * We need to use AdxCompUninstallerListenerLinux for the moment
  * 
@@ -25,9 +25,7 @@ public class AdxCompUninstallerListener extends AdxCompUninstallerListenerCommon
 
 	private static final Logger logger = Logger.getLogger(AdxCompUninstallerListener.class.getName());
 	private static String LogPrefix = "AdxCompUninstallerListener - ";
-
-
-	private RegistryHandler registryHandler;
+	private final RegistryHandler registryHandler;
 
 	public AdxCompUninstallerListener(RegistryDefaultHandler handler, Resources resources, Messages messages, Prompt prompt) {
 

@@ -56,8 +56,6 @@ public class ReadMeNewPanel extends IzPanel implements HyperlinkListener, Action
 	 */
 	public ReadMeNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			Log log) {
-		// public ReadMePanel(InstallerFrame parent, GUIInstallData idata) {
-		// super(parent, idata, new IzPanelLayout());
 		super(panel, parent, installData, new IzPanelLayout(log), resources);
 		// We load the licence
 		loadReadMe();

@@ -14,9 +14,6 @@ import com.izforge.izpack.panels.target.TargetPanel;
  */
 public class TargetNewPanel extends TargetPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4462248660406450482L;
 	private static Logger logger = Logger.getLogger(TargetNewPanel.class.getName());
 
@@ -25,7 +22,6 @@ public class TargetNewPanel extends TargetPanel {
 		super(panel, parent, installData, resources, log);
 	}
 
-	
 	/**
 	 * Called when the panel becomes active.
 	 */
@@ -37,14 +33,13 @@ public class TargetNewPanel extends TargetPanel {
 		logger.log(Level.FINE, "TargetNewPanel.panelActivate  Path: " + pathSelectionPanel.getPath());
 	}
 
-
 	@Override
 	public void saveData() {
 
 		logger.log(Level.FINE, "TargetNewPanel.saveData");
 
 		// <ComponentName>c:\Sage\SafeX3\${component.node.name}</ComponentName>
-		String platformSep = "[\\\\\\/]";// "\\\\"; 
+		String platformSep = "[\\\\\\/]";// "\\\\";
 		int positionFromEnd = 0;
 		String variableNameRaw = getMetadata().getConfigurationOptionValue("SetVariableName", installData.getRules());
 		String variableName = null;
@@ -75,9 +70,9 @@ public class TargetNewPanel extends TargetPanel {
 			String variableValue = pathElements[(pathElements.length - 1 - positionFromEnd)];
 			installData.setVariable(variableName, variableValue);
 			logger.log(Level.FINE, "TargetNewPanel.saveData path: " + path + "  setVariable  '" + variableName + "': "
-					+ variableValue);		
-			}				
-		
+					+ variableValue);
+		}
+
 	}
 
 }

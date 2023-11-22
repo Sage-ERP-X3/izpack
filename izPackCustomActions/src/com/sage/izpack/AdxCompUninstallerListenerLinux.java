@@ -7,6 +7,10 @@ import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
 
 /**
+ * Listener Implemented to avoid error on Linux Uninstaller.jar:
+ * Error while instantiate AdxCompUninstallerListener
+ * Caused by: java.lang.ClassNotFoundException: com.coi.tools.os.win.MSWinConstants 
+ * The reference to RegistryDefaultHandler class in the constructor cause the issue.
  * 
  * @author Franck DEPOORTERE
  */

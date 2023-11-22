@@ -27,7 +27,8 @@ import com.izforge.izpack.util.Housekeeper;
 public class RegistryInstallerNewListener extends com.izforge.izpack.event.RegistryInstallerListener {
 
 	private static Logger logger = Logger.getLogger(RegistryInstallerNewListener.class.getName());
-	private RegistryDefaultHandler myhandler;
+	private final RegistryDefaultHandler myhandler;
+	private static final String LogPrefix = "RegistryInstallerNewListener - ";
 
 	public RegistryInstallerNewListener(IUnpacker unpacker, VariableSubstitutor substitutor, InstallData installData,
 			UninstallData uninstallData, Resources resources, RulesEngine rules, Housekeeper housekeeper,
@@ -75,8 +76,8 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		// + appName;
 		String keyName = RegistryHandler.UNINSTALL_ROOT + appName;
 
-		logger.log(Level.FINE, "RegistryInstallerNewListener.updateRegistry   Updating DisplayVersion, Registry path "
-				+ keyName + " key: " + "DisplayVersion" + " value: " + version);
+		logger.log(Level.FINE, LogPrefix + "updateRegistry   Updating DisplayVersion, Registry path " + keyName
+				+ " key: " + "DisplayVersion" + " value: " + version);
 
 		RegistryHandler myHandlerInstance = myhandler.getInstance();
 		try {
@@ -88,16 +89,15 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 					if (displayVersionVal != null && version != null && displayVersionVal != version) {
 						myHandlerInstance.setValue(keyName, "DisplayVersion", version);
 
-						logger.log(Level.FINE,
-								"RegistryInstallerNewListener.updateRegistry   DisplayVersion updated, Registry path "
-										+ keyName + " key: " + "DisplayVersion" + " value: " + version);
+						logger.log(Level.FINE, LogPrefix + "updateRegistry   DisplayVersion updated, Registry path "
+								+ keyName + " key: " + "DisplayVersion" + " value: " + version);
 					}
 				}
 			}
 		} catch (NativeLibException e) {
 			e.printStackTrace();
-			logger.log(Level.WARNING, "RegistryInstallerNewListener.updateRegistry   Error while update registry path "
-					+ keyName + " Key: DisplayVersion, value: " + version);
+			logger.log(Level.WARNING, LogPrefix + "updateRegistry   Error while update registry path " + keyName
+					+ " Key: DisplayVersion, value: " + version);
 		}
 	}
 

@@ -37,11 +37,9 @@ public class PacksNewPanel extends PacksPanel {
 	/**
 	 * The packs messages.
 	 */
-	// private Messages messages = null;
 
 	public PacksNewPanel(Panel panel, InstallerFrame frame, GUIInstallData installData, Resources resources,
 			ObjectFactory factory, RulesEngine rules) {
-		// super(panel, frame, installData, resources, factory, rules);
 		super(panel, frame, installData, resources, factory);
 	}
 

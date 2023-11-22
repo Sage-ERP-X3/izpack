@@ -27,7 +27,7 @@ import com.izforge.izpack.util.OsVersion;
 public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 
 	private static Logger logger = Logger.getLogger(CheckedHelloNewConsolePanel.class.getName());
-	private Resources resources;
+	private final Resources resources;
 
 	/**
 	 * The prompt.

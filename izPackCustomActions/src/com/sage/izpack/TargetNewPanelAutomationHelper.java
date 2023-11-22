@@ -36,8 +36,6 @@ public class TargetNewPanelAutomationHelper extends TargetPanelAutomation {
 		if (InstallationInformationHelper.isIncompatibleInstallation(installData.getInstallPath(),
 				installData.getInfo().isReadInstallationInformation())) {
 
-			// if (TargetPanelHelper.isIncompatibleInstallation(path,
-			// installData.getInfo().isReadInstallationInformation()))
 			throw new InstallerException(installData.getMessages().get("TargetPanel.incompatibleInstallation"));
 		}
 		installData.setInstallPath(path);

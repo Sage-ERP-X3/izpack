@@ -26,14 +26,15 @@ import com.izforge.izpack.util.OsVersion;
 public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 	private static Logger logger = Logger.getLogger(CheckedHelloNewPanel.class.getName());
+	private static final String logPrefix = "CheckedHelloNewPanel - ";
 
-	private static final long serialVersionUID = 1737042770727953387L; // 1737042770727953387L
+	private static final long serialVersionUID = 1737042770727953387L;
 
 	private ResourcesHelper _resourceHelper = null;
-	private RegistryDefaultHandler _handler;
-	private RegistryHelper _registryHelper;
+	private final RegistryDefaultHandler _handler;
+	private final RegistryHelper _registryHelper;
 	private RegistryHandler _registryHandler;
-	private Resources _resources;
+	private final Resources _resources;
 	private RegistryHandlerX3 _x3Handler;
 
 	public CheckedHelloNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
@@ -49,8 +50,6 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		_x3Handler = new RegistryHandlerX3(_registryHandler, installData);
 
 		initPath(this.installData, resources, _registryHelper, _x3Handler);
-		// CheckedHelloNewPanelAutomationHelper.initPath(this.installData, _resources,
-		// _registryHelper, _x3Handler);
 	}
 
 	public static String initPath(InstallData installData, Resources resources, RegistryHelper registryHelper,
@@ -129,7 +128,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 				// No Adxadmin
 				if (!adxAdminInstalled) {
 					// No Adxadmin
-					logger.log(Level.FINE, getString("adxadminNotRegistered"));
+					logger.log(Level.FINE, logPrefix + getString("adxadminNotRegistered"));
 					JOptionPane.showMessageDialog(null, getString("adxadminNotRegistered"),
 							getString("installer.error"), JOptionPane.ERROR_MESSAGE);
 					parent.lockNextButton();
@@ -137,7 +136,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 				}
 			} catch (Exception e) { // Will only be happen if registry handler is good, but an
 									// exception at performing was thrown. This is an error...
-				logger.log(Level.WARNING, getString("installer.error") + ":" + e.getMessage());
+				logger.log(Level.WARNING, logPrefix + getString("installer.error") + ":" + e.getMessage());
 				JOptionPane.showMessageDialog(null, e.getMessage(), getString("installer.error"),
 						JOptionPane.ERROR_MESSAGE);
 				parent.lockNextButton();
@@ -156,7 +155,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			// <variable name="CheckedHelloNewPanel.allowMultipleInstance" value="true"/>
 			if (Boolean.TRUE.toString().equalsIgnoreCase(allowMultipleInstall)) {
 
-				logger.log(Level.FINE, "CheckedHelloNewPanel allow-multiple-instance=true");
+				logger.log(Level.FINE, logPrefix + "allow-multiple-instance=true");
 
 				parent.lockNextButton();
 				try {
@@ -175,7 +174,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			// or <variable name="CheckedHelloNewPanel.allowMultipleInstance"
 			// value="false"/>
 			else {
-				logger.log(Level.FINE, "CheckedHelloNewPanel allowMultipleInstance=false (updatemode)");
+				logger.log(Level.FINE, logPrefix + "allowMultipleInstance=false (updatemode)");
 
 				parent.lockNextButton();
 				try {
@@ -217,28 +216,26 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 		if (!result) {
 			logger.log(Level.FINE,
-					"CheckedHelloNewPanel isRegistered()  Could not get RegistryHandler.getInstallationPath() return NULL"
+					logPrefix + "isRegistered()  Could not get RegistryHandler.getInstallationPath() return NULL"
 							+ _registryHelper + " Unix: " + OsVersion.IS_UNIX);
 			if (OsVersion.IS_UNIX) {
 				// String isAdxAdmin = installData.getVariable("is-adxadmin");
 				if (_x3Handler == null)
 					_x3Handler = new RegistryHandlerX3(_registryHandler, installData);
-				logger.log(Level.FINE, "CheckedHelloNewPanel isRegistered()  is-adxdmin: " + _x3Handler.isAdminSetup());
+				logger.log(Level.FINE, logPrefix + "isRegistered()  is-adxdmin: " + _x3Handler.isAdminSetup());
 				if (_x3Handler.isAdminSetup() && _x3Handler.getAdxAdminDirPath() != null) {
 					result = true;
 				}
 
 				String appName = installData.getVariable("APP_NAME");
-				logger.log(Level.FINE,
-						"CheckedHelloNewPanel isRegistered:" + result + " Set Uninstallname: " + appName);
+				logger.log(Level.FINE, logPrefix + "isRegistered:" + result + " Set Uninstallname: " + appName);
 				if (_registryHandler == null)
 					_registryHandler = _handler != null ? _handler.getInstance() : null;
 
 				if (_registryHandler != null) {
 					_registryHandler.setUninstallName(appName);
 				} else {
-					logger.log(Level.WARNING,
-							"CheckedHelloNewPanel isRegistered() CANNOT set Uninstallname: " + appName);
+					logger.log(Level.WARNING, logPrefix + "isRegistered() CANNOT set Uninstallname: " + appName);
 				}
 				installData.setVariable("UNINSTALL_NAME", appName);
 			}

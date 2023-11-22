@@ -11,8 +11,8 @@ import com.izforge.izpack.installer.panel.PanelView;
 public class ReadMeNewConsolePanel extends com.izforge.izpack.panels.info.InfoConsolePanel {
 
 	private static Logger logger = Logger.getLogger(ReadMeNewConsolePanel.class.getName());
-	private Resources resources;
-	private InstallData installData;
+	private final Resources resources;
+	private final InstallData installData;
 	private static final long serialVersionUID = 8430577231809871722L;
 
 	public ReadMeNewConsolePanel(InstallData installData, Resources resources, PanelView<ConsolePanel> panel) {

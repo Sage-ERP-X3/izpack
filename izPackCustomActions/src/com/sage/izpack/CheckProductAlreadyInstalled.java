@@ -21,7 +21,6 @@ import com.izforge.izpack.installer.bootstrap.Installer;
 public class CheckProductAlreadyInstalled implements DataValidator {
 
 	private static Logger logger = Logger.getLogger(CheckProductAlreadyInstalled.class.getName());
-
 	private static final String SPEC_FILE_NAME = "productsSpec.txt";
 
 	protected String errMessage = "";

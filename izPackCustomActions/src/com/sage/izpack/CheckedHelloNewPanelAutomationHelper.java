@@ -13,15 +13,18 @@ import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.panels.checkedhello.CheckedHelloPanelAutomationHelper;
 import com.izforge.izpack.panels.checkedhello.RegistryHelper;
 
+/*
+ * @author Franck DEPOORTERE
+*/
 public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutomationHelper {
 
 	private static Logger logger = Logger.getLogger(CheckedHelloNewPanelAutomationHelper.class.getName());
 
 	private final RegistryHelper registryHelper;
-	private InstallData installData;
-	private RegistryHandler registryHandler;
-	private RegistryHandlerX3 x3Handler;
-	private static String logPrefix = "CheckedHelloNewPanelAutomationHelper ";
+	private final InstallData installData;
+	private final RegistryHandler registryHandler;
+	private final RegistryHandlerX3 x3Handler;
+	private static final String logPrefix = "CheckedHelloNewPanelAutomationHelper ";
 
 	public CheckedHelloNewPanelAutomationHelper(RegistryDefaultHandler handler, InstallData installData,
 			Resources resources) throws NativeLibException {
@@ -35,7 +38,6 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 		this.x3Handler = new RegistryHandlerX3(registryHandler, installData);
 
 		CheckedHelloNewPanel.initPath(installData, resources, registryHelper, x3Handler);
-		// initPath(installData, resources, registryHelper, x3Handler);
 	}
 
 	/**
@@ -73,59 +75,7 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 		installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
 	}
 
-/*
-	private static String initPath(InstallData installData, Resources resources, RegistryHelper registryHelper,
-			RegistryHandlerX3 x3Handler) throws NativeLibException {
 
-		// String prefixLabel = "CheckedHelloNewPanel Init - ";
-
-		String path = installData.getInstallPath();
-		if (path == null && OsVersion.IS_WINDOWS)
-			path = registryHelper.getInstallationPath();
-
-		if (path == null) {
-			if (x3Handler.isAdminSetup()) {
-				path = x3Handler.getAdxAdminDirPath();
-			}
-			logger.log(Level.FINE, logPrefix
-					+ "Warning: Could not get RegistryHandler.getInstallationPath() return NULL. path: " + path);
-		}
-
-		// Update case :
-		if (path != null) {
-			String targetPanelDir = "TargetPanel.dir.windows";
-			if (OsVersion.IS_LINUX) {
-				targetPanelDir = "TargetPanel.dir.unix";
-				installData.setVariable(targetPanelDir, path);
-			} else {
-				installData.setVariable(targetPanelDir, path);
-			}
-			logger.log(Level.FINE, logPrefix + "Set " + targetPanelDir + ": " + path);
-
-			installData.setVariable(InstallData.INSTALL_PATH, path);
-			logger.log(Level.FINE, logPrefix + "Set INSTALL_PATH: " + path);
-
-			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-			logger.log(Level.FINE, logPrefix + "Set " + InstallData.MODIFY_INSTALLATION + ": true");
-		}
-
-		// Update case : read .installationinformation
-		if (path != null && installData.getInfo().isReadInstallationInformation()) {
-
-			if (!InstallationInformationHelper.hasAlreadyReadInformation(installData)) {
-				InstallationInformationHelper.readInformation(installData, resources);
-			} else {
-				logger.log(Level.FINE,
-						logPrefix + "ReadInstallationInformation: "
-								+ installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
-								+ InstallationInformationHelper.hasAlreadyReadInformation(installData));
-			}
-
-		}
-		logger.log(Level.FINE, logPrefix + "InitPath returned path:" + path);
-		return path;
-	}
-	*/
 
 	/**
 	 * @throws Exception
@@ -176,8 +126,7 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 
 	public static String getString(String key, ResourcesHelper resourcesHelper) {
 
-		String result = resourcesHelper.getCustomString(key);
-		return result;
+		return resourcesHelper.getCustomString(key);
 	}
 
 }

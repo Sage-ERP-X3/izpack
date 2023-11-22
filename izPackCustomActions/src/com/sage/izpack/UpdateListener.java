@@ -322,10 +322,7 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 			if (exitCode != 0) {
 				// script doesn't return 0 = SUCCESS
 				// throw an exception
-				// Debug.log("Command failed: "+ String.join(",", procBuilder.command()));
 				logger.log(Level.FINE, prefixLabel + "Command failed: " + procBuilder.command());
-				// Debug.log("Command failed: " + procBuilder.command());
-
 				throw new InstallerException(resource + " return code is " + exitCode + " !");
 			}
 		} else {
@@ -356,39 +353,19 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 			VariableSubstitutor substitutor = new VariableSubstitutorImpl(installData.getVariables());
 			substitutor.substitute(inputStream, fos, SubstitutionType.TYPE_PLAIN, "UTF-8");
 
-			/*
-			 * VariableSubstitutorInputStream substitutedStream = new
-			 * VariableSubstitutorInputStream(stream, installData.getVariables(),
-			 * SubstitutionType.TYPE_PLAIN, true); byte[] buffer = new byte[1024]; int len;
-			 * while ((len = substitutedStream.read(buffer)) != -1) { fos.write(buffer, 0,
-			 * len); }
-			 * 
-			 * substitutedStream.close();
-			 */
-			// VariableSubstitutor substitutor = new
-			// VariableSubstitutorImpl(installData.getVariables());
-			// substitutor.setBracesRequired(true);
-			// String result = substitutor.substitute(stream, SubstitutionType.TYPE_PLAIN);
-
-			// logger.log(Level.FINE,
-			// "UpdateListener.fetchAndExecuteResource() substitutor.substitute:", result);
-
-			// fos.write(result.getBytes());
-
 			fos.close();
 		} catch (com.izforge.izpack.api.exception.ResourceNotFoundException resNotFound) {
-			logger.log(Level.WARNING, prefixLabel + "Resource not found: " + resource + " " + resNotFound.getMessage());
+			logger.log(Level.FINE, prefixLabel + "Resource not found: " + resource + " " + resNotFound.getMessage());
 			return null;
 		} catch (com.izforge.izpack.api.exception.ResourceException resEx) {
-			logger.log(Level.WARNING, prefixLabel + "Resource error: " + resource + " " + resEx.getMessage());
+			logger.log(Level.FINE, prefixLabel + "Resource error: " + resource + " " + resEx.getMessage());
 			return null;
 		} catch (IOException ex) {
-			logger.log(Level.WARNING, prefixLabel + "" + ex.getMessage());
+			logger.log(Level.FINE, prefixLabel + "" + ex.getMessage());
 			throw new InstallerException(
 					prefixLabel + "I/O error during writing resource " + resource + " to a temporary buildfile", ex);
 		} catch (Exception ex) {
-			logger.log(Level.WARNING, prefixLabel + "Resource gerror: " + resource + " " + ex.getMessage());
-			// ex.printStackTrace();
+			logger.log(Level.FINE, prefixLabel + "Resource gerror: " + resource + " " + ex.getMessage());
 			return null;
 		} finally {
 		}

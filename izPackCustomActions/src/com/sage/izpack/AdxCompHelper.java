@@ -80,7 +80,7 @@ public class AdxCompHelper {
 		return new java.io.File(adxInstallBuilder.toString());
 	}
 
-	public Document getAdxInstallDoc() throws FileNotFoundException, NativeLibException, IOException, Exception {
+	public Document getAdxInstallDocument() throws FileNotFoundException, NativeLibException, IOException, Exception {
 		String logPrefix = "AdxCompHelper - ";
 		String adxAdminPath = this.getAdxAdminPath();
 		if (adxAdminPath == null || "".equals(adxAdminPath)) {
@@ -182,21 +182,6 @@ public class AdxCompHelper {
 		return moduleSpec;
 	}
 
-	
-	/*
-	TransformerFactory transformerFactory = TransformerFactory.newInstance();
-	transformerFactory.setAttribute("indent-number", 4);
-	Transformer transformer = transformerFactory.newTransformer();
-	transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-	transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-	transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-	transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-*/
-
-	// Transformer transformer = TransformerFactory.newInstance().newTransformer();
-	// transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-	// transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
-	// transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 
 	public static Transformer getTransformer(String encoding)
 			throws TransformerFactoryConfigurationError, TransformerConfigurationException {

@@ -10,8 +10,6 @@ import java.security.cert.PKIXCertPathBuilderResult;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-
 import javax.crypto.Cipher;
 
 import org.bouncycastle.openssl.PEMDecryptorProvider;
@@ -20,7 +18,8 @@ import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
-import org.icepdf.core.pobjects.acroform.signature.certificates.CertificateVerifier;
+// TODO: FRDEPO => DEPRECATED in java 9 and superior
+// import org.icepdf.core.pobjects.acroform.signature.certificates.CertificateVerifier;
 
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.installer.DataValidator;

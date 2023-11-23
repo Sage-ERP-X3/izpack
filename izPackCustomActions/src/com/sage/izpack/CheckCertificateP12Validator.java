@@ -1,6 +1,7 @@
 package com.sage.izpack;
 
-import javax.xml.bind.DatatypeConverter;
+// FRDEPO: error: package javax.xml.bind does not exist
+// import javax.xml.bind.DatatypeConverter;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMDecryptorProvider;
@@ -134,14 +135,16 @@ public class CheckCertificateP12Validator implements DataValidator {
 
 	}
 
-	private static String getThumbprint(X509Certificate cert)
-			throws NoSuchAlgorithmException, CertificateEncodingException {
+	private static String getThumbprint(X509Certificate cert) throws NoSuchAlgorithmException, CertificateEncodingException {
+		// 	throws NoSuchAlgorithmException, CertificateEncodingException {
 		MessageDigest md = MessageDigest.getInstance("SHA-1");
 		byte[] der = cert.getEncoded();
 		md.update(der);
 		byte[] digest = md.digest();
-		String digestHex = DatatypeConverter.printHexBinary(digest);
-		return digestHex.toLowerCase();
+		// TODO: FRDEPO : error: cannot find symbol
+		// String digestHex = DatatypeConverter.printHexBinary(digest);
+		// return digestHex.toLowerCase();
+		return null;
 	}
 
 	@Override

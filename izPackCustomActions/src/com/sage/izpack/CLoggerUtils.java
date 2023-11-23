@@ -189,8 +189,9 @@ public class CLoggerUtils {
 		try {
 
 			Field wTargetField = aClass.getDeclaredField(aFieldName);
-
-			boolean wHasToRemovePrivate = !wTargetField.isAccessible();
+			// TODO: FRDEPO= isAccessible() in AccessibleObject has been deprecated
+			// boolean wHasToRemovePrivate = !wTargetField.isAccessible();
+			boolean wHasToRemovePrivate = true;
 			// remove "private"
 			if (wHasToRemovePrivate) {
 				wTargetField.setAccessible(true);

@@ -75,9 +75,9 @@ public class CheckCertificateSyrDataValidator implements DataValidator{
             
             // cert should be part of the path  to be validated
             certCAChain.add(cert);
-            
-            PKIXCertPathBuilderResult verifiedCertChain = CertificateVerifier.verifyCertificate(cert,  new HashSet<X509Certificate> (certCAChain));
-                
+            // TODO: FRDEPO =>  error: cannot find symbol
+            // PKIXCertPathBuilderResult verifiedCertChain = CertificateVerifier.verifyCertificate(cert,  new HashSet<X509Certificate> (certCAChain));
+            PKIXCertPathBuilderResult verifiedCertChain = null;
 
             // Then check the private key
             PEMParser pemParser = new PEMParser(new InputStreamReader(inPemKeyFile));

@@ -141,6 +141,9 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 		return adxCompHelper.getAdxInstallFile(adxAdminDir);
 	}
 
+	/*
+	 * Remove module from Xml file [ADXADMIN_DIR]\inst\adxinstalls.xml
+	 */
 	private void cleanAdxInstallXml(String logPrefix, Element elemSpecDoc) throws TransformerFactoryConfigurationError,
 			FileNotFoundException, NativeLibException, IOException, Exception {
 		String moduleName = elemSpecDoc.getAttribute("name");
@@ -148,13 +151,19 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 
 		Document adxInstallXmlDoc = this.getAdxInstallDocument();
 		java.io.File adxAdminDir = new java.io.File(this.getAdxAdminPath());
+		java.io.File adxInstallFile = getAdxInstallFile(adxAdminDir);
+		if (adxInstallXmlDoc == null && !adxInstallFile.exists()) {
+			System.out.println(logPrefix + "Xml file " + adxInstallFile.getAbsolutePath() + " doesn't exist.");
+			return;			
+		}
+		
 		logger.log(Level.FINE, logPrefix + "moduleSpec 0: + " + AdxCompHelper.asString(elemSpecDoc, "utf-8")
-				+ "  moduleName found: " + moduleName + "   moduleFamily found: " + moduleFamily);
-
+				+ "  moduleName found: " + moduleName + "   moduleFamily found: " + moduleFamily);		
+		
 		// Get current module: Report, Runtime ...
 		Element adxXmlModule = getModule(adxInstallXmlDoc, elemSpecDoc, moduleName, moduleFamily);
 
-		// module not found :(
+		// Xml module not found :(
 		if (adxXmlModule == null) {
 			System.out.println(logPrefix + "module " + moduleName + "/" + moduleFamily + " not in "
 					+ adxAdminDir.getAbsolutePath() + ". Check finished.");

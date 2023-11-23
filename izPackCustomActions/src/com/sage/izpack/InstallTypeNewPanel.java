@@ -35,9 +35,6 @@ import com.izforge.izpack.core.os.RegistryDefaultHandler;
 
 public class InstallTypeNewPanel extends IzPanel implements ActionListener, ListSelectionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7778360562175088671L;
 
 	private static Logger logger = Logger.getLogger(InstallTypeNewPanel.class.getName());

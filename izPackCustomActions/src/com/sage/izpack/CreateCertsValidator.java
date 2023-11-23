@@ -20,9 +20,10 @@ import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.x509.extension.AuthorityKeyIdentifierStructure;
-import org.bouncycastle.x509.extension.SubjectKeyIdentifierStructure;
-import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
+// TODO: FRDEPO => warning: [deprecation] AuthorityKeyIdentifierStructure in org.bouncycastle.x509.extension has been deprecated
+// import org.bouncycastle.x509.extension.AuthorityKeyIdentifierStructure;
+// simport org.bouncycastle.x509.extension.SubjectKeyIdentifierStructure;
+// import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
@@ -197,11 +198,13 @@ public class CreateCertsValidator implements DataValidator {
                 KeyUsage.keyCertSign
                 | KeyUsage.cRLSign ));
         
+     // TODO: FRDEPO => warning: [deprecation] AuthorityKeyIdentifierStructure in org.bouncycastle.x509.extension has been deprecated
+/*
         SubjectKeyIdentifierStructure keyid = new SubjectKeyIdentifierStructure(pair.getPublic());
         certGen.addExtension(Extension.authorityKeyIdentifier, false, 
                 new AuthorityKeyIdentifier(keyid.getKeyIdentifier()));
         certGen.addExtension(Extension.subjectKeyIdentifier, false, keyid);
-
+*/
         ContentSigner sigGen=new JcaContentSignerBuilder("SHA256WithRSAEncryption").setProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()).build(pair.getPrivate());
         X509Certificate cert=new JcaX509CertificateConverter().setProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()).getCertificate(certGen.build(sigGen));
         cert.checkValidity(new Date());
@@ -251,12 +254,14 @@ public class CreateCertsValidator implements DataValidator {
                 | KeyUsage.dataEncipherment
                 | KeyUsage.keyAgreement));
         
+     // TODO: FRDEPO => warning: [deprecation] AuthorityKeyIdentifierStructure in org.bouncycastle.x509.extension has been deprecated
+/*
         SubjectKeyIdentifierStructure keyid = new SubjectKeyIdentifierStructure(pair.getPublic());
         certGen.addExtension(Extension.subjectKeyIdentifier, false, keyid);
 
         AuthorityKeyIdentifierStructure keyidCA = new AuthorityKeyIdentifierStructure(certCA);
         certGen.addExtension(Extension.authorityKeyIdentifier, false, keyidCA);
-        
+  */      
         List<GeneralName> subjectNames = new ArrayList<>();
         subjectNames.add(new GeneralName(GeneralName.dNSName,dnsName));
         
@@ -313,12 +318,14 @@ public class CreateCertsValidator implements DataValidator {
                 | KeyUsage.keyAgreement));
         certGen.addExtension(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_clientAuth));
         
+     // TODO: FRDEPO => warning: [deprecation] AuthorityKeyIdentifierStructure in org.bouncycastle.x509.extension has been deprecated
+/*
         SubjectKeyIdentifierStructure keyid = new SubjectKeyIdentifierStructure(pair.getPublic());
         certGen.addExtension(Extension.subjectKeyIdentifier, false, keyid);
 
         AuthorityKeyIdentifierStructure keyidCA = new AuthorityKeyIdentifierStructure(certCA);
         certGen.addExtension(Extension.authorityKeyIdentifier, false, keyidCA);
-
+*/
         ContentSigner sigGen=new JcaContentSignerBuilder("SHA256WithRSAEncryption").setProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()).build(pairCA.getPrivate());
         X509Certificate cert=new JcaX509CertificateConverter().setProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()).getCertificate(certGen.build(sigGen));
         

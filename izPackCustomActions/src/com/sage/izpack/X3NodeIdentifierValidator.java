@@ -85,7 +85,7 @@ public class X3NodeIdentifierValidator
 	@Override
 	public Status validateData(InstallData installData) {
 
-		return DataValidator.Status.OK; // checkData();
+		return DataValidator.Status.OK;
 	}
 
 	/**

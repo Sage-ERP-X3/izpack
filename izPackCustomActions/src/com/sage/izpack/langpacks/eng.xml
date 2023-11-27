@@ -367,4 +367,7 @@
     <str id="portinuse" txt="This port is already in use !"/>
 	<str id="privilegesIssue" txt="It looks that you don't have enough rights. You need to launch the 'Uninstaller' program from 'Add or remove programs' to get all privileges."/>		
 
+    <str id="userNameNotFound" txt="Invalid user name: id not found in your system"/>
+    <str id="groupNameNotFound" txt="Invalid group name: id not found in your system"/>
+
 </izpack:langpack>

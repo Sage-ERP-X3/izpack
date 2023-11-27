@@ -370,5 +370,7 @@
 	<str id="X3NodeIdentifierValidator" txt="Cet identifiant est déjà utilisé !"/>
     <str id="portinuse" txt="This port is already in use !"/>
     <str id="privilegesIssue" txt="Il semble que vous n'ayez pas suffisamment de droits. Vous devez lancer le programme 'Uninstaller' à partir de la fonction 'Ajouter ou supprimer des programmes' pour obtenir tous les privilèges."/>		
+    <str id="userNameNotFound" txt="Nom d'utilisateur invalide : nom introuvable dans votre système"/>
+    <str id="groupNameNotFound" txt="Nom de groupe invalide: nom introuvable dans votre système"/>
 
 </izpack:langpack>

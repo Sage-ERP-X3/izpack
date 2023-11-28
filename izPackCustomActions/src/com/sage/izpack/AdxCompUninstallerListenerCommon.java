@@ -35,6 +35,7 @@ import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.core.data.DefaultVariables;
 import com.izforge.izpack.core.handler.PromptUIHandler;
+import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.Platform;
 import com.izforge.izpack.util.helper.SpecHelper;
 
@@ -141,6 +142,32 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 		return adxCompHelper.getAdxInstallFile(adxAdminDir);
 	}
 
+	/**
+	 * Delete /sage/adxadm or c:\\sage\\adxadm file
+	 * 
+	 * @return
+	 */
+	private boolean deleteAdxAdmFile() {
+
+		boolean result = false;
+		try {
+			String path = RegistryHandlerX3.AdxAdmFileWindows; // "c:\\sage\\adxadm";
+			if (OsVersion.IS_UNIX) {
+				path = RegistryHandlerX3.AdxAdmFileLinux; // "/sage/adxadm";
+			}
+			java.io.File adxadmFile = new java.io.File(path);
+			if (!adxadmFile.exists()) {
+				return false;
+			}
+			adxadmFile.delete();
+			result = true;
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+			GetPromptUIHandler().emitError("Error", ex.getMessage());
+		}
+		return result;
+	}
+
 	/*
 	 * Remove module from Xml file [ADXADMIN_DIR]\inst\adxinstalls.xml
 	 */
@@ -154,12 +181,12 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 		java.io.File adxInstallFile = getAdxInstallFile(adxAdminDir);
 		if (adxInstallXmlDoc == null && !adxInstallFile.exists()) {
 			System.out.println(logPrefix + "Xml file " + adxInstallFile.getAbsolutePath() + " doesn't exist.");
-			return;			
+			return;
 		}
-		
+
 		logger.log(Level.FINE, logPrefix + "moduleSpec 0: + " + AdxCompHelper.asString(elemSpecDoc, "utf-8")
-				+ "  moduleName found: " + moduleName + "   moduleFamily found: " + moduleFamily);		
-		
+				+ "  moduleName found: " + moduleName + "   moduleFamily found: " + moduleFamily);
+
 		// Get current module: Report, Runtime ...
 		Element adxXmlModule = getModule(adxInstallXmlDoc, elemSpecDoc, moduleName, moduleFamily);
 
@@ -205,21 +232,23 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 				Document adxInstallXmlDoc = this.getAdxInstallDocument();
 				if (adxInstallXmlDoc == null) {
 					logger.log(Level.FINE, this.getAdxAdminPath() + " doesn't exist or cannot be opened.");
-					this.processDone = true;
-					return;
+				} else {
+					NodeList listAdxInstallsNodes = adxInstallXmlDoc.getDocumentElement()
+							.getElementsByTagName("module");
+					int nodes = 0;
+					if (listAdxInstallsNodes != null)
+						nodes = listAdxInstallsNodes.getLength();
+					if (nodes > 0) {
+						String remaining = this.getString("uninstaller.adxadmin.remainingmodules",
+								"remaining modules children: cancel installation !");
+						System.out.println(remaining);
+						GetPromptUIHandler().emitError("Error", remaining);
+						System.exit(1);
+					}
 				}
-				NodeList listAdxInstallsNodes = adxInstallXmlDoc.getDocumentElement().getElementsByTagName("module");
-				int nodes = 0;
-				if (listAdxInstallsNodes != null)
-					nodes = listAdxInstallsNodes.getLength();
-				if (nodes > 0) {
-					String remaining = this.getString("uninstaller.adxadmin.remainingmodules",
-							"remaining modules children: cancel installation !");
-					System.out.println(remaining);
-					GetPromptUIHandler().emitError("Error", remaining);
-					System.exit(1);
-				}
+				deleteAdxAdmFile();
 			}
+			
 			this.processDone = true;
 		} catch (WrappedNativeLibException exception) {
 			GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", PrivilegesFriendlyMessage));
@@ -233,10 +262,7 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 	protected boolean isAdxAdmin() throws Exception {
 		boolean isAdxAdminB = isAdxAdminFromPath();
 		if (!isAdxAdminB) {
-			// isAdxAdminB = isAdxAdminFromInformations();
-			// if (!isAdxAdminB) {
 			isAdxAdminB = isAdxAdminFromVariables();
-			// }
 		}
 		return isAdxAdminB;
 	}
@@ -255,18 +281,6 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 			return false;
 			// throw new InstallerException(e);
 		}
-		return isAdxAdminB;
-	}
-
-	private boolean isAdxAdminFromInformations() throws Exception {
-
-		AutomatedInstallData installData = new AutomatedInstallData(new DefaultVariables(),
-				new Platform(Platform.Name.WINDOWS));
-		Map<String, Pack> result = InstallationInformationHelper.loadInstallationInformation(getInstallPath(),
-				installData, resources);
-
-		String isAdxAdmin = installData.getVariable("is-adxadmin");
-		boolean isAdxAdminB = ((isAdxAdmin != null) ? isAdxAdmin.compareToIgnoreCase("true") >= 0 : false);
 		return isAdxAdminB;
 	}
 

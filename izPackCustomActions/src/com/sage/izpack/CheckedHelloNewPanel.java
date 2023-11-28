@@ -210,44 +210,47 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 	protected boolean isRegistered() throws Exception {
 		boolean result = false;
 
-		if (OsVersion.IS_WINDOWS) {
-			result = super.isRegistered();
-		}
-
-		if (!result) {
-			logger.log(Level.FINE,
-					logPrefix + "isRegistered()  Could not get RegistryHandler.getInstallationPath() return NULL"
-							+ _registryHelper + " Unix: " + OsVersion.IS_UNIX);
-			if (OsVersion.IS_UNIX) {
-				// String isAdxAdmin = installData.getVariable("is-adxadmin");
-				if (_x3Handler == null)
-					_x3Handler = new RegistryHandlerX3(_registryHandler, installData);
-				logger.log(Level.FINE, logPrefix + "isRegistered()  is-adxdmin: " + _x3Handler.isAdminSetup());
-				if (_x3Handler.isAdminSetup() && _x3Handler.getAdxAdminDirPath() != null) {
-					result = true;
-				}
-
-				String appName = installData.getVariable("APP_NAME");
-				logger.log(Level.FINE, logPrefix + "isRegistered:" + result + " Set Uninstallname: " + appName);
-				if (_registryHandler == null)
-					_registryHandler = _handler != null ? _handler.getInstance() : null;
-
-				if (_registryHandler != null) {
-					_registryHandler.setUninstallName(appName);
-				} else {
-					logger.log(Level.WARNING, logPrefix + "isRegistered() CANNOT set Uninstallname: " + appName);
-				}
-				installData.setVariable("UNINSTALL_NAME", appName);
+		try {
+			if (OsVersion.IS_WINDOWS) {
+				result = super.isRegistered();
 			}
+
+			if (!result) {
+				logger.log(Level.FINE,
+						logPrefix + "isRegistered()  Could not get RegistryHandler.getInstallationPath() return NULL"
+								+ _registryHelper + " Unix: " + OsVersion.IS_UNIX);
+				if (OsVersion.IS_UNIX) {
+					if (_x3Handler == null)
+						_x3Handler = new RegistryHandlerX3(_registryHandler, installData);
+					logger.log(Level.FINE, logPrefix + "isRegistered()  is-adxdmin: " + _x3Handler.isAdminSetup());
+					if (_x3Handler.isAdminSetup() && _x3Handler.getAdxAdminDirPath() != null) {
+						result = true;
+					}
+
+					String appName = this.installData.getVariable("APP_NAME");
+					logger.log(Level.FINE, logPrefix + "isRegistered:" + result + " Set Uninstallname: " + appName);
+					if (_registryHandler == null)
+						_registryHandler = _handler != null ? _handler.getInstance() : null;
+
+					if (_registryHandler != null) {
+						_registryHandler.setUninstallName(appName);
+					} else {
+						logger.log(Level.WARNING, logPrefix + "isRegistered() CANNOT set Uninstallname: " + appName);
+					}
+					installData.setVariable("UNINSTALL_NAME", appName);
+				}
+			}
+			if (result) {
+				// Set variable "modify.izpack.install"
+				installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+			}
+			logger.log(Level.FINE,
+					"CheckedHelloNewPanel isRegistered()  Set " + InstallData.MODIFY_INSTALLATION + ": " + result);
+		} catch (Exception ex) {
+			logger.log(Level.WARNING, logPrefix + "isRegistered error : " + ex);
+			ex.printStackTrace();
+			throw ex;
 		}
-		if (result) {
-			// Set variable "modify.izpack.install"
-			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-		}
-		logger.log(Level.FINE,
-				"CheckedHelloNewPanel isRegistered()  Set " + InstallData.MODIFY_INSTALLATION + ": " + result);
-		// logger.log(Level.FINE, "CheckedHelloNewPanel isRegistered()
-		// _registryHandler.getUninstallName: " + _registryHandler.getUninstallName());
 
 		return result;
 	}
@@ -283,6 +286,8 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			path = _registryHelper.getInstallationPath();
 
 		if (path == null) {
+			if (_x3Handler == null)
+				_x3Handler = new RegistryHandlerX3(_registryHandler, this.installData);
 			if (_x3Handler.isAdminSetup()) {
 				path = _x3Handler.getAdxAdminDirPath();
 			}

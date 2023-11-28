@@ -209,18 +209,6 @@ public class AdxCompHelper {
 		transformer.transform(source, result);
 	}
 
-	/*
-	private void saveXml(java.io.File fileAdxinstalls, Document adxInstallXmlDoc)
-			throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
-		// write the content into xml file
-		Transformer transformer = AdxCompHelper.getTransformer(null);
-		DOMSource source = new DOMSource(adxInstallXmlDoc);
-		StreamResult result = new StreamResult(fileAdxinstalls);
-
-		// Output to console for testing
-		transformer.transform(source, result);
-	}
-	*/
 
 	
 }

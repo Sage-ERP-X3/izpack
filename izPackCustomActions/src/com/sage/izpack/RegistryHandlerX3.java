@@ -173,16 +173,24 @@ public class RegistryHandlerX3 {
 
 	private String readAdxAdmFile(java.io.File adxadmFile) {
 		String adxAdminPath = null;
+
+		if (adxadmFile == null) {
+			logger.log(Level.WARNING, LogPrefix + "readAdxAdmFile. Cannot open NULL file");
+			return null;
+		}
+
 		FileReader readerAdxAdmFile;
 		try {
+			logger.log(Level.FINE, LogPrefix + "readAdxAdmFile. Reading file '" + adxadmFile.getAbsolutePath() + "'");
 			readerAdxAdmFile = new FileReader(adxadmFile);
 			BufferedReader buffread = new BufferedReader(readerAdxAdmFile);
 			adxAdminPath = buffread.readLine();
 			if (adxAdminPath != null)
 				adxAdminPath = adxAdminPath.trim();
 			buffread.close();
-			logger.log(Level.FINE, "RegistryHandlerX3.readAdxAdmFile. adxAdminPath: '" + adxAdminPath + "'");
+			logger.log(Level.FINE, LogPrefix + "readAdxAdmFile. adxAdminPath: '" + adxAdminPath + "'");
 		} catch (IOException e) {
+			logger.log(Level.WARNING, LogPrefix + "readAdxAdmFile. Cannot open file '" + adxadmFile + "'");
 			e.printStackTrace();
 		}
 		return adxAdminPath;
@@ -212,15 +220,16 @@ public class RegistryHandlerX3 {
 			String adxAdminPath = this.getAdxAdminDirPath();
 			if (adxAdminPath == null || "".equals(adxAdminPath)) {
 				// nothing to do
-				logger.log(Level.WARNING, "loadListFromAdxadmin error while retrieve AdxAdminDirPath=" + adxAdminPath);
+				logger.log(Level.WARNING,
+						LogPrefix + "loadListFromAdxadmin error while retrieve AdxAdminDirPath=" + adxAdminPath);
 				return lstCompPropsParam;
 			}
 
 			java.io.File dirAdxDir = new java.io.File(adxAdminPath);
 			if (!dirAdxDir.exists() || !dirAdxDir.isDirectory()) {
 				// nothing to do
-				logger.log(Level.WARNING,
-						"loadListFromAdxadmin error while reading AdxAdminDirPath=" + dirAdxDir.getAbsolutePath());
+				logger.log(Level.WARNING, LogPrefix + "loadListFromAdxadmin error while reading AdxAdminDirPath="
+						+ dirAdxDir.getAbsolutePath());
 				return lstCompPropsParam;
 			}
 
@@ -235,8 +244,8 @@ public class RegistryHandlerX3 {
 
 			if (!fileAdxinstalls.exists()) {
 				// nothing to do
-				logger.log(Level.WARNING,
-						"loadListFromAdxadmin error - File " + fileAdxinstalls.getAbsolutePath() + " doesn't exist.");
+				logger.log(Level.WARNING, LogPrefix + "loadListFromAdxadmin error - File "
+						+ fileAdxinstalls.getAbsolutePath() + " doesn't exist.");
 				return lstCompPropsParam;
 			}
 
@@ -295,7 +304,7 @@ public class RegistryHandlerX3 {
 				}
 			}
 		} catch (Exception ex) {
-			logger.log(Level.WARNING, "loadListFromAdxadmin error : " + ex);
+			logger.log(Level.WARNING, LogPrefix + "loadListFromAdxadmin error : " + ex);
 			ex.printStackTrace();
 		}
 		return lstCompPropsParam;
@@ -337,8 +346,7 @@ public class RegistryHandlerX3 {
 				}
 
 			} catch (Exception ex) {
-				// Debug.log(ex);
-				logger.log(Level.FINE, "Error while loading " + SPEC_FILE_NAME + " : " + ex);
+				logger.log(Level.FINE, LogPrefix + "Error while loading " + SPEC_FILE_NAME + " : " + ex);
 			}
 
 			// load registry
@@ -403,8 +411,7 @@ public class RegistryHandlerX3 {
 			rh.setRoot(oldVal);
 
 		} catch (Exception ex) {
-			logger.log(Level.ALL, "loadListFromRegistry error : " + ex);
-			// Debug.trace(ex);
+			logger.log(Level.ALL, LogPrefix + "loadListFromRegistry error : " + ex);
 		}
 		return lstCompPropsParam;
 

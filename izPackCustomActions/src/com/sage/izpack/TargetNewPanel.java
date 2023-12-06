@@ -16,6 +16,7 @@ public class TargetNewPanel extends TargetPanel {
 
 	private static final long serialVersionUID = 4462248660406450482L;
 	private static Logger logger = Logger.getLogger(TargetNewPanel.class.getName());
+	private static final String logPrefix = "TargetNewPanel - ";
 
 	public TargetNewPanel(Panel panel, InstallerFrame parent, GUIInstallData installData, Resources resources,
 			Log log) {
@@ -28,22 +29,22 @@ public class TargetNewPanel extends TargetPanel {
 	@Override
 	public void panelActivate() {
 
-		logger.log(Level.FINE, "TargetNewPanel.panelActivate");
+		logger.log(Level.FINE, logPrefix + "panelActivate");
 		super.panelActivate();
-		logger.log(Level.FINE, "TargetNewPanel.panelActivate  Path: " + pathSelectionPanel.getPath());
+		logger.log(Level.FINE, logPrefix + "panelActivate  Path: " + pathSelectionPanel.getPath());
 	}
 
 	@Override
 	public void saveData() {
 
-		logger.log(Level.FINE, "TargetNewPanel.saveData");
+		logger.log(Level.FINE, logPrefix + "saveData");
 
 		// <ComponentName>c:\Sage\SafeX3\${component.node.name}</ComponentName>
 		String platformSep = "[\\\\\\/]";// "\\\\";
 		int positionFromEnd = 0;
 		String variableNameRaw = getMetadata().getConfigurationOptionValue("SetVariableName", installData.getRules());
 		String variableName = null;
-		logger.log(Level.FINE, "TargetNewPanel.saveData  variableNameRaw: " + variableNameRaw);
+		logger.log(Level.FINE, logPrefix + "saveData variableNameRaw: " + variableNameRaw);
 
 		if (variableNameRaw != null && variableNameRaw.indexOf("${") >= 0 && variableNameRaw.indexOf("}") >= 0) {
 
@@ -56,21 +57,21 @@ public class TargetNewPanel extends TargetPanel {
 					positionFromEnd = pathElements.length - 1 - i;
 				}
 			}
-			logger.log(Level.FINE, "TargetNewPanel.saveData  variableName: '" + variableName + "'  positionFromEnd: "
-					+ positionFromEnd);
+			logger.log(Level.FINE,
+					logPrefix + "saveData variableName: '" + variableName + "'  positionFromEnd: " + positionFromEnd);
 		}
 
 		super.saveData();
 		String path = pathSelectionPanel.getPath();
 
-		logger.log(Level.FINE, "TargetNewPanel.saveData  Path: " + path);
+		logger.log(Level.FINE, logPrefix + "saveData Path: " + path);
 		if (variableName != null) {
 
 			String[] pathElements = path.split(platformSep);
 			String variableValue = pathElements[(pathElements.length - 1 - positionFromEnd)];
 			installData.setVariable(variableName, variableValue);
-			logger.log(Level.FINE, "TargetNewPanel.saveData path: " + path + "  setVariable  '" + variableName + "': "
-					+ variableValue);
+			logger.log(Level.FINE,
+					logPrefix + "saveData path: " + path + "  setVariable  '" + variableName + "': " + variableValue);
 		}
 
 	}

@@ -98,10 +98,8 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 				fetchAndExecuteResource(AFTER_INSTALL_SCRIPT + "_" + PLATFORM, null, this.getInstallData());
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	/*
@@ -171,15 +169,7 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 
 			beforePacksCommon();
 
-			/*
-			 * if (Boolean.valueOf(this.getInstallData().getVariable(InstallData.
-			 * MODIFY_INSTALLATION))) { fetchAndExcuteResource(pack.getLangPackId() + "_" +
-			 * BEFORE_UPDATE_SCRIPT + "_" + PLATFORM, getInstallData()); } else {
-			 * fetchAndExcuteResource(pack.getLangPackId() + "_" + BEFORE_INSTALL_SCRIPT +
-			 * "_" + PLATFORM, getInstallData()); }
-			 */
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -236,32 +226,6 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 			logger.log(Level.FINE, prefixLabel + "NO resource found for resourcePs:" + resourcePs);
 		}
 
-		/*
-		 * if (resourcePs != null) { InputStream streamPs =
-		 * this.spec.getResource(resourcePs); if (streamPs != null &&
-		 * streamPs.available() > 0) {
-		 * 
-		 * VariableSubstitutor substitutorPs = new
-		 * VariableSubstitutorImpl(installData.getVariables());
-		 * substitutorPs.setBracesRequired(true); String result =
-		 * substitutorPs.substitute(streamPs, SubstitutionType.TYPE_PLAIN);
-		 * 
-		 * File tempFilePs = File.createTempFile(resource, ".ps1"); FileOutputStream fos
-		 * = new FileOutputStream(tempFilePs); tempFilePs.deleteOnExit();
-		 * fos.write(result.getBytes()); fos.flush(); fos.close();
-		 * 
-		 * installData.setVariable("BEFORE_UPDATE_SCRIPT_PS", tempFilePs.getName());
-		 * installData.setVariable("BEFORE_UPDATE_SCRIPT_PS_PATH",
-		 * tempFilePs.getPath());
-		 * 
-		 * logger.log(Level.FINE, "UpdateListener.fetchAndExecuteResource resourcePs:" +
-		 * resourcePs + "  Temp file created: " + tempFilePs.getAbsolutePath() +
-		 * "  Add variable " + BEFORE_UPDATE_SCRIPT_PS + ":" + tempFilePs.getName());
-		 * 
-		 * } else { logger.log(Level.FINE,
-		 * "UpdateListener.fetchAndExecuteResource()  NO resource found for resourcePs:"
-		 * + resourcePs); } }
-		 */
 		String ext = OsVersion.IS_UNIX ? ".sh" : ".cmd";
 		// InputStream stream = spec.getResource(resource);
 		File tempFile = createTempFile(installData, resource, resource, ext);
@@ -325,7 +289,6 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 		} else {
 			logger.log(Level.FINE, prefixLabel + "NO resource found for resource:" + resource);
 		}
-
 	}
 
 	private File createTempFile(InstallData installData, String resource, String fileName, String ext) {

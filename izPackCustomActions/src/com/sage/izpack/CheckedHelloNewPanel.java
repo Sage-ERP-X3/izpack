@@ -245,7 +245,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 				installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
 			}
 			logger.log(Level.FINE,
-					"CheckedHelloNewPanel isRegistered()  Set " + InstallData.MODIFY_INSTALLATION + ": " + result);
+					logPrefix + "isRegistered()  Set " + InstallData.MODIFY_INSTALLATION + ": " + result);
 		} catch (Exception ex) {
 			logger.log(Level.WARNING, logPrefix + "isRegistered error : " + ex);
 			ex.printStackTrace();

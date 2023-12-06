@@ -24,7 +24,7 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 	private final InstallData installData;
 	private final RegistryHandler registryHandler;
 	private final RegistryHandlerX3 x3Handler;
-	private static final String logPrefix = "CheckedHelloNewPanelAutomationHelper ";
+	private static final String logPrefix = "CheckedHelloNewPanelAutomationHelper - ";
 
 	public CheckedHelloNewPanelAutomationHelper(RegistryDefaultHandler handler, InstallData installData,
 			Resources resources) throws NativeLibException {
@@ -75,8 +75,6 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 		installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
 	}
 
-
-
 	/**
 	 * @throws Exception
 	 */
@@ -100,7 +98,7 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 		int uninstallModifier = 1;
 		while (true) {
 			if (uninstallName == null) {
-				logger.log(Level.WARNING, "CheckedHelloNewPanel uninstallName returns NULL");
+				logger.log(Level.WARNING, logPrefix + "uninstallName returns NULL");
 				break; // Should never be...
 			}
 			// Now we define a new uninstall name.
@@ -114,7 +112,7 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 				// Now let us inform the user.
 				// emitNotification(getString("CheckedHelloNewPanel.infoOverUninstallKey") +
 				// newUninstallName);
-				logger.log(Level.FINE, "CheckedHelloNewPanel setUniqueUninstallKey() "
+				logger.log(Level.FINE, logPrefix + "setUniqueUninstallKey() "
 						+ getString("CheckedHelloNewPanel.infoOverUninstallKey", resourcesHelper) + newUninstallName);
 				// Now a little hack if the registry spec file contains
 				// the pack "UninstallStuff".

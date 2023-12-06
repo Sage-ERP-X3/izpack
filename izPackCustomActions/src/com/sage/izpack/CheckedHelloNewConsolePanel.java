@@ -28,6 +28,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 
 	private static Logger logger = Logger.getLogger(CheckedHelloNewConsolePanel.class.getName());
 	private final Resources resources;
+	private static final String logPrefix = "CheckedHelloNewConsolePanel - ";
 
 	/**
 	 * The prompt.
@@ -53,7 +54,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		this.registryHandler = handler != null ? handler.getInstance() : null;
 		this.x3Handler = new RegistryHandlerX3(registryHandler, installData);
 
-		logger.log(Level.FINE, "CheckedHelloNewConsolePanel");
+		logger.log(Level.FINE, logPrefix);
 
 		this.resourceHelper = new ResourcesHelper(installData, resources);
 		resourceHelper.mergeCustomMessages();
@@ -62,7 +63,6 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 
 		this.installPath = CheckedHelloNewPanel.initPath(installData, resources, registryHelper, x3Handler);
 	}
-
 
 	/**
 	 * Runs the panel using the specified console.
@@ -74,7 +74,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 	@Override
 	public boolean run(InstallData installData, Console console) {
 
-		logger.log(Level.FINE, "CheckedHelloNewConsolePanel.run()  installPath: " + this.installPath);
+		logger.log(Level.FINE, logPrefix + "run()  installPath: " + this.installPath);
 
 		printHeadLine(installData, console);
 
@@ -120,7 +120,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 				// return variables.get("APP_NAME") + " " + variables.get("APP_VER");
 				Variables variables = this.installData.getVariables();
 				installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
-				logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set UNINSTALL_NAME: " + variables.get("APP_NAME"));
+				logger.log(Level.FINE, logPrefix + "Set UNINSTALL_NAME: " + variables.get("APP_NAME"));
 				// installData.setVariable("UNINSTALL_NAME", registryHelper.getUninstallName());
 				if (result) {
 					display(installData, console);
@@ -131,7 +131,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 				// or <variable name="CheckedHelloNewPanel.allowMultipleInstance"
 				// value="false"/>
 			} else {
-				logger.log(Level.FINE, "CheckedHelloNewPanel allow-multiple-instance=false (updatemode)");
+				logger.log(Level.FINE, logPrefix + "allow-multiple-instance=false (updatemode)");
 
 				result = multipleInstall(installData);
 				if (result) {
@@ -157,7 +157,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 				Variables variables = this.installData.getVariables();
 				// installData.setVariable("UNINSTALL_NAME", registryHelper.getUninstallName());
 				installData.setVariable("UNINSTALL_NAME", variables.get("APP_NAME"));
-				logger.log(Level.FINE, "CheckedHelloNewConsolePanel Set UNINSTALL_NAME: " + variables.get("APP_NAME"));
+				logger.log(Level.FINE, logPrefix + "Set UNINSTALL_NAME: " + variables.get("APP_NAME"));
 				if (result) {
 					display(installData, console);
 					result = promptEndPanel(installData, console);
@@ -180,7 +180,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 	@Override
 	protected boolean multipleInstall(InstallData installData) {
 
-		logger.log(Level.FINE, "CheckedHelloNewConsolePanel.multipleInstall()");
+		logger.log(Level.FINE, logPrefix + "multipleInstall()");
 
 		boolean result;
 		String path;

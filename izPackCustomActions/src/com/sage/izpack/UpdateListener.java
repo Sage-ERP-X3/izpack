@@ -246,12 +246,9 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 		 * substitutorPs.setBracesRequired(true); String result =
 		 * substitutorPs.substitute(streamPs, SubstitutionType.TYPE_PLAIN);
 		 * 
-		 * File tempFilePs = File.createTempFile(resource, ".ps1"); 
-		 * FileOutputStream fos = new FileOutputStream(tempFilePs); 
-		 * tempFilePs.deleteOnExit();
-		 * fos.write(result.getBytes()); 
-		 * fos.flush(); 
-		 * fos.close();
+		 * File tempFilePs = File.createTempFile(resource, ".ps1"); FileOutputStream fos
+		 * = new FileOutputStream(tempFilePs); tempFilePs.deleteOnExit();
+		 * fos.write(result.getBytes()); fos.flush(); fos.close();
 		 * 
 		 * installData.setVariable("BEFORE_UPDATE_SCRIPT_PS", tempFilePs.getName());
 		 * installData.setVariable("BEFORE_UPDATE_SCRIPT_PS_PATH",
@@ -335,9 +332,10 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 
 		File tempFile = null;
 		try {
-			// Object obj = this.resources.getObject(resource);
 			InputStream inputStream = this.spec.getResource(resource);
-
+			if (inputStream == null && this.resources != null) {
+				inputStream = this.resources.getInputStream(resource);
+			}
 			if (inputStream == null) {
 				logger.log(Level.FINE,
 						prefixLabel + "Cannot createTempFile(" + resource + ", " + fileName + ext + ") ");

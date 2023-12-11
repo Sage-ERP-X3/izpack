@@ -209,19 +209,5 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		return result;
 	}
 
-	/**
-	 * Returns the text to display.
-	 * 
-	 * @return the text
-	 */
-	/*
-	 * @Override protected String getText() { ResourcesHelper resourcesHelper = new
-	 * ResourcesHelper(this.installData, this.resources); String str =
-	 * resourcesHelper.getCustomString("HelloPanel.welcome1") +
-	 * this.installData.getInfo().getAppName() + " " +
-	 * this.installData.getInfo().getAppVersion() +
-	 * resourcesHelper.getCustomString("HelloPanel.welcome2"); return str; // return
-	 * resources.getString(panelResourceName,
-	 * "Error : could not load the info text!"); }
-	 */
+
 }

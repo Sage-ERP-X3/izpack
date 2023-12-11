@@ -72,6 +72,12 @@ public class FinishNewPanelAutomationHelper extends FinishPanelAutomation {
 	}
 
 	public static void initUninstallPath(Resources resources, InstallData installData) {
+
+		if (installData == null) {
+			logger.log(Level.SEVERE, logPrefix + " Error: initUninstallPath(resources, installData = NULL)");
+
+			return;
+		}
 		Info info = installData.getInfo();
 		if (info.getUninstallerPath() == null) {
 			String uninstallPath = info.getInstallationSubPath();
@@ -96,56 +102,6 @@ public class FinishNewPanelAutomationHelper extends FinishPanelAutomation {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		// createUninstallerIcon(resources, installData, "UninstallerIcon", "UninstallerIcon", ".ico");
-
 	}
-/*
-	private static File createUninstallerIcon(Resources resources, InstallData installData, String resource,
-			String targetfileName, String ext) {
 
-		SpecHelper helper = new SpecHelper(resources);
-
-		File tempFile = null;
-		try {
-			InputStream inputStream = helper.getResource(resource);
-
-			if (inputStream == null) {
-				logger.log(Level.FINE, logPrefix + "Cannot createTempFile(" + resource + ", " + targetfileName + ") ");
-				return null;
-			}
-
-			logger.log(Level.FINE, logPrefix + "createTempFile(" + resource + ", " + targetfileName + ") ");
-
-			tempFile = File.createTempFile(targetfileName, ext);
-			tempFile.deleteOnExit();
-			FileOutputStream fos = new FileOutputStream(tempFile);
-			int a;
-			while ((a = inputStream.read()) != -1)
-				fos.write(a);
-			fos.close();
-			Path source =Paths.get(tempFile.getAbsolutePath()); 
-			Path dest = Paths.get(installData.getInstallPath() + File.separator + "Uninstaller" + targetfileName + ext);
-			logger.log(Level.FINE, logPrefix + "copy " + source + " to " + dest + "");
-			Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING);
-			
-		} catch (com.izforge.izpack.api.exception.ResourceNotFoundException resNotFound) {
-			logger.log(Level.WARNING, logPrefix + "Resource not found: " + resource + " " + resNotFound.getMessage());
-			return null;
-		} catch (com.izforge.izpack.api.exception.ResourceException resEx) {
-			logger.log(Level.WARNING, logPrefix + "Resource error: " + resource + " " + resEx.getMessage());
-			return null;
-		} catch (IOException ex) {
-			logger.log(Level.WARNING, logPrefix + "" + ex.getMessage());
-			throw new InstallerException(
-					logPrefix + "I/O error during writing resource " + resource + " to a temporary buildfile", ex);
-		} catch (Exception ex) {
-			logger.log(Level.WARNING, logPrefix + "Resource gerror: " + resource + " " + ex.getMessage());
-			return null;
-		} finally {
-		}
-
-		return tempFile;
-	}
-*/
 }

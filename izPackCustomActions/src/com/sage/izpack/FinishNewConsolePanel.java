@@ -29,12 +29,15 @@ public class FinishNewConsolePanel extends FinishConsolePanel {
 	private InstallData installData;
 	private ResourcesHelper resourceHelper;
 	private Resources resources;
+	private static String logPrefix = "FinishNewConsolePanel - ";
+
 
 	public FinishNewConsolePanel(InstallData installData, ObjectFactory factory, ConsoleInstaller parent,
 			PlatformModelMatcher matcher, UninstallDataWriter uninstallDataWriter, UninstallData uninstallData,
 			Resources resources, Prompt prompt, PanelView<ConsolePanel> panel) {
 		super(factory, parent, matcher, uninstallData, prompt, panel);
 
+		this.installData = installData;
 		this.uninstallDataWriter = uninstallDataWriter;
 		this.prompt = prompt;
 		this.uninstallData = uninstallData;
@@ -59,7 +62,6 @@ public class FinishNewConsolePanel extends FinishConsolePanel {
 		boolean result = true;
 
 		// X3-256055: Uninstaller (izpack 5.2)
-		String logPrefix = "FinishNewPanel writeUninstallData - ";
 		boolean uninstallRequired = this.uninstallDataWriter.isUninstallRequired();
 		logger.log(Level.FINE, logPrefix + "uninstallRequired:" + uninstallRequired);
 

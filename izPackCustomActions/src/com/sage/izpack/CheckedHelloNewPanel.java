@@ -218,7 +218,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			if (!result) {
 				logger.log(Level.FINE,
 						logPrefix + "isRegistered()  Could not get RegistryHandler.getInstallationPath() return NULL"
-								+ _registryHelper + " Unix: " + OsVersion.IS_UNIX);
+								+ _registryHelper + " IsUnix: " + OsVersion.IS_UNIX);
 				if (OsVersion.IS_UNIX) {
 					if (_x3Handler == null)
 						_x3Handler = new RegistryHandlerX3(_registryHandler, installData);
@@ -229,13 +229,17 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 					String appName = this.installData.getVariable("APP_NAME");
 					logger.log(Level.FINE, logPrefix + "isRegistered:" + result + " Set Uninstallname: " + appName);
-					if (_registryHandler == null)
-						_registryHandler = _handler != null ? _handler.getInstance() : null;
 
-					if (_registryHandler != null) {
-						_registryHandler.setUninstallName(appName);
-					} else {
-						logger.log(Level.WARNING, logPrefix + "isRegistered() CANNOT set Uninstallname: " + appName);
+					if (OsVersion.IS_WINDOWS) {
+						if (_registryHandler == null)
+							_registryHandler = _handler != null ? _handler.getInstance() : null;
+
+						if (_registryHandler != null) {
+							_registryHandler.setUninstallName(appName);
+						} else {
+							logger.log(Level.WARNING,
+									logPrefix + "isRegistered() CANNOT set Uninstallname: " + appName);
+						}
 					}
 					installData.setVariable("UNINSTALL_NAME", appName);
 				}

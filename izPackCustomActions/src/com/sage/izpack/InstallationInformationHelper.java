@@ -36,7 +36,7 @@ public final class InstallationInformationHelper {
 	private static final Logger logger = Logger.getLogger(InstallationInformationHelper.class.getName());
 
 	private static final List<String> VariablesExceptions = new ArrayList<String>(Arrays.asList("app-version", "APP_VER",
-			"app-version-new", "APP_VER_NEW", "ISO2_LANG", "ISO3_LANG", "COMPONENT.VERSION"));
+			"app-version-new", "APP_VER_NEW", "ISO2_LANG", "ISO3_LANG", "COMPONENT.VERSION")); // , "modify.izpack.install", "component.status" ));
 
 	public static boolean hasAlreadyReadInformation(com.izforge.izpack.api.data.InstallData installData) {
 

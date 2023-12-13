@@ -1,12 +1,16 @@
 package com.sage.izpack;
 
+import static com.sage.izpack.CTextLineUtils.toInsecable;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +21,7 @@ import javax.swing.table.TableCellRenderer;
 
 import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.data.Panel;
+import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.factory.ObjectFactory;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.api.rules.RulesEngine;
@@ -33,6 +38,7 @@ public class PacksNewPanel extends PacksPanel {
 	private static final long serialVersionUID = 2809544763635023846L;
 
 	private static final Logger logger = Logger.getLogger(PacksNewPanel.class.getName());
+	private static String prefixLabel = "PacksNewPanel - ";
 
 	/**
 	 * The packs messages.
@@ -56,7 +62,7 @@ public class PacksNewPanel extends PacksPanel {
 	@Override
 	protected JTable createPacksTable(int width, JScrollPane scroller, GridBagLayout layout,
 			GridBagConstraints constraints) {
-		logger.log(Level.FINE, "PacksNewPanel.createPacksTable");
+		logger.log(Level.FINE, prefixLabel + "createPacksTable");
 
 		// List<Pack> selectedPacks = new LinkedList<Pack>();
 		for (Pack p : this.installData.getAvailablePacks()) {
@@ -67,7 +73,7 @@ public class PacksNewPanel extends PacksPanel {
 				p.setPreselected(true);
 			}
 
-			logger.log(Level.FINE, "PacksNewPanel.createPacksTable - Pack " + p.getName() + " Required: "
+			logger.log(Level.FINE, prefixLabel + "createPacksTable - Pack " + p.getName() + " Required: "
 					+ p.isRequired() + " Preselected: " + p.isPreselected());
 		}
 
@@ -75,7 +81,7 @@ public class PacksNewPanel extends PacksPanel {
 
 		JTable table = super.createPacksTable(width, scroller, layout, constraints);
 
-		logger.log(Level.FINE, "PacksNewPanel.createPacksTable constraints: " + constraints + " ");
+		logger.log(Level.FINE, prefixLabel + "createPacksTable constraints: " + constraints + " ");
 		/*
 		 * Pack pack = this.packsModel.getPackAtRow(0); if (pack != null &&
 		 * !pack.isPreselected()) pack.setPreselected(true);
@@ -94,44 +100,71 @@ public class PacksNewPanel extends PacksPanel {
 
 	@Override
 	public void panelActivate() {
-		logger.log(Level.FINE, "PacksNewPanel.panelActivate");
-		// this.packsModel.updateTable();
+		logger.log(Level.FINE, prefixLabel + "panelActivate");
+
+		// Avoid reset of our correct values and variables already read
+		// boolean hasAlreadyReadInfo =  InstallationInformationHelper.hasAlreadyReadInformation(installData);
+		// if (installData.getInfo().isReadInstallationInformation()) {
+		//	logger.log(Level.FINE, prefixLabel + "panelActivate : setReadInstallationInformation to false. Variables already read");
+		//	installData.getInfo().setReadInstallationInformation(false);
+		//}
 
 		if (installData.getSelectedPacks().isEmpty()) {
-			logger.log(Level.FINE, "PacksNewPanel.panelActivate : getSelectedPacks().isEmpty()");
+			logger.log(Level.FINE, prefixLabel + "panelActivate : getSelectedPacks().isEmpty()");
 
 			List<Pack> selectedPacks = new LinkedList<Pack>();
 			for (Pack p : installData.getAvailablePacks()) {
 				if (p.isRequired()) {
 					selectedPacks.add(p);
-					logger.log(Level.FINE, "PacksNewPanel.panelActivate : add selectedPacks:" + p.getName());
+					logger.log(Level.FINE, prefixLabel + "panelActivate : add selectedPacks:" + p.getName());
 				}
 			}
 
-			logger.log(Level.FINE, "PacksNewPanel.panelActivate : selectedPacks:" + selectedPacks);
+			logger.log(Level.FINE, prefixLabel + "panelActivate : selectedPacks:" + selectedPacks);
 			installData.setSelectedPacks(selectedPacks);
 
 			// parent.lockNextButton();
 		} else {
 			logger.log(Level.FINE,
-					"PacksNewPanel.panelActivate : getSelectedPacks() : " + installData.getSelectedPacks());
+					prefixLabel + "panelActivate : getSelectedPacks() : " + installData.getSelectedPacks());
 			parent.unlockNextButton();
 		}
 
+		// Variables variables = installData.getVariables();
+		// variables.getProperties().clone();
+		// boolean isUpdateMode = variables.getBoolean("modify.izpack.install");
+		// Map<String, String> v = new HashMap<String, String>();
+		// if (isUpdateMode) {
+		//	logger.log(Level.FINE, prefixLabel + "panelActivate : Backup variables");
+		//	for (Entry<Object, Object> wEntry : variables.getProperties().entrySet()) {
+		//		v.put(String.valueOf(wEntry.getKey()), String.valueOf(wEntry.getValue()));
+		//	}			
+		//}
+			
 		super.panelActivate();
 
+
+		// if (isUpdateMode) {
+		//	logger.log(Level.FINE, prefixLabel + "panelActivate : Restore variables");
+		//	Variables variables2 = installData.getVariables();
+		//	for (Entry<String, String> wEntry : v.entrySet()) {
+		//		variables2.set(wEntry.getKey(), wEntry.getValue());
+		//	}	
+		//}
+			
+		
 		if (installData.getSelectedPacks().isEmpty()) {
-			logger.log(Level.FINE, "PacksNewPanel.panelActivate2 : getSelectedPacks().isEmpty()");
+			logger.log(Level.FINE, prefixLabel + "panelActivate2 : getSelectedPacks().isEmpty()");
 
 			List<Pack> selectedPacks = new LinkedList<Pack>();
 			for (Pack p : installData.getAvailablePacks()) {
 				if (p.isRequired()) {
 					selectedPacks.add(p);
-					logger.log(Level.FINE, "PacksNewPanel.panelActivate2 : add selectedPacks:" + p.getName());
+					logger.log(Level.FINE, prefixLabel + "panelActivate2 : add selectedPacks:" + p.getName());
 				}
 			}
 
-			logger.log(Level.FINE, "PacksNewPanel.panelActivate2 : selectedPacks:" + selectedPacks);
+			logger.log(Level.FINE, prefixLabel + "panelActivate2 : selectedPacks:" + selectedPacks);
 			installData.setSelectedPacks(selectedPacks);
 
 			if (!installData.getSelectedPacks().isEmpty()) {
@@ -140,7 +173,7 @@ public class PacksNewPanel extends PacksPanel {
 			
 		} else {
 			logger.log(Level.FINE,
-					"PacksNewPanel.panelActivate2 : getSelectedPacks() : " + installData.getSelectedPacks());
+					prefixLabel + "panelActivate2 : getSelectedPacks() : " + installData.getSelectedPacks());
 			parent.unlockNextButton();
 		}
 
@@ -148,7 +181,7 @@ public class PacksNewPanel extends PacksPanel {
 		CheckBoxNewRenderer packSelectedRenderer = new CheckBoxNewRenderer();
 		packsTable.getColumnModel().getColumn(0).setCellRenderer(packSelectedRenderer);
 
-		logger.log(Level.FINE, "PacksNewPanel.panelActivate2 : installedpacks : " + installedpacks);
+		logger.log(Level.FINE, prefixLabel + "panelActivate2 : installedpacks : " + installedpacks);
 
 	}
 
@@ -159,10 +192,10 @@ public class PacksNewPanel extends PacksPanel {
 	 */
 	@Override
 	public boolean isValidated() {
-		logger.log(Level.FINE, "PacksNewPanel.isValidated : ");
+		logger.log(Level.FINE, prefixLabel + "isValidated : ");
 
 		boolean isValidated = super.isValidated();
-		logger.log(Level.FINE, "PacksNewPanel.isValidated : " + isValidated);
+		logger.log(Level.FINE, prefixLabel + "isValidated : " + isValidated);
 
 		return isValidated;
 	}
@@ -183,7 +216,7 @@ public class PacksNewPanel extends PacksPanel {
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
-			logger.log(Level.FINE, "PacksNewPanel.CheckBoxNewRenderer : isSelected: " + isSelected);
+			logger.log(Level.FINE, prefixLabel + "CheckBoxNewRenderer : isSelected: " + isSelected);
 
 			if (isSelected) {
 				checkbox.setForeground(table.getSelectionForeground());
@@ -196,24 +229,24 @@ public class PacksNewPanel extends PacksPanel {
 			PacksModel.CbSelectionState state = (PacksModel.CbSelectionState) value;
 
 			logger.log(Level.FINE,
-					"PacksNewPanel.CheckBoxNewRenderer : state: " + state + " state.isSelectedOrRequiredSelected() : "
+					prefixLabel + "CheckBoxNewRenderer : state: " + state + " state.isSelectedOrRequiredSelected() : "
 							+ state.isSelectedOrRequiredSelected() + "  state.isChecked() : " + state.isChecked()
 							+ "  value: " + value);
 
 			if (state == PacksModel.CbSelectionState.DEPENDENT_DESELECTED) {
 				// condition not fulfilled
 				checkbox.setForeground(Color.GRAY);
-				logger.log(Level.FINE, "PacksNewPanel.CheckBoxNewRenderer :  condition not fulfilled");
+				logger.log(Level.FINE, prefixLabel + "CheckBoxNewRenderer :  condition not fulfilled");
 			}
 			if (state == PacksModel.CbSelectionState.REQUIRED_PARTIAL_SELECTED) {
-				logger.log(Level.FINE, "PacksNewPanel.CheckBoxNewRenderer :  setSelected");
+				logger.log(Level.FINE, prefixLabel + "CheckBoxNewRenderer :  setSelected");
 				checkbox.setForeground(Color.RED);
 				checkbox.setSelected(true);
 			}
 
 			if (state != null) {
 				logger.log(Level.FINE,
-						"PacksNewPanel.CheckBoxNewRenderer :  setSelected? : " + (value != null && state.isChecked())); // isSelectedOrRequiredSelected()));
+						prefixLabel + "CheckBoxNewRenderer :  setSelected? : " + (value != null && state.isChecked())); // isSelectedOrRequiredSelected()));
 
 				checkbox.setEnabled(state.isSelectable());
 				checkbox.setSelected((value != null && state.isChecked())); // isSelectedOrRequiredSelected()));

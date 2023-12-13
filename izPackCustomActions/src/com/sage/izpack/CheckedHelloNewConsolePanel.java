@@ -137,14 +137,6 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 				if (result) {
 					installData.getInfo().setUninstallerPath(null);
 					installData.getInfo().setUninstallerName(null);
-					// try {
-					// _registryHelper.updateUninstallName();
-					// registered = false;
-					// } catch (NativeLibException exception) {
-					// result = false;
-					// logger.log(Level.SEVERE, "CheckedHelloNewConsolePanel " +
-					// exception.getMessage(), exception);
-					// }
 				}
 
 				// Set variable "modify.izpack.install"
@@ -193,8 +185,6 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 				path = "<not found>";
 			}
 			// X3-240420 : Wrong message when updating the console This method should only
-			// ResourcesHelper resourcesHelper = new ResourcesHelper(this.installData,
-			// this.resources);
 			String noLuck = this.resourceHelper.getCustomString("CheckedHelloNewPanel.productAlreadyExist0") + path
 					+ ". " + this.resourceHelper.getCustomString("CheckedHelloNewPanel.productAlreadyExist1");
 

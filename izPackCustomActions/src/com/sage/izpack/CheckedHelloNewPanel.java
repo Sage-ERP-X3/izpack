@@ -96,6 +96,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		}
 
 		// Update case : read .installationinformation
+		/*
 		if (path != null && installData.getInfo().isReadInstallationInformation()) {
 
 			if (!InstallationInformationHelper.hasAlreadyReadInformation(installData)) {
@@ -107,7 +108,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 								+ InstallationInformationHelper.hasAlreadyReadInformation(installData));
 			}
 
-		}
+		}*/
 		logger.log(Level.FINE, logPrefix + "InitPath returned path:" + path);
 		return path;
 	}

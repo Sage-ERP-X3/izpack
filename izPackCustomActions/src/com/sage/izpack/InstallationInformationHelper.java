@@ -256,9 +256,9 @@ public final class InstallationInformationHelper {
 			 * "Could not read Pack installation information in current izPack version: " +
 			 * e.getMessage()); throw e; }
 			 */
-			installData.getAllPacks().clear();
-			installData.getAvailablePacks().clear();
-			installData.setSelectedPacks(new ArrayList<Pack>());
+			// installData.getAllPacks().clear();
+			// installData.getAvailablePacks().clear();
+			// installData.setSelectedPacks(new ArrayList<Pack>());
 
 			try {
 				Variables envvariables = installData.getVariables();
@@ -354,8 +354,9 @@ public final class InstallationInformationHelper {
 			 * } finally { installData.setSelectedPacks(packLists); logger.log(Level.FINE,
 			 * logHeader + "setSelectedPacks: " + packLists); }
 			 */
-			installData.getAllPacks().clear();
-			installData.getAvailablePacks().clear();
+			
+			// installData.getAllPacks().clear();
+			//installData.getAvailablePacks().clear();
 			installData.setSelectedPacks(packLists);
 
 			try {

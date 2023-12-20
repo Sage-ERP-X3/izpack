@@ -35,22 +35,22 @@ public final class InstallationInformationHelper {
 
 	private static final Logger logger = Logger.getLogger(InstallationInformationHelper.class.getName());
 
-	private static final List<String> VariablesExceptions = new ArrayList<String>(Arrays.asList("app-version",
-			"APP_VER", "app-version-new", "APP_VER_NEW", "ISO2_LANG", "ISO3_LANG", "COMPONENT.VERSION", "modify.izpack.install", "component.status"));
+	private static final List<String> VariablesExceptions = new ArrayList<String>(
+			Arrays.asList("app-version", "APP_VER", "app-version-new", "APP_VER_NEW", "ISO2_LANG", "ISO3_LANG",
+					"COMPONENT.VERSION", "modify.izpack.install", "component.status"));
 
 	private static boolean hasRead = false;
-	
+	private static final String logPrefix = "InstallationInformationHelper - ";
+
 	public static boolean hasAlreadyReadInformation(com.izforge.izpack.api.data.InstallData installData) {
 
 		/*
-		String informationRead = installData.getVariable("information-read");
-		boolean result = false;
-		if (informationRead != null && informationRead.equalsIgnoreCase("true")) {
-			result = true;
-		}
-*/
-		logger.log(Level.FINE,
-				"InstallationInformationHelper hasAlreadyReadInformation : " + hasRead); //  + " value: " + informationRead);
+		 * String informationRead = installData.getVariable("information-read"); boolean
+		 * result = false; if (informationRead != null &&
+		 * informationRead.equalsIgnoreCase("true")) { result = true; }
+		 */
+		logger.log(Level.FINE, logPrefix + "hasAlreadyReadInformation : " + hasRead); // + " value: " +
+																						// informationRead);
 		return hasRead;
 	}
 
@@ -63,41 +63,38 @@ public final class InstallationInformationHelper {
 		installData.setVariable("sageos.version", osVersion);
 		installData.setVariable("sageos.details", osVersionDetails);
 
-		logger.log(Level.FINE, "InstallationInformationHelper set variables 'os.version', 'sageos.version': "
-				+ osVersion + "  'sageos.details':" + osVersionDetails);
+		logger.log(Level.FINE, logPrefix + "set variables 'os.version', 'sageos.version': " + osVersion
+				+ "  'sageos.details':" + osVersionDetails);
 
-		logger.log(Level.FINE, "InstallationInformationHelper Reading file " + InstallData.INSTALLATION_INFORMATION);
+		logger.log(Level.FINE, logPrefix + "Reading file " + InstallData.INSTALLATION_INFORMATION);
 
-		logger.log(Level.FINE, "InstallationInformationHelper Before " + InstallData.INSTALLATION_INFORMATION
-				+ " component.node.name : " + installData.getVariable("component.node.name"));
+		logger.log(Level.FINE, logPrefix + "Before " + InstallData.INSTALLATION_INFORMATION + " component.node.name : "
+				+ installData.getVariable("component.node.name"));
 
 		// Read .installationinformation
 		Boolean informationloaded = false;
 		try {
-			logger.log(Level.FINE, "InstallationInformationHelper Loading installation information");
+			logger.log(Level.FINE, logPrefix + "Loading installation information");
 
 			saveNewAppVersion(installData);
 
-			loadInstallationInformation(installData.getInstallPath(), installData, resources);
-			informationloaded = true;
-			logger.log(Level.FINE, "InstallationInformationHelper Installation information loaded");
+			informationloaded = loadInstallationInformation(installData.getInstallPath(), installData, resources);
+			;
+			logger.log(Level.FINE, logPrefix + "Installation information loaded");
 		} catch (Exception e) {
-			logger.log(Level.FINE,
-					"InstallationInformationHelper Installation information loading failed: " + e.getMessage());
+			logger.log(Level.FINE, logPrefix + "Installation information loading failed: " + e.getMessage());
 			informationloaded = false;
 		}
 
 		// If old version 4.3.8, ...
 		if (!informationloaded) {
-			logger.log(Level.FINE, "InstallationInformationHelper Loading legacy installation information");
+			logger.log(Level.FINE, logPrefix + "Loading legacy installation information");
 			try {
-				loadLegacyInstallationInformation(installData, resources);
-				informationloaded =true;
-				logger.log(Level.FINE, "InstallationInformationHelper Legacy installation information loaded");
+				informationloaded = loadLegacyInstallationInformation(installData, resources);
+				logger.log(Level.FINE, logPrefix + "Legacy installation information loaded");
 
 			} catch (Exception e) {
-				logger.log(Level.FINE, "InstallationInformationHelper Installation legacy information loading failed: "
-						+ e.getMessage());
+				logger.log(Level.FINE, logPrefix + "Installation legacy information loading failed: " + e.getMessage());
 				informationloaded = false;
 			}
 		}
@@ -122,8 +119,8 @@ public final class InstallationInformationHelper {
 			currentVersion = installData.getVariable(paramName);
 		}
 		if (currentVersion != null) {
-			logger.log(Level.FINE, "InstallationInformationHelper Set current version 'APP_VER' (" + currentVersion
-					+ ") from '" + paramName + "' : " + currentVersion);
+			logger.log(Level.FINE, logPrefix + "Set current version 'APP_VER' (" + currentVersion + ") from '"
+					+ paramName + "' : " + currentVersion);
 			// installData.setVariable("app-version", newCurrentVersion);
 			installData.setVariable("APP_VER", currentVersion);
 		}
@@ -133,8 +130,7 @@ public final class InstallationInformationHelper {
 		String currentVersion = installData.getVariable("app-version");
 		if (currentVersion != null) {
 			installData.setVariable("app-version-new", currentVersion);
-			logger.log(Level.FINE,
-					"InstallationInformationHelper save current version 'app-version-new' : " + currentVersion);
+			logger.log(Level.FINE, logPrefix + "save current version 'app-version-new' : " + currentVersion);
 		}
 	}
 
@@ -228,15 +224,16 @@ public final class InstallationInformationHelper {
 				}
 			}
 		}
-		logger.log(Level.FINE, "InstallationInformationHelper.isIncompatibleInstallation returns " + result + "");
+		logger.log(Level.FINE, logPrefix + "isIncompatibleInstallation returns " + result + "");
 
 		return result;
 	}
 
-	private static Map<String, Pack> loadInstallationInformation(String installPath,
+	private static boolean loadInstallationInformation(String installPath,
 			com.izforge.izpack.api.data.InstallData installData, Resources resources) throws Exception {
-		Map<String, Pack> readPacks = new HashMap<String, Pack>();
-		String logPrefix = "InstallationInformationHelper ";
+
+		boolean result = false;
+		// Map<String, Pack> readPacks = new HashMap<String, Pack>();
 		// installation shall be modified
 		// load installation information
 		ObjectInputStream oin = null;
@@ -246,29 +243,23 @@ public final class InstallationInformationHelper {
 			oin = new ObjectInputStream(fin);
 			// noinspection unchecked
 
-
 			/*
-			List<com.izforge.izpack.api.data.Pack> packsinstalled = (List<com.izforge.izpack.api.data.Pack>) oin
-					.readObject();
-			try {
-				for (com.izforge.izpack.api.data.Pack installedpack : packsinstalled) {
-					if (!readPacks.containsKey(installedpack.getName())) {
-						readPacks.put(installedpack.getName(), installedpack);
-						logger.log(Level.FINE, logPrefix + "Add pack " + installedpack.getName() + "");
-					}
-				}
-				installData.setSelectedPacks(packsinstalled);
-				logger.log(Level.FINE, logPrefix + "Found " + packsinstalled.size() + " installed packs");
-			} catch (Exception e) {
-				logger.warning(logPrefix + "Could not read Pack installation information in current izPack version: "
-						+ e.getMessage());
-				throw e;
-			}
-*/
+			 * List<com.izforge.izpack.api.data.Pack> packsinstalled =
+			 * (List<com.izforge.izpack.api.data.Pack>) oin .readObject(); try { for
+			 * (com.izforge.izpack.api.data.Pack installedpack : packsinstalled) { if
+			 * (!readPacks.containsKey(installedpack.getName())) {
+			 * readPacks.put(installedpack.getName(), installedpack); logger.log(Level.FINE,
+			 * logPrefix + "Add pack " + installedpack.getName() + ""); } }
+			 * installData.setSelectedPacks(packsinstalled); logger.log(Level.FINE,
+			 * logPrefix + "Found " + packsinstalled.size() + " installed packs"); } catch
+			 * (Exception e) { logger.warning(logPrefix +
+			 * "Could not read Pack installation information in current izPack version: " +
+			 * e.getMessage()); throw e; }
+			 */
 			installData.getAllPacks().clear();
 			installData.getAvailablePacks().clear();
 			installData.setSelectedPacks(new ArrayList<Pack>());
-			
+
 			try {
 				Variables envvariables = installData.getVariables();
 				List<DynamicVariable> dynamicVariables = loadDynamicVariables(resources);
@@ -290,11 +281,16 @@ public final class InstallationInformationHelper {
 				}
 				installData.setVariable("information-read", "true");
 
+				result = true;
 			} catch (Exception e) {
 				logger.warning(logPrefix + "Could not read Properties installation information: " + e.getMessage());
 				throw e;
 			}
 
+			writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
+					resources, true);
+		} else {
+			result = false;
 		}
 
 		if (oin != null) {
@@ -303,21 +299,19 @@ public final class InstallationInformationHelper {
 			} catch (IOException ignored) {
 			}
 		}
-		
-		writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
-				resources, true);
-		
-		return readPacks;
+
+		return result;
 	}
 
 	/*
 	 * 
 	 */
-	private static void loadLegacyInstallationInformation(com.izforge.izpack.api.data.InstallData installData,
+	private static boolean loadLegacyInstallationInformation(com.izforge.izpack.api.data.InstallData installData,
 			Resources resources) {
 
+		boolean result = false;
 		Map<String, com.izforge.izpack.Pack> readPacks = new HashMap<String, com.izforge.izpack.Pack>();
-		String logHeader = "InstallationInformationHelper.loadLegacyInstallationInformation - ";
+		String logHeader = logPrefix + "loadLegacyInstallationInformation - ";
 		ObjectInputStream oin = null;
 		File installInfo = new File(installData.getInstallPath(), InstallData.INSTALLATION_INFORMATION);
 		if (installInfo.exists()) {
@@ -326,48 +320,43 @@ public final class InstallationInformationHelper {
 				fin = new FileInputStream(installInfo);
 			} catch (FileNotFoundException e1) {
 				e1.printStackTrace();
-				return;
+				return result;
 			}
 			try {
 				oin = new ObjectInputStream(fin);
 			} catch (IOException e1) {
 				e1.printStackTrace();
-				return;
+				return result;
 			}
 
 			List<com.izforge.izpack.Pack> packsinstalled;
 			ArrayList<Pack> packLists = new ArrayList<Pack>();
 
 			/*
-			try {
-				packsinstalled = (List<com.izforge.izpack.Pack>) oin.readObject();
-
-				for (com.izforge.izpack.Pack installedpack : packsinstalled) {
-					readPacks.put(installedpack.name, installedpack);
-					packLists.add(new Pack(installedpack.name, installedpack.id, installedpack.description, null,
-							installedpack.dependencies, installedpack.required, installedpack.preselected,
-							installedpack.loose, installedpack.excludeGroup, installedpack.uninstall, 0));
-
-					logger.log(Level.FINE, logHeader + "Installedpack: " + installedpack.name);
-				}
-				logger.log(Level.FINE, logHeader + "Found Legacy " + packsinstalled.size() + " installed packs");
-			} catch (ClassNotFoundException e1) {
-				e1.printStackTrace();
-				logger.warning(logHeader + "Could not read Legacy 'Pack' installation information: " + e1.getMessage());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				logger.warning(logHeader + "Could not read Legacy 'Pack' installation information: " + e1.getMessage());
-			} catch (Exception e) {
-				logger.warning(logHeader + "Could not read Legacy 'Pack' installation information: " + e.getMessage());
-			} finally {
-				installData.setSelectedPacks(packLists);
-				logger.log(Level.FINE, logHeader + "setSelectedPacks: " + packLists);
-			}
-			*/
+			 * try { packsinstalled = (List<com.izforge.izpack.Pack>) oin.readObject();
+			 * 
+			 * for (com.izforge.izpack.Pack installedpack : packsinstalled) {
+			 * readPacks.put(installedpack.name, installedpack); packLists.add(new
+			 * Pack(installedpack.name, installedpack.id, installedpack.description, null,
+			 * installedpack.dependencies, installedpack.required,
+			 * installedpack.preselected, installedpack.loose, installedpack.excludeGroup,
+			 * installedpack.uninstall, 0));
+			 * 
+			 * logger.log(Level.FINE, logHeader + "Installedpack: " + installedpack.name); }
+			 * logger.log(Level.FINE, logHeader + "Found Legacy " + packsinstalled.size() +
+			 * " installed packs"); } catch (ClassNotFoundException e1) {
+			 * e1.printStackTrace(); logger.warning(logHeader +
+			 * "Could not read Legacy 'Pack' installation information: " + e1.getMessage());
+			 * } catch (IOException e1) { e1.printStackTrace(); logger.warning(logHeader +
+			 * "Could not read Legacy 'Pack' installation information: " + e1.getMessage());
+			 * } catch (Exception e) { logger.warning(logHeader +
+			 * "Could not read Legacy 'Pack' installation information: " + e.getMessage());
+			 * } finally { installData.setSelectedPacks(packLists); logger.log(Level.FINE,
+			 * logHeader + "setSelectedPacks: " + packLists); }
+			 */
 			installData.getAllPacks().clear();
 			installData.getAvailablePacks().clear();
 			installData.setSelectedPacks(packLists);
-			
 
 			try {
 				Variables envvariables = installData.getVariables();
@@ -401,11 +390,13 @@ public final class InstallationInformationHelper {
 				writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
 						resources, true);
 
+				result = true;
 			} catch (Exception e) {
 				logger.warning(
 						logHeader + "Could not read Legacy 'Properties' installation information: " + e.getMessage());
 			}
 		}
+		return result;
 	}
 
 	private static DynamicVariable getDynamicVariable(List<DynamicVariable> dynamicVariables, String name) {
@@ -432,10 +423,9 @@ public final class InstallationInformationHelper {
 		List<DynamicVariable> dynamicVariables = null;
 		try {
 			dynamicVariables = (List<DynamicVariable>) resources.getObject("dynvariables");
-			logger.log(Level.FINE, "InstallationInformationHelper.loadDynamicVariables  " + dynamicVariables);
+			logger.log(Level.FINE, logPrefix + "loadDynamicVariables  " + dynamicVariables);
 		} catch (Exception e) {
-			logger.log(Level.WARNING,
-					"InstallationInformationHelper.loadDynamicVariables  Cannot find optional dynamic variables", e);
+			logger.log(Level.WARNING, logPrefix + "loadDynamicVariables  Cannot find optional dynamic variables", e);
 		}
 		return dynamicVariables;
 	}
@@ -444,16 +434,15 @@ public final class InstallationInformationHelper {
 			List<Pack> selectedPacks, Variables variables, Resources resources, boolean forceWrite) throws IOException {
 
 		if (!installData.getInfo().isWriteInstallationInformation() && !forceWrite) {
-			logger.log(Level.FINE, "InstallationInformationHelper  Skip writing installation information");
+			logger.log(Level.FINE, logPrefix + "Skip writing installation information");
 			return;
 		}
-		logger.log(Level.FINE, "InstallationInformationHelper  Writing installation information to fix legacy issue");
+		logger.log(Level.FINE, logPrefix + "Writing installation information to fix legacy issue");
 		String installDir = installData.getInstallPath();
 
 		File installationInfo = new File(installDir + File.separator + InstallData.INSTALLATION_INFORMATION);
 		if (!installationInfo.exists()) {
-			logger.log(Level.FINE,
-					"InstallationInformationHelper  Creating info file " + installationInfo.getAbsolutePath());
+			logger.log(Level.FINE, logPrefix + "Creating info file " + installationInfo.getAbsolutePath());
 			File dir = new File(installData.getInstallPath());
 			if (!dir.exists()) {
 				// if no packs have been installed, then the installation directory won't exist
@@ -472,9 +461,8 @@ public final class InstallationInformationHelper {
 			File installationInfoArchive = new File(
 					installDir + File.separator + InstallData.INSTALLATION_INFORMATION + bakName);
 			logger.log(Level.FINE,
-					"InstallationInformationHelper  Previous installation information found: "
-							+ installationInfo.getAbsolutePath() + "  Renaming to "
-							+ installationInfoArchive.getAbsolutePath());
+					logPrefix + "Previous installation information found: " + installationInfo.getAbsolutePath()
+							+ "  Renaming to " + installationInfoArchive.getAbsolutePath());
 			// app-version-old 2.23.0.16
 			Files.copy(installationInfo.toPath(), installationInfoArchive.toPath());
 		}
@@ -522,7 +510,7 @@ public final class InstallationInformationHelper {
 		oout.writeObject(clone.getProperties());
 		fout.close();
 
-		logger.log(Level.FINE, "Installation information saved: " + installationInfo.getAbsolutePath());
+		logger.log(Level.FINE, logPrefix + "Installation information saved: " + installationInfo.getAbsolutePath());
 		// IOUtils.closeQuietly(oout);
 		// IOUtils.closeQuietly(fout);
 

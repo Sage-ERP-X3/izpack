@@ -20,21 +20,6 @@ public class TargetNewConsolePanel extends TargetConsolePanel {
 	public TargetNewConsolePanel(PanelView<ConsolePanel> panel, InstallData installData, Resources resources,
 			Prompt prompt) {
 		super(panel, installData, prompt);
-
-		// Update case : read .installationinformation
-		if (installData.getInfo().isReadInstallationInformation()) {
-
-			if (!InstallationInformationHelper.hasAlreadyReadInformation(installData)) {
-				InstallationInformationHelper.readInformation(installData, resources);
-			} else {
-				logger.log(Level.FINE,
-						logPrefix + "ReadInstallationInformation: "
-								+ installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
-								+ InstallationInformationHelper.hasAlreadyReadInformation(installData));
-			}
-
-		}
-
 	}
 
 	@Override

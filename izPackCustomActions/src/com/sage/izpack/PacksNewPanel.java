@@ -112,13 +112,6 @@ public class PacksNewPanel extends PacksPanel {
 	public void panelActivate() {
 		logger.log(Level.FINE, prefixLabel + "panelActivate");
 
-		// Avoid reset of our correct values and variables already read
-		// boolean hasAlreadyReadInfo =  InstallationInformationHelper.hasAlreadyReadInformation(installData);
-		// if (installData.getInfo().isReadInstallationInformation()) {
-		//	logger.log(Level.FINE, prefixLabel + "panelActivate : setReadInstallationInformation to false. Variables already read");
-		//	installData.getInfo().setReadInstallationInformation(false);
-		//}
-
 		if (installData.getSelectedPacks().isEmpty()) {
 			logger.log(Level.FINE, prefixLabel + "panelActivate : getSelectedPacks().isEmpty()");
 

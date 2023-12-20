@@ -95,20 +95,6 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			logger.log(Level.FINE, logPrefix + "Set INSTALL_PATH: " + path);
 		}
 
-		// Update case : read .installationinformation
-		/*
-		if (path != null && installData.getInfo().isReadInstallationInformation()) {
-
-			if (!InstallationInformationHelper.hasAlreadyReadInformation(installData)) {
-				InstallationInformationHelper.readInformation(installData, resources);
-			} else {
-				logger.log(Level.FINE,
-						logPrefix + "ReadInstallationInformation: "
-								+ installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
-								+ InstallationInformationHelper.hasAlreadyReadInformation(installData));
-			}
-
-		}*/
 		logger.log(Level.FINE, logPrefix + "InitPath returned path:" + path);
 		return path;
 	}

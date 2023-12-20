@@ -243,19 +243,23 @@ public final class InstallationInformationHelper {
 			oin = new ObjectInputStream(fin);
 			// noinspection unchecked
 
-			/*
-			 * List<com.izforge.izpack.api.data.Pack> packsinstalled =
-			 * (List<com.izforge.izpack.api.data.Pack>) oin .readObject(); try { for
-			 * (com.izforge.izpack.api.data.Pack installedpack : packsinstalled) { if
-			 * (!readPacks.containsKey(installedpack.getName())) {
-			 * readPacks.put(installedpack.getName(), installedpack); logger.log(Level.FINE,
-			 * logPrefix + "Add pack " + installedpack.getName() + ""); } }
-			 * installData.setSelectedPacks(packsinstalled); logger.log(Level.FINE,
-			 * logPrefix + "Found " + packsinstalled.size() + " installed packs"); } catch
-			 * (Exception e) { logger.warning(logPrefix +
-			 * "Could not read Pack installation information in current izPack version: " +
-			 * e.getMessage()); throw e; }
-			 */
+			List<com.izforge.izpack.api.data.Pack> packsinstalled = (List<com.izforge.izpack.api.data.Pack>) oin
+					.readObject();
+			try {
+				for (com.izforge.izpack.api.data.Pack installedpack : packsinstalled) {
+					// if (!readPacks.containsKey(installedpack.getName())) {
+					//	readPacks.put(installedpack.getName(), installedpack);
+					//	logger.log(Level.FINE, logPrefix + "Add pack " + installedpack.getName() + "");
+					//}
+				}
+				installData.setSelectedPacks(packsinstalled);
+				// removeAlreadyInstalledPacks(installData.getSelectedPacks(),
+				logger.log(Level.FINE, logPrefix + "Found " + packsinstalled.size() + " installed packs");
+			} catch (Exception e) {
+				logger.warning(logPrefix + "Could not read Pack installation information in current izPack version: "
+						+ e.getMessage());
+				throw e;
+			}
 			// installData.getAllPacks().clear();
 			// installData.getAvailablePacks().clear();
 			// installData.setSelectedPacks(new ArrayList<Pack>());
@@ -287,8 +291,8 @@ public final class InstallationInformationHelper {
 				throw e;
 			}
 
-			writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
-					resources, true);
+			//writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
+			//		resources, true);
 		} else {
 			result = false;
 		}
@@ -474,14 +478,11 @@ public final class InstallationInformationHelper {
 			for (DynamicVariable dynvar : dynamicVariables) {
 
 				if (clone.get(dynvar.getName()) != null && !dynvar.isCheckonce()) {
-
 					clone.getProperties().remove(dynvar.getName());
 				}
 
 				if (VariablesExceptions.contains(dynvar.getName())) {
-
 					clone.getProperties().remove(dynvar.getName());
-
 				}
 
 			}

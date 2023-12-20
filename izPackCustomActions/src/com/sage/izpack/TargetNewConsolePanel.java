@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.handler.Prompt;
+import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.installer.console.ConsolePanel;
 import com.izforge.izpack.installer.panel.PanelView;
 import com.izforge.izpack.panels.target.TargetConsolePanel;
@@ -16,8 +17,24 @@ public class TargetNewConsolePanel extends TargetConsolePanel {
 	private static Logger logger = Logger.getLogger(TargetNewConsolePanel.class.getName());
 	private static final String logPrefix = "TargetNewConsolePanel - ";
 
-	public TargetNewConsolePanel(PanelView<ConsolePanel> panel, InstallData installData, Prompt prompt) {
+	public TargetNewConsolePanel(PanelView<ConsolePanel> panel, InstallData installData, Resources resources,
+			Prompt prompt) {
 		super(panel, installData, prompt);
+
+		// Update case : read .installationinformation
+		if (installData.getInfo().isReadInstallationInformation()) {
+
+			if (!InstallationInformationHelper.hasAlreadyReadInformation(installData)) {
+				InstallationInformationHelper.readInformation(installData, resources);
+			} else {
+				logger.log(Level.FINE,
+						logPrefix + "ReadInstallationInformation: "
+								+ installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
+								+ InstallationInformationHelper.hasAlreadyReadInformation(installData));
+			}
+
+		}
+
 	}
 
 	@Override
@@ -30,18 +47,16 @@ public class TargetNewConsolePanel extends TargetConsolePanel {
 		String path = properties.getProperty(InstallData.INSTALL_PATH);
 		if (path == null || "".equals(path.trim())) {
 			System.err.println(logPrefix + "Missing mandatory target path!");
-		} else if (InstallationInformationHelper.isIncompatibleInstallation(installData.getInstallPath(),
-				installData.getInfo().isReadInstallationInformation())) {
+		} else {
 
-			System.err.println(logPrefix + "getIncompatibleInstallationMsg(installData)");
+			// if
+			// (InstallationInformationHelper.isIncompatibleInstallation(installData.getInstallPath(),
+			// installData.getInfo().isReadInstallationInformation())) {
+			// System.err.println(logPrefix +
+			// "getIncompatibleInstallationMsg(installData)");
 
-		}
-		// else if (TargetPanelHelper.isIncompatibleInstallation(path,
-		// installData.getInfo().isReadInstallationInformation()))
-		// {
-		// System.err.println(getIncompatibleInstallationMsg(installData));
-		// }
-		else {
+			// }
+			// else {
 			path = installData.getVariables().replace(path);
 			installData.setInstallPath(path);
 			result = true;

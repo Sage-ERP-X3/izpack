@@ -291,6 +291,7 @@ public class OsVersionHelper {
             }
         } else if (OsVersion.IS_REDHAT_LINUX) {
             try {
+                // result = OsVersion.REDHAT + OsVersion.SP + OsVersion.LINUX + OsVersion.NL + StringTool.listToString(getFileContent("/etc/redhat-release"));
                 result = OsVersion.REDHAT + OsVersion.SP + OsVersion.LINUX + OsVersion.NL + StringTool.listToString(getFileContent("/etc/redhat-release"));
             } catch (IOException e) {
                 // TODO ignore

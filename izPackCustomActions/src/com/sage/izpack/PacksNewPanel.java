@@ -47,6 +47,21 @@ public class PacksNewPanel extends PacksPanel {
 	public PacksNewPanel(Panel panel, InstallerFrame frame, GUIInstallData installData, Resources resources,
 			ObjectFactory factory, RulesEngine rules) {
 		super(panel, frame, installData, resources, factory);
+		
+		// Update case : read .installationinformation
+		if (installData.getInfo().isReadInstallationInformation()) {
+
+			if (!InstallationInformationHelper.hasAlreadyReadInformation(installData)) {
+				InstallationInformationHelper.readInformation(installData, resources);
+			} else {
+				logger.log(Level.FINE,
+						prefixLabel + "ReadInstallationInformation: "
+								+ installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
+								+ InstallationInformationHelper.hasAlreadyReadInformation(installData));
+			}
+
+		}
+		
 	}
 
 	/**
@@ -114,7 +129,7 @@ public class PacksNewPanel extends PacksPanel {
 
 			List<Pack> selectedPacks = new LinkedList<Pack>();
 			for (Pack p : installData.getAvailablePacks()) {
-				if (p.isRequired()) {
+				if (p.isRequired() && !selectedPacks.contains(p)) {
 					selectedPacks.add(p);
 					logger.log(Level.FINE, prefixLabel + "panelActivate : add selectedPacks:" + p.getName());
 				}
@@ -158,7 +173,7 @@ public class PacksNewPanel extends PacksPanel {
 
 			List<Pack> selectedPacks = new LinkedList<Pack>();
 			for (Pack p : installData.getAvailablePacks()) {
-				if (p.isRequired()) {
+				if (p.isRequired() && !selectedPacks.contains(p)) {
 					selectedPacks.add(p);
 					logger.log(Level.FINE, prefixLabel + "panelActivate2 : add selectedPacks:" + p.getName());
 				}
@@ -216,7 +231,7 @@ public class PacksNewPanel extends PacksPanel {
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
-			logger.log(Level.FINE, prefixLabel + "CheckBoxNewRenderer : isSelected: " + isSelected);
+			logger.log(Level.FINE, prefixLabel + "CheckBoxNewRenderer : "+value+" isSelected: " + isSelected);
 
 			if (isSelected) {
 				checkbox.setForeground(table.getSelectionForeground());

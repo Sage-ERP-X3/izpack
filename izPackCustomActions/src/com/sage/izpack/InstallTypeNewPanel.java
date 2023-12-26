@@ -235,8 +235,6 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 			if (!installationinformation.exists()) {
 				emitError(ResourcesHelper.getCustomPropString("installer.error"),
 						ResourcesHelper.getCustomPropString("PathInputPanel.required.forModificationInstallation"));
-				// emitError(parent.langpack.getString("installer.error"),
-//						parent.langpack.getString("PathInputPanel.required.forModificationInstallation"));
 
 				return false;
 			}

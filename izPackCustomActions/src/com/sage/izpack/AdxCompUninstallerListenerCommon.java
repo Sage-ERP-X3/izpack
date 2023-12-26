@@ -73,6 +73,18 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 		return handler;
 	}
 
+	protected void emitError(String message, Exception exceptionMesg) {
+		AbstractUIHandler UIHandler = GetPromptUIHandler();
+		if (UIHandler != null)
+			UIHandler.emitError("Error", message);
+		else
+			System.err.println(message);
+
+		if (exceptionMesg != null)
+			System.err.println(exceptionMesg.getMessage());
+	}
+
+	
 	@Override
 	public void initialise() {
 		logger.log(Level.FINE, LogPrefix + "initialise");
@@ -163,7 +175,8 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 			result = true;
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
-			GetPromptUIHandler().emitError("Error", ex.getMessage());
+			// GetPromptUIHandler().emitError("Error", ex.getMessage());
+			emitError("Error", ex);
 		}
 		return result;
 	}
@@ -242,19 +255,20 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 						String remaining = this.getString("uninstaller.adxadmin.remainingmodules",
 								"remaining modules children: cancel installation !");
 						System.out.println(remaining);
-						GetPromptUIHandler().emitError("Error", remaining);
+						 emitError(remaining, null);
 						System.exit(1);
 					}
 				}
 				deleteAdxAdmFile();
 			}
-			
+
 			this.processDone = true;
 		} catch (WrappedNativeLibException exception) {
-			GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", PrivilegesFriendlyMessage));
+			emitError(this.getString("privilegesIssue", PrivilegesFriendlyMessage), exception);
+			
 			throw exception;
 		} catch (Exception exception) {
-			GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", PrivilegesFriendlyMessage));
+				emitError(this.getString("privilegesIssue", PrivilegesFriendlyMessage), exception);
 			throw new IzPackException(exception);
 		}
 	}

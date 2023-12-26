@@ -67,8 +67,8 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	@Override
 	public void beforeDelete(List<File> files, ProgressListener listener) {
 
-		// deleteRegistry();
 		logger.log(Level.FINE, LogPrefix + "beforeDelete.  ");
+		deleteRegistry();
 		try {
 			super.beforeDelete(files, listener);
 		} catch (WrappedNativeLibException exception) {
@@ -117,10 +117,13 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
 
 			if (myHandlerInstance.keyExist(keyName)) {
-				myHandlerInstance.deleteValue(keyName, "DisplayVersion");
+				// myHandlerInstance.deleteValue(keyName, "DisplayVersion");
 				// myHandlerInstance.deleteKey(keyName + "\\DisplayVersion");
 				myHandlerInstance.deleteKey(keyName);
 				logger.log(Level.FINE, LogPrefix + "Registry key " + keyName + " deleted");
+			}
+			else {
+				logger.log(Level.FINE, LogPrefix + "Registry key " + keyName + " doesn't exist or not found.");	
 			}
 		} catch (NativeLibException e) {
 			e.printStackTrace();

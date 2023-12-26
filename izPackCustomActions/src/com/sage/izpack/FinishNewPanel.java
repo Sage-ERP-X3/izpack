@@ -47,7 +47,7 @@ public class FinishNewPanel extends FinishPanel {
 	public void panelActivate() {
 
 		boolean uninstallRequired = this.uninstallDataWriter.isUninstallRequired();
-		logger.log(Level.FINE, logPrefix+"uninstallRequired:" + uninstallRequired);
+		logger.log(Level.FINE, logPrefix + "uninstallRequired:" + uninstallRequired);
 
 		FinishNewPanelAutomationHelper.initUninstallPath(this.resources, this.installData);
 		logger.log(Level.FINE, logPrefix + "getUninstallerPath:" + installData.getInfo().getUninstallerPath());
@@ -65,19 +65,18 @@ public class FinishNewPanel extends FinishPanel {
 	private boolean writeUninstallData() {
 
 		boolean result = true;
-
 		// X3-256055: Uninstaller (izpack 5.2)
-		installData.setVariable("force-generate-uninstaller", "true");
+		boolean wasIzPack4 = InstallationInformationHelper.wasLegacyIzpackInfo();
+		installData.setVariable("force-generate-uninstaller", String.valueOf(wasIzPack4));
 		boolean uninstallRequired = this.uninstallDataWriter.isUninstallRequired();
 		logger.log(Level.FINE, logPrefix + "writeUninstallData. uninstallRequired:" + uninstallRequired);
 
-		if (!uninstallRequired) {
+		if (!uninstallRequired && wasIzPack4) {
 			result = uninstallDataWriter.write();
 			logger.log(Level.FINE,
 					logPrefix + "force writeUninstallData. uninstallDataWriter.write() returns " + result);
 
 			if (!result) {
-				// Messages messages = locales.getMessages();
 				String title = this.resourceHelper.getCustomString("installer.error");
 				String message = this.resourceHelper.getCustomString("installer.uninstall.writefailed");
 				JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);

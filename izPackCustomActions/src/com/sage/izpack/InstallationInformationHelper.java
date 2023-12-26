@@ -41,6 +41,7 @@ public final class InstallationInformationHelper {
 
 	private static boolean hasRead = false;
 	private static final String logPrefix = "InstallationInformationHelper - ";
+	private static boolean wasLegacyIzpack = false;
 
 	public static boolean hasAlreadyReadInformation(com.izforge.izpack.api.data.InstallData installData) {
 
@@ -49,10 +50,14 @@ public final class InstallationInformationHelper {
 		 * result = false; if (informationRead != null &&
 		 * informationRead.equalsIgnoreCase("true")) { result = true; }
 		 */
-		logger.log(Level.FINE, logPrefix + "hasAlreadyReadInformation : " + hasRead); // + " value: " +
-																						// informationRead);
+		logger.log(Level.FINE, logPrefix + "hasAlreadyReadInformation : " + hasRead); 
 		return hasRead;
 	}
+	
+	public static boolean wasLegacyIzpackInfo() {
+		return wasLegacyIzpack;
+	}
+	
 
 	public static boolean readInformation(com.izforge.izpack.api.data.InstallData installData, Resources resources) {
 
@@ -208,6 +213,8 @@ public final class InstallationInformationHelper {
 							}
 
 							logger.log(Level.FINE, logHeader + "InstallationInformation legacy read");
+							
+							wasLegacyIzpack = true;
 						}
 					} catch (Exception e) {
 						result = true;
@@ -394,7 +401,7 @@ public final class InstallationInformationHelper {
 
 				writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
 						resources, true);
-
+				wasLegacyIzpack = true;
 				result = true;
 			} catch (Exception e) {
 				logger.warning(
@@ -493,18 +500,6 @@ public final class InstallationInformationHelper {
 			}
 		}
 
-		// if (clone.get("APP_VER_NEW") != null) {
-		// clone.getProperties().remove("APP_VER_NEW");
-		// }
-		// dynvar) (clone.get("APP_VER") != null) {
-		// clone.getProperties().remove("APP_VER");
-		// }
-		// if (clone.get("ISO2_LANG") != null) {
-		// clone.getProperties().remove("ISO2_LANG");
-		// }
-		// if (clone.get("ISO3_LANG") != null) {
-		// clone.getProperties().remove("ISO3_LANG");
-		// }
 
 		FileOutputStream fout = new FileOutputStream(installationInfo);
 		ObjectOutputStream oout = new ObjectOutputStream(fout);

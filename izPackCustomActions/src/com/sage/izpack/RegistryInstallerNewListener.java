@@ -93,6 +93,7 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		RegistryHandler myHandlerInstance = myhandler.getInstance();
 		try {
 			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+			
 			myHandlerInstance.setUninstallName(appName);
 			// RegistryHelper registryHelper = new RegistryHelper(myhandler, getInstallData());
 			// registryHelper.updateUninstallName();

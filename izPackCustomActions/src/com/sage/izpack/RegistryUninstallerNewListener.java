@@ -44,11 +44,6 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		this.prompt = prompt;
 	}
 
-	private AbstractUIHandler GetPromptUIHandler() {
-
-		AbstractUIHandler handler = new PromptUIHandler(this.prompt);
-		return handler;
-	}
 
 	/**
 	 * Invoked after a file is deleted.
@@ -60,6 +55,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	public void afterDelete(File file) {
 
 		logger.log(Level.FINE, LogPrefix + "afterDelete. File : " + file);
+		System.out.println(LogPrefix + "afterDelete. File : " + file);
 
 		super.afterDelete(file);
 	}
@@ -68,11 +64,14 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	public void beforeDelete(List<File> files, ProgressListener listener) {
 
 		logger.log(Level.FINE, LogPrefix + "beforeDelete.  ");
+		System.out.println(LogPrefix + "beforeDelete.  ");
+
 		deleteRegistry();
 		try {
 			super.beforeDelete(files, listener);
 		} catch (WrappedNativeLibException exception) {
-			GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", AdxCompUninstallerListener.PrivilegesFriendlyMessage));
+			// GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", AdxCompUninstallerListener.PrivilegesFriendlyMessage));
+			emitError(this.getString("privilegesIssue", AdxCompUninstallerListener.PrivilegesFriendlyMessage), exception);
 			throw exception;
 		} catch (Exception exception) {
 			throw exception;
@@ -107,7 +106,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		String keyName = RegistryHandler.UNINSTALL_ROOT + unInstallName;
 		if (unInstallName == null) {
 			logger.log(Level.FINE, LogPrefix + "Error in deleteRegistry: getUninstallName() is empty");
-			// myHandlerInstance.setUninstallName("Sage X3 Management Console");
+			System.out.println(LogPrefix + "Error in deleteRegistry: getUninstallName() is empty");
 			return;
 		}
 
@@ -121,13 +120,16 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 				// myHandlerInstance.deleteKey(keyName + "\\DisplayVersion");
 				myHandlerInstance.deleteKey(keyName);
 				logger.log(Level.FINE, LogPrefix + "Registry key " + keyName + " deleted");
+				System.out.println(LogPrefix + "Registry key " + keyName + " deleted");
 			}
 			else {
 				logger.log(Level.FINE, LogPrefix + "Registry key " + keyName + " doesn't exist or not found.");	
+				System.out.println(LogPrefix + "Registry key " + keyName + " doesn't exist or not found.");
 			}
 		} catch (NativeLibException e) {
 			e.printStackTrace();
 			logger.log(Level.FINE, LogPrefix + "Error, registry key " + keyName + " NOT deleted");
+			System.out.println(LogPrefix + "Error, registry key " + keyName + " NOT deleted");
 		}
 	}
 
@@ -140,4 +142,15 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		return result;
 	}
 
+
+	protected void emitError(String message, Exception exceptionMesg) {
+		AbstractUIHandler UIHandler = new PromptUIHandler(this.prompt);
+		if (this.prompt != null && UIHandler != null) // prompt object can be null in Console mode
+			UIHandler.emitError("Error", message);
+		else
+			System.err.println(message);
+
+		if (exceptionMesg != null)
+			System.err.println(exceptionMesg.getMessage());
+	}
 }

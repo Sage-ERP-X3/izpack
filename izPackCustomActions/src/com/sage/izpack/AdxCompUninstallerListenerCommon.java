@@ -68,14 +68,17 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 		this.specHelper = new SpecHelper(this.resources);
 	}
 
-	protected AbstractUIHandler GetPromptUIHandler() {
-		AbstractUIHandler handler = new PromptUIHandler(this.prompt);
-		return handler;
+	protected void emitWarning(String title, String message) {
+		AbstractUIHandler UIHandler = new PromptUIHandler(this.prompt);
+		if (this.prompt != null && UIHandler != null)
+			UIHandler.emitWarning(title, message);
+		else
+			System.err.println(message);
 	}
 
 	protected void emitError(String message, Exception exceptionMesg) {
-		AbstractUIHandler UIHandler = GetPromptUIHandler();
-		if (UIHandler != null)
+		AbstractUIHandler UIHandler = new PromptUIHandler(this.prompt);
+		if (this.prompt != null && UIHandler != null)
 			UIHandler.emitError("Error", message);
 		else
 			System.err.println(message);
@@ -84,7 +87,6 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 			System.err.println(exceptionMesg.getMessage());
 	}
 
-	
 	@Override
 	public void initialise() {
 		logger.log(Level.FINE, LogPrefix + "initialise");
@@ -255,7 +257,7 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 						String remaining = this.getString("uninstaller.adxadmin.remainingmodules",
 								"remaining modules children: cancel installation !");
 						System.out.println(remaining);
-						 emitError(remaining, null);
+						emitError(remaining, null);
 						System.exit(1);
 					}
 				}
@@ -265,10 +267,10 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 			this.processDone = true;
 		} catch (WrappedNativeLibException exception) {
 			emitError(this.getString("privilegesIssue", PrivilegesFriendlyMessage), exception);
-			
+
 			throw exception;
 		} catch (Exception exception) {
-				emitError(this.getString("privilegesIssue", PrivilegesFriendlyMessage), exception);
+			emitError(this.getString("privilegesIssue", PrivilegesFriendlyMessage), exception);
 			throw new IzPackException(exception);
 		}
 	}
@@ -376,7 +378,8 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 					String notidleMsg = "notidle";
 					String friendlyMsg = this.getString(notidleMsg,
 							errorMsg + ": module not idle (Status: " + modstatus + ") " + notidleMsg);
-					GetPromptUIHandler().emitWarning(errorMsg, friendlyMsg);
+					// GetPromptUIHandler().emitWarning(errorMsg, friendlyMsg);
+					emitWarning(errorMsg, friendlyMsg);
 					System.exit(1);
 				}
 			}

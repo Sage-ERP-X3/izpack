@@ -1,6 +1,8 @@
 package com.sage.izpack;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -8,6 +10,7 @@ import java.util.logging.Logger;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.IzPackException;
 import com.izforge.izpack.api.exception.NativeLibException;
+import com.izforge.izpack.api.exception.ResourceNotFoundException;
 import com.izforge.izpack.api.exception.WrappedNativeLibException;
 import com.izforge.izpack.api.handler.AbstractUIHandler;
 import com.izforge.izpack.api.handler.Prompt;
@@ -44,7 +47,6 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		this.prompt = prompt;
 	}
 
-
 	/**
 	 * Invoked after a file is deleted.
 	 *
@@ -66,16 +68,20 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		logger.log(Level.FINE, LogPrefix + "beforeDelete.  ");
 		System.out.println(LogPrefix + "beforeDelete.  ");
 
-		deleteRegistry();
 		try {
 			super.beforeDelete(files, listener);
 		} catch (WrappedNativeLibException exception) {
-			// GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue", AdxCompUninstallerListener.PrivilegesFriendlyMessage));
-			emitError(this.getString("privilegesIssue", AdxCompUninstallerListener.PrivilegesFriendlyMessage), exception);
+			// GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue",
+			// AdxCompUninstallerListener.PrivilegesFriendlyMessage));
+			emitError(this.getString("privilegesIssue", AdxCompUninstallerListener.PrivilegesFriendlyMessage),
+					exception);
 			throw exception;
 		} catch (Exception exception) {
 			throw exception;
 		}
+
+		System.out.println(LogPrefix + "beforeDelete.  deleteRegistry");
+		deleteRegistry();
 	}
 
 	/**
@@ -94,6 +100,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 
 	}
 
+	
 	private void deleteRegistry() {
 
 		RegistryHandler myHandlerInstance = myhandler.getInstance();
@@ -121,9 +128,8 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 				myHandlerInstance.deleteKey(keyName);
 				logger.log(Level.FINE, LogPrefix + "Registry key " + keyName + " deleted");
 				System.out.println(LogPrefix + "Registry key " + keyName + " deleted");
-			}
-			else {
-				logger.log(Level.FINE, LogPrefix + "Registry key " + keyName + " doesn't exist or not found.");	
+			} else {
+				logger.log(Level.FINE, LogPrefix + "Registry key " + keyName + " doesn't exist or not found.");
 				System.out.println(LogPrefix + "Registry key " + keyName + " doesn't exist or not found.");
 			}
 		} catch (NativeLibException e) {
@@ -141,7 +147,6 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 			result = defaultTranslation;
 		return result;
 	}
-
 
 	protected void emitError(String message, Exception exceptionMesg) {
 		AbstractUIHandler UIHandler = new PromptUIHandler(this.prompt);

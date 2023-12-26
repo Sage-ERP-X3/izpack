@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.coi.tools.os.win.RegDataContainer;
+import com.izforge.izpack.api.data.Info;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.data.Pack;
@@ -18,7 +19,9 @@ import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.installer.data.UninstallData;
 import com.izforge.izpack.installer.unpacker.IUnpacker;
+import com.izforge.izpack.panels.checkedhello.RegistryHelper;
 import com.izforge.izpack.util.Housekeeper;
+import com.izforge.izpack.util.OsVersion;
 
 /*
  * 
@@ -42,6 +45,8 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 
 		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks start");
 
+		updateRegistry();
+
 		super.afterPacks(packs, listener);
 
 		// Fix the bug when un-installing a product, sometimes, the Registry
@@ -53,7 +58,6 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 				&& !this.getInstallData().getInfo().isWriteInstallationInformation()) {
 			deleteInstallInformation();
 		}
-		updateRegistry();
 
 		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks end");
 	}
@@ -79,9 +83,20 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		logger.log(Level.FINE, LogPrefix + "updateRegistry   Updating DisplayVersion, Registry path " + keyName
 				+ " key: " + "DisplayVersion" + " value: " + version);
 
+
+		Info info =  getInstallData().getInfo();
+		if (info != null && (info.getAppName() == null || info.getUninstallerName() == null)) {
+			info.setAppName(appName);
+			info.setUninstallerName(appName);
+		}
+		
 		RegistryHandler myHandlerInstance = myhandler.getInstance();
 		try {
 			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+			myHandlerInstance.setUninstallName(appName);
+			// RegistryHelper registryHelper = new RegistryHelper(myhandler, getInstallData());
+			// registryHelper.updateUninstallName();
+			
 			if (myHandlerInstance.keyExist(keyName)) {
 				RegDataContainer cont = myHandlerInstance.getValue(keyName, "DisplayVersion");
 				if (cont != null) {

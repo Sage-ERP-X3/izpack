@@ -70,7 +70,7 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 
 	protected void emitWarning(String title, String message) {
 		AbstractUIHandler UIHandler = new PromptUIHandler(this.prompt);
-		if (this.prompt != null && UIHandler != null)
+		if (this.prompt != null && UIHandler != null)	
 			UIHandler.emitWarning(title, message);
 		else
 			System.err.println(message);
@@ -85,6 +85,7 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 
 		if (exceptionMesg != null)
 			System.err.println(exceptionMesg.getMessage());
+		
 	}
 
 	@Override

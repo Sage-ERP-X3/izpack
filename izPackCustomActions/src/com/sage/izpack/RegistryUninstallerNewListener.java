@@ -122,8 +122,10 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 			if (installPath == null) {
 				return;
 			}
-			InstallData data = new com.izforge.izpack.installer.data.InstallData(new DefaultVariables(),
-					Platforms.WINDOWS);
+			// Warning: Cannot use com.izforge.izpack.installer.data.InstallData within Uninstaller package: error NoClassDefFoundError
+			// InstallData data = new com.izforge.izpack.installer.data.InstallData(new DefaultVariables(), Platforms.WINDOWS);
+			InstallData data = new InstallDataSage(new DefaultVariables(),
+					Platforms.WINDOWS);			
 			data.setInstallPath(installPath);
 			System.out.println(LogPrefix + "Trying to read " + installPath + "\\.installationinformation");
 			InstallationInformationHelper.readInformation(data, resources);

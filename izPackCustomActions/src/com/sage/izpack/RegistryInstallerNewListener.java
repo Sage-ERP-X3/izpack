@@ -45,7 +45,7 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 
 		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks start");
 
-		// updateRegistry();
+		updateRegistry();
 
 		super.afterPacks(packs, listener);
 
@@ -83,8 +83,7 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		logger.log(Level.FINE, LogPrefix + "updateRegistry   Updating DisplayVersion, Registry path " + keyName
 				+ " key: " + "DisplayVersion" + " value: " + version);
 
-/*
-		Info info =  getInstallData().getInfo();
+		/*
 		if (info != null && (info.getAppName() == null || info.getUninstallerName() == null)) {
 			info.setAppName(appName);
 			info.setUninstallerName(appName);
@@ -93,7 +92,8 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		RegistryHandler myHandlerInstance = myhandler.getInstance();
 		try {
 			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);			
-			// myHandlerInstance.setUninstallName(appName);
+			myHandlerInstance.setUninstallName("");
+			myHandlerInstance.setUninstallName(appName);
 			
 			if (myHandlerInstance.keyExist(keyName)) {
 				RegDataContainer cont = myHandlerInstance.getValue(keyName, "DisplayVersion");

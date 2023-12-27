@@ -1,25 +1,25 @@
 package com.sage.izpack;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.IzPackException;
 import com.izforge.izpack.api.exception.NativeLibException;
-import com.izforge.izpack.api.exception.ResourceNotFoundException;
 import com.izforge.izpack.api.exception.WrappedNativeLibException;
 import com.izforge.izpack.api.handler.AbstractUIHandler;
 import com.izforge.izpack.api.handler.Prompt;
 import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
+import com.izforge.izpack.core.data.DefaultVariables;
 import com.izforge.izpack.core.handler.PromptUIHandler;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.event.RegistryUninstallerListener;
+import com.izforge.izpack.util.Platforms;
 
 /*
  * This class fixes the bug when un-installing a product, sometimes, the Registry is not cleaned (Ex: X3-237732)
@@ -100,7 +100,6 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 
 	}
 
-	
 	private void deleteRegistry() {
 
 		RegistryHandler myHandlerInstance = myhandler.getInstance();
@@ -114,7 +113,30 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		if (unInstallName == null) {
 			logger.log(Level.FINE, LogPrefix + "Error in deleteRegistry: getUninstallName() is empty");
 			System.out.println(LogPrefix + "Error in deleteRegistry: getUninstallName() is empty");
-			return;
+
+			System.out.println(LogPrefix + "Trying to read InstallPath from install.log");
+			AdxCompUninstallerListener lst = new AdxCompUninstallerListener(myhandler, resources, messages, prompt);
+			String installPath = lst.getInstallPath();
+
+			System.out.println(LogPrefix + "install.log read. installPath:" + installPath);
+			if (installPath == null) {
+				return;
+			}
+			InstallData data = new com.izforge.izpack.installer.data.InstallData(new DefaultVariables(),
+					Platforms.WINDOWS);
+			data.setInstallPath(installPath);
+			System.out.println(LogPrefix + "Trying to read " + installPath + "\\.installationinformation");
+			InstallationInformationHelper.readInformation(data, resources);
+			unInstallName = data.getVariable("APP_NAME");
+			if (unInstallName == null)
+				unInstallName = data.getVariable("UNINSTALL_NAME");
+			System.out.println(
+					LogPrefix + "unInstallName read from .installationinformation - APP_NAME:" + unInstallName);
+			if (unInstallName == null) {
+				return;
+			} else {
+				keyName = RegistryHandler.UNINSTALL_ROOT + unInstallName;
+			}
 		}
 
 		logger.log(Level.ALL, LogPrefix + "UninstallName Registry key " + keyName);
@@ -124,7 +146,6 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 
 			if (myHandlerInstance.keyExist(keyName)) {
 				// myHandlerInstance.deleteValue(keyName, "DisplayVersion");
-				// myHandlerInstance.deleteKey(keyName + "\\DisplayVersion");
 				myHandlerInstance.deleteKey(keyName);
 				logger.log(Level.FINE, LogPrefix + "Registry key " + keyName + " deleted");
 				System.out.println(LogPrefix + "Registry key " + keyName + " deleted");

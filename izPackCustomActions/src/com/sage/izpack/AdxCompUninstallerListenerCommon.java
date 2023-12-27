@@ -318,7 +318,7 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 		return false;
 	}
 
-	protected String getInstallPath() {
+	public String getInstallPath() {
 		String result = null;
 		try {
 			InputStream in = getClass().getResourceAsStream("/install.log");

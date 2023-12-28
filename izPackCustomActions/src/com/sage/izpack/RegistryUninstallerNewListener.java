@@ -120,6 +120,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 
 			System.out.println(LogPrefix + "install.log read. installPath:" + installPath);
 			if (installPath == null) {
+				System.out.println(LogPrefix + "Warning: Cannot read installPath from install.log read.");
 				return;
 			}
 			// Warning: Cannot use com.izforge.izpack.installer.data.InstallData within Uninstaller package: error NoClassDefFoundError

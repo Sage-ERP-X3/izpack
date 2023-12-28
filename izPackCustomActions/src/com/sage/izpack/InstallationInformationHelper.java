@@ -20,11 +20,9 @@ import java.util.Properties;
 import com.izforge.izpack.api.data.DynamicVariable;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Pack;
-import com.izforge.izpack.api.data.Value;
 import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.exception.InstallerException;
 import com.izforge.izpack.api.resource.Resources;
-import com.izforge.izpack.api.rules.RulesEngine;
 import com.izforge.izpack.core.data.DefaultVariables;
 
 /*
@@ -50,14 +48,13 @@ public final class InstallationInformationHelper {
 		 * result = false; if (informationRead != null &&
 		 * informationRead.equalsIgnoreCase("true")) { result = true; }
 		 */
-		logger.log(Level.FINE, logPrefix + "hasAlreadyReadInformation : " + hasRead); 
+		logger.log(Level.FINE, logPrefix + "hasAlreadyReadInformation : " + hasRead);
 		return hasRead;
 	}
-	
+
 	public static boolean wasLegacyIzpackInfo() {
 		return wasLegacyIzpack;
 	}
-	
 
 	public static boolean readInformation(com.izforge.izpack.api.data.InstallData installData, Resources resources) {
 
@@ -213,7 +210,7 @@ public final class InstallationInformationHelper {
 							}
 
 							logger.log(Level.FINE, logHeader + "InstallationInformation legacy read");
-							
+
 							wasLegacyIzpack = true;
 						}
 					} catch (Exception e) {
@@ -255,9 +252,10 @@ public final class InstallationInformationHelper {
 			try {
 				for (com.izforge.izpack.api.data.Pack installedpack : packsinstalled) {
 					// if (!readPacks.containsKey(installedpack.getName())) {
-					//	readPacks.put(installedpack.getName(), installedpack);
-					//	logger.log(Level.FINE, logPrefix + "Add pack " + installedpack.getName() + "");
-					//}
+					// readPacks.put(installedpack.getName(), installedpack);
+					// logger.log(Level.FINE, logPrefix + "Add pack " + installedpack.getName() +
+					// "");
+					// }
 				}
 				installData.setSelectedPacks(packsinstalled);
 				// removeAlreadyInstalledPacks(installData.getSelectedPacks(),
@@ -298,8 +296,9 @@ public final class InstallationInformationHelper {
 				throw e;
 			}
 
-			//writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
-			//		resources, true);
+			// writeInstallationInformation(installData, installData.getSelectedPacks(),
+			// installData.getVariables(),
+			// resources, true);
 		} else {
 			result = false;
 		}
@@ -365,9 +364,9 @@ public final class InstallationInformationHelper {
 			 * } finally { installData.setSelectedPacks(packLists); logger.log(Level.FINE,
 			 * logHeader + "setSelectedPacks: " + packLists); }
 			 */
-			
+
 			// installData.getAllPacks().clear();
-			//installData.getAvailablePacks().clear();
+			// installData.getAvailablePacks().clear();
 			installData.setSelectedPacks(packLists);
 
 			try {
@@ -375,20 +374,26 @@ public final class InstallationInformationHelper {
 
 				List<DynamicVariable> dynamicVariables = loadDynamicVariables(resources);
 
-				Properties variables = (Properties) oin.readObject();
-				for (Object key : variables.keySet()) {
+				Object variablesObject = oin.readObject();
+				while (variablesObject != null) {
 
-					DynamicVariable dynVariable = getDynamicVariable(dynamicVariables, (String) key);
-					if (((dynVariable != null && !dynVariable.isCheckonce()))
-							|| envvariables.isBlockedVariableName((String) key)
-							|| envvariables.containsOverride((String) key)
-							|| VariablesExceptions.contains((String) key)) {
-						installData.setVariable((String) key + "-old", (String) variables.get(key));
-						logger.log(Level.FINE, logHeader + "Skip variable : " + key + ": " + variables.get(key));
-					} else {
-						installData.setVariable((String) key, (String) variables.get(key));
-						logger.log(Level.FINE, logHeader + "Set Legacy variable : " + key + ": " + variables.get(key));
+					logger.log(Level.FINE, logHeader + "readObject legacy type:" + variablesObject.getClass().getName());
+
+					if (variablesObject instanceof Properties) {
+						Properties variables = (Properties) variablesObject;
+						for (Object key : variables.keySet()) {
+							readVariables(installData, logHeader, envvariables, dynamicVariables, variables, key);
+						}
 					}
+					
+					if (variablesObject instanceof ArrayList) {
+						ArrayList variables = (ArrayList) variablesObject;
+						for (Object key : variables) {
+							readPackages(installData, logHeader, variables);
+						}
+					}
+					
+					variablesObject = oin.readObject();
 				}
 
 				logger.log(Level.FINE, logHeader + "writeInstallationInformation to fix legacy issue");
@@ -409,6 +414,26 @@ public final class InstallationInformationHelper {
 			}
 		}
 		return result;
+	}
+
+	private static void readVariables(com.izforge.izpack.api.data.InstallData installData, String logHeader,
+			Variables envvariables, List<DynamicVariable> dynamicVariables, Properties variables, Object key) {
+		DynamicVariable dynVariable = getDynamicVariable(dynamicVariables, (String) key);
+		if (((dynVariable != null && !dynVariable.isCheckonce())) || envvariables.isBlockedVariableName((String) key)
+				|| envvariables.containsOverride((String) key) || VariablesExceptions.contains((String) key)) {
+			installData.setVariable((String) key + "-old", (String) variables.get(key));
+			logger.log(Level.FINE, logHeader + "Skip variable : " + key + ": " + variables.get(key));
+		} else {
+			installData.setVariable((String) key, (String) variables.get(key));
+			logger.log(Level.FINE, logHeader + "Set Legacy variable : " + key + ": " + variables.get(key));
+		}
+	}
+
+	private static void readPackages(com.izforge.izpack.api.data.InstallData installData, String logHeader,
+			ArrayList variables) {
+		logger.log(Level.FINE,
+				"readVariables ArrayList objects: " + variables + " : " + variables.getClass().getName());
+
 	}
 
 	private static DynamicVariable getDynamicVariable(List<DynamicVariable> dynamicVariables, String name) {
@@ -499,7 +524,6 @@ public final class InstallationInformationHelper {
 				clone.getProperties().remove(excVar);
 			}
 		}
-
 
 		FileOutputStream fout = new FileOutputStream(installationInfo);
 		ObjectOutputStream oout = new ObjectOutputStream(fout);

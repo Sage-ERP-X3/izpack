@@ -1,7 +1,7 @@
 FROM openjdk:11
 
 # install needed packages
-RUN apt-get update && apt-get install -y ant  && apt-get install -y zip && apt-get install -y xmlstarlet && apt-get  install -y powershell
+RUN apt-get update && apt-get install -y ant  && apt-get install -y zip && apt-get install -y xmlstarlet && apt-get install -y powershell
 # apt install openjdk-11-jre-headless
 RUN mkdir -p izpack
 

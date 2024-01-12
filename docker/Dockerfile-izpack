@@ -1,11 +1,19 @@
 FROM openjdk:8
 
 # install needed packages
-RUN apt-get update && apt-get install -y ant  && apt-get install -y zip && apt-get install -y xmlstarlet
+RUN add-apt-repository universe
+# Install pre-requisite packages.
+RUN apt-get install -y wget
+# Download the PowerShell package file
+RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.0/powershell_7.4.0-1.deb_amd64.deb
+# Install the PowerShell package
+RUN dpkg -i powershell_7.4.0-1.deb_amd64.deb
+
+# && apt-get install -y powershell
+RUN apt-get update && apt-get install -y ant  && apt-get install -y zip && apt-get install -y xmlstarlet 
 RUN mkdir -p izpack
 
 COPY /ant-lib /usr/share/ant/lib/
 COPY . izpack
 WORKDIR /izpack
 RUN ant -file src/build.xml all
-  

@@ -2,6 +2,11 @@ FROM openjdk:11
 
 
 # install needed packages
+# install needed packages
+RUN apt-get update && apt-get install -y ant  && apt-get install -y zip && apt-get install -y xmlstarlet  && apt-get install -y libicu-dev
+#  && apt-get install -y powershell
+# apt install openjdk-11-jre-headless
+
 # RUN add-apt-repository universe
 # Install pre-requisite packages.
 RUN apt-get install -y wget
@@ -10,10 +15,6 @@ RUN wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.0/power
 # Install the PowerShell package
 RUN dpkg -i powershell_7.4.0-1.deb_amd64.deb
 
-# install needed packages
-RUN apt-get update && apt-get install -y ant  && apt-get install -y zip && apt-get install -y xmlstarlet
-#  && apt-get install -y powershell
-# apt install openjdk-11-jre-headless
 RUN mkdir -p izpack
 
 COPY /ant-lib /usr/share/ant/lib/

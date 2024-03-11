@@ -337,10 +337,12 @@ public final class InstallationInformationHelper {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 				return result;
+			}finally {
+				
 			}
 
 			List<com.izforge.izpack.Pack> packsinstalled;
-			ArrayList<Pack> packLists = new ArrayList<Pack>();
+			// ArrayList<Pack> packLists = new ArrayList<Pack>();
 
 			/*
 			 * try { packsinstalled = (List<com.izforge.izpack.Pack>) oin.readObject();
@@ -367,7 +369,7 @@ public final class InstallationInformationHelper {
 
 			// installData.getAllPacks().clear();
 			// installData.getAvailablePacks().clear();
-			installData.setSelectedPacks(packLists);
+			// installData.setSelectedPacks(packLists);
 
 			try {
 				Variables envvariables = installData.getVariables();
@@ -404,6 +406,8 @@ public final class InstallationInformationHelper {
 				// installData.getInfo().setUninstallerName("uninstaller.jar");
 				// installData.getInfo().setUninstallerCondition("uninstaller.write");
 
+				fin.close();
+				oin.close();
 				writeInstallationInformation(installData, installData.getSelectedPacks(), installData.getVariables(),
 						resources, true);
 				wasLegacyIzpack = true;
@@ -433,7 +437,30 @@ public final class InstallationInformationHelper {
 			ArrayList variables) {
 		logger.log(Level.FINE,
 				"readVariables ArrayList objects: " + variables + " : " + variables.getClass().getName());
-
+		// installData.setSelectedPacks(variables);
+		List<com.izforge.izpack.api.data.Pack> packLists = new ArrayList<com.izforge.izpack.api.data.Pack>();
+		for (Object key : variables) {
+			logger.log(Level.FINE, "keyType:" + key.getClass().getName());
+			if (key instanceof com.izforge.izpack.Pack) {
+				com.izforge.izpack.Pack theFormerPack = (com.izforge.izpack.Pack)key;
+				com.izforge.izpack.api.data.Pack newPack = new com.izforge.izpack.api.data.Pack(
+						theFormerPack.name, 
+						theFormerPack.packImgId, 
+						theFormerPack.description, 
+						null, // new List<OsModel>(),//  theFormerPack.osConstraints,
+						theFormerPack.dependencies,
+						theFormerPack.required,
+						theFormerPack.preselected,
+						theFormerPack.loose,
+						theFormerPack.excludeGroup,
+						theFormerPack.uninstall,
+						theFormerPack.nbytes
+						);
+				packLists.add(newPack);
+			}
+		}
+		if (packLists.size() > 0)
+			installData.setSelectedPacks(packLists);
 	}
 
 	private static DynamicVariable getDynamicVariable(List<DynamicVariable> dynamicVariables, String name) {

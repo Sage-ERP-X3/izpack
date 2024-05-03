@@ -30,7 +30,9 @@ import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.security.x509.X500Name;
+// Java 8
+// import sun.security.x509.X500Name;
+import javax.security.auth.x500.X500Principal;
 
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.installer.DataValidator;
@@ -100,8 +102,15 @@ public class CheckCertificateP12Validator implements DataValidator {
 		CertificateFactory factory = CertificateFactory.getInstance("X.509");
 		servercert = (X509Certificate) factory.generateCertificate(inCertFile);
 
-		X500Name x500Name = new X500Name(servercert.getSubjectX500Principal().getName());
-		String cname = x500Name.getCommonName();
+		// Java 8
+		// X500Name x500Name = new X500Name(servercert.getSubjectX500Principal().getName());
+		// String cname = x500Name.getCommonName();
+		
+        // Java 11
+        X500Principal x500Principal = servercert.getSubjectX500Principal();
+        String name = x500Principal.getName();                    
+        String cname = CertManagerDataValidator.extractCommonName(name);
+        
 		adata.setVariable("mongodb.ssl.certificate.cname", cname);
 		;
 		logger.log(Level.FINE, "Set certificate cname " + cname);

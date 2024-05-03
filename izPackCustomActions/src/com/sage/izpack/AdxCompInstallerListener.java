@@ -262,6 +262,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			bos.write(aByte);
 		}
 		content = bos.toByteArray();
+		bis.close();
 		uninstallData.addAdditionalData(dataName, content);
 	}
 

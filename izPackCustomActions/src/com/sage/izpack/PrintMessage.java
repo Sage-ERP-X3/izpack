@@ -2,7 +2,6 @@ package com.sage.izpack;
 
 import java.util.ResourceBundle;
 
-import com.izforge.izpack.core.resource.ResourceManager;
 import com.izforge.izpack.panels.process.AbstractUIProcessHandler;
 import com.izforge.izpack.util.Debug;
 

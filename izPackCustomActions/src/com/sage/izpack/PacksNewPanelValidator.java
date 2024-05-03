@@ -4,7 +4,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.izforge.izpack.api.data.InstallData;
-import com.izforge.izpack.api.installer.DataValidator.Status;
 import com.izforge.izpack.installer.validator.ConditionValidator;
 
 public class PacksNewPanelValidator extends ConditionValidator {

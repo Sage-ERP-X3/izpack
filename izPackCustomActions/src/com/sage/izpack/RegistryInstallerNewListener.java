@@ -6,7 +6,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.coi.tools.os.win.RegDataContainer;
-import com.izforge.izpack.api.data.Info;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.data.Pack;
@@ -19,9 +18,7 @@ import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.installer.data.UninstallData;
 import com.izforge.izpack.installer.unpacker.IUnpacker;
-import com.izforge.izpack.panels.checkedhello.RegistryHelper;
 import com.izforge.izpack.util.Housekeeper;
-import com.izforge.izpack.util.OsVersion;
 
 /*
  * 
@@ -76,19 +73,15 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		if (version == null)
 			version = variables.get("APP_VER");
 		String appName = variables.get("APP_NAME");
-		// String keyName = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
-		// + appName;
+		// String keyName = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + appName;
+		String publisher = variables.get("publisher");
+
 		String keyName = RegistryHandler.UNINSTALL_ROOT + appName;
 
 		logger.log(Level.FINE, LogPrefix + "updateRegistry   Updating DisplayVersion, Registry path " + keyName
-				+ " key: " + "DisplayVersion" + " value: " + version);
+				+ " key: " + "DisplayVersion: " + version  + " Publisher:" + publisher);
 
-		/*
-		if (info != null && (info.getAppName() == null || info.getUninstallerName() == null)) {
-			info.setAppName(appName);
-			info.setUninstallerName(appName);
-		}
-*/		
+
 		RegistryHandler myHandlerInstance = myhandler.getInstance();
 		try {
 			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);			
@@ -106,6 +99,18 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 								+ keyName + " key: " + "DisplayVersion" + " value: " + version);
 					}
 				}
+
+				RegDataContainer contPublisher = myHandlerInstance.getValue(keyName, "Publisher");
+				if (contPublisher != null) {
+					String publisherVal = contPublisher.getStringData();
+					if (publisherVal != null && publisher != null && publisherVal != publisher) {
+						myHandlerInstance.setValue(keyName, "Publisher", publisher);
+
+						logger.log(Level.FINE, LogPrefix + "updateRegistry   Publisher updated, Registry path "
+								+ keyName + " key: " + "Publisher" + " value: " + publisher);
+					}
+				}
+
 			}
 		} catch (NativeLibException e) {
 			e.printStackTrace();

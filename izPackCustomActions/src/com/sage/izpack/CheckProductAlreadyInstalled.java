@@ -3,7 +3,6 @@ package com.sage.izpack;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,7 +12,6 @@ import com.izforge.izpack.api.installer.DataValidator;
 import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.core.resource.ResourceManager;
-import com.izforge.izpack.installer.bootstrap.Installer;
 
 /*
 * @author Franck DEPOORTERE

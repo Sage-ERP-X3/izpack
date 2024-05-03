@@ -4,8 +4,6 @@ import java.awt.Container;
 import java.awt.Component;
 import java.lang.reflect.ParameterizedType;
 
-import com.izforge.izpack.api.data.Panel;
-
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
  * 

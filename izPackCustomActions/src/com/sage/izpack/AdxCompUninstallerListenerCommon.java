@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,9 +20,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.izforge.izpack.api.data.AutomatedInstallData;
-import com.izforge.izpack.api.data.InstallData;
-import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.event.AbstractUninstallerListener;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.IzPackException;
@@ -33,10 +29,8 @@ import com.izforge.izpack.api.handler.AbstractUIHandler;
 import com.izforge.izpack.api.handler.Prompt;
 import com.izforge.izpack.api.resource.Messages;
 import com.izforge.izpack.api.resource.Resources;
-import com.izforge.izpack.core.data.DefaultVariables;
 import com.izforge.izpack.core.handler.PromptUIHandler;
 import com.izforge.izpack.util.OsVersion;
-import com.izforge.izpack.util.Platform;
 import com.izforge.izpack.util.helper.SpecHelper;
 
 /*
@@ -265,7 +259,7 @@ public abstract class AdxCompUninstallerListenerCommon extends AbstractUninstall
 				deleteAdxAdmFile();
 			}
 
-			this.processDone = true;
+			processDone = true;
 		} catch (WrappedNativeLibException exception) {
 			emitError(this.getString("privilegesIssue", PrivilegesFriendlyMessage), exception);
 

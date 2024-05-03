@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.lang.reflect.Field;
 
-import com.sage.izpack.CTextLineUtils;
 import static com.sage.izpack.CTextLineUtils.generateLineFull;
 import static com.sage.izpack.CTextLineUtils.generateLineBeginEnd;
 

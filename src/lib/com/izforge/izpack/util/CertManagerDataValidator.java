@@ -4,32 +4,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.security.cert.CertificateFactory;
-import java.security.cert.PKIXCertPathBuilderResult;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.HashSet;
+import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.openssl.PEMDecryptorProvider;
-import org.bouncycastle.openssl.PEMEncryptedKeyPair;
-import org.bouncycastle.openssl.PEMKeyPair;
-import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.PEMWriter;
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
 
-import sun.security.x509.X500Name;
+
+// Java 8
+// import sun.security.x509.X500Name;
 
 import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.DataValidator;
 import com.izforge.izpack.installer.InstallData;
-import com.izforge.izpack.installer.DataValidator.Status;
-import com.izforge.izpack.util.ssl.CertificateVerifier;
 
 
 public class CertManagerDataValidator implements DataValidator
@@ -58,7 +49,17 @@ public class CertManagerDataValidator implements DataValidator
         return false;
     }
 
-    
+    // Java 8
+    public static String extractCommonName(String name) {
+        // Parse the X500 name to extract the common name (CN)
+        String[] parts = name.split(",");
+        for (String part : parts) {
+            if (part.trim().startsWith("CN=")) {
+                return part.trim().substring(3);
+            }
+        }
+        return null; // Or throw an exception if CN is not found
+    }
 
     public Status validateData(AutomatedInstallData adata)
     {
@@ -88,7 +89,6 @@ public class CertManagerDataValidator implements DataValidator
                 {
 
                     adata.setVariable("syracuse.certificate.certtool",adata.getVariable("INSTALL_PATH") + File.separator + "syracuse" + File.separator + "certs_tools");
-
                     
                     readCerts (adata);
                     
@@ -96,8 +96,16 @@ public class CertManagerDataValidator implements DataValidator
                     InputStream inPemCertFile = new FileInputStream(adata.getVariable("syracuse.ssl.certfile"));
                     X509Certificate cert = (X509Certificate) factory.generateCertificate(inPemCertFile);
                     
-                    X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName()); 
-                    hostname = x500Name.getCommonName().toLowerCase();                    
+                    // Java 8
+                    // sun.security.x509.X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName()); 
+                    // hostname = x500Name.getCommonName().toLowerCase();                    
+
+                    // Java 11
+                    X500Principal x500Principal = cert.getSubjectX500Principal();
+                    String name = x500Principal.getName();                    
+                    String commonName = extractCommonName(name);
+                    hostname = commonName.toLowerCase();
+                    
                     adata.setVariable("syracuse.certificate.serverpassphrase",adata.getVariable("syracuse.ssl.pemkeypassword"));
                 }
 
@@ -105,9 +113,7 @@ public class CertManagerDataValidator implements DataValidator
                 adata.setVariable("mongodb.ssl.server.serverpassphrase",adata.getVariable("syracuse.certificate.serverpassphrase"));
                 adata.setVariable("mongodb.ssl.server.certfile",strCertPath + File.separator + localHOST_NAME+".crt");
                 adata.setVariable("mongodb.ssl.server.pemkeyfile",strCertPath + File.separator + localHOST_NAME+".key");
-                adata.setVariable("mongodb.ssl.server.pemcafile",strCertPath + File.separator + "ca.cacrt");
-                
-
+                adata.setVariable("mongodb.ssl.server.pemcafile",strCertPath + File.separator + "ca.cacrt");               
             }
             
 
@@ -141,9 +147,16 @@ public class CertManagerDataValidator implements DataValidator
                         InputStream inPemCertFile = new FileInputStream(adata.getVariable("syracuse.ssl.certfile"));
                         X509Certificate cert = (X509Certificate) factory.generateCertificate(inPemCertFile);
                         
-                        X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName()); 
-                        
-                        adata.setVariable("mongodb.service.hostname",x500Name.getCommonName().toLowerCase());
+                        // Java 8
+                        // X500Name x500Name = new sun.security.x509.X500Name.X500Name(cert.getSubjectX500Principal().getName()); 
+                        // adata.setVariable("mongodb.service.hostname",x500Name.getCommonName().toLowerCase());
+
+                        // Java 11
+                        X500Principal x500Principal = cert.getSubjectX500Principal();
+                        String name = x500Principal.getName();                    
+                        String commonName = extractCommonName(name);
+
+                        adata.setVariable("mongodb.service.hostname",commonName.toLowerCase());
                     }
                     else
                     {
@@ -306,8 +319,15 @@ public class CertManagerDataValidator implements DataValidator
         InputStream inPemCertFile = new FileInputStream(fieldPemCertFile);
         X509Certificate cert = (X509Certificate) factory.generateCertificate(inPemCertFile);
         
-        X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName()); 
-        String cn = x500Name.getCommonName().toLowerCase();        
+        // Java 8
+        // X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName()); 
+        // String cn = x500Name.getCommonName().toLowerCase();        
+        
+        // Java 11
+        X500Principal x500Principal = cert.getSubjectX500Principal();
+        String name = x500Principal.getName();                    
+        String cn = extractCommonName(name);
+
         
         // copy Cert in output directory
         File sourceserverCRT = new File (fieldPemCertFile);
@@ -323,7 +343,7 @@ public class CertManagerDataValidator implements DataValidator
         Files.copy(sourceserverKey.toPath(), certToolOutputServerkey.toPath(), StandardCopyOption.REPLACE_EXISTING);
         Files.copy(sourceserverKey.toPath(), certsServerkey.toPath(), StandardCopyOption.REPLACE_EXISTING);
         
-        // public key in output directoru
+        // public key in output directory
         PublicKey pubKey = cert.getPublicKey();
         File certToolOutputServerPub = new File (strCertToolPath+File.separator+"output" + File.separator + localHOST_NAME+".pem");
         FileWriter serverpubfile = new FileWriter(certToolOutputServerPub);

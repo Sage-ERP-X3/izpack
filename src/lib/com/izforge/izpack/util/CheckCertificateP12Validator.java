@@ -13,6 +13,9 @@ import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+
+import javax.security.auth.x500.X500Principal;
+
 import java.security.cert.Certificate;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -27,7 +30,8 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import sun.security.x509.X500Name;
+// Java 11
+// import sun.security.x509.X500Name;
 import com.izforge.izpack.installer.AutomatedInstallData;
 
 
@@ -99,8 +103,15 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         CertificateFactory factory = CertificateFactory.getInstance("X.509"); 
         servercert = (X509Certificate) factory.generateCertificate(inCertFile);
 
-        X500Name x500Name = new X500Name(servercert.getSubjectX500Principal().getName());
-        String cname = x500Name.getCommonName();
+        // Java 8
+        // X500Name x500Name = new X500Name(servercert.getSubjectX500Principal().getName());
+        // String cname = x500Name.getCommonName();
+        
+        // Java 11
+        X500Principal x500Principal = servercert.getSubjectX500Principal();
+        String name = x500Principal.getName();                    
+        String cname = CertManagerDataValidator.extractCommonName(name);
+        
         adata.setVariable("mongodb.ssl.certificate.cname",cname);;
         Debug.trace("Set certificate cname " + cname);
 

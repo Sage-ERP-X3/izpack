@@ -12,12 +12,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-
-import sun.security.x509.X500Name;
-
+// Java 8
+// import sun.security.x509.X500Name;
 import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.DataValidator;
-import com.izforge.izpack.installer.DataValidator.Status;
 import com.izforge.izpack.util.os.MoreAdvApi32;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Kernel32;
@@ -57,8 +55,7 @@ public class UpdatePassphraseValidator implements DataValidator
         
         
         if (OsVersion.IS_WINDOWS && !updateMode )
-        {
-        
+        {        
             String userName = adata.getVariable("syracuse.winservice.username");
             String passWord = adata.getVariable("syracuse.winservice.password");
             String strDomain = ".";
@@ -91,30 +88,22 @@ public class UpdatePassphraseValidator implements DataValidator
             String strHOST_NAME = adata.getVariable("HOST_NAME").toLowerCase();
             String strServerPassphrase = adata.getVariable("syracuse.certificate.serverpassphrase"); //syracuse.certificate.serverpassphrase
             
-            
-            
+                       
             try
-            {
-
-                
+            {                
                 if (!certCreate)
                 {
-                    CertificateFactory factory = CertificateFactory.getInstance("X.509");
-                    InputStream inPemCertFile = new FileInputStream(adata.getVariable("syracuse.ssl.certfile"));
-                    X509Certificate cert = (X509Certificate) factory.generateCertificate(inPemCertFile);
-                    
-                    X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName()); 
-                    
-                    //strHOST_NAME=x500Name.getCommonName().toLowerCase();
+                    // CertificateFactory factory = CertificateFactory.getInstance("X.509");
+                    // InputStream inPemCertFile = new FileInputStream(adata.getVariable("syracuse.ssl.certfile"));
+                    // X509Certificate cert = (X509Certificate) factory.generateCertificate(inPemCertFile);
+                    // Java 8
+                    // X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName());                     
+                    // strHOST_NAME=x500Name.getCommonName().toLowerCase();
                     
                     strServerPassphrase = adata.getVariable("syracuse.ssl.pemkeypassword");
                 }
                 
-                String strPassPhraseFile = strCertsDir+"\\"+strHOST_NAME+"\\"+strHOST_NAME+".pwd";
-
-                
-                
-                
+                String strPassPhraseFile = strCertsDir+"\\"+strHOST_NAME+"\\"+strHOST_NAME+".pwd";                               
                 
                 //delete old passphrase ?
                 File oldPassphrase = new File (strPassPhraseFile);
@@ -222,9 +211,7 @@ public class UpdatePassphraseValidator implements DataValidator
                         
                         adata.setVariable(strMessageValue, strMessage);
                         return Status.WARNING;
-                    }
-                    
-                    
+                    }                    
             }
             catch (Exception ex)
             {
@@ -237,9 +224,7 @@ public class UpdatePassphraseValidator implements DataValidator
                 sreturn = Status.WARNING;
             }
         }
-        
-        
-        
+                       
         return sreturn;
     }
 

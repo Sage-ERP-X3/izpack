@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <eclipse-userlibraries version="2">
     <library name="IZPACK5" systemlibrary="false">
-        <archive path="../libs/izpack-ant-5.2.0.jar"/>
-        <archive path="../libs/izpack-api-5.2.0.jar"/>
-        <archive path="../libs/izpack-compiler-5.2.0.jar"/>
-        <archive path="../libs/izpack-core-5.2.0.jar"/>
-        <archive path="../libs/izpack-event-5.2.0.jar"/>
-        <archive path="../libs/izpack-gui-5.2.0.jar"/>
-        <archive path="../libs/izpack-installer-5.2.0.jar"/>
-        <archive path="../libs/izpack-native-5.2.0.jar"/>
-        <archive path="../libs/izpack-panel-5.2.0.jar"/>
-        <archive path="../libs/izpack-tools-5.2.0.jar"/>
-        <archive path="../libs/izpack-uninstaller-5.2.0.jar"/>
-        <archive path="../libs/izpack-util-5.2.0.jar"/>
-        <archive path="../izPackCustomActions/libs/mongo-java-driver-3.4.2.jar"/>
-        <archive path="../izPackCustomActions/libs/bcpkix-jdk15on-150.jar"/>
-        <archive path="../izPackCustomActions/libs/bcprov-jdk15on-150.jar"/>
+        <archive path="IzPack/lib/izpack-ant-5.2.0.jar"/>
+        <archive path="IzPack/lib/izpack-api-5.2.0.jar"/>
+        <archive path="IzPack/lib/izpack-compiler-5.2.0.jar"/>
+        <archive path="IzPack/lib/izpack-core-5.2.0.jar"/>
+        <archive path="IzPack/lib/izpack-event-5.2.0.jar"/>
+        <archive path="IzPack/lib/izpack-gui-5.2.0.jar"/>
+        <archive path="IzPack/lib/izpack-installer-5.2.0.jar"/>
+        <archive path="IzPack/lib/izpack-native-5.2.0.jar"/>
+        <archive path="IzPack/lib/izpack-panel-5.2.0.jar"/>
+        <archive path="IzPack/lib/izpack-tools-5.2.0.jar"/>
+        <archive path="IzPack/lib/izpack-uninstaller-5.2.0.jar"/>
+        <archive path="IzPack/lib/izpack-util-5.2.0.jar"/>
+        <archive path="izPackCustomActions/libs/mongo-java-driver-3.4.2.jar"/>
+        <archive path="izPackCustomActions/libs/bcpkix-jdk15on-150.jar"/>
+        <archive path="izPackCustomActions/libs/bcprov-jdk15on-150.jar"/>
 		
     </library>
 </eclipse-userlibraries>

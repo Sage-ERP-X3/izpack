@@ -251,6 +251,9 @@ public final class InstallationInformationHelper {
 					.readObject();
 			try {
 				for (com.izforge.izpack.api.data.Pack installedpack : packsinstalled) {
+					
+					// readVariables(installData, logHeader, envvariables, dynamicVariables, variables, key);
+
 					// if (!readPacks.containsKey(installedpack.getName())) {
 					// readPacks.put(installedpack.getName(), installedpack);
 					// logger.log(Level.FINE, logPrefix + "Add pack " + installedpack.getName() +
@@ -556,6 +559,7 @@ public final class InstallationInformationHelper {
 		ObjectOutputStream oout = new ObjectOutputStream(fout);
 		oout.writeObject(selectedPacks);
 		oout.writeObject(clone.getProperties());
+		oout.close();
 		fout.close();
 
 		logger.log(Level.FINE, logPrefix + "Installation information saved: " + installationInfo.getAbsolutePath());

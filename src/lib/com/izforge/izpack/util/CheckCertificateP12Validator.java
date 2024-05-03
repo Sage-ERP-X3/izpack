@@ -3,54 +3,32 @@ package com.izforge.izpack.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.CertificateFactory;
-import java.security.cert.PKIXCertPathBuilderResult;
 import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import javax.xml.bind.DatatypeConverter;
+// Java 8
+// import javax.xml.bind.DatatypeConverter;
 import java.security.cert.CertificateEncodingException;
-import java.security.spec.RSAPrivateCrtKeySpec;
-import java.security.spec.RSAPublicKeySpec;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import com.izforge.izpack.util.Debug;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
 import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
-import org.bouncycastle.util.io.pem.PemHeader;
-import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import sun.security.x509.X500Name;
 import com.izforge.izpack.installer.AutomatedInstallData;
-import com.izforge.izpack.installer.DataValidator;
-import com.izforge.izpack.installer.DataValidator.Status;
-import com.izforge.izpack.util.ssl.CertificateVerifier;
 
 
 public class CheckCertificateP12Validator implements com.izforge.izpack.installer.DataValidator
@@ -164,10 +142,29 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         byte[] der = cert.getEncoded();
         md.update(der);
         byte[] digest = md.digest();
-        String digestHex = DatatypeConverter.printHexBinary(digest);
+        // Java 8 
+        // String digestHex = DatatypeConverter.printHexBinary(digest);
+        String digestHex = bytesToHex(digest);
         return digestHex.toLowerCase();
     }
 
+    // Java 11: 
+    // In Java 8, javax.xml.bind.DatatypeConverter.printHexBinary() was commonly used to convert byte arrays to hexadecimal strings. 
+    // Since the javax.xml.bind package is no longer included by default in Java 11 and later versions, 
+    // you would need to find an alternative method to achieve the same functionality.
+    // if you prefer not to introduce additional dependencies, we implemented the conversion here:
+    public static String bytesToHex(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : bytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
+    
     public String getErrorMessageId()
     {
         return strMessageId;

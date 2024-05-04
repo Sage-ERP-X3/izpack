@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:11
 
 # install needed packages
 RUN apt-get update && apt-get install -y ant  && apt-get install -y zip && apt-get install -y xmlstarlet 

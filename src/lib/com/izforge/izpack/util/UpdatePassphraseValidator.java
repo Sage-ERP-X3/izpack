@@ -4,14 +4,10 @@
 package com.izforge.izpack.util;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 // Java 8
 // import sun.security.x509.X500Name;
 import com.izforge.izpack.installer.AutomatedInstallData;

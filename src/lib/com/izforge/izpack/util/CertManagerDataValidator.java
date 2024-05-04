@@ -49,7 +49,7 @@ public class CertManagerDataValidator implements DataValidator
         return false;
     }
 
-    // Java 8
+    // Java 8 => Java 11
     public static String extractCommonName(String name) {
         // Parse the X500 name to extract the common name (CN)
         String[] parts = name.split(",");

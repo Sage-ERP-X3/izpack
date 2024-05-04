@@ -23,9 +23,7 @@ package com.izforge.izpack.compiler;
 import com.izforge.izpack.Pack;
 import com.izforge.izpack.PackFile;
 import com.izforge.izpack.adaptator.IXMLElement;
-import com.izforge.izpack.adaptator.IXMLWriter;
 import com.izforge.izpack.adaptator.impl.XMLElementImpl;
-import com.izforge.izpack.adaptator.impl.XMLWriter;
 import com.izforge.izpack.util.FileUtil;
 
 import java.io.*;
@@ -33,6 +31,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+// Java 8 / 11
 import java.util.jar.Pack200;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
@@ -421,18 +420,19 @@ public class Packager extends PackagerBase
         }
     }
 
-    private Pack200.Packer createAgressivePack200Packer()
+    // Java 8 / 11
+    private java.util.jar.Pack200.Packer createAgressivePack200Packer()
     {
-        Pack200.Packer packer = Pack200.newPacker();
-        Map<String, String> m = packer.properties();
-        m.put(Pack200.Packer.EFFORT, "9");
-        m.put(Pack200.Packer.SEGMENT_LIMIT, "-1");
-        m.put(Pack200.Packer.KEEP_FILE_ORDER, Pack200.Packer.FALSE);
-        m.put(Pack200.Packer.DEFLATE_HINT, Pack200.Packer.FALSE);
-        m.put(Pack200.Packer.MODIFICATION_TIME, Pack200.Packer.LATEST);
-        m.put(Pack200.Packer.CODE_ATTRIBUTE_PFX +"LineNumberTable", Pack200.Packer.STRIP);
-        m.put(Pack200.Packer.CODE_ATTRIBUTE_PFX + "LocalVariableTable", Pack200.Packer.STRIP);
-        m.put(Pack200.Packer.CODE_ATTRIBUTE_PFX + "SourceFile", Pack200.Packer.STRIP);
+    	java.util.jar.Pack200.Packer packer = java.util.jar.Pack200.newPacker();
+        Map<String, String> property = packer.properties();
+        property.put(Pack200.Packer.EFFORT, "9");
+        property.put(Pack200.Packer.SEGMENT_LIMIT, "-1");
+        property.put(Pack200.Packer.KEEP_FILE_ORDER, Pack200.Packer.FALSE);
+        property.put(Pack200.Packer.DEFLATE_HINT, Pack200.Packer.FALSE);
+        property.put(Pack200.Packer.MODIFICATION_TIME, Pack200.Packer.LATEST);
+        property.put(Pack200.Packer.CODE_ATTRIBUTE_PFX +"LineNumberTable", Pack200.Packer.STRIP);
+        property.put(Pack200.Packer.CODE_ATTRIBUTE_PFX + "LocalVariableTable", Pack200.Packer.STRIP);
+        property.put(Pack200.Packer.CODE_ATTRIBUTE_PFX + "SourceFile", Pack200.Packer.STRIP);
         return packer;
     }
 

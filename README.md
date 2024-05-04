@@ -1,6 +1,10 @@
 # IzPack
 =============
 
+## Version 4.3.11 : 15.05.2024
+
+- Compliancy with Java 11
+
 
 ## Version 4.3.10 : 15.02.2022
 

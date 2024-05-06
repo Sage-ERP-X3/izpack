@@ -1,6 +1,6 @@
 #!groovy
 
-env.IZPACK_VERSION = '5.2.0.4'
+env.IZPACK_VERSION = '5.2.0.5'
 //env.IZPACK_VERSION = 'X3_293748_AdxAdmin'
 
 node {
@@ -42,7 +42,7 @@ node {
         //         env.kVersion    = env.BRANCH_NAME
         //         env.kVersName   = "all"
         //         env.kPlateform  = "linux"
-        //         env.kJavaTargetVersion = "1.8"
+        //         env.kJavaTargetVersion = "11" // "1.8"
         //         env.kDevelopHome = "/izpack"
 
         //         def image

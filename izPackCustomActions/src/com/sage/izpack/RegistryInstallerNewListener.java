@@ -79,43 +79,43 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		String keyName = RegistryHandler.UNINSTALL_ROOT + appName;
 
 		logger.log(Level.FINE, LogPrefix + "updateRegistry   Updating DisplayVersion, Registry path " + keyName
-				+ " key: " + "DisplayVersion: " + version  + " Publisher:" + publisher);
-
+				+ " key: " + "DisplayVersion: " + version + " Publisher:" + publisher);
 
 		RegistryHandler myHandlerInstance = myhandler.getInstance();
 		try {
-			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);			
+			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
 			myHandlerInstance.setUninstallName("");
 			myHandlerInstance.setUninstallName(appName);
-			
+
 			if (myHandlerInstance.keyExist(keyName)) {
-				RegDataContainer cont = myHandlerInstance.getValue(keyName, "DisplayVersion");
-				if (cont != null) {
-					String displayVersionVal = cont.getStringData();
-					if (displayVersionVal != null && version != null && displayVersionVal != version) {
-						myHandlerInstance.setValue(keyName, "DisplayVersion", version);
-
-						logger.log(Level.FINE, LogPrefix + "updateRegistry   DisplayVersion updated, Registry path "
-								+ keyName + " key: " + "DisplayVersion" + " value: " + version);
-					}
-				}
-
-				RegDataContainer contPublisher = myHandlerInstance.getValue(keyName, "Publisher");
-				if (contPublisher != null) {
-					String publisherVal = contPublisher.getStringData();
-					if (publisherVal != null && publisher != null && publisherVal != publisher) {
-						myHandlerInstance.setValue(keyName, "Publisher", publisher);
-
-						logger.log(Level.FINE, LogPrefix + "updateRegistry   Publisher updated, Registry path "
-								+ keyName + " key: " + "Publisher" + " value: " + publisher);
-					}
-				}
-
+				updateEntry(myHandlerInstance, keyName, "DisplayVersion", version);
+				updateEntry(myHandlerInstance, keyName, "Publisher", publisher);
 			}
 		} catch (NativeLibException e) {
 			e.printStackTrace();
 			logger.log(Level.WARNING, LogPrefix + "updateRegistry   Error while update registry path " + keyName
 					+ " Key: DisplayVersion, value: " + version);
+		}
+	}
+
+	private void updateEntry(RegistryHandler myHandlerInstance, String keyName, String entryName, String entryValue)
+			throws NativeLibException {
+
+		if (!myHandlerInstance.valueExist(keyName, entryName)) { // "Publisher"
+			myHandlerInstance.setValue(keyName, entryName, entryValue);
+			logger.log(Level.FINE, LogPrefix + "updateRegistry " + entryName + " created, Registry path " + keyName
+					+ " key: " + entryName + " value: " + entryValue);
+		} else {
+			RegDataContainer contPublisher = myHandlerInstance.getValue(keyName, entryName);
+			if (contPublisher != null) {
+				String publisherVal = contPublisher.getStringData();
+				if (publisherVal != null && entryValue != null && publisherVal != entryValue) {
+					myHandlerInstance.setValue(keyName, entryName, entryValue);
+
+					logger.log(Level.FINE, LogPrefix + "updateRegistry   Publisher updated, Registry path " + keyName
+							+ " key: " + entryName + " value: " + entryValue);
+				}
+			}
 		}
 	}
 

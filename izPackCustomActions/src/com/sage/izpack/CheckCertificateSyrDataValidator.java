@@ -52,12 +52,8 @@ public class CheckCertificateSyrDataValidator implements DataValidator{
         //String fieldPemCertFile = adata.getVariable("mongodb.ssl.certfile");
         //String fieldPemKeyFile = adata.getVariable("mongodb.ssl.pemkeyfile");
         //String fieldPemKeyPassword = adata.getVariable("mongodb.ssl.pemkeypassword");
-        //String fieldPemCaFile = adata.getVariable("mongodb.ssl.pemcafile");
-        
-        
-        //createcert
-        //String str
-        
+        //String fieldPemCaFile = adata.getVariable("mongodb.ssl.pemcafile");       
+               
         
         try
         {
@@ -96,7 +92,7 @@ public class CheckCertificateSyrDataValidator implements DataValidator{
                 PEMKeyPair ukp = (PEMKeyPair) object;
                 kp = converter.getKeyPair(ukp);
             }
-            
+            pemParser.close();
             
             byte[] input = "1234567890ABCDEF".getBytes();
             

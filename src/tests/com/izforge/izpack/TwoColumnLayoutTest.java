@@ -132,7 +132,10 @@ public class TwoColumnLayoutTest implements ActionListener
 
         }
        
-		// DEBUG FRDEPO
+        
+       //  String regist = IoHelper.getRegistry("HKLM:SOFTWARE\\Wow6432Node\\Microsoft\\VisualStudio\\14.0\\VC\\Runtimes\\X64:Major");
+
+        // DEBUG FRDEPO
         // ElasticSearchDataValidator vali =new ElasticSearchDataValidator();
         // vali.validateData(null);
         // RegistryTest.readRegistryTest();

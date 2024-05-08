@@ -104,9 +104,9 @@ public class UnixUsers extends ArrayList
      *
      * @return an UnixUsers Arraylist of these users
      */
-    public ArrayList _getUsersWithValidShellsExistingHomesAndDesktops()
+    public ArrayList<UnixUser> _getUsersWithValidShellsExistingHomesAndDesktops()
     {
-        ArrayList result = new ArrayList();
+        ArrayList<UnixUser> result = new ArrayList<UnixUser>();
 
         ArrayList<UnixUser> usersWithValidShellsAndExistingHomes = getUsersWithValidShellsAndExistingHomes();
 
@@ -159,7 +159,7 @@ public class UnixUsers extends ArrayList
      *
      * @return an UnixUsers Arraylist of these users
      */
-    public static ArrayList getUsersWithValidShellsExistingHomesAndDesktops()
+    public static ArrayList<UnixUser> getUsersWithValidShellsExistingHomesAndDesktops()
     {
         UnixUsers users = new UnixUsers();
 

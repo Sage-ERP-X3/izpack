@@ -188,7 +188,7 @@ public class AutomatedInstallData implements Serializable
     public AutomatedInstallData()
     {
         availablePacks = new ArrayList<Pack>();
-        selectedPacks = new ArrayList();
+        selectedPacks = new ArrayList<Pack>();
         panels = new ArrayList<IzPanel>();
         panelsOrder = new ArrayList<Panel>();
         xmlData = new XMLElementImpl("AutomatedInstallation");

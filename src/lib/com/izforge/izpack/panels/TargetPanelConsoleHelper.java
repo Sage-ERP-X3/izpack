@@ -154,9 +154,8 @@ public class TargetPanelConsoleHelper extends PanelConsoleHelper implements Pane
                 idata.setInstallPath(strTargetPath);
                 
                 String summaryCaption = idata.langpack.getString("TargetPanel.summaryCaption") ;
-                ArrayList lstTarget = new ArrayList ();
-                lstTarget.add(strTargetPath);
-                
+                ArrayList<String> lstTarget = new ArrayList<String> ();
+                lstTarget.add(strTargetPath);                
                 idata.summaryText.put(summaryCaption, lstTarget);
                 
                 

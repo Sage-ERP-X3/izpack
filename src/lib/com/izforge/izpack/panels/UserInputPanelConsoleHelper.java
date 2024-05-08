@@ -37,12 +37,10 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import com.izforge.izpack.LocaleDatabase;
 import com.izforge.izpack.Pack;
 import com.izforge.izpack.Panel;
 import com.izforge.izpack.adaptator.IXMLElement;
 import com.izforge.izpack.installer.AutomatedInstallData;
-import com.izforge.izpack.installer.InstallData;
 import com.izforge.izpack.installer.PanelConsole;
 import com.izforge.izpack.installer.PanelConsoleHelper;
 import com.izforge.izpack.installer.ResourceManager;
@@ -260,7 +258,7 @@ public class UserInputPanelConsoleHelper extends PanelConsoleHelper implements P
 
         // added by APO
         String summaryCaption = idata.langpack.getString("UserInputPanel.summaryCaption") ;
-        ArrayList lstTarget = new ArrayList ();
+        ArrayList<String> lstTarget = new ArrayList<String>();
 
         try
         {

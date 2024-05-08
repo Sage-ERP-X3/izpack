@@ -154,7 +154,7 @@ public class InstallerBase
         in = InstallerBase.class.getResourceAsStream("/packs.info");
         objIn = new ObjectInputStream(in);
         size = objIn.readInt();
-        ArrayList availablePacks = new ArrayList();
+        ArrayList<Pack> availablePacks = new ArrayList<Pack>();
         ArrayList<Pack> allPacks = new ArrayList<Pack>();
         for (i = 0; i < size; i++)
         {

@@ -21,7 +21,6 @@
 
 package com.izforge.izpack.uninstaller;
 
-import com.izforge.izpack.installer.MultiVolumeInstaller;
 import com.izforge.izpack.util.OsVersion;
 
 import java.io.*;
@@ -269,7 +268,7 @@ public class SelfModifier
         this.maxmemory = Long.parseLong(System.getProperty(MEMORY_KEY, "64"));
         this.maxpermgensize = this.maxmemory / 4;
 
-        // retrieve refrence to target method
+        // retrieve reference to target method
         try
         {
             Class clazz = Class.forName(cName);

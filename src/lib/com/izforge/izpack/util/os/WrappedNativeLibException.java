@@ -120,8 +120,7 @@ public class WrappedNativeLibException extends Exception
                     }
                     if (nle.getOsErr() != 0)
                     {
-                        String val = langpack
-                                .get("NativeLibException.libInternal.OsErrNumPraefix")
+                        String val = langpack.get("NativeLibException.libInternal.OsErrNumPraefix")
                                 + Integer.toString(nle.getOsErr());
                         if (val == null)
                         {
@@ -136,8 +135,7 @@ public class WrappedNativeLibException extends Exception
                     }
                     if (nle.getOsMessage() != null)
                     {
-                        String val = langpack
-                                .get("NativeLibException.libInternal.OsErrStringPraefix")
+                        String val = langpack.get("NativeLibException.libInternal.OsErrStringPraefix")
                                 + nle.getOsMessage();
                         if (val == null)
                         {

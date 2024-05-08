@@ -28,19 +28,16 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import com.coi.tools.os.win.MSWinConstants;
 import com.coi.tools.os.win.NativeLibException;
-import com.izforge.izpack.Pack;
 import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.PanelConsole;
 import com.izforge.izpack.installer.PanelConsoleHelper;
 import com.izforge.izpack.installer.ScriptParser;
-import com.izforge.izpack.util.Debug;
 import com.izforge.izpack.util.FileExecutor;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.VariableSubstitutor;
@@ -162,7 +159,7 @@ public class JDKPathPanelConsoleHelper extends PanelConsoleHelper implements Pan
         if (i == 1)
         {
             String summaryCaption = idata.langpack.getString("JDKPathPanel.summaryCaption") ;
-            ArrayList lstTarget = new ArrayList ();
+            ArrayList<String> lstTarget = new ArrayList<String> ();
             lstTarget.add(idata.getVariable(variableName));
 
             idata.summaryText.put(summaryCaption, lstTarget);

@@ -1476,7 +1476,7 @@ public class ShortcutPanel extends IzPanel implements ActionListener, ListSelect
         progressbar.setStringPainted(true);
         invalidate();
 
-        ArrayList startMenuShortcuts = new ArrayList();
+        ArrayList<Object> startMenuShortcuts = new ArrayList<Object>();
         for (int i = 0; i < shortcuts.size(); i++)
         {
             data = (ShortcutData) shortcuts.elementAt(i);

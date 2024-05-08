@@ -22,6 +22,7 @@ import com.izforge.izpack.Pack;
 import com.izforge.izpack.installer.InstallData;
 import com.izforge.izpack.installer.InstallerFrame;
 import com.izforge.izpack.installer.IzPanel;
+import com.izforge.izpack.panels.InstallationGroupPanel.GroupData;
 import com.izforge.izpack.util.AbstractUIHandler;
 import com.izforge.izpack.util.Debug;
 import com.izforge.izpack.util.OsConstraint;
@@ -78,7 +79,7 @@ public class InstallationGroupPanel extends IzPanel
     public void panelActivate()
     {
         // Set/restore availablePacks from allPacks; consider OS constraints
-        idata.availablePacks = new ArrayList();
+        idata.availablePacks = new ArrayList<Pack>();
         for (Pack p : idata.allPacks)
         {
             if (OsConstraint.oneMatchesCurrentSystem(p.osConstraints))
@@ -342,13 +343,13 @@ public class InstallationGroupPanel extends IzPanel
      * @param idata - the panel install data
      * @return HashMap<String, GroupData> of unique install group names
      */
-    protected HashMap getInstallGroups(InstallData idata)
+    protected HashMap<String, GroupData> getInstallGroups(InstallData idata)
     {
         /* First create a packsByName<String, Pack> of all packs and identify
         the unique install group names.
         */
         packsByName = new HashMap<String, Pack>();
-        HashMap installGroups = new HashMap();
+        HashMap<String, GroupData> installGroups = new HashMap<String, GroupData>();
         for (int n = 0; n < idata.availablePacks.size(); n++)
         {
             Pack p = (Pack) idata.availablePacks.get(n);

@@ -779,7 +779,7 @@ public class TreePacksPanel extends IzPanel implements PacksPanelInterface
     {
         if (parent == null) // the root node
         {
-            java.util.Iterator iter = idata.availablePacks.iterator();
+            Iterator<Pack> iter = idata.availablePacks.iterator();
             ArrayList rootNodes = new ArrayList();
             while (iter.hasNext())
             {

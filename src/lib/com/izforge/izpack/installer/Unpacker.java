@@ -31,6 +31,7 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+// Java 8 / 11
 import java.util.jar.Pack200;
 
 /**
@@ -43,6 +44,7 @@ public class Unpacker extends UnpackerBase
 {
     private static final String tempSubPath = "/IzpackWebTemp";
 
+    // Java 8 / 11
     private Pack200.Unpacker unpacker;
 
 
@@ -319,6 +321,7 @@ public class Unpacker extends UnpackerBase
                         {
                             int key = objIn.readInt();
                             InputStream pack200Input = Unpacker.class.getResourceAsStream("/packs/pack200-" + key);
+                            // Java 8 / 11
                             Pack200.Unpacker unpacker = getPack200Unpacker();
                             java.util.jar.JarOutputStream jarOut = new java.util.jar.JarOutputStream(new FileOutputStream(pathFile));
                             unpacker.unpack(pack200Input, jarOut);
@@ -521,7 +524,9 @@ public class Unpacker extends UnpackerBase
             removeFromInstances();
         }
     }
-
+    // Java 8 / 11
+    // Java 17 : Pack200 is deprecated.  Maybe take the code from izPack 5, class Packager : 
+    // https://github.com/izpack/izpack/blob/master/izpack-compiler/src/main/java/com/izforge/izpack/compiler/packager/impl/Packager.java
     private Pack200.Unpacker getPack200Unpacker()
     {
         if (unpacker == null)

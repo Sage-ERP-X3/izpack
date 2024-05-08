@@ -52,13 +52,11 @@ public class FileUtil
      *         null.
      * @throws IOException
      */
-    public static ArrayList getFileContent(String fileName)
+    public static ArrayList<String> getFileContent(String fileName)
             throws IOException
     {
-        ArrayList result = new ArrayList();
-
+        ArrayList<String> result = new ArrayList<String>();
         File aFile = new File(fileName);
-
         if (!aFile.isFile())
         {
             //throw new IOException( fileName + " is not a regular File" );
@@ -66,7 +64,6 @@ public class FileUtil
         }
 
         BufferedReader reader = null;
-
         try
         {
             reader = new BufferedReader(new FileReader(aFile));
@@ -75,19 +72,15 @@ public class FileUtil
         {
             // TODO handle Exception
             e1.printStackTrace();
-
             return result;
         }
 
         String aLine = null;
-
         while ((aLine = reader.readLine()) != null)
         {
             result.add(aLine + "\n");
         }
-
         reader.close();
-
         return result;
     }
 

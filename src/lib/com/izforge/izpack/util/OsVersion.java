@@ -310,10 +310,9 @@ public final class OsVersion implements OsVersionConstants, StringConstants {
         String result = null;
 
         try {
-            ArrayList lstLines = FileUtil.getFileContent(strReleaseFile);
+            ArrayList<String> lstLines = FileUtil.getFileContent(strReleaseFile);
 
-            Iterator linesIter = lstLines.iterator();
-
+            Iterator<String> linesIter = lstLines.iterator();
             while (linesIter.hasNext()) {
                 String strline = (String) linesIter.next();
 

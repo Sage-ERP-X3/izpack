@@ -408,6 +408,10 @@ public class Packager extends PackagerBase
         primaryJarStream.closeEntry();
 
         // Pack200 files
+
+        // Java 8 / 11
+        // Java 17 : Pack200 is deprecated.  Maybe take the code from izPack 5, class Packager : 
+        // https://github.com/izpack/izpack/blob/master/izpack-compiler/src/main/java/com/izforge/izpack/compiler/packager/impl/Packager.java
         Pack200.Packer packer = createAgressivePack200Packer();
         for (Integer key : pack200Map.keySet())
         {
@@ -421,6 +425,8 @@ public class Packager extends PackagerBase
     }
 
     // Java 8 / 11
+    // Java 17 : Pack200 is deprecated.  Maybe take the code from izPack 5, class Packager : 
+    // https://github.com/izpack/izpack/blob/master/izpack-compiler/src/main/java/com/izforge/izpack/compiler/packager/impl/Packager.java
     private java.util.jar.Pack200.Packer createAgressivePack200Packer()
     {
     	java.util.jar.Pack200.Packer packer = java.util.jar.Pack200.newPacker();

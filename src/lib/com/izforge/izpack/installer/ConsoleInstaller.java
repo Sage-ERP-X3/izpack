@@ -394,7 +394,7 @@ public class ConsoleInstaller extends InstallerBase
             }
             // We get the data
             UninstallData udata = UninstallData.getInstance();
-            List files = udata.getUninstalableFilesList();
+            List<?> files = udata.getUninstalableFilesList();
             ZipOutputStream outJar = installdata.uninstallOutJar;
 
             if (outJar == null) {

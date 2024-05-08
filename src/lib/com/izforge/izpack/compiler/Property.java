@@ -241,8 +241,8 @@ public class Property
         Properties props = new Properties();
         config.getPackagerListener().packagerMsg("Loading Environment " + prefix,
                 PackagerListener.MSG_VERBOSE);
-        Vector osEnv = Execute.getProcEnvironment();
-        for (Enumeration e = osEnv.elements(); e.hasMoreElements();)
+        Vector<?> osEnv = Execute.getProcEnvironment();
+        for (Enumeration<?> e = osEnv.elements(); e.hasMoreElements();)
         {
             String entry = (String) e.nextElement();
             int pos = entry.indexOf('=');

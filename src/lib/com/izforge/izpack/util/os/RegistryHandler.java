@@ -351,11 +351,11 @@ public class RegistryHandler extends OSClassHelper implements MSWinConstants
         return (null);
     }
 
-    public void setLoggingInfo(List info) throws NativeLibException
+    public void setLoggingInfo(List<?> info) throws NativeLibException
     {
     }
 
-    public void addLoggingInfo(List info) throws NativeLibException
+    public void addLoggingInfo(List<RegistryLogItem> info) throws NativeLibException
     {
     }
 
@@ -434,7 +434,7 @@ public class RegistryHandler extends OSClassHelper implements MSWinConstants
             {
                 RegistryLogItem rli = new RegistryLogItem(RegistryLogItem.CREATED_KEY, HKEY_LOCAL_MACHINE, keyName, null,
                         null, null);
-                ArrayList lstLog = new ArrayList ();
+                ArrayList<RegistryLogItem> lstLog = new ArrayList<RegistryLogItem> ();
                 lstLog.add(rli);
                addLoggingInfo(lstLog);
                 
@@ -449,7 +449,7 @@ public class RegistryHandler extends OSClassHelper implements MSWinConstants
             {
                 RegistryLogItem rli = new RegistryLogItem(RegistryLogItem.CREATED_KEY, HKEY_CURRENT_USER, keyName, null,
                         null, null);
-                ArrayList lstLog = new ArrayList ();
+                ArrayList<RegistryLogItem> lstLog = new ArrayList<RegistryLogItem> ();
                 lstLog.add(rli);
                addLoggingInfo(lstLog);
                 

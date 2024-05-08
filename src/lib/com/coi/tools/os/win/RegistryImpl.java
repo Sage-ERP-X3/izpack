@@ -43,7 +43,7 @@ public class RegistryImpl implements MSWinConstants
 
     private boolean logPrevSetValueFlag = false;
 
-    private List logging = new ArrayList();
+    private List logging = new ArrayList<RegistryLogItem>();
 
     private boolean doLogging = false;
 
@@ -516,7 +516,7 @@ public class RegistryImpl implements MSWinConstants
     {
         synchronized (logging)
         {
-            Iterator iter = logging.iterator();
+            Iterator<RegistryLogItem> iter = logging.iterator();
             suspendLogging();
 
             while (iter.hasNext())
@@ -666,7 +666,7 @@ public class RegistryImpl implements MSWinConstants
      */
     public void resetLogging()
     {
-        logging = new ArrayList();
+        logging = new ArrayList<RegistryLogItem>();
         activateLogging();
     }
 
@@ -728,7 +728,7 @@ public class RegistryImpl implements MSWinConstants
      */
     public void addLoggingInfo(List info)
     {
-        Iterator iter = info.iterator();
+        Iterator<?> iter = info.iterator();
         while (iter.hasNext())
         {
             try

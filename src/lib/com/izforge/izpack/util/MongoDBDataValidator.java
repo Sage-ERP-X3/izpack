@@ -100,7 +100,7 @@ public class MongoDBDataValidator implements DataValidator
                 Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());        
 
                 CertificateFactory factory = CertificateFactory.getInstance("X.509");
-                ArrayList chainArray = new ArrayList();
+                ArrayList<X509Certificate> chainArray = new ArrayList<X509Certificate>();
                 
                 if (pemcaFile !=null && !"".equals(pemcaFile))
                 {

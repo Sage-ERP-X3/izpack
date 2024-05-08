@@ -281,7 +281,7 @@ public class Packager extends PackagerBase
             // We write the actual pack files
             objOut.writeInt(packInfo.getPackFiles().size());
 
-            Iterator iter = packInfo.getPackFiles().iterator();
+            Iterator<?> iter = packInfo.getPackFiles().iterator();
             while (iter.hasNext())
             {
                 boolean addFile = !pack.loose;

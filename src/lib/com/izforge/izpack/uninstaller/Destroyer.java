@@ -463,7 +463,7 @@ public class Destroyer extends Thread
      */
     private List[] getListenerLists() throws Exception
     {
-        ArrayList[] uninstaller = new ArrayList[]{new ArrayList(), new ArrayList()};
+        ArrayList[] uninstaller = new ArrayList[]{new ArrayList<Object>(), new ArrayList<Object>()};
         // Load listeners if exist
         InputStream in;
         ObjectInputStream objIn;
@@ -471,9 +471,9 @@ public class Destroyer extends Thread
         if (in != null)
         {
             objIn = new ObjectInputStream(in);
-            List listeners = (List) objIn.readObject();
+            List<?> listeners = (List<?>) objIn.readObject();
             objIn.close();
-            Iterator iter = listeners.iterator();
+            Iterator<?> iter = listeners.iterator();
             while (iter != null && iter.hasNext())
             {
                 Class<UninstallerListener> clazz = (Class<UninstallerListener>) Class.forName(((String) iter.next()));
@@ -497,11 +497,11 @@ public class Destroyer extends Thread
      * @param handler   the current progress handler
      */
 
-    private void informListeners(List listeners, int action, Object param,
+    private void informListeners(List<?> listeners, int action, Object param,
                                  AbstractUIProgressHandler handler)
     {
         // Iterate the action list.
-        Iterator iter = listeners.iterator();
+        Iterator<?> iter = listeners.iterator();
         UninstallerListener il = null;
         while (iter.hasNext())
         {

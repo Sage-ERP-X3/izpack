@@ -361,7 +361,7 @@ public class CompileWorker implements Runnable
         }
 
         // list of classpath entries
-        ArrayList classpath = new ArrayList();
+        ArrayList<String> classpath = new ArrayList<String>();
 
         this.jobs = new ArrayList<CompilationJob>();
 
@@ -422,11 +422,11 @@ public class CompileWorker implements Runnable
         return new CompileResult();
     }
 
-    private CompilationJob collectJobsRecursive(IXMLElement node, ArrayList classpath)
+    private CompilationJob collectJobsRecursive(IXMLElement node, ArrayList<String> classpath)
             throws Exception
     {
         Vector<IXMLElement> toplevel_tags = node.getChildren();
-        ArrayList ourclasspath = (ArrayList) classpath.clone();
+        ArrayList<String> ourclasspath = (ArrayList) classpath.clone();
         ArrayList<File> files = new ArrayList<File>();
 
         for (int i = 0; i < toplevel_tags.size(); i++) {
@@ -482,7 +482,7 @@ public class CompileWorker implements Runnable
                 }
 
                 // check whether the wanted pack was selected for installation
-                Iterator pack_it = this.idata.selectedPacks.iterator();
+                Iterator<?> pack_it = this.idata.selectedPacks.iterator();
                 boolean found = false;
 
                 while (pack_it.hasNext())
@@ -517,7 +517,7 @@ public class CompileWorker implements Runnable
     /**
      * helper: process a <code>&lt;classpath&gt;</code> tag.
      */
-    private void changeClassPath(ArrayList classpath, IXMLElement child) throws Exception
+    private void changeClassPath(ArrayList<String> classpath, IXMLElement child) throws Exception
     {
         String add = child.getAttribute("add");
         if (add != null)
@@ -606,7 +606,7 @@ public class CompileWorker implements Runnable
 
         private ArrayList<File> files;
 
-        private ArrayList classpath;
+        private ArrayList<String> classpath;
 
         private LocaleDatabase langpack;
 
@@ -693,7 +693,7 @@ public class CompileWorker implements Runnable
             // construct classpath argument for compiler
             // - collect all classpaths
             StringBuffer classpath_sb = new StringBuffer();
-            Iterator cp_it = this.classpath.iterator();
+            Iterator<String> cp_it = this.classpath.iterator();
             while (cp_it.hasNext())
             {
                 String cp = (String) cp_it.next();
@@ -1082,7 +1082,7 @@ public class CompileWorker implements Runnable
             // construct classpath argument for compiler
             // - collect all classpaths
             StringBuffer classpath_sb = new StringBuffer();
-            Iterator cp_it = this.classpath.iterator();
+            Iterator<String> cp_it = this.classpath.iterator();
             while (cp_it.hasNext())
             {
                 String cp = (String) cp_it.next();

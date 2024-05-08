@@ -89,7 +89,7 @@ public class RegistryInstallerListener extends NativeInstallerListener implement
 
     private RulesEngine rules;
 
-	private List registryModificationLog;
+	private List<Object> registryModificationLog;
     
     /**
      * Default constructor.
@@ -141,7 +141,7 @@ public class RegistryInstallerListener extends NativeInstallerListener implement
             if (getSpecHelper().getSpec() != null)
             {
                 VariableSubstitutor substitutor = new VariableSubstitutor(idata.getVariables());
-                Iterator iter = idata.selectedPacks.iterator();
+                Iterator<?> iter = idata.selectedPacks.iterator();
                 // Get the special pack "UninstallStuff" which contains values
                 // for the uninstaller entry.
                 uninstallerPack = getSpecHelper().getPackForName("UninstallStuff");
@@ -247,12 +247,12 @@ public class RegistryInstallerListener extends NativeInstallerListener implement
         }
         
         // Get all entries for registry settings.
-        Vector regEntries = pack.getChildren();
+        Vector<?> regEntries = pack.getChildren();
         if (regEntries == null)
         {
             return;
         }
-        Iterator entriesIter = regEntries.iterator();
+        Iterator<?> entriesIter = regEntries.iterator();
         while (entriesIter != null && entriesIter.hasNext())
         {
             IXMLElement regEntry = (IXMLElement) entriesIter.next();

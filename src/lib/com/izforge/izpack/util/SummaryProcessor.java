@@ -113,7 +113,7 @@ public class SummaryProcessor
             System.out.println(" ");
             System.out.println(entry.getKey() + " :");
             System.out.println(" ");
-            Iterator iter = entry.getValue().iterator();
+            Iterator<?> iter = entry.getValue().iterator();
             while (iter.hasNext())
             {
                 System.out.println((String) iter.next());

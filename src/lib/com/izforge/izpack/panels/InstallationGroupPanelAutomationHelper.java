@@ -47,7 +47,7 @@ public class InstallationGroupPanelAutomationHelper
     public void makeXMLData(AutomatedInstallData idata, IXMLElement panelRoot)
     {
         GroupData[] rows = (GroupData[]) idata.getAttribute("GroupData");
-        HashMap packsByName = (HashMap) idata.getAttribute("packsByName");
+        HashMap<?, ?> packsByName = (HashMap<?, ?>) idata.getAttribute("packsByName");
         // Write out the group to pack mappings
         for (GroupData gd : rows)
         {
@@ -93,7 +93,7 @@ public class InstallationGroupPanelAutomationHelper
                     Debug.trace("Available pack count: " + idata.availablePacks.size());
                     for (IXMLElement xpack : packs)
                     {
-                        String pname = xpack.getAttribute("name");
+                        // String pname = xpack.getAttribute("name");
                         String indexStr = xpack.getAttribute("index");
                         int index = Integer.parseInt(indexStr);
                         if (index >= 0)

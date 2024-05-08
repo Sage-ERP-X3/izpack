@@ -68,7 +68,7 @@ public class Bin_Langpacks_InstallerTest extends TestCase
     {
         this.check = new LocaleDatabase(new FileInputStream(basePath + langpack));
         // all keys in the English langpack should be present in the foreign langpack
-        for (Iterator i = reference.keySet().iterator(); i.hasNext();)
+        for (Iterator<?> i = reference.keySet().iterator(); i.hasNext();)
         {
             // Locale Database uses the id strings as keys
             String id = (String) i.next();
@@ -76,7 +76,7 @@ public class Bin_Langpacks_InstallerTest extends TestCase
         }
         // there should be no keys in the foreign langpack which don't exist in the 
         // english langpack
-        for (Iterator i = this.check.keySet().iterator(); i.hasNext();)
+        for (Iterator<?> i = this.check.keySet().iterator(); i.hasNext();)
         {
             // LocaleDatabase uses the id strings as keys
             String id = (String) i.next();

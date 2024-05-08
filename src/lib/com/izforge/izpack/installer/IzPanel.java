@@ -1116,7 +1116,7 @@ public class IzPanel extends JPanel implements AbstractUIHandler, LayoutConstant
 
     private HashMap<String, String> helps = null;
 
-    public void setHelps(HashMap helps)
+    public void setHelps(HashMap<String, String> helps)
     {
         this.helps = helps;
     }

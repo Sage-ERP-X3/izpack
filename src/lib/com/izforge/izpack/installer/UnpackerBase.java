@@ -480,7 +480,7 @@ public abstract class UnpackerBase implements IUnpacker
             return;
         }
         // Iterate the action list.
-        Iterator iter = listener.iterator();
+        Iterator<?> iter = listener.iterator();
         while (iter.hasNext())
         {
             if (shouldInterrupt())

@@ -14,7 +14,7 @@ import java.util.*;
 public class PreValidatePacksPanelAction implements PanelAction
 {
     
-    private Map installedpacks = null;
+    private Map<String, Pack> installedpacks = null;
 
     public void executeAction(AutomatedInstallData adata, AbstractUIHandler handler)
     {
@@ -22,7 +22,7 @@ public class PreValidatePacksPanelAction implements PanelAction
         // then we must select already installed packs
         
         Boolean modifyinstallation = Boolean.valueOf(adata.getVariable(InstallData.MODIFY_INSTALLATION));
-        installedpacks = new HashMap();
+        installedpacks = new HashMap<String, Pack>();
 
         if (modifyinstallation)
         {
@@ -71,7 +71,7 @@ public class PreValidatePacksPanelAction implements PanelAction
 
                 Properties variables = (Properties) oin.readObject();
                 
-                Iterator iter = variables.keySet().iterator();
+                Iterator<?> iter = variables.keySet().iterator();
                 while (iter.hasNext())
                 {
                     String key = (String) iter.next();
@@ -120,7 +120,7 @@ public class PreValidatePacksPanelAction implements PanelAction
 
     }
     
-    private void removeAlreadyInstalledPacks(List selectedpacks)
+    private void removeAlreadyInstalledPacks(List<?> selectedpacks)
     {
         List<Pack> removepacks = new ArrayList<Pack>();
 

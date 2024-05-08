@@ -1,7 +1,5 @@
 package com.izforge.izpack.panels;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,9 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
-
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -36,7 +31,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.izforge.izpack.adaptator.IXMLElement;
@@ -47,7 +41,6 @@ import com.izforge.izpack.installer.InstallData;
 import com.izforge.izpack.installer.InstallerFrame;
 import com.izforge.izpack.installer.IzPanel;
 import com.izforge.izpack.installer.ResourceManager;
-import com.izforge.izpack.installer.DataValidator.Status;
 import com.izforge.izpack.util.Debug;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.os.RegistryDefaultHandler;
@@ -63,9 +56,9 @@ public class InstallTypePanel extends IzPanel implements ActionListener, ListSel
     public static String ADX_NODE_FAMILY = "component.node.family";  
     private JRadioButton normalinstall;
     private JRadioButton modifyinstall;
-    private DefaultListModel listItems;
-    private JList installedComponents;
-    private HashMap lstCompProps;
+    private DefaultListModel<String> listItems;
+    private JList<String> installedComponents;
+    private HashMap<String, String[]> lstCompProps;
     private String selectedKey;
     
     public InstallTypePanel(InstallerFrame parent, InstallData idata)
@@ -408,10 +401,10 @@ public class InstallTypePanel extends IzPanel implements ActionListener, ListSel
         //add(modifyinstall, NEXT_LINE);
         topPanel.add(modifyinstall);
         
-        lstCompProps = new HashMap();
+        lstCompProps = new HashMap<String, String[]>();
 
-        listItems = new DefaultListModel();
-        installedComponents = new JList (listItems);
+        listItems = new DefaultListModel<String>();
+        installedComponents = new JList<String> (listItems);
         installedComponents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         installedComponents.setLayoutOrientation(JList.VERTICAL);
         installedComponents.setVisibleRowCount(5);

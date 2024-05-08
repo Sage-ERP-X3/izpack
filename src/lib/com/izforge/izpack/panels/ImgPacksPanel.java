@@ -106,7 +106,7 @@ public class ImgPacksPanel extends PacksPanelBase
 
         // Create the image label with a scroller.
         // Use the image of the first pack having an image as initial image
-        Iterator pack_it = idata.availablePacks.iterator();
+        Iterator<?> pack_it = idata.availablePacks.iterator();
         Pack firstImgPack = null;
         boolean imgFound = false;
         while (!imgFound && pack_it.hasNext())
@@ -174,7 +174,7 @@ public class ImgPacksPanel extends PacksPanelBase
     {
         int size = idata.availablePacks.size();
         images = new HashMap<String, ImageIcon>(size);
-        Iterator pack_it = idata.availablePacks.iterator();
+        Iterator<?> pack_it = idata.availablePacks.iterator();
         while (pack_it.hasNext())
         {
             Pack pack = (Pack) pack_it.next();

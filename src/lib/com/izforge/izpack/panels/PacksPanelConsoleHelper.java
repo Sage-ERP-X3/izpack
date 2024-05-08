@@ -146,9 +146,9 @@ public class PacksPanelConsoleHelper extends PanelConsoleHelper implements Panel
         if (i == 1)
         {
             String summaryCaption = installData.langpack.getString("PacksPanel.summaryCaption") ;
-            ArrayList lstTarget = new ArrayList ();
+            ArrayList<String> lstTarget = new ArrayList<String> ();
 
-            Iterator iter = installData.selectedPacks.iterator();
+            Iterator<?> iter = installData.selectedPacks.iterator();
             while (iter.hasNext())
             {
                 Pack pack = (Pack) iter.next();

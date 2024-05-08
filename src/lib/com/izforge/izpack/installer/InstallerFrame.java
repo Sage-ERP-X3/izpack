@@ -918,7 +918,7 @@ public class InstallerFrame extends JFrame {
             BufferedWriter logWriter = new BufferedWriter(new OutputStreamWriter(outJar));
             logWriter.write(installdata.getInstallPath());
             logWriter.newLine();
-            Iterator iter = files.iterator();
+            Iterator<?> iter = files.iterator();
             if (extLogWriter != null) { // Write intern (in uninstaller.jar) and extern log file.
                 while (iter.hasNext()) {
                     String txt = (String) iter.next();
@@ -976,7 +976,7 @@ public class InstallerFrame extends JFrame {
                     String key = keys.next();
                     Object contents = additionalData.get(key);
                     if ("__uninstallLibs__".equals(key)) {
-                        Iterator nativeLibIter = ((List) contents).iterator();
+                        Iterator<?> nativeLibIter = ((List) contents).iterator();
                         while (nativeLibIter != null && nativeLibIter.hasNext()) {
                             String nativeLibName = (String) ((List) nativeLibIter.next()).get(0);
                             byte[] buffer = new byte[5120];
@@ -1000,7 +1000,7 @@ public class InstallerFrame extends JFrame {
                         ArrayList<String> subContents = new ArrayList<String>();
 
                         // Secound put the class into uninstaller.jar
-                        Iterator listenerIter = ((List) contents).iterator();
+                        Iterator<?> listenerIter = ((List) contents).iterator();
                         while (listenerIter.hasNext()) {
                             byte[] buffer = new byte[5120];
                             long bytesCopied = 0;

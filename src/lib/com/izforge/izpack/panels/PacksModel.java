@@ -48,10 +48,10 @@ class PacksModel extends AbstractTableModel
 
     private static final String INITAL_PACKSELECTION = "initial.pack.selection";
 
-    private List packs;
+    private List<Pack> packs;
     private List<Pack> hiddenPacks;
 
-    private List packsToInstall;
+    private List<Pack> packsToInstall;
 
     private Map installedpacks;
     private boolean modifyinstallation;
@@ -82,7 +82,7 @@ class PacksModel extends AbstractTableModel
     {
         this.idata = idata;
         modifyinstallation = Boolean.valueOf(idata.getVariable(InstallData.MODIFY_INSTALLATION));
-        this.installedpacks = new HashMap();
+        this.installedpacks = new HashMap<Object, Pack>();
 
         // cannot modify
         // for update purpose
@@ -139,7 +139,7 @@ class PacksModel extends AbstractTableModel
         }
         this.rules = rules;
         
-        this.packs = new ArrayList();
+        this.packs = new ArrayList<Pack>();
         this.hiddenPacks = new ArrayList<Pack>();
         for(Pack availablePack : idata.availablePacks){
             // only add a pack if not hidden
@@ -168,7 +168,7 @@ class PacksModel extends AbstractTableModel
         return (Pack) this.packs.get(row);
     }
 
-    private void removeAlreadyInstalledPacks(List selectedpacks)
+    private void removeAlreadyInstalledPacks(List<?> selectedpacks)
     {
         List<Pack> removepacks = new ArrayList<Pack>();
 

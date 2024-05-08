@@ -356,7 +356,7 @@ public class MultiVolumePackager extends PackagerBase
             // We write the actual pack files
             objOut.writeInt(packInfo.getPackFiles().size());
 
-            Iterator iter = packInfo.getPackFiles().iterator();
+            Iterator<?> iter = packInfo.getPackFiles().iterator();
             for (Object o : packInfo.getPackFiles())
             {
                 boolean addFile = !pack.loose;

@@ -431,7 +431,7 @@ public class AntAction extends ActionBase
         }
         if (props.size() > 0)
         {
-            Iterator iter = props.keySet().iterator();
+            Iterator<?> iter = props.keySet().iterator();
             String key = null;
             while (iter.hasNext())
             {

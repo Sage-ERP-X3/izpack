@@ -96,12 +96,12 @@ public class AntActionUninstallerListener extends SimpleUninstallerListener
         // The actions are stored at installation time as list of AntAction
         // objects.
         // See AntActionInstallerListener.afterPacks.
-        List allActions = (List) objIn.readObject();
+        List<?> allActions = (List) objIn.readObject();
         objIn.close();
         in.close();
         ArrayList<AntAction> befDel = new ArrayList<AntAction>();
         antActions = new ArrayList<AntAction>();
-        Iterator iter = allActions.iterator();
+        Iterator<?> iter = allActions.iterator();
         // There are two possible orders; before and after deletion.
         // Now we assign the actions to two different lists, the
         // local "before" list which we perform after the scan and

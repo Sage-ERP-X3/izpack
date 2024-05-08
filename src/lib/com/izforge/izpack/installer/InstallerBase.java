@@ -311,7 +311,7 @@ public class InstallerBase
         installdata.allPacks = allPacks;
 
         // get list of preselected packs
-        Iterator pack_it = availablePacks.iterator();
+        Iterator<Pack> pack_it = availablePacks.iterator();
         while (pack_it.hasNext())
         {
             Pack pack = (Pack) pack_it.next();
@@ -543,7 +543,7 @@ public class InstallerBase
             objIn = new ObjectInputStream(in);
             Object listeners = objIn.readObject();
             objIn.close();
-            Iterator keys = ((List) listeners).iterator();
+            Iterator<?> keys = ((List) listeners).iterator();
             while (keys != null && keys.hasNext())
             {
                 CustomData ca = (CustomData) keys.next();

@@ -1346,7 +1346,7 @@ public class ShortcutPanel extends IzPanel implements ActionListener, ListSelect
         addToUninstaller();
     }
 
-    private String createXDGMenu(ArrayList shortcuts, String menuName)
+    private String createXDGMenu(ArrayList<Object> shortcuts, String menuName)
     {
         String menuConfigText = "<Menu>\n" +
                 "<Name>Applications</Name>\n" +
@@ -1383,7 +1383,7 @@ public class ShortcutPanel extends IzPanel implements ActionListener, ListSelect
         return menuDirectoryDescriptor;
     }
 
-    private void writeXDGMenuFile(ArrayList desktopFileNames, String groupName, String icon, String comment)
+    private void writeXDGMenuFile(ArrayList<Object> desktopFileNames, String groupName, String icon, String comment)
     {
         if ("".equals(suggestedProgramGroup) || suggestedProgramGroup == null)
         {

@@ -628,7 +628,7 @@ public abstract class PacksPanelBase extends IzPanel implements PacksPanelInterf
 
             // set the JCheckBoxes to the currently selected panels. The
             // selection might have changed in another panel
-            java.util.Iterator iter = idata.availablePacks.iterator();
+            Iterator<Pack> iter = idata.availablePacks.iterator();
             bytes = 0;
             while (iter.hasNext())
             {
@@ -662,7 +662,7 @@ public abstract class PacksPanelBase extends IzPanel implements PacksPanelInterf
     public String getSummaryBody()
     {
         StringBuffer retval = new StringBuffer(256);
-        Iterator iter = idata.selectedPacks.iterator();
+        Iterator<?> iter = idata.selectedPacks.iterator();
         boolean first = true;
         while (iter.hasNext())
         {

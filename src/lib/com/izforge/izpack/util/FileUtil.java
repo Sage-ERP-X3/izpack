@@ -113,7 +113,7 @@ public class FileUtil
         String searchString = caseInSensitiveSearch
                 ? aSearchString.toLowerCase() : aSearchString;
 
-        ArrayList fileContent = new ArrayList();
+        ArrayList<?> fileContent = new ArrayList();
 
         try
         {
@@ -125,7 +125,7 @@ public class FileUtil
             e.printStackTrace();
         }
 
-        Iterator linesIter = fileContent.iterator();
+        Iterator<?> linesIter = fileContent.iterator();
 
         while (linesIter.hasNext())
         {

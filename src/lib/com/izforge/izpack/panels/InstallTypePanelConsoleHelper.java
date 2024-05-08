@@ -260,7 +260,7 @@ public class InstallTypePanelConsoleHelper extends PanelConsoleHelper implements
             
             List<String> lstSubKeys = Arrays.asList( rh.getSubkeys(UninstallKeyName));
             
-            ArrayList tblComps = new ArrayList ();
+            ArrayList<String[]> tblComps = new ArrayList<String[]> ();
             
             for (String uninstallKey : lstSubKeys) 
             {
@@ -309,11 +309,10 @@ public class InstallTypePanelConsoleHelper extends PanelConsoleHelper implements
         
     }
 
-    private List loadListFromAdxadmin(AutomatedInstallData installData)
+    private List<String[]> loadListFromAdxadmin(AutomatedInstallData installData)
     {
         try
         {
-            
             String strAdxAdminPath = "";
             
             if (OsVersion.IS_UNIX)
@@ -328,14 +327,11 @@ public class InstallTypePanelConsoleHelper extends PanelConsoleHelper implements
                 {
                     // nothing to do
                     emitErrorAndBlockNext(installData.langpack.getString("installer.error"), installData.langpack.getString("InstallationTypePanel.errNoCompFound"));
-
                 }
                 
                 FileReader readerAdxAdmFile = new FileReader(adxadmFile);
                 BufferedReader buffread = new BufferedReader(readerAdxAdmFile);
                 strAdxAdminPath = buffread.readLine();
-
-                
             }
             else
             {
@@ -370,12 +366,9 @@ public class InstallTypePanelConsoleHelper extends PanelConsoleHelper implements
 
                 // free RegistryHandler
                 rh.setRoot(oldVal);
-                
             }
-    
-            
+          
             // check strAdxAdminPath
-            
             if (strAdxAdminPath == null || "".equals(strAdxAdminPath)) 
             {
                 // nothing to do
@@ -404,7 +397,6 @@ public class InstallTypePanelConsoleHelper extends PanelConsoleHelper implements
                 // nothing to do
                 emitErrorAndBlockNext(installData.langpack.getString("installer.error"), installData.langpack.getString("InstallationTypePanel.errNoCompFound"));
             }
-        
             
             // we need to know type and family
             String strComponentType = installData.getVariable(ADX_NODE_TYPE);
@@ -431,11 +423,10 @@ public class InstallTypePanelConsoleHelper extends PanelConsoleHelper implements
             
             NodeList nodeLst = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
             
-            ArrayList tblComps = new ArrayList ();
+            ArrayList<String[]> tblComps = new ArrayList<String[]> ();
              
             for (int i = 0; i < nodeLst.getLength(); i++) 
-            {
-             
+            {             
                 Element moduleNode = (Element) nodeLst.item(i);
                 String path = xPath.evaluate("./component."+strComponentFamily.toLowerCase()+".path", moduleNode);
                 String strversion = xPath.evaluate("./component."+strComponentFamily.toLowerCase()+".version", moduleNode);
@@ -459,8 +450,7 @@ public class InstallTypePanelConsoleHelper extends PanelConsoleHelper implements
                         String[] elem = new String[]{name+" "+ strversion +" ("+path+")",name,path, strversion};
                         tblComps.add (elem);
                     }
-                }
-                
+                }                
             }
             
             return tblComps;

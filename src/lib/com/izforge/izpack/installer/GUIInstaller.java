@@ -41,7 +41,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.*;
 import java.util.List;
 
@@ -77,7 +76,7 @@ public class GUIInstaller extends InstallerBase
     /**
      * holds language to ISO-3 language code translation
      */
-    private static HashMap isoTable;
+    private static HashMap<Object, Object> isoTable;
 
     /**
      * The constructor.
@@ -698,7 +697,7 @@ public class GUIInstaller extends InstallerBase
         /**
          * The combo box.
          */
-        private JComboBox comboBox;
+        private JComboBox<?> comboBox;
 
         /**
          * The ISO3 to ISO2 HashMap
@@ -842,7 +841,7 @@ public class GUIInstaller extends InstallerBase
             if (iso3Toiso2 == null)
             { // Loasd predefined langs into HashMap.
                 iso3Toiso2 = new HashMap<String, String>(32);
-                isoTable = new HashMap();
+                isoTable = new HashMap<Object, Object>();
                 for (i = 0; i < LANG_CODES.length; ++i)
                 {
                     iso3Toiso2.put(LANG_CODES[i][0], LANG_CODES[i][1]);
@@ -947,7 +946,7 @@ public class GUIInstaller extends InstallerBase
             Object mapped = null;
             if (isoTable != null)
             {
-                Iterator iter = isoTable.keySet().iterator();
+                Iterator<Object> iter = isoTable.keySet().iterator();
                 while (iter.hasNext())
                 {
                     Object key = iter.next();

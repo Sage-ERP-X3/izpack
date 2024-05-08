@@ -209,7 +209,7 @@ public class AntActionInstallerListener extends SimpleInstallerListener
     private int getActionCount(AutomatedInstallData idata, String order)
     {
         int retval = 0;
-        Iterator iter = idata.selectedPacks.iterator();
+        Iterator<?> iter = idata.selectedPacks.iterator();
         while (iter.hasNext())
         {
             String currentPack = ((Pack) iter.next()).name;

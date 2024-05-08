@@ -70,7 +70,7 @@ public class BSFInstallerListener extends SimpleInstallerListener
             return;
         }
 
-        Iterator iter = idata.selectedPacks.iterator();
+        Iterator<?> iter = idata.selectedPacks.iterator();
         Pack p;
         while (iter != null && iter.hasNext())
         {

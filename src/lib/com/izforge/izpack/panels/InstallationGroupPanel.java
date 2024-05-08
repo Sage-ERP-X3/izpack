@@ -90,7 +90,7 @@ public class InstallationGroupPanel extends IzPanel
 
         Debug.trace("InstallationGroupPanel.panelActivate, selectedGroup=" + selectedGroup);
         // If there are no groups, skip this panel
-        HashMap installGroups = getInstallGroups(idata);
+        HashMap<?, ?> installGroups = getInstallGroups(idata);
         if (installGroups.size() == 0)
         {
             super.askQuestion("Skip InstallGroup selection",
@@ -276,7 +276,7 @@ public class InstallationGroupPanel extends IzPanel
         Debug.trace("InstallationGroupPanel.removeUnusedPacks, GroupData=" + data.name);
 
         // Now remove the packs not in groupPackNames
-        Iterator iter = idata.availablePacks.iterator();
+        Iterator<?> iter = idata.availablePacks.iterator();
         while (iter.hasNext())
         {
             Pack p = (Pack) iter.next();
@@ -375,12 +375,12 @@ public class InstallationGroupPanel extends IzPanel
         /* Build up a set of the packs to include in the installation by finding
         all packs in the selected group, and then include their dependencies.
         */
-        Iterator gditer = installGroups.values().iterator();
+        Iterator<GroupData> gditer = installGroups.values().iterator();
         while (gditer.hasNext())
         {
             GroupData data = (GroupData) gditer.next();
             Debug.trace("Adding dependents for: " + data.name);
-            Iterator iter = idata.availablePacks.iterator();
+            Iterator<?> iter = idata.availablePacks.iterator();
             while (iter.hasNext())
             {
                 Pack p = (Pack) iter.next();
@@ -563,7 +563,7 @@ public class InstallationGroupPanel extends IzPanel
             }
         });
 
-        Iterator iter = values.iterator();
+        Iterator<?> iter = values.iterator();
         ButtonGroup buttonGroup = new ButtonGroup();
         boolean madeSelection = false;
         int count = 0;

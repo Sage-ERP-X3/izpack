@@ -505,7 +505,7 @@ public class TreePacksPanel extends IzPanel implements PacksPanelInterface
      *
      * @param packs
      */
-    private void computePacks(List packs)
+    private void computePacks(List<?> packs)
     {
         names = new HashMap<String, Pack>();
         dependenciesExist = false;
@@ -634,14 +634,14 @@ public class TreePacksPanel extends IzPanel implements PacksPanelInterface
     }
 
     /**
-     * Initialize tree model sructures
+     * Initialize tree model structures
      */
     private void createTreeData()
     {
         treeData = new HashMap<String, ArrayList<String>>();
         idToPack = new HashMap<String, Pack>();
 
-        java.util.Iterator iter = idata.availablePacks.iterator();
+        Iterator<Pack> iter = idata.availablePacks.iterator();
         while (iter.hasNext())
         {
             Pack p = (Pack) iter.next();
@@ -780,7 +780,7 @@ public class TreePacksPanel extends IzPanel implements PacksPanelInterface
         if (parent == null) // the root node
         {
             Iterator<Pack> iter = idata.availablePacks.iterator();
-            ArrayList rootNodes = new ArrayList();
+            ArrayList<Object> rootNodes = new ArrayList<Object>();
             while (iter.hasNext())
             {
                 Pack p = (Pack) iter.next();
@@ -794,14 +794,14 @@ public class TreePacksPanel extends IzPanel implements PacksPanelInterface
         }
         else
         {
-            ArrayList links = new ArrayList();
+            ArrayList<Object> links = new ArrayList<Object>();
             Object kidsObject = treeData.get(parent);
             Pack p = idToPack.get(parent);
             String translated = getI18NPackName(parent);
 
             if (kidsObject != null)
             {
-                ArrayList kids = (ArrayList) kidsObject;
+                ArrayList<?> kids = (ArrayList<?>) kidsObject;
                 for (Object kid : kids)
                 {
                     String kidId = (String) kid;
@@ -827,7 +827,7 @@ public class TreePacksPanel extends IzPanel implements PacksPanelInterface
 
     /**
      * Called when the panel becomes active. If a derived class implements this method also, it is
-     * recomanded to call this method with the super operator first.
+     * recomended to call this method with the super operator first.
      */
     public void panelActivate()
     {
@@ -852,7 +852,7 @@ public class TreePacksPanel extends IzPanel implements PacksPanelInterface
 
             //initialize helper map to increa performance
             packToRowNumber = new HashMap<Pack, Integer>();
-            java.util.Iterator rowpack = idata.availablePacks.iterator();
+            Iterator<Pack> rowpack = idata.availablePacks.iterator();
             int index = 0;
             while (rowpack.hasNext())
             {
@@ -885,7 +885,7 @@ public class TreePacksPanel extends IzPanel implements PacksPanelInterface
 
             // set the JCheckBoxes to the currently selected panels. The
             // selection might have changed in another panel
-            java.util.Iterator iter = idata.availablePacks.iterator();
+            Iterator<Pack> iter = idata.availablePacks.iterator();
             bytes = 0;
             while (iter.hasNext())
             {
@@ -917,7 +917,7 @@ public class TreePacksPanel extends IzPanel implements PacksPanelInterface
     public String getSummaryBody()
     {
         StringBuffer retval = new StringBuffer(256);
-        Iterator iter = idata.selectedPacks.iterator();
+        Iterator<?> iter = idata.selectedPacks.iterator();
         boolean first = true;
         while (iter.hasNext())
         {

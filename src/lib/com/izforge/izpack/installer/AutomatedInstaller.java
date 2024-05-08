@@ -138,7 +138,7 @@ public class AutomatedInstaller extends InstallerBase
             BufferedWriter logWriter = new BufferedWriter(new OutputStreamWriter(outJar));
             logWriter.write(this.idata.getInstallPath());
             logWriter.newLine();
-            Iterator iter = files.iterator();
+            Iterator<?> iter = files.iterator();
             while (iter.hasNext())
             {
                 logWriter.write((String) iter.next());
@@ -188,7 +188,7 @@ public class AutomatedInstaller extends InstallerBase
                     Object contents = additionalData.get(key);
                     if ("__uninstallLibs__".equals(key))
                     {
-                        Iterator nativeLibIter = ((List) contents).iterator();
+                        Iterator<?> nativeLibIter = ((List<?>) contents).iterator();
                         while (nativeLibIter != null && nativeLibIter.hasNext())
                         {
                             String nativeLibName = (String) ((List) nativeLibIter.next()).get(0);
@@ -216,7 +216,7 @@ public class AutomatedInstaller extends InstallerBase
                         ArrayList<String> subContents = new ArrayList<String>();
 
                         // Secound put the class into uninstaller.jar
-                        Iterator listenerIter = ((List) contents).iterator();
+                        Iterator<?> listenerIter = ((List) contents).iterator();
                         while (listenerIter.hasNext())
                         {
                             byte[] buffer = new byte[5120];

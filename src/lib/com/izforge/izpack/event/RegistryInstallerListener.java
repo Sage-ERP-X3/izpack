@@ -442,7 +442,7 @@ public class RegistryInstallerListener extends NativeInstallerListener implement
         {
             RegistryLogItem rli = new RegistryLogItem(RegistryLogItem.CREATED_KEY, rootId, keypath, null,
                     null, null);
-            ArrayList lstLog = new ArrayList ();
+            ArrayList<RegistryLogItem> lstLog = new ArrayList<RegistryLogItem> ();
             lstLog.add(rli);
             rh.addLoggingInfo(lstLog);
         }

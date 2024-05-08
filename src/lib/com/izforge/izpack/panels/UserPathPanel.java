@@ -76,7 +76,7 @@ public class UserPathPanel extends UserPathInputPanel
         if (dependsName != null && !(dependsName.equalsIgnoreCase("")))
         {
             Debug.trace("Checking for pack dependency of " + dependsName);
-            Iterator iter = idata.selectedPacks.iterator();
+            Iterator<?> iter = idata.selectedPacks.iterator();
             while (iter.hasNext())
             {
                 Pack pack = (Pack) iter.next();

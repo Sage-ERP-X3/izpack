@@ -814,7 +814,7 @@ public class GUIInstaller extends InstallerBase
             // native: get the names as they are written in that language.
             if (langType.equals(LANGUAGE_DISPLAY_TYPES[1]))
             {
-                return (expandItems(items, (new JComboBox()).getFont()));
+                return (expandItems(items, (new JComboBox<Object>()).getFont()));
             }
             // default: get the names as they are written in the default
             // language.

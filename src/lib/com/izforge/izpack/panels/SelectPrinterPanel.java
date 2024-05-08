@@ -53,7 +53,7 @@ public class SelectPrinterPanel extends IzPanel implements ActionListener
     /**
      * The ComboBox to list the printers.
      */
-    private JComboBox cbPrinters;
+    private JComboBox<String> cbPrinters;
 
     /**
      * Install data variables.

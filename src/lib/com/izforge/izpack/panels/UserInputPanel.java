@@ -2082,7 +2082,7 @@ public class UserInputPanel extends IzPanel implements ActionListener, ItemListe
     {
         String variable;
         String value;
-        JComboBox comboBox;
+        JComboBox<?> comboBox;
 
         try
         {
@@ -2661,7 +2661,7 @@ public class UserInputPanel extends IzPanel implements ActionListener, ItemListe
         String check_filename = null;
         int search_type = 0;
         int result_type = 0;
-        JComboBox combobox = new JComboBox();
+        JComboBox<Object> combobox = new JComboBox();
         JLabel label = null;
 
         // System.out.println ("adding search combobox, variable "+variable);

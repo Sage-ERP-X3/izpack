@@ -109,12 +109,9 @@ public class FileUtil
                                        boolean caseInSensitiveSearch)
     {
         boolean result = false;
-
-        String searchString = caseInSensitiveSearch
-                ? aSearchString.toLowerCase() : aSearchString;
+        String searchString = caseInSensitiveSearch ? aSearchString.toLowerCase() : aSearchString;
 
         ArrayList<?> fileContent = new ArrayList();
-
         try
         {
             fileContent = getFileContent(aFileName);

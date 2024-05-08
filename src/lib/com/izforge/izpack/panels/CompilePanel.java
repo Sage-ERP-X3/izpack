@@ -55,12 +55,12 @@ public class CompilePanel extends IzPanel implements ActionListener, CompileHand
     /**
      * The combobox for compiler selection.
      */
-    protected JComboBox compilerComboBox;
+    protected JComboBox<String> compilerComboBox;
 
     /**
      * The combobox for compiler argument selection.
      */
-    protected JComboBox argumentsComboBox;
+    protected JComboBox<String> argumentsComboBox;
 
     /**
      * The start button.
@@ -132,11 +132,11 @@ public class CompilePanel extends IzPanel implements ActionListener, CompileHand
         // (to center it vertically)
         JPanel subpanel = new JPanel();
         JLabel compilerLabel = new JLabel();
-        compilerComboBox = new JComboBox();
+        compilerComboBox = new JComboBox<String>();
         this.browseButton = ButtonFactory.createButton(parent.langpack
                 .getString("CompilePanel.browse"), idata.buttonsHColor);
         JLabel argumentsLabel = new JLabel();
-        this.argumentsComboBox = new JComboBox();
+        this.argumentsComboBox = new JComboBox<String>();
         this.startButton = ButtonFactory.createButton(parent.langpack
                 .getString("CompilePanel.start"), idata.buttonsHColor);
         this.tipLabel = LabelFactory.create(parent.langpack.getString("CompilePanel.tip"),

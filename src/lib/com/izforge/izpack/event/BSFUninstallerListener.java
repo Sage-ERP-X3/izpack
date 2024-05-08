@@ -35,7 +35,7 @@ import java.util.List;
 public class BSFUninstallerListener extends SimpleUninstallerListener
 {
 
-    private List bsfActions = null;
+    private List<?> bsfActions = null;
 
     public BSFUninstallerListener()
     {

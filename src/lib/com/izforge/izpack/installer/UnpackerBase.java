@@ -190,7 +190,7 @@ public abstract class UnpackerBase implements IUnpacker
     {
         synchronized (instances)
         {
-            Iterator iter = instances.keySet().iterator();
+            Iterator<Object> iter = instances.keySet().iterator();
             while (iter.hasNext())
             {
                 Object key = iter.next();
@@ -242,7 +242,7 @@ public abstract class UnpackerBase implements IUnpacker
     {
         synchronized (instances)
         {
-            Iterator iter = instances.keySet().iterator();
+            Iterator<Object> iter = instances.keySet().iterator();
             while (iter.hasNext())
             {
                 Object key = iter.next();
@@ -549,7 +549,7 @@ public abstract class UnpackerBase implements IUnpacker
             // element of custom action array.
             i = retval.length - 1; // Should be so, but safe is safe ...
             retval[i] = new ArrayList();
-            Iterator iter = retval[AutomatedInstallData.INSTALLER_LISTENER_INDEX]
+            Iterator<?> iter = retval[AutomatedInstallData.INSTALLER_LISTENER_INDEX]
                     .iterator();
             while (iter.hasNext())
             {

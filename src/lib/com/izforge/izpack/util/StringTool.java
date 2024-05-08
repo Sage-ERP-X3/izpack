@@ -263,7 +263,7 @@ public class StringTool
      * @param aStringList
      * @return a printable list
      */
-    public static String stringArrayListToString(ArrayList aStringList)
+    public static String stringArrayListToString(ArrayList<?> aStringList)
     {
         return stringArrayListToString(aStringList, null);
     }
@@ -274,7 +274,7 @@ public class StringTool
      * @param aStringList
      * @return a printable list
      */
-    public static String stringArrayListToString(ArrayList aStringList, String aLineSeparator)
+    public static String stringArrayListToString(ArrayList<?> aStringList, String aLineSeparator)
     {
         String LineSeparator = aLineSeparator;
         if (LineSeparator == null)

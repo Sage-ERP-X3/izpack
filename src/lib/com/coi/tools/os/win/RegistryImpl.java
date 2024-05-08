@@ -715,7 +715,7 @@ public class RegistryImpl implements MSWinConstants
      *
      * @param info list containing RegistryLogItems to be used for logging
      */
-    public void setLoggingInfo(List info)
+    public void setLoggingInfo(List<?> info)
     {
         resetLogging();
         addLoggingInfo(info);
@@ -726,7 +726,7 @@ public class RegistryImpl implements MSWinConstants
      *
      * @param info list containing RegistryLogItems to be used for logging logging list.
      */
-    public void addLoggingInfo(List info)
+	public void addLoggingInfo(List<?> info)
     {
         Iterator<?> iter = info.iterator();
         while (iter.hasNext())

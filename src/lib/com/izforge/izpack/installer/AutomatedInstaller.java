@@ -123,7 +123,7 @@ public class AutomatedInstaller extends InstallerBase
         {
             // We get the data
             UninstallData udata = UninstallData.getInstance();
-            List files = udata.getUninstalableFilesList();
+            List<?> files = udata.getUninstalableFilesList();
             ZipOutputStream outJar = this.idata.uninstallOutJar;
 
             if (outJar == null)

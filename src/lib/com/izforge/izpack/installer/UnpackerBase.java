@@ -35,9 +35,7 @@ import org.apache.regexp.RECompiler;
 import org.apache.regexp.RESyntaxException;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -941,7 +939,7 @@ public abstract class UnpackerBase implements IUnpacker
         Debug.trace("writing installation information");
         String installdir = idata.getInstallPath();
 
-        List installedpacks = new ArrayList(idata.selectedPacks);
+        List<Pack> installedpacks = new ArrayList<Pack>(idata.selectedPacks);
 
         File installationinfo = new File(installdir + File.separator + AutomatedInstallData.INSTALLATION_INFORMATION);
         if (!installationinfo.exists())

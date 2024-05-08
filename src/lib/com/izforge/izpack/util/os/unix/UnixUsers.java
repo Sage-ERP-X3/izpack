@@ -133,7 +133,7 @@ public class UnixUsers extends ArrayList
     {
         ArrayList<String> result = new ArrayList<String>();
 
-        ArrayList validUserDesktops = getUsersWithValidShellsExistingHomesAndDesktops();
+        ArrayList<?> validUserDesktops = getUsersWithValidShellsExistingHomesAndDesktops();
 
         for (int idx = 0; idx < validUserDesktops.size(); idx++)
         {

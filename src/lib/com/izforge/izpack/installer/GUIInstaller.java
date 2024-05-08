@@ -124,7 +124,7 @@ public class GUIInstaller extends InstallerBase
         
 //        // set Font Size
 //        // try this APO
-        java.util.Enumeration keys = UIManager.getDefaults().keys();
+        Enumeration<Object> keys = UIManager.getDefaults().keys();
         while (keys.hasMoreElements())
         {
             Object key = keys.nextElement();

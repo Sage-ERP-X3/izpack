@@ -2142,7 +2142,7 @@ public class CompilerConfig extends Thread {
      * Perform recursive substitution on all properties
      */
     protected void substituteAllProperties(IXMLElement element) throws CompilerException {
-        Enumeration attributes = element.enumerateAttributeNames();
+        Enumeration<?> attributes = element.enumerateAttributeNames();
         while (attributes.hasMoreElements())
         {
             String name = (String) attributes.nextElement();

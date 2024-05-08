@@ -597,7 +597,7 @@ public class MultiVolumeUnpacker extends UnpackerBase
     {
         // save the variables
         Properties installerproperties = idata.getVariables();
-        Enumeration installerpropertieskeys = installerproperties.keys();
+        Enumeration<?> installerpropertieskeys = installerproperties.keys();
         try
         {
             String installpath = idata.getVariable("INSTALL_PATH");

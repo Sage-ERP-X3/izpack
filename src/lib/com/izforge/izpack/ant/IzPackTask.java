@@ -238,7 +238,7 @@ public class IzPackTask extends Task implements PackagerListener
 
         if (properties != null)
         {
-            Enumeration e = properties.keys();
+            Enumeration<?> e = properties.keys();
             while (e.hasMoreElements())
             {
                 String name = (String) e.nextElement();
@@ -251,7 +251,7 @@ public class IzPackTask extends Task implements PackagerListener
         if (inheritAll)
         {
             Hashtable projectProps = getProject().getProperties();
-            Enumeration e = projectProps.keys();
+            Enumeration<?> e = projectProps.keys();
             while (e.hasMoreElements())
             {
                 String name = (String) e.nextElement();

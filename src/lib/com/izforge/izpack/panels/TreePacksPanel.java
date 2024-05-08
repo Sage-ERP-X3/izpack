@@ -396,7 +396,7 @@ public class TreePacksPanel extends IzPanel implements PacksPanelInterface
     {
         idata.selectedPacks.clear();
         CheckBoxNode cbn = (CheckBoxNode) getTree().getModel().getRoot();
-        Enumeration e = cbn.depthFirstEnumeration();
+        Enumeration<?> e = cbn.depthFirstEnumeration();
         while (e.hasMoreElements())
         {
             CheckBoxNode c = (CheckBoxNode) e.nextElement();
@@ -556,7 +556,7 @@ public class TreePacksPanel extends IzPanel implements PacksPanelInterface
             if ((state == -2) && rnode.getChildCount() > 0)
             {
                 boolean dirty = false;
-                Enumeration toBeDeselected = rnode.depthFirstEnumeration();
+                Enumeration<?> toBeDeselected = rnode.depthFirstEnumeration();
                 while (toBeDeselected.hasMoreElements())
                 {
                     CheckBoxNode cbn = (CheckBoxNode) toBeDeselected.nextElement();
@@ -578,7 +578,7 @@ public class TreePacksPanel extends IzPanel implements PacksPanelInterface
             }
         }
 
-        Enumeration e = rnode.children();
+        Enumeration<?> e = rnode.children();
         while (e.hasMoreElements())
         {
             Object next = e.nextElement();
@@ -1319,7 +1319,7 @@ class CheckTreeController extends MouseAdapter
     {
         current.setPartial(false);
         treePacksPanel.setModelValue(current);
-        Enumeration e = current.depthFirstEnumeration();
+        Enumeration<?> e = current.depthFirstEnumeration();
         while (e.hasMoreElements())
         {
             CheckBoxNode child = (CheckBoxNode) e.nextElement();
@@ -1335,7 +1335,7 @@ class CheckTreeController extends MouseAdapter
 
     private boolean hasExcludes(CheckBoxNode node)
     {
-        Enumeration e = node.depthFirstEnumeration();
+        Enumeration<?> e = node.depthFirstEnumeration();
         while (e.hasMoreElements())
         {
             CheckBoxNode cbn = (CheckBoxNode) e.nextElement();
@@ -1400,7 +1400,7 @@ class CheckTreeController extends MouseAdapter
 
     public void selectAllChildNodes(CheckBoxNode cbn)
     {
-        Enumeration e = cbn.children();
+        Enumeration<?> e = cbn.children();
         while (e.hasMoreElements())
         {
             CheckBoxNode subCbn = (CheckBoxNode) e.nextElement();
@@ -1456,7 +1456,7 @@ class CheckTreeController extends MouseAdapter
      */
     public void updateAllParents(CheckBoxNode root)
     {
-        Enumeration rootEnum = root.depthFirstEnumeration();
+        Enumeration<?> rootEnum = root.depthFirstEnumeration();
         while (rootEnum.hasMoreElements())
         {
             CheckBoxNode child = (CheckBoxNode) rootEnum.nextElement();
@@ -1477,7 +1477,7 @@ class CheckTreeController extends MouseAdapter
         CheckBoxNode parent = (CheckBoxNode) node.getParent();
         if (parent != null && !parent.equals(parent.getRoot()))
         {
-            Enumeration ne = parent.children();
+            Enumeration<?> ne = parent.children();
             boolean allSelected = true;
             boolean allDeselected = true;
             while (ne.hasMoreElements())
@@ -1544,7 +1544,7 @@ class CheckTreeController extends MouseAdapter
         {
             return node.getPack().nbytes;
         }
-        Enumeration e = node.children();
+        Enumeration<?> e = node.children();
         Pack nodePack = node.getPack();
         long bytes = 0;
         if (nodePack != null)

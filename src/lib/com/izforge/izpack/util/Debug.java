@@ -195,7 +195,7 @@ public class Debug
 
             Properties sysProps = System.getProperties();
 
-            Enumeration spe = sysProps.keys();
+            Enumeration<?> spe = sysProps.keys();
 
             while (spe.hasMoreElements())
             {

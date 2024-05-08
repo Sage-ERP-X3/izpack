@@ -278,7 +278,7 @@ public class Property
     protected void addProperties(Properties props) throws CompilerException
     {
         resolveAllProperties(props);
-        Enumeration e = props.keys();
+        Enumeration<?> e = props.keys();
         while (e.hasMoreElements())
         {
             String name = (String) e.nextElement();
@@ -303,7 +303,7 @@ public class Property
         VariableSubstitutor subs = new VariableSubstitutor(props);
         subs.setBracesRequired(true);
 
-        for (Enumeration e = props.keys(); e.hasMoreElements();)
+        for (Enumeration<?> e = props.keys(); e.hasMoreElements();)
         {
             String name = (String) e.nextElement();
             String value = props.getProperty(name);

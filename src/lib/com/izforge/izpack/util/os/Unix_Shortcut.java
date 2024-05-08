@@ -61,7 +61,6 @@ import com.izforge.izpack.util.os.unix.ShellScript;
 import com.izforge.izpack.util.os.unix.UnixHelper;
 import com.izforge.izpack.util.os.unix.UnixUser;
 import com.izforge.izpack.util.os.unix.UnixUsers;
-//import com.sun.corba.se.impl.orbutil.closure.Constant;
 
 import java.io.*;
 import java.util.*;
@@ -1236,7 +1235,7 @@ public class Unix_Shortcut extends Shortcut implements Unix_ShortcutConstants
     public String replace()
     {
         String result = template;
-        Enumeration enumeration = props.keys();
+        Enumeration<?> enumeration = props.keys();
 
         while (enumeration.hasMoreElements())
         {

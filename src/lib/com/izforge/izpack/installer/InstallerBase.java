@@ -279,7 +279,7 @@ public class InstallerBase
             installdata.setVariable(INSTALLER, "automated");
         }
 
-        Enumeration e = System.getProperties().keys();
+        Enumeration<?> e = System.getProperties().keys();
         while (e.hasMoreElements())
         {
             String varName = (String) e.nextElement();
@@ -293,7 +293,7 @@ public class InstallerBase
 
         if (null != variables)
         {
-            Enumeration enumeration = variables.keys();
+            Enumeration<?> enumeration = variables.keys();
             String varName;
             String varValue;
             while (enumeration.hasMoreElements())

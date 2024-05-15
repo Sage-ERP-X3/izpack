@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<izpack:langpack version="5.0" xmlns:izpack="http://izpack.org/schema/langpack" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://izpack.org/schema/langpack http://izpack.org/schema/5.0/izpack-langpack-5.0.xsd">
+	<str id="pack.core" txt="Required files" />
+	<str id="pack.core.description" txt="This pack contains the minimal set of files necessary." />
+	<str id="pack.experimental" txt="Experimental tools" />
+	<str id="pack.experimental.description" txt="This pack contains several experimental utilities (izpack2exe, izpack2app, izpack2jnlp)." />
+</izpack:langpack>

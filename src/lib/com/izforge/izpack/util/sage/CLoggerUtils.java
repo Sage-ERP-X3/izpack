@@ -50,8 +50,7 @@ public class CLoggerUtils {
 	 */
 	static {
 		try {
-			String wLoggerInitReport = setFormatOfSimpleFormatter(
-					SIMPLE_FORMATTER_FORMAT);
+			String wLoggerInitReport = setFormatOfSimpleFormatter(SIMPLE_FORMATTER_FORMAT);
 
 			logInfo(wLoggerInitReport);
 		} catch (Exception e) {
@@ -161,17 +160,14 @@ public class CLoggerUtils {
 	 * 62    private static final String format = LoggingSupport.getSimpleFormat();
 	 * </pre>
 	 * 
-	 * @param aFormat
-	 *            the format to replace the format given by the method
-	 *            "LoggingSupport.getSimpleFormat() "
+	 * @param aFormat: the format to replace the format given by the method "LoggingSupport.getSimpleFormat() "
 	 * @return the report of the setting
 	 * @throws Exception
 	 */
-	public static String setFormatOfSimpleFormatter(final String aFormat)
-			throws Exception {
+	private static String setFormatOfSimpleFormatter(final String aFormat) throws Exception {
 
-		return setPrivateStaticFinalString(SimpleFormatter.class, "format",
-				aFormat);
+		return setPrivateStaticFinalString(SimpleFormatter.class, "format", aFormat);
+				
 	}
 
 	/**
@@ -182,33 +178,39 @@ public class CLoggerUtils {
 	 * @return the report of the setting
 	 * @throws Exception
 	 */
-	public static String setPrivateStaticFinalString(Class<?> aClass,
+	private static String setPrivateStaticFinalString(Class<?> aClass,
 			final String aFieldName, final String aValue) throws Exception {
 
 		try {
 
-			Field wTargetField = aClass.getDeclaredField(aFieldName);
+			java.lang.reflect.Field wTargetField = aClass.getDeclaredField(aFieldName);
 
-			boolean wHasToRemovePrivate = !wTargetField.isAccessible();
+			// Java 8
+			// boolean wHasToRemovePrivate = !wTargetField.isAccessible();
 			// remove "private"
-			if (wHasToRemovePrivate) {
-				wTargetField.setAccessible(true);
-			}
+			// if (wHasToRemovePrivate) {
+			//	wTargetField.setAccessible(true);
+			//}
 
+			// Java 11
+            boolean wHasToRemovePrivate = !wTargetField.canAccess(null);
+            // remove "private"
+            if (wHasToRemovePrivate) {
+                wTargetField.setAccessible(true); // still works in Java 11
+            }
+			
+			
 			// remove "final"
-			// @see
-			// https://stackoverflow.com/questions/3301635/change-private-static-final-field-using-java-reflection
+			// @see https://stackoverflow.com/questions/3301635/change-private-static-final-field-using-java-reflection
 
 			int wOriginalModifiers = wTargetField.getModifiers();
-			boolean wHasToRemoveFinal = (wOriginalModifiers
-					& ~Modifier.FINAL) != wOriginalModifiers;
+			boolean wHasToRemoveFinal = (wOriginalModifiers & ~Modifier.FINAL) != wOriginalModifiers;
 			Field wModifiersField = null;
 
 			if (wHasToRemoveFinal) {
 				wModifiersField = Field.class.getDeclaredField("modifiers");
 				wModifiersField.setAccessible(true);
-				wModifiersField.setInt(wTargetField,
-						wTargetField.getModifiers() & ~Modifier.FINAL);
+				wModifiersField.setInt(wTargetField, wTargetField.getModifiers() & ~Modifier.FINAL);
 			}
 
 			// verif
@@ -224,25 +226,11 @@ public class CLoggerUtils {
 			boolean wModified = aValue.equals(wNewValue);
 
 			return String.format(
-					"Modified static fied: [%s.%s]\n - Modified=[%b]\n - NewValue=[%s]\n - OldValue=[%s]",
-					//
-					aClass.getSimpleName(),
-					//
-					wTargetField.getName(),
-					//
-					wModified,
-					//
-					wNewValue,
-					//
-					wOldValue);
+					"Modified static fied: [%s.%s]\n - Modified=[%b]\n - NewValue=[%s]\n - OldValue=[%s]", aClass.getSimpleName(),
+					wTargetField.getName(), wModified, wNewValue, wOldValue);
 
 		} catch (Exception e) {
-			throw new Exception(String.format(
-					"ERROR: Unable to set the final field [%s.%s]",
-					//
-					aClass.getSimpleName(),
-					//
-					aFieldName), e);
+			throw new Exception(String.format("ERROR: Unable to set the final field [%s.%s]",  aClass.getSimpleName(), aFieldName), e);
 		}
 	}
 

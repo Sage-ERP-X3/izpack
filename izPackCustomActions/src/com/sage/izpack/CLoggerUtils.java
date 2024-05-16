@@ -49,14 +49,19 @@ public class CLoggerUtils {
 	 * 
 	 */
 	static {
-		try {
-			String wLoggerInitReport = setFormatOfSimpleFormatter(
-					SIMPLE_FORMATTER_FORMAT);
+		// Doesn't work with Java 11:
+		
+//		Caused by: java.lang.IllegalArgumentException: null object for private final java.lang.String java.util.logging.SimpleFormatter.format
+//		at java.base/java.lang.reflect.AccessibleObject.canAccess(AccessibleObject.java:457)
+//		at com.izforge.izpack.util.sage.CLoggerUtils.setPrivateStaticFinalString(CLoggerUtils.java:196)
 
-			logInfo(wLoggerInitReport);
-		} catch (Exception e) {
-			logSevere(dumpStackTrace(e));
-		}
+		
+//		try {
+//			String wLoggerInitReport = setFormatOfSimpleFormatter( SIMPLE_FORMATTER_FORMAT);
+//			logInfo(wLoggerInitReport);
+//		} catch (Exception e) {
+//			logSevere(dumpStackTrace(e));
+//		}
 	}
 
 	/**
@@ -167,11 +172,10 @@ public class CLoggerUtils {
 	 * @return the report of the setting
 	 * @throws Exception
 	 */
-	public static String setFormatOfSimpleFormatter(final String aFormat)
+	private static String setFormatOfSimpleFormatter(final String aFormat)
 			throws Exception {
 
-		return setPrivateStaticFinalString(SimpleFormatter.class, "format",
-				aFormat);
+		return setPrivateStaticFinalString(SimpleFormatter.class, "format", aFormat);
 	}
 
 	/**
@@ -226,23 +230,16 @@ public class CLoggerUtils {
 
 			return String.format(
 					"Modified static fied: [%s.%s]\n - Modified=[%b]\n - NewValue=[%s]\n - OldValue=[%s]",
-					//
 					aClass.getSimpleName(),
-					//
 					wTargetField.getName(),
-					//
 					wModified,
-					//
 					wNewValue,
-					//
 					wOldValue);
 
 		} catch (Exception e) {
 			throw new Exception(String.format(
 					"ERROR: Unable to set the final field [%s.%s]",
-					//
 					aClass.getSimpleName(),
-					//
 					aFieldName), e);
 		}
 	}

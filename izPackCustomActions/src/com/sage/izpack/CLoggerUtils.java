@@ -186,13 +186,14 @@ public class CLoggerUtils {
 	 * @return the report of the setting
 	 * @throws Exception
 	 */
-	public static String setPrivateStaticFinalString(Class<?> aClass,
+	private static String setPrivateStaticFinalString(Class<?> aClass,
 			final String aFieldName, final String aValue) throws Exception {
 
 		try {
 
 			Field wTargetField = aClass.getDeclaredField(aFieldName);
-			// TODO: FRDEPO= isAccessible() in AccessibleObject has been deprecated
+			// Java 8
+			// isAccessible() in AccessibleObject has been deprecated
 			// boolean wHasToRemovePrivate = !wTargetField.isAccessible();
 			boolean wHasToRemovePrivate = true;
 			// remove "private"

@@ -49,13 +49,19 @@ public class CLoggerUtils {
 	 * 
 	 */
 	static {
-		try {
-			String wLoggerInitReport = setFormatOfSimpleFormatter(SIMPLE_FORMATTER_FORMAT);
+		// Doesn't work with Java 11:
+		
+//		Caused by: java.lang.IllegalArgumentException: null object for private final java.lang.String java.util.logging.SimpleFormatter.format
+//		at java.base/java.lang.reflect.AccessibleObject.canAccess(AccessibleObject.java:457)
+//		at com.izforge.izpack.util.sage.CLoggerUtils.setPrivateStaticFinalString(CLoggerUtils.java:196)
 
-			logInfo(wLoggerInitReport);
-		} catch (Exception e) {
-			logSevere(dumpStackTrace(e));
-		}
+		
+//		try {
+//			String wLoggerInitReport = setFormatOfSimpleFormatter( SIMPLE_FORMATTER_FORMAT);
+//			logInfo(wLoggerInitReport);
+//		} catch (Exception e) {
+//			logSevere(dumpStackTrace(e));
+//		}
 	}
 
 	/**

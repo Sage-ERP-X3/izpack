@@ -1,7 +1,7 @@
 FROM openjdk:11
 
 # install needed packages
-RUN apt-get update && apt-get upgrade
+RUN apt-get update -y && apt-get upgrade -y
 RUN apt-get install -y ant  && apt-get install -y zip && apt-get install -y xmlstarlet 
 
 # Install pre-requisite packages for Powershell .

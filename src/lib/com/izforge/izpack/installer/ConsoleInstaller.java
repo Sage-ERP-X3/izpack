@@ -112,6 +112,7 @@ public class ConsoleInstaller extends InstallerBase
     {
         String version = System.getProperty("java.version");
         String required = this.installdata.info.getJavaVersion();
+		Debug.log("checkJavaVersion(installed:" + version + ", required:" + required + ")");
         if (required != null && version.compareTo(required) < 0)
         {
             String msg = this.getVersionNotAvailable(version, required);

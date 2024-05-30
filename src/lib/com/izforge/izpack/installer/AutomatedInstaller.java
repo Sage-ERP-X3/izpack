@@ -118,17 +118,17 @@ public class AutomatedInstaller extends InstallerBase
     /**
      * Checks the Java version.
      */
-    private void checkJavaVersion() throws Exception
-    {
-        String version = System.getProperty("java.version");
-        String required = idata.info.getJavaVersion();
-        if (required != null && version.compareTo(required) < 0)
-        {
-            String msg = this.getVersionNotAvailable(version, required);
-            System.out.println(msg);
-            System.exit(1);
-        }
-    }
+	private void checkJavaVersion() throws Exception {
+		
+		String version = System.getProperty("java.version");
+		String required = idata.info.getJavaVersion();
+		Debug.log("checkJavaVersion(installed:" + version + ", required:" + required + ")");
+		if (required != null && version.compareTo(required) < 0) {
+			String msg = this.getVersionNotAvailable(version, required);
+			System.out.println(msg);
+			System.exit(1);
+		}
+	}
     
     
     /**

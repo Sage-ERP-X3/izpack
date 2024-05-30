@@ -300,6 +300,7 @@ public class GUIInstaller extends InstallerBase
         String required = this.installdata.info.getJavaVersion();
         if (version.compareTo(required) < 0)
         {
+        	/*
             StringBuffer msg = new StringBuffer();
             msg.append("The application that you are trying to install requires a ");
             msg.append(required);
@@ -308,13 +309,15 @@ public class GUIInstaller extends InstallerBase
             msg.append(version);
             msg.append(" version of the Java platform.\n");
             msg.append("Please upgrade to a newer version.");
-
-            System.out.println(msg.toString());
+        	 */
+            String msg = this.getVersionNotAvailable(version, required);
+            System.out.println(msg);
             JOptionPane.showMessageDialog(null, msg.toString(), "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
     }
 
+    
     /**
      * Checks if a JDK is available.
      */

@@ -94,6 +94,28 @@ public class InstallerBase
     }
 
     /**
+     * Formats a message indicating the required java version isn't available.
+     *
+     * @param version         the current version
+     * @param requiredVersion the required version
+     * @return the formatted message
+     */
+    protected String getVersionNotAvailable(String version, String requiredVersion)
+    {
+        StringBuilder msg = new StringBuilder();
+        msg.append("The application that you are trying to install requires a ");
+        msg.append(requiredVersion);
+        msg.append(" version or later of the Java platform.\n");
+        msg.append("You are running a ");
+        msg.append(version);
+        msg.append(" version of the Java platform.\n");
+        msg.append("Please upgrade to a newer version.");
+        return msg.toString();
+    }
+
+    
+    
+    /**
      * Loads the installation data. Also sets environment variables to <code>installdata</code>.
      * All system properties are available as $SYSTEM_<variable> where <variable> is the actual
      * name _BUT_ with all separators replaced by '_'. Properties with null values are never stored.

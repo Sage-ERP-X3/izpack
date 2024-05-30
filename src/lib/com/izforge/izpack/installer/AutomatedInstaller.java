@@ -103,6 +103,9 @@ public class AutomatedInstaller extends InstallerBase
         // load conditions
         loadConditions(this.idata);
 
+        // Checks the Java version - Java 11
+        checkJavaVersion();
+        
         // loads installer conditions
         loadInstallerRequirements();
 
@@ -112,6 +115,22 @@ public class AutomatedInstaller extends InstallerBase
         
     }
 
+    /**
+     * Checks the Java version.
+     */
+    private void checkJavaVersion() throws Exception
+    {
+        String version = System.getProperty("java.version");
+        String required = idata.info.getJavaVersion();
+        if (required != null && version.compareTo(required) < 0)
+        {
+            String msg = this.getVersionNotAvailable(version, required);
+            System.out.println(msg);
+            System.exit(1);
+        }
+    }
+    
+    
     /**
      * Writes the uninstalldata. <p/> Unfortunately, Java doesn't allow multiple inheritance, so
      * <code>AutomatedInstaller</code> and <code>InstallerFrame</code> can't share this code ...

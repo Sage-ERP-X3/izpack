@@ -89,6 +89,10 @@ public class ConsoleInstaller extends InstallerBase
         this.installdata.setVariable(ScriptParser.ISO3_LANG, this.installdata.localeISO3);
         ResourceManager.create(this.installdata);
         loadConditions(installdata);
+        
+        // Checks the Java version - Java 11
+        checkJavaVersion();
+        
         loadInstallerRequirements();
         loadDynamicVariables();
         refreshDynamicVariables(new VariableSubstitutor(installdata.getVariables()), installdata);
@@ -101,6 +105,21 @@ public class ConsoleInstaller extends InstallerBase
         //}
     }
 
+    /**
+     * Checks the Java version.
+     */
+    private void checkJavaVersion() throws Exception
+    {
+        String version = System.getProperty("java.version");
+        String required = this.installdata.info.getJavaVersion();
+        if (required != null && version.compareTo(required) < 0)
+        {
+            String msg = this.getVersionNotAvailable(version, required);
+            System.out.println(msg);
+            System.exit(1);
+        }
+    }
+    
     protected void iterateAndPerformAction(String strAction) throws Exception
     {
         if (!checkInstallerRequirements(this.installdata))

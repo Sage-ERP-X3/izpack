@@ -253,8 +253,9 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 	 *
 	 * @param panelRoot The tree to put the data in.
 	 */
-	public void makeXMLData(IXMLElement panelRoot) {
-		new InstallTypeNewPanelAutomationHelper().makeXMLData(installData, panelRoot);
+	@Override
+	public void createInstallationRecord(IXMLElement panelRoot) {
+		new InstallTypeNewPanelAutomation().createInstallationRecord(installData, panelRoot);
 	}
 
 	/*

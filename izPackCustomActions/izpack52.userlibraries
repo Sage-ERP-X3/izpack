@@ -13,6 +13,8 @@
         <archive path="IzPack/lib/izpack-tools-5.2.1.jar"/>
         <archive path="IzPack/lib/izpack-uninstaller-5.2.1.jar"/>
         <archive path="IzPack/lib/izpack-util-5.2.1.jar"/>
+        <archive path="izPackCustomActions/libs/jna-5.14.0.jar"/>
+        <archive path="izPackCustomActions/libs/jna-platform-5.14.0.jar"/>
         <archive path="izPackCustomActions/libs/mongo-java-driver-3.4.2.jar"/>
         <archive path="izPackCustomActions/libs/bcpkix-jdk15on-150.jar"/>
         <archive path="izPackCustomActions/libs/bcprov-jdk15on-150.jar"/>

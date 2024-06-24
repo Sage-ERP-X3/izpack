@@ -14,15 +14,19 @@ https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5<br/>
 
 # Version 5.2.0
 
+
+## Version 5.2.1.1: 2024-09
+
+- X3-293749: Migration of Syracuse, MongoDb to IzPack 5
+
+
 ## Version 5.2.1.0: 2024-05
+
+- X3-311594 Migration of installers: Support Java 11
 
 - X3-311594 : Upgrade from izpack 5.2.0 to the 5.2.1 release
   Source: Clone https://github.com/izpack/izpack.git and build project with Maven: `mvn verify install`
 
-
-## Version 5.2.0.5: 2024-05
-
-- X3-311594 Migration of installers: Support Java 11
 
 ## Version 5.2.0.4: 2023-11
 

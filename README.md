@@ -5,6 +5,9 @@
 
 - X3-311594: Compliancy with Java 11 - Migration of installers: Support Java 11
 
+- X3-309977: update driver mongodb-driver-core-5.1.0.jar (previous: mongo-java-driver-3.4.2.jar)
+Source: https://repo.maven.apache.org/maven2/org/mongodb/mongodb-driver-core/5.1.0/
+
 
 ## Version 4.3.10 : 15.02.2022
 

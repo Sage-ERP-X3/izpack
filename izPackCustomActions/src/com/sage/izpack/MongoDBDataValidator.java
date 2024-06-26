@@ -30,10 +30,13 @@ public class MongoDBDataValidator implements DataValidator {
 
 	private static Logger logger = Logger.getLogger(MongoDBDataValidator.class.getName());
 
-//	// Ignore differences between given hostname and certificate hostname
-//    private static HostnameVerifier hostVerifier = new HostnameVerifier() {
-//        public boolean verify(String hostname, SSLSession session) { return true; }
-//    };	
+	/*
+	 * Syracuse supports MongoDb 3, 4 and 7 from Sage X3 2024 R2
+	 */
+	private static boolean isSupportedVersion(String version) {
+		return version.startsWith("3.") || version.startsWith("4.") || version.startsWith("7.");
+	}
+
 
 	@Override
 	public Status validateData(InstallData adata) {
@@ -55,14 +58,11 @@ public class MongoDBDataValidator implements DataValidator {
 			if (!sslEnabled) {
 
 				MongoClient mongoClient = new MongoClient(hostName, Integer.parseInt(hostPort));
+				String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1)).getString("version");
 
-				String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1))
-						.getString("version");
-
-				if (!(version.startsWith("3.") || version.startsWith("4."))) {
+				if (!isSupportedVersion(version)) {
 					bReturn = Status.ERROR;
 				} else {
-
 					// test if syracuse db already exists
 					MongoIterable<String> lstDb = mongoClient.listDatabaseNames();
 
@@ -157,10 +157,9 @@ public class MongoDBDataValidator implements DataValidator {
 				// String version =
 				// mongoClient.getDB("test").command("buildInfo").getString("version");
 
-				String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1))
-						.getString("version");
+				String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1)).getString("version");
 
-				if (!(version.startsWith("3.") || version.startsWith("4."))) {
+				if (!isSupportedVersion(version)) {
 					bReturn = Status.ERROR;
 				} else {
 					// test if syracuse db already exists

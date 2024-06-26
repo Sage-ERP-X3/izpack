@@ -8,17 +8,9 @@ import java.io.InputStreamReader;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.Security;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-
-import javax.net.SocketFactory;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
 
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
@@ -28,10 +20,8 @@ import org.bson.Document;
 import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.DataValidator;
 import com.izforge.izpack.installer.InstallData;
-import com.izforge.izpack.installer.DataValidator.Status;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientURI;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoIterable;
 
@@ -44,17 +34,20 @@ public class MongoDBDataValidator implements DataValidator
 //        public boolean verify(String hostname, SSLSession session) { return true; }
 //    };	
 
+	// Syracuse support MongoDb 3, 4 and 7 for the moment
+	 private static boolean isSupportedVersion(String version) {
+	        return version.startsWith("3.") || version.startsWith("4.") || version.startsWith("7.");
+	    }
+	 
     public Status validateData(AutomatedInstallData adata)
     {
         Status bReturn = Status.OK;
         try
-        {
-        
+        {        
             Boolean modifyinstallation = Boolean.valueOf(adata.getVariable(InstallData.MODIFY_INSTALLATION));
 
             //String userName = adata.getVariable("mongodb.url.username");
-            //String passWord = adata.getVariable("mongodb.url.password");
-            
+            //String passWord = adata.getVariable("mongodb.url.password");            
             String hostName = new String (adata.getVariable("mongodb.service.hostname"));
             String hostPort = adata.getVariable("mongodb.service.port");
             boolean sslEnabled = "true".equalsIgnoreCase(adata.getVariable("mongodb.ssl.enable"));
@@ -63,19 +56,15 @@ public class MongoDBDataValidator implements DataValidator
             String pemcaFile = adata.getVariable("mongodb.ssl.pemcafile");
             
             if (!sslEnabled)
-            {
-            
-                MongoClient mongoClient = new MongoClient( hostName , Integer.parseInt(hostPort) );
-                
-                String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1)).getString("version");
-                
-                if (!(version.startsWith("3.") || version.startsWith("4."))) 
+            {            
+                MongoClient mongoClient = new MongoClient( hostName , Integer.parseInt(hostPort) );                
+                String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1)).getString("version");                
+                if (!isSupportedVersion(version)) 
             	{
             		bReturn = Status.ERROR;
             	}
                 else
-                {
-	    
+                {	    
 	                // test if syracuse db already exists
 	                MongoIterable<String> lstDb = mongoClient.listDatabaseNames();
 	                
@@ -89,9 +78,7 @@ public class MongoDBDataValidator implements DataValidator
 	                    }
 	                }
                 }
-                
-                
-                
+                               
                 mongoClient.close();
             }
             else
@@ -168,9 +155,8 @@ public class MongoDBDataValidator implements DataValidator
                 //MongoClient mongoClient = new MongoClient(cliUri);
                 //String version = mongoClient.getDB("test").command("buildInfo").getString("version");
                 
-                String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1)).getString("version");
-                
-                if (!(version.startsWith("3.") || version.startsWith("4."))) 
+                String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1)).getString("version");                
+                if (!isSupportedVersion(version)) 
             	{
             		bReturn = Status.ERROR;
             	}
@@ -192,8 +178,6 @@ public class MongoDBDataValidator implements DataValidator
                 
                 mongoClient.close();
             }
-            
-
         }
         catch (Exception ex)
         {

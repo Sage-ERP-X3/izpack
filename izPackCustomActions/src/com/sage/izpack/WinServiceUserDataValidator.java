@@ -93,7 +93,7 @@ public class WinServiceUserDataValidator implements DataValidator {
                 // local database
                 adata.setVariable("syracuse.winservice.username", userName);
             }
-            
+            bReturn = Status.OK;
         }
         catch (Exception ex)
         {

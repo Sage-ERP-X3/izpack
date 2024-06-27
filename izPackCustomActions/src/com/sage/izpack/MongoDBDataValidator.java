@@ -32,11 +32,25 @@ public class MongoDBDataValidator implements DataValidator {
 
 	/*
 	 * Syracuse supports MongoDb 3, 4 and 7 from Sage X3 2024 R2
+	 * 
+	 * @param version: ex = "7.0.11"
 	 */
 	private static boolean isSupportedVersion(String version) {
-		return version.startsWith("3.") || version.startsWith("4.") || version.startsWith("7.");
-	}
 
+		Integer majorVersion = 0;
+		try {
+			String[] verStr1 = version.split("\\.");
+			if (verStr1[0] == null || verStr1[0].trim().length() == 0) {
+				verStr1[0] = "0";
+			}
+			majorVersion = Integer.valueOf(verStr1[0]);
+		} catch (NumberFormatException e) {
+			majorVersion = 0;
+			
+		}
+		return majorVersion >= 3;
+		// return version.startsWith("3.") || version.startsWith("4.") || version.startsWith("7.");
+	}
 
 	@Override
 	public Status validateData(InstallData adata) {

@@ -181,6 +181,7 @@
             <include name="FinishNewPanelAutomationHelper.java"/>
             <include name="FinishNewPanelValidator.java"/>
             <include name="HexaPassphraseProcessor.java"/>
+            <include name="HostnameValidator.java"/>
             <include name="InstallTypeNewPanel.java"/>
             <include name="InstallTypeNewPanelAutomationHelper.java"/>
             <include name="InstallationInformationHelper.java"/>

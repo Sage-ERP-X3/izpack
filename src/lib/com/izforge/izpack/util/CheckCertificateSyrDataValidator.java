@@ -1,11 +1,8 @@
 package com.izforge.izpack.util;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.security.KeyPair;
 import java.security.Security;
 import java.security.cert.CertificateFactory;
@@ -26,7 +23,6 @@ import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
 
 import com.izforge.izpack.installer.AutomatedInstallData;
 import com.izforge.izpack.installer.DataValidator;
-import com.izforge.izpack.installer.DataValidator.Status;
 import com.izforge.izpack.util.ssl.CertificateVerifier;
 
 
@@ -58,11 +54,7 @@ public class CheckCertificateSyrDataValidator implements DataValidator
         //String fieldPemKeyFile = adata.getVariable("mongodb.ssl.pemkeyfile");
         //String fieldPemKeyPassword = adata.getVariable("mongodb.ssl.pemkeypassword");
         //String fieldPemCaFile = adata.getVariable("mongodb.ssl.pemcafile");
-        
-        
-        //createcert
-        //String str
-        
+               
         
         try
         {

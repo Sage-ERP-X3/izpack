@@ -176,6 +176,11 @@
             <include name="CheckedHelloNewConsolePanel.java"/>
             <include name="CheckedHelloNewPanel.java"/>
             <include name="CheckedHelloNewPanelAutomationHelper.java"/>
+            <include name="CheckCertificateDataValidator.java"/>
+            <include name="CertificateVerifier.java"/>
+            <include name="CRLVerifier.java"/>
+            <include name="CertificateVerificationResult.java"/>
+            <include name="CertificateVerificationException.java"/>
             <include name="FinishNewConsolePanel.java"/>
             <include name="FinishNewPanel.java"/>
             <include name="FinishNewPanelAutomationHelper.java"/>
@@ -196,6 +201,8 @@
             <include name="PacksNewPanelValidator.java"/>
             <include name="PacksNewPanel.java"/>
             <include name="PanelAutomationHelper.java"/>
+            <include name="PortDataValidator.java"/>
+            <include name="PostValidateSSLRedoAction.java"/>
             <include name="RegistryHandlerX3.java"/>
             <include name="RegistryInstallerNewListener.java"/>
             <include name="StringUtil.java"/>

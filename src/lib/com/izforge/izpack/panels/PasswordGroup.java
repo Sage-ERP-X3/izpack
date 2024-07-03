@@ -91,7 +91,8 @@ public class PasswordGroup implements ProcessingClient
         }
         catch (Throwable exception)
         {
-            Debug.trace("Failed in PasswordGroup constructor making processor: " + exception);
+            Debug.trace("Failed in PasswordGroup constructor making processor Class.forName('"+processor+"'): " + exception);
+            exception.printStackTrace();
             this.processor = null;
         }
     }

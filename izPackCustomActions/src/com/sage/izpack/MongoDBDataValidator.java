@@ -30,10 +30,27 @@ public class MongoDBDataValidator implements DataValidator {
 
 	private static Logger logger = Logger.getLogger(MongoDBDataValidator.class.getName());
 
-//	// Ignore differences between given hostname and certificate hostname
-//    private static HostnameVerifier hostVerifier = new HostnameVerifier() {
-//        public boolean verify(String hostname, SSLSession session) { return true; }
-//    };	
+	/*
+	 * Syracuse supports MongoDb 3, 4 and 7 from Sage X3 2024 R2
+	 * 
+	 * @param version: ex = "7.0.11"
+	 */
+	private static boolean isSupportedVersion(String version) {
+
+		Integer majorVersion = 0;
+		try {
+			String[] verStr1 = version.split("\\.");
+			if (verStr1[0] == null || verStr1[0].trim().length() == 0) {
+				verStr1[0] = "0";
+			}
+			majorVersion = Integer.valueOf(verStr1[0]);
+		} catch (NumberFormatException e) {
+			majorVersion = 0;
+			
+		}
+		return majorVersion >= 3;
+		// return version.startsWith("3.") || version.startsWith("4.") || version.startsWith("7.");
+	}
 
 	@Override
 	public Status validateData(InstallData adata) {
@@ -55,14 +72,11 @@ public class MongoDBDataValidator implements DataValidator {
 			if (!sslEnabled) {
 
 				MongoClient mongoClient = new MongoClient(hostName, Integer.parseInt(hostPort));
+				String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1)).getString("version");
 
-				String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1))
-						.getString("version");
-
-				if (!(version.startsWith("3.") || version.startsWith("4."))) {
+				if (!isSupportedVersion(version)) {
 					bReturn = Status.ERROR;
 				} else {
-
 					// test if syracuse db already exists
 					MongoIterable<String> lstDb = mongoClient.listDatabaseNames();
 
@@ -157,10 +171,9 @@ public class MongoDBDataValidator implements DataValidator {
 				// String version =
 				// mongoClient.getDB("test").command("buildInfo").getString("version");
 
-				String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1))
-						.getString("version");
+				String version = mongoClient.getDatabase("test").runCommand(new Document("buildInfo", 1)).getString("version");
 
-				if (!(version.startsWith("3.") || version.startsWith("4."))) {
+				if (!isSupportedVersion(version)) {
 					bReturn = Status.ERROR;
 				} else {
 					// test if syracuse db already exists

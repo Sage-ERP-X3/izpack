@@ -12,12 +12,16 @@ https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5<br/>
 
 <br/>
 
-# Version 5.2.0
+# Version 5.2.1
 
 
 ## Version 5.2.1.1: 2024-09
 
 - X3-293749: Migration of Syracuse, MongoDb to IzPack 5
+
+- X3-309977:  mongo-java-driver-3.12.5.jar to support MongoDb 7.0 (previous: mongo-java-driver-3.4.2.jar)
+Add driver mongodb-driver-core-5.1.0.jar. 
+Source: https://repo.maven.apache.org/maven2/org/mongodb/mongodb-driver-core/5.1.0/
 
 
 ## Version 5.2.1.0: 2024-05
@@ -27,6 +31,8 @@ https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5<br/>
 - X3-311594 : Upgrade from izpack 5.2.0 to the 5.2.1 release
   Source: Clone https://github.com/izpack/izpack.git and build project with Maven: `mvn verify install`
 
+
+# Version 5.2.0
 
 ## Version 5.2.0.4: 2023-11
 
@@ -71,19 +77,12 @@ Powershell.exe -executionpolicy remotesigned -File  "${BEFORE_UPDATE_SCRIPT_PS_P
 ```
 
 
-
-
-
-### Misc
-
-
-### Bug fix
-
-
 ## Version 5.1.3: 2021-01
 
 - update to IZPACK 5.1.3 <br/>
   This version has been introduced for X3 Console Manage 2.51. <br/>
+
+<br>
 
 
 

@@ -167,7 +167,7 @@
     -->
     <target name="build.com.sage.izpack">
 
-        <build-installer-listener name="com.sage.izpack" classpath-ext="${basedir}/lib/izpack-core-5.2.1.jar;${basedir}/lib/izpack-uninstaller-5.2.1.jar;${basedir}/lib/izpack-util-5.2.1.jar;${basedir}/lib/izpack-api-5.2.1.jar;${basedir}/lib/izpack-tools-5.2.1.jar;${basedir}/lib/izpack-event-5.2.1.jar;${basedir}/lib/izpack-installer-5.2.1.jar;${basedir}/lib/izpack-panel-5.2.1.jar;${basedir}/lib/izpack-gui-5.2.1.jar;${basedir}/lib/jline-2.12.1.jar;${basedir}/izPackCustomActions/libs/bcpkix-jdk15on-150.jar;${basedir}/izPackCustomActions/libs/bcprov-jdk15on-150.jar;${basedir}/izPackCustomActions/libs/mongo-java-driver-3.4.2.jar;${basedir}/izPackCustomActions/libs/jna-5.14.0.jar;${basedir}/izPackCustomActions/libs/jna-platform-5.14.0.jar">
+        <build-installer-listener name="com.sage.izpack" classpath-ext="${basedir}/lib/izpack-core-5.2.1.jar;${basedir}/lib/izpack-uninstaller-5.2.1.jar;${basedir}/lib/izpack-util-5.2.1.jar;${basedir}/lib/izpack-api-5.2.1.jar;${basedir}/lib/izpack-tools-5.2.1.jar;${basedir}/lib/izpack-event-5.2.1.jar;${basedir}/lib/izpack-installer-5.2.1.jar;${basedir}/lib/izpack-panel-5.2.1.jar;${basedir}/lib/izpack-gui-5.2.1.jar;${basedir}/lib/jline-2.12.1.jar;${basedir}/izPackCustomActions/libs/bcpkix-jdk15on-150.jar;${basedir}/izPackCustomActions/libs/bcprov-jdk15on-150.jar;${basedir}/izPackCustomActions/libs/mongo-java-driver-3.12.5.jar;${basedir}/izPackCustomActions/libs/jna-5.14.0.jar;${basedir}/izPackCustomActions/libs/jna-platform-5.14.0.jar">
             <include name="ArchitectureChecker.java"/>
             <include name="AdxCompHelper.java"/>
             <include name="AdxCompInstallerListener.java"/>
@@ -176,13 +176,23 @@
             <include name="CheckedHelloNewConsolePanel.java"/>
             <include name="CheckedHelloNewPanel.java"/>
             <include name="CheckedHelloNewPanelAutomationHelper.java"/>
+            <include name="CheckCertificateDataValidator.java"/>
+            <include name="CertificateVerifier.java"/>
+            <include name="CRLVerifier.java"/>
+            <include name="CertificateVerificationResult.java"/>
+            <include name="CertificateVerificationException.java"/>
             <include name="FinishNewConsolePanel.java"/>
             <include name="FinishNewPanel.java"/>
             <include name="FinishNewPanelAutomationHelper.java"/>
             <include name="FinishNewPanelValidator.java"/>
             <include name="HexaPassphraseProcessor.java"/>
+            <include name="HostnameValidator.java"/>
             <include name="InstallTypeNewPanel.java"/>
             <include name="InstallTypeNewPanelAutomationHelper.java"/>
+            <include name="InstallTypeConsolePanel.java"/>
+            <include name="InstallTypePanel.java"/>
+            <include name="InstallTypePanelAutomationHelper.java"/>
+            <include name="InstallationTypePanelAutomationHelper.java"/>
             <include name="InstallationInformationHelper.java"/>
             <include name="NodeIdentifierValidator.java"/>
             <include name="NodeIdentifierDataValidator.java"/>
@@ -190,6 +200,9 @@
             <include name="PacksNewPanelAutomationHelper.java"/>
             <include name="PacksNewPanelValidator.java"/>
             <include name="PacksNewPanel.java"/>
+            <include name="PanelAutomationHelper.java"/>
+            <include name="PortDataValidator.java"/>
+            <include name="PostValidateSSLRedoAction.java"/>
             <include name="RegistryHandlerX3.java"/>
             <include name="RegistryInstallerNewListener.java"/>
             <include name="StringUtil.java"/>

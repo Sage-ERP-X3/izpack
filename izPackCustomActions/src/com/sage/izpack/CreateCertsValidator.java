@@ -65,6 +65,9 @@ public class CreateCertsValidator implements DataValidator {
             X509Certificate cacert = generateCAV3Certificate(pairCA, countryCode, organization, organizationalUnit,
                     state, city, name, email, validity);
             
+            String thumbPrint = CheckCertificateP12Validator.getThumbprint(cacert);
+            adata.setVariable("mongodb.ssl.certificate.thumbprint", thumbPrint);
+
             String strCertPath = adata.getVariable("mongodb.dir.certs");
             File dirCerts =  new File (strCertPath);
             if (!dirCerts.exists()) dirCerts.mkdirs();

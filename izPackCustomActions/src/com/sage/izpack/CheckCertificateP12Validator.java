@@ -144,7 +144,7 @@ public class CheckCertificateP12Validator implements DataValidator {
 
 	}
 
-	private static String getThumbprint(X509Certificate cert) throws NoSuchAlgorithmException, CertificateEncodingException {
+	public static String getThumbprint(X509Certificate cert) throws NoSuchAlgorithmException, CertificateEncodingException {
 		// 	throws NoSuchAlgorithmException, CertificateEncodingException {
 		MessageDigest md = MessageDigest.getInstance("SHA-1");
 		byte[] der = cert.getEncoded();

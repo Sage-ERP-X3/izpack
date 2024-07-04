@@ -2,42 +2,27 @@ package com.izforge.izpack.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.Security;
 import java.security.cert.CertificateFactory;
 import java.security.cert.PKIXCertPathBuilderResult;
 import java.security.cert.X509Certificate;
-import java.security.spec.RSAPrivateCrtKeySpec;
-import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 
 import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
 import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
-import org.bouncycastle.util.io.pem.PemHeader;
-import org.bouncycastle.util.io.pem.PemObject;
-import org.bouncycastle.util.io.pem.PemReader;
-
 import com.izforge.izpack.installer.AutomatedInstallData;
-import com.izforge.izpack.installer.DataValidator;
-import com.izforge.izpack.installer.DataValidator.Status;
 import com.izforge.izpack.util.ssl.CertificateVerifier;
 
 
@@ -120,12 +105,10 @@ public class CheckCertificateDataValidator implements com.izforge.izpack.install
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.ENCRYPT_MODE, cert.getPublicKey() );
             byte[] cipherText = cipher.doFinal(input);
-
             //System.out.println("cipher: " + new String(cipherText));
 
             cipher.init(Cipher.DECRYPT_MODE, kp.getPrivate());
-            byte[] decrypted = cipher.doFinal(cipherText);
-            
+            byte[] decrypted = cipher.doFinal(cipherText);            
             //System.out.println("plain : " + new String(decrypted));
 
 
@@ -178,6 +161,14 @@ public class CheckCertificateDataValidator implements com.izforge.izpack.install
         catch (Exception ex)
         {
             strMessage = ex.getMessage();
+            
+            // https://stackoverflow.com/questions/13721579/jce-cannot-authenticate-the-provider-bc-in-java-swing-application
+            // Use OpenJDK. It does not require the JCE provider to be signed.
+            if (strMessage!= null && strMessage.indexOf("JCE cannot authenticate the provider BC") >=0 ) {
+            	strMessage +=" Please use an OpenJDK distribution to solve the issue (Java Zulu, ..) .";	
+            }
+            Debug.trace(ex.getMessage());
+            Debug.trace(strMessage);            
             adata.setVariable(strMessageValue, strMessage);
             return Status.ERROR;
         }

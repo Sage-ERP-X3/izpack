@@ -78,9 +78,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         InputStream inPrivKeyFile;
         InputStream inCertFile;
         X509Certificate servercert;
-        InputStreamReader keyStreamReader;
-        // PemReader reader;
-       
+        InputStreamReader keyStreamReader;       
 
         if(!(new File(privKeyFile)).exists()) {
             byte[] certAndKey = Files.readAllBytes(Paths.get(pemKeyFile));
@@ -119,6 +117,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         Debug.trace("Set certificate thumbPrint " + thumbPrint);
 
         // JCE cannot authenticate the provider BC in java swing application
+        // https://stackoverflow.com/questions/13721579/jce-cannot-authenticate-the-provider-bc-in-java-swing-application
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         
         PEMParser pemParser = new PEMParser(keyStreamReader);

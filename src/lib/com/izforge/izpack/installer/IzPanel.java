@@ -1056,7 +1056,7 @@ public class IzPanel extends JPanel implements AbstractUIHandler, LayoutConstant
                 }
                 else
                 {
-                    Debug.trace("Validation did not pass!");
+                    Debug.trace("Validation did not pass! " +  " validationService:" + this.validationService.getClass().getSimpleName());
                     // try to parse the text, and substitute any variable it finds
                     VariableSubstitutor vs = new VariableSubstitutor(idata.getVariables());
                     if (this.validationService.getWarningMessageId() != null

@@ -28,7 +28,6 @@ import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
-import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 // Java 11
 // import sun.security.x509.X500Name;
@@ -80,7 +79,7 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         InputStream inCertFile;
         X509Certificate servercert;
         InputStreamReader keyStreamReader;
-        PemReader reader;
+        // PemReader reader;
        
 
         if(!(new File(privKeyFile)).exists()) {
@@ -119,6 +118,9 @@ public class CheckCertificateP12Validator implements com.izforge.izpack.installe
         adata.setVariable("mongodb.ssl.certificate.thumbprint",thumbPrint);
         Debug.trace("Set certificate thumbPrint " + thumbPrint);
 
+        // JCE cannot authenticate the provider BC in java swing application
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        
         PEMParser pemParser = new PEMParser(keyStreamReader);
         Object object = pemParser.readObject();
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(bcprovider);

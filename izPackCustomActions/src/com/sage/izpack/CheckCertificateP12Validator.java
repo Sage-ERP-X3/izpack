@@ -165,7 +165,7 @@ public class CheckCertificateP12Validator implements DataValidator {
 	        }
 	        hexString.append(hex);
 	    }
-	    return hexString.toString();
+	    return hexString.toString().toLowerCase();
 	}
 	
 	@Override

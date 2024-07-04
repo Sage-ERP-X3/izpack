@@ -1,6 +1,7 @@
 package com.sage.izpack;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import com.izforge.izpack.panels.userinput.processorclient.ProcessingClient;
 import com.izforge.izpack.panels.userinput.validator.Validator;
@@ -20,7 +21,7 @@ public class HostnameValidator implements Validator {
 
 		try {
 			InetAddress.getByName(host);
-		} catch (Exception ex) {
+		} catch (UnknownHostException ex) {
 			retValue = false;
 		}
 		return retValue;

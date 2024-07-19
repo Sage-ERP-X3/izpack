@@ -84,7 +84,7 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 		try {
 			super.afterPacks(packs, listener);
 
-			if (Boolean.valueOf(this.getInstallData().getVariable(InstallData.MODIFY_INSTALLATION))) {
+			if (ModifyInstallationUtil.get(getInstallData())) {
 				// at the top i imagine a first general action script
 				// let says beforeUpdate Script
 
@@ -117,7 +117,7 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 			// super.afterPack(pack, i, handler);
 			super.afterPack(pack);
 
-			if (Boolean.valueOf(getInstallData().getVariable(InstallData.MODIFY_INSTALLATION))) {
+			if (ModifyInstallationUtil.get(getInstallData())) {
 				// fetchAndExcuteResource(pack.id + "_" + AFTER_UPDATE_SCRIPT + "_" + PLATFORM,
 				// getInstallData());
 				fetchAndExecuteResource(pack.getLangPackId() + "_" + AFTER_UPDATE_SCRIPT + "_" + PLATFORM, null,
@@ -176,7 +176,7 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 
 	private void beforePacksCommon() throws Exception {
 		// if (Boolean.valueOf(idata.getVariable(InstallData.MODIFY_INSTALLATION)))
-		if (Boolean.valueOf(getInstallData().getVariable(InstallData.MODIFY_INSTALLATION))) {
+		if (ModifyInstallationUtil.get(getInstallData())) {
 			// at the top i imagine a first general action script
 			// let says beforeUpdate Script
 

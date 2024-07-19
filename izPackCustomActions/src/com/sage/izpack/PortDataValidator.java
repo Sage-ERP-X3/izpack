@@ -25,9 +25,7 @@ public class PortDataValidator implements DataValidator {
 		// if update mode
 		// load old value
 
-		// izpack5 changed this to low case, we read both to be compatible with version 4 & 5
-		boolean updatemode = ("true".equalsIgnoreCase(adata.getVariable(InstallData.MODIFY_INSTALLATION.toUpperCase()))
-				|| "true".equalsIgnoreCase(adata.getVariable(InstallData.MODIFY_INSTALLATION)));
+		boolean updatemode = ModifyInstallationUtil.get(adata);
 
 		if (updatemode) {
 			// load old installadata

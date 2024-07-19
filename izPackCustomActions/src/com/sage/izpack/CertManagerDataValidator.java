@@ -57,7 +57,7 @@ public class CertManagerDataValidator implements DataValidator {
 	@Override
 	public Status validateData(InstallData adata) {
 
-		Boolean modifyinstallation = Boolean.valueOf(adata.getVariable(InstallData.MODIFY_INSTALLATION));
+		Boolean modifyinstallation = ModifyInstallationUtil.get(adata);
 		Boolean mongoSSL = Boolean.valueOf(adata.getVariable("mongodb.ssl.enable"));
 
 		Status statusReturn = Status.OK;

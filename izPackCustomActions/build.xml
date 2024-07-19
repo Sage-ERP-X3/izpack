@@ -191,6 +191,7 @@
             <include name="InstallTypeNewPanelAutomationHelper.java"/>
             <include name="InstallationTypePanelAutomationHelper.java"/>
             <include name="InstallationInformationHelper.java"/>
+            <include name="ModifyInstallationUtil.java"/>
             <include name="NodeIdentifierValidator.java"/>
             <include name="NodeIdentifierDataValidator.java"/>
             <include name="OsVersionHelper.java"/>			

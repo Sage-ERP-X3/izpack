@@ -10,13 +10,10 @@ public class PostValidateSSLRedoAction implements PanelAction {
 	@Override
 	public void executeAction(final InstallData adata, AbstractUIHandler handler) {
 		String strRedoSSL = adata.getVariable("MONGODB.SSL.REDO");
-		String strUpdate = adata.getVariable(InstallData.MODIFY_INSTALLATION.toUpperCase());
-		if (strUpdate == null || strUpdate.trim().equals("")) {
-			strUpdate = adata.getVariable(InstallData.MODIFY_INSTALLATION);
-		}
+		boolean update = ModifyInstallationUtil.get(adata);
 		String strSSLAlreadyDone = adata.getVariable("mongodb.ssl.alreadydone");
 
-		if ("true".equalsIgnoreCase(strUpdate) && "true".equalsIgnoreCase(strRedoSSL)
+		if (update && "true".equalsIgnoreCase(strRedoSSL)
 				&& "true".equalsIgnoreCase(strSSLAlreadyDone)) {
 			// we want to redo ssl configuration
 			// set mongodb.ssl.alreadydone to false

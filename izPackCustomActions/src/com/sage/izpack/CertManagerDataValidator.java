@@ -75,6 +75,13 @@ public class CertManagerDataValidator implements DataValidator {
 				if (certCreate) {
 					certCreate(adata);
 					hostname = adata.getVariable("syracuse.certificate.hostname").toLowerCase();
+
+					// set for mongodb install
+					adata.setVariable("mongodb.ssl.server.certfile",
+							strCertPath + File.separator + localHOST_NAME + ".crt");
+					adata.setVariable("mongodb.ssl.server.pemkeyfile",
+							strCertPath + File.separator + localHOST_NAME + ".key");
+					adata.setVariable("mongodb.ssl.server.pemcafile", strCertPath + File.separator + "ca.cacrt");
 				} else {
 
 					adata.setVariable("syracuse.certificate.certtool", adata.getVariable("INSTALL_PATH")
@@ -98,16 +105,7 @@ public class CertManagerDataValidator implements DataValidator {
                     
                     adata.setVariable("syracuse.certificate.serverpassphrase",adata.getVariable("syracuse.ssl.pemkeypassword"));
 				}
-
-				// set for mongodb install
-				adata.setVariable("mongodb.ssl.server.serverpassphrase",
-						adata.getVariable("syracuse.certificate.serverpassphrase"));
-				adata.setVariable("mongodb.ssl.server.certfile",
-						strCertPath + File.separator + localHOST_NAME + ".crt");
-				adata.setVariable("mongodb.ssl.server.pemkeyfile",
-						strCertPath + File.separator + localHOST_NAME + ".key");
-				adata.setVariable("mongodb.ssl.server.pemcafile", strCertPath + File.separator + "ca.cacrt");
-
+				adata.setVariable("mongodb.ssl.server.serverpassphrase", adata.getVariable("syracuse.certificate.serverpassphrase"));
 			}
 
 			if (mongoSSL) {
@@ -205,11 +203,6 @@ public class CertManagerDataValidator implements DataValidator {
 		}
 
 		KeyPairGeneratorDataValidator.mergeFiles(new File[] { certsServerCRT, certsServerKey }, certsServerPem);
-
-		// set variables for future use
-		adata.setVariable("mongodb.ssl.client.certfile", strCertPath + File.separator + "client.crt");
-		adata.setVariable("mongodb.ssl.client.pemkeyfile", strCertPath + File.separator + "client.key");
-		adata.setVariable("mongodb.ssl.pemcafile", strCertPath + File.separator + "ca.cacrt");
 	}
 
 	public void clientCertCreate(InstallData adata) throws Exception {
@@ -252,12 +245,6 @@ public class CertManagerDataValidator implements DataValidator {
 		KeyPairGeneratorDataValidator.writePrivateKey(strCertPath + File.separator + "client.key", pairClient, null);
 
 		KeyPairGeneratorDataValidator.mergeFiles(new File[] { certsServerCRT, certsServerKey }, certsServerPem);
-
-		// set variables for future use
-		adata.setVariable("mongodb.ssl.client.certfile", strCertPath + File.separator + "client.crt");
-		adata.setVariable("mongodb.ssl.client.pemkeyfile", strCertPath + File.separator + "client.key");
-		adata.setVariable("mongodb.ssl.pemcafile", strCertPath + File.separator + "ca.cacrt");
-
 	}
 
 	public void readCerts(InstallData adata) throws Exception {

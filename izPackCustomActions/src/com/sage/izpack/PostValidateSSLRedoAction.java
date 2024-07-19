@@ -10,7 +10,10 @@ public class PostValidateSSLRedoAction implements PanelAction {
 	@Override
 	public void executeAction(final InstallData adata, AbstractUIHandler handler) {
 		String strRedoSSL = adata.getVariable("MONGODB.SSL.REDO");
-		String strUpdate = adata.getVariable("MODIFY.IZPACK.INSTALL");
+		String strUpdate = adata.getVariable(InstallData.MODIFY_INSTALLATION.toUpperCase());
+		if (strUpdate == null || strUpdate.trim().equals("")) {
+			strUpdate = adata.getVariable(InstallData.MODIFY_INSTALLATION);
+		}
 		String strSSLAlreadyDone = adata.getVariable("mongodb.ssl.alreadydone");
 
 		if ("true".equalsIgnoreCase(strUpdate) && "true".equalsIgnoreCase(strRedoSSL)

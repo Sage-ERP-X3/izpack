@@ -212,7 +212,8 @@ public class MongoDBDataValidator implements DataValidator {
 
 	@Override
 	public boolean getDefaultAnswer() {
-		return false;
+		// warning means that DB is already configured, can be ignored
+		return Boolean.TRUE;
 	}
 
 }

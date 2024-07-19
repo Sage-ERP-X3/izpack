@@ -31,8 +31,11 @@ public class UpdatePassphraseValidator implements DataValidator {
 		boolean updateMode = false;
 		boolean createCertificate = true;
 
-		if (adata.getVariable("MODIFY.IZPACK.INSTALL") != null)
-			updateMode = adata.getVariable("MODIFY.IZPACK.INSTALL").equalsIgnoreCase("true");
+		if (adata.getVariable(InstallData.MODIFY_INSTALLATION.toUpperCase()) != null) {
+			updateMode = adata.getVariable(InstallData.MODIFY_INSTALLATION.toUpperCase()).equalsIgnoreCase("true");
+		} else if (adata.getVariable(InstallData.MODIFY_INSTALLATION) != null){
+			updateMode = adata.getVariable(InstallData.MODIFY_INSTALLATION).equalsIgnoreCase("true");
+		}
 		if (adata.getVariable("syracuse.certificate.install") != null)
 			createCertificate = adata.getVariable("syracuse.certificate.install").equalsIgnoreCase("true");
 

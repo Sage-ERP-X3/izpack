@@ -150,7 +150,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			// String version = moduleSpec.getFirstChildNamed("component." +
 			// moduleFamily.toLowerCase() + ".version").getContent();
 
-			boolean modifyinstallation = Boolean.valueOf(installData.getVariable(InstallData.MODIFY_INSTALLATION));
+			boolean modifyinstallation = ModifyInstallationUtil.get(installData);
 
 			logger.log(Level.FINE, LogPrefix + "afterPacks  moduleName: " + moduleName + " moduleFamily: "
 					+ moduleFamily + " modifyinstallation: " + modifyinstallation);

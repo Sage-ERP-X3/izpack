@@ -57,7 +57,7 @@ public class MongoDBDataValidator implements DataValidator {
 		Status bReturn = Status.OK;
 		try {
 
-			Boolean modifyinstallation = Boolean.valueOf(adata.getVariable(InstallData.MODIFY_INSTALLATION));
+			Boolean modifyinstallation = ModifyInstallationUtil.get(adata);
 
 			// String userName = adata.getVariable("mongodb.url.username");
 			// String passWord = adata.getVariable("mongodb.url.password");
@@ -212,7 +212,8 @@ public class MongoDBDataValidator implements DataValidator {
 
 	@Override
 	public boolean getDefaultAnswer() {
-		return false;
+		// warning means that DB is already configured, can be ignored
+		return Boolean.TRUE;
 	}
 
 }

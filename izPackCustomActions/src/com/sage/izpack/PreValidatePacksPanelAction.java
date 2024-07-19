@@ -31,7 +31,7 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
 		// well if in modify mode
 		// then we must select already installed packs
 
-		boolean modifyinstallation = Boolean.valueOf(installData.getVariable(InstallData.MODIFY_INSTALLATION));
+		boolean modifyinstallation = ModifyInstallationUtil.get(installData);
 		this.installedpacks = new HashMap<String, com.izforge.izpack.Pack>();
 		HashMap<String, com.izforge.izpack.api.data.Pack> installedpacksBis = new HashMap<String, com.izforge.izpack.api.data.Pack>();
 		if (modifyinstallation) {

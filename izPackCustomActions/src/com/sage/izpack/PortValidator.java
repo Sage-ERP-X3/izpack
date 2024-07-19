@@ -36,7 +36,7 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
         int numfields = client.getNumFields();
         List<String> exludedPorts = new ArrayList<String>();
         
-		boolean modifyinstallation = Boolean.valueOf(this.installData.getVariable(InstallData.MODIFY_INSTALLATION));
+		boolean modifyinstallation = ModifyInstallationUtil.get(installData);
 
 		// VariableSubstitutor substitutor = new VariableSubstitutorImpl(this.installData.getVariables());
 

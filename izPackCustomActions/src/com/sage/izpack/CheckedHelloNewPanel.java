@@ -234,7 +234,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			if (result) {
 				// Set variable "modify.izpack.install"
 				installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-				installData.setVariable(InstallData.MODIFY_INSTALLATION.toLowerCase(), "true");
+				installData.setVariable(InstallData.MODIFY_INSTALLATION.toUpperCase(), "true");
 			}
 			logger.log(Level.FINE,
 					logPrefix + "isRegistered()  Set " + InstallData.MODIFY_INSTALLATION + ": " + result);

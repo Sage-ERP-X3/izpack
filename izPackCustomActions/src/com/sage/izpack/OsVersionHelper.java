@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.izforge.izpack.util.FileUtil;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.StringTool;
 
@@ -67,6 +68,15 @@ public class OsVersionHelper {
      */
     public final static String AMI = "Amazon Linux AMI";
 
+    /**
+     * MACHINE_ID = /etc/machine_id || /var/lib/dbus/machine_id
+     */
+    public static final String MACHINE_ID = getLinuxMachineId();
+
+    /**
+     * MACHINE_ID_REGISTERED = Machine_ID != null
+     */
+    public static final boolean MACHINE_ID_REGISTERED = OsVersion.IS_LINUX && (MACHINE_ID != null);
     
 	/**
 	 * True if Oracle Linux was detected
@@ -376,4 +386,21 @@ public class OsVersionHelper {
         return result.toString();
     }
     
+    private static String getLinuxMachineId() {
+        String result = null;
+
+        File machineIdFile = new File("/var/lib/dbus/machine-id");
+
+        try {
+            if (!machineIdFile.exists())
+                machineIdFile = new File("/etc/machine-id");
+            if (machineIdFile.exists())
+                result = (String) FileUtil.getFileContent(machineIdFile.getAbsolutePath()).get(0);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return result;
+    }
+
 }

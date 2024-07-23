@@ -104,6 +104,7 @@ public class CheckedHelloNewConsolePanel extends CheckedHelloConsolePanel {
 		boolean result = true;
 		// Update mode
 		if (this.installPath != null) {
+			ModifyInstallationUtil.set(installData, Boolean.TRUE);
 			String allowMultipleInstall = installData.getVariable("allow-multiple-instance");
 			// multiple install is allowed
 			// <variable name="CheckedHelloNewPanel.allowMultipleInstance" value="true"/>

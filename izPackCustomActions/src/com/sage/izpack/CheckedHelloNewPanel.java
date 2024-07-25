@@ -93,6 +93,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 			installData.setVariable(InstallData.INSTALL_PATH, path);
 			logger.log(Level.FINE, logPrefix + "Set INSTALL_PATH: " + path);
+			ModifyInstallationUtil.set(installData, Boolean.TRUE);
 		}
 
 		logger.log(Level.FINE, logPrefix + "InitPath returned path:" + path);

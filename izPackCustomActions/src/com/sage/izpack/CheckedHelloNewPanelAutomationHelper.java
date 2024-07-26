@@ -1,5 +1,6 @@
 package com.sage.izpack;
 
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,6 +13,7 @@ import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.panels.checkedhello.CheckedHelloPanelAutomationHelper;
 import com.izforge.izpack.panels.checkedhello.RegistryHelper;
+import com.izforge.izpack.util.OsVersion;
 
 /*
  * @author Franck DEPOORTERE
@@ -45,6 +47,8 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 	 */
 	@Override
 	public void runAutomated(InstallData installData, IXMLElement panelRoot) {
+		ModifyInstallationUtil.set(installData, isUpdate());
+
 		RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler, installData);
 
 		if (x3Handler.needAdxAdmin()) {
@@ -127,4 +131,15 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 		return resourcesHelper.getCustomString(key);
 	}
 
+	private boolean isUpdate() {
+		if (OsVersion.IS_WINDOWS) {
+            try {
+                return registryHelper.isRegistered();
+            } catch (NativeLibException e) {
+				return Boolean.FALSE;
+            }
+        }
+		File uninstaller = new File(installData.getInfo().getUninstallerPath() + File.separator + "uninstaller.jar");
+		return uninstaller.exists();
+	}
 }

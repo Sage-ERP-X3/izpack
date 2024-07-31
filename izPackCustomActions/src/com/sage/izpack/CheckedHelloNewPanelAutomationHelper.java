@@ -139,6 +139,13 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 				return Boolean.FALSE;
             }
         }
+		if (installData == null
+				|| installData.getInfo() == null
+				|| installData.getInfo().getUninstallerPath() == null
+				|| installData.getInstallPath() == null
+		) {
+			return Boolean.FALSE;
+		}
 		String uninstallerPath =
 				installData.getInfo().getUninstallerPath().replaceAll("\\$INSTALL_PATH", installData.getInstallPath())
 				+ File.separator

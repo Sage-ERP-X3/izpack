@@ -139,7 +139,14 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 				return Boolean.FALSE;
             }
         }
-		File uninstaller = new File(installData.getInfo().getUninstallerPath() + File.separator + "uninstaller.jar");
-		return uninstaller.exists();
+		String uninstallerPath =
+				installData.getInfo().getUninstallerPath().replaceAll("\\$INSTALL_PATH", installData.getInstallPath())
+				+ File.separator
+				+ "uninstaller.jar";
+		logger.log(Level.FINE, logPrefix + "checking for presence of uninstaller, path=" + uninstallerPath);
+		File uninstaller = new File(uninstallerPath);
+		boolean exists = uninstaller.exists();
+		logger.log(Level.FINE, logPrefix + "uninstaller.jar exists: " + (exists ? "yes" : "no"));
+		return exists;
 	}
 }

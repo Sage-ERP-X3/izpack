@@ -39,12 +39,11 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 
 	@Override
 	public void afterPacks(List<Pack> packs, ProgressListener listener) {
-
 		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks start");
+		super.afterPacks(packs, listener);
 
 		updateRegistry();
 
-		super.afterPacks(packs, listener);
 
 		// Fix the bug when un-installing a product, sometimes, the Registry
 		// is not cleaned and on old file .installationinformation from a former setup
@@ -109,7 +108,7 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 			RegDataContainer contPublisher = myHandlerInstance.getValue(keyName, entryName);
 			if (contPublisher != null) {
 				String publisherVal = contPublisher.getStringData();
-				if (publisherVal != null && entryValue != null && publisherVal != entryValue) {
+				if (publisherVal != null && entryValue != null && !publisherVal.equals(entryValue)) {
 					myHandlerInstance.setValue(keyName, entryName, entryValue);
 
 					logger.log(Level.FINE, LogPrefix + "updateRegistry   Publisher updated, Registry path " + keyName

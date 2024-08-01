@@ -17,11 +17,7 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 		IXMLElement ipath = new XMLElementImpl(InstallData.MODIFY_INSTALLATION, panelRoot);
 		// check this writes even if value is the default,
 		// because without the constructor, default does not get set.
-		if (installData.getVariable(InstallData.MODIFY_INSTALLATION) != null) {
-			ipath.setContent(installData.getVariable(InstallData.MODIFY_INSTALLATION));
-		} else {
-			ipath.setContent(Boolean.FALSE.toString());
-		}
+		ipath.setContent(ModifyInstallationUtil.get(installData).toString());
 
 		IXMLElement prev = panelRoot.getFirstChildNamed(InstallData.MODIFY_INSTALLATION);
 		if (prev != null) {
@@ -45,27 +41,7 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 	public void runAutomated(InstallData installData, IXMLElement panelRoot) throws InstallerException {
 
 		// part of MODIFY_INSTALLATION
-		IXMLElement ipath = panelRoot.getFirstChildNamed(InstallData.MODIFY_INSTALLATION);
-
-		String modify = null;
-
-		try {
-			modify = ipath.getContent().trim();
-		} catch (Exception ex) {
-			// assume a normal install
-			installData.setVariable(InstallData.MODIFY_INSTALLATION, "false");
-		}
-
-		if (modify == null || "".equals(modify)) {
-			// assume a normal install
-			installData.setVariable(InstallData.MODIFY_INSTALLATION, "false");
-		} else {
-			if (Boolean.parseBoolean(modify)) {
-				installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-			} else {
-				installData.setVariable(InstallData.MODIFY_INSTALLATION, "false");
-			}
-		}
+		ModifyInstallationUtil.set(installData, ModifyInstallationUtil.get(panelRoot));
 		// part of target path
 		IXMLElement ipath2 = panelRoot.getFirstChildNamed(INSTALLPATH);
 
@@ -94,8 +70,7 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 			modifyInstallation = overrides.fetch(InstallData.MODIFY_INSTALLATION.toUpperCase());
 		}
 		if (modifyInstallation != null) {
-			installData.setVariable(InstallData.MODIFY_INSTALLATION,
-					String.valueOf(Boolean.parseBoolean(modifyInstallation)));
+			ModifyInstallationUtil.set(installData, modifyInstallation);
 		}
 		String installpath = overrides.fetch(INSTALLPATH);
 		if (installpath != null) {

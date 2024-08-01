@@ -62,7 +62,7 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 						RegDataContainer oldInstallPath = registryHandler.getValue(RegistryHandler.UNINSTALL_ROOT + line, "DisplayIcon");
 						String path = oldInstallPath.getStringData().substring(0, oldInstallPath.getStringData().indexOf("Uninstaller") - 1);
 						installData.setInstallPath(path);
-						installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+						ModifyInstallationUtil.set(installData, Boolean.TRUE);;
 						logger.log(Level.FINE, "CheckProductAlreadyInstalled  Detected path: " + path);
 						
 						//  INSTALLER_GUI = 0, INSTALLER_AUTO = 1, INSTALLER_CONSOLE = 2;

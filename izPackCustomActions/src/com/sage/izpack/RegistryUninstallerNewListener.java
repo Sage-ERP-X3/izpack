@@ -36,6 +36,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 	private final Prompt prompt;
 	private final Resources resources;
 	private final Messages messages;
+	private AdxCompUninstallerListener adxCompUninstallerListener = null;
 
 	public RegistryUninstallerNewListener(RegistryDefaultHandler handler, Resources resources, Messages messages,
 			Prompt prompt) {
@@ -97,7 +98,16 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		logger.log(Level.FINE, LogPrefix + "afterDelete.  ");
 
 		super.afterDelete(files, listener);
+		deleteInstallationInformation();
+	}
 
+	private void deleteInstallationInformation() {
+		AdxCompUninstallerListener lst = getAdxCompUninstallerListener();
+		String installPath = lst.getInstallPath();
+		File installationinformation = new File(installPath + File.separator + ".installationinformation");
+		if (installationinformation.exists()) {
+			installationinformation.delete();
+		}
 	}
 
 	private void deleteRegistry() {
@@ -115,7 +125,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 			System.out.println(LogPrefix + "Error in deleteRegistry: getUninstallName() is empty");
 
 			System.out.println(LogPrefix + "Trying to read InstallPath from install.log");
-			AdxCompUninstallerListener lst = new AdxCompUninstallerListener(myhandler, resources, messages, prompt);
+			AdxCompUninstallerListener lst = getAdxCompUninstallerListener();
 			String installPath = lst.getInstallPath();
 
 			System.out.println(LogPrefix + "install.log read. installPath:" + installPath);
@@ -161,6 +171,13 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 			logger.log(Level.FINE, LogPrefix + "Error, registry key " + keyName + " NOT deleted");
 			System.out.println(LogPrefix + "Error, registry key " + keyName + " NOT deleted");
 		}
+	}
+
+	private AdxCompUninstallerListener getAdxCompUninstallerListener() {
+		if (this.adxCompUninstallerListener == null) {
+			this.adxCompUninstallerListener = new AdxCompUninstallerListener(myhandler, resources, messages, prompt);
+		}
+		return this.adxCompUninstallerListener;
 	}
 
 	private String getString(String resourceId, String defaultTranslation) {

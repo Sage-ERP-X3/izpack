@@ -25,7 +25,7 @@ public class PortDataValidator implements DataValidator {
 		// if update mode
 		// load old value
 
-		boolean updatemode = ("true".equalsIgnoreCase(adata.getVariable("MODIFY.IZPACK.INSTALL")));
+		boolean updatemode = ModifyInstallationUtil.get(adata);
 
 		if (updatemode) {
 			// load old installadata

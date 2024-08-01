@@ -1,5 +1,6 @@
 package com.sage.izpack;
 
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,6 +13,7 @@ import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.panels.checkedhello.CheckedHelloPanelAutomationHelper;
 import com.izforge.izpack.panels.checkedhello.RegistryHelper;
+import com.izforge.izpack.util.OsVersion;
 
 /*
  * @author Franck DEPOORTERE
@@ -45,6 +47,8 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 	 */
 	@Override
 	public void runAutomated(InstallData installData, IXMLElement panelRoot) {
+		ModifyInstallationUtil.set(installData, isUpdate());
+
 		RegistryHandlerX3 x3Handler = new RegistryHandlerX3(this.registryHandler, installData);
 
 		if (x3Handler.needAdxAdmin()) {
@@ -127,4 +131,29 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 		return resourcesHelper.getCustomString(key);
 	}
 
+	private boolean isUpdate() {
+		if (OsVersion.IS_WINDOWS) {
+            try {
+                return registryHelper.isRegistered();
+            } catch (NativeLibException e) {
+				return Boolean.FALSE;
+            }
+        }
+		if (installData == null
+				|| installData.getInfo() == null
+				|| installData.getInfo().getUninstallerPath() == null
+				|| installData.getInstallPath() == null
+		) {
+			return Boolean.FALSE;
+		}
+		String uninstallerPath =
+				installData.getInfo().getUninstallerPath().replaceAll("\\$INSTALL_PATH", installData.getInstallPath())
+				+ File.separator
+				+ "uninstaller.jar";
+		logger.log(Level.FINE, logPrefix + "checking for presence of uninstaller, path=" + uninstallerPath);
+		File uninstaller = new File(uninstallerPath);
+		boolean exists = uninstaller.exists();
+		logger.log(Level.FINE, logPrefix + "uninstaller.jar exists: " + (exists ? "yes" : "no"));
+		return exists;
+	}
 }

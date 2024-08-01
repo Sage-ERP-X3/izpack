@@ -144,7 +144,7 @@ public class CheckCertificateP12Validator implements DataValidator {
 
 	}
 
-	private static String getThumbprint(X509Certificate cert) throws NoSuchAlgorithmException, CertificateEncodingException {
+	public static String getThumbprint(X509Certificate cert) throws NoSuchAlgorithmException, CertificateEncodingException {
 		// 	throws NoSuchAlgorithmException, CertificateEncodingException {
 		MessageDigest md = MessageDigest.getInstance("SHA-1");
 		byte[] der = cert.getEncoded();
@@ -153,9 +153,21 @@ public class CheckCertificateP12Validator implements DataValidator {
 		// TODO: FRDEPO : error: cannot find symbol
 		// String digestHex = DatatypeConverter.printHexBinary(digest);
 		// return digestHex.toLowerCase();
-		return null;
+		return bytesToHex(digest);
 	}
 
+	private static String bytesToHex(byte[] hash) {
+	    StringBuilder hexString = new StringBuilder(2 * hash.length);
+	    for (int i = 0; i < hash.length; i++) {
+	        String hex = Integer.toHexString(0xff & hash[i]);
+	        if(hex.length() == 1) {
+	            hexString.append('0');
+	        }
+	        hexString.append(hex);
+	    }
+	    return hexString.toString().toLowerCase();
+	}
+	
 	@Override
 	public String getErrorMessageId() {
 		return strMessageId;

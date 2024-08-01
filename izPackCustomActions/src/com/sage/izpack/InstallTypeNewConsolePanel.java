@@ -46,19 +46,22 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 	@Override
 	public boolean run(InstallData installData, Properties p) {
 
-		String strType = p.getProperty(InstallData.MODIFY_INSTALLATION).trim();
+		String strType = p.getProperty(InstallData.MODIFY_INSTALLATION.toUpperCase()).trim();
+		if (strType == null || "".equals(strType)) {
+			strType = p.getProperty(InstallData.MODIFY_INSTALLATION.toLowerCase()).trim();
+		}
 		if (strType == null || "".equals(strType)) {
 			// assume a normal install
-			installData.setVariable(InstallData.MODIFY_INSTALLATION, "false");
+			ModifyInstallationUtil.set(installData, Boolean.FALSE);
 		} else {
 			if (Boolean.parseBoolean(strType)) {
 				// is a modify type install
-				installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+				ModifyInstallationUtil.set(installData, Boolean.TRUE);
 				String strInstallpath = p.getProperty("installpath").trim();
 				installData.setInstallPath(strInstallpath);
 
 			} else {
-				installData.setVariable(InstallData.MODIFY_INSTALLATION, "false");
+				ModifyInstallationUtil.set(installData, Boolean.FALSE);
 			}
 		}
 		return true;
@@ -93,10 +96,10 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 
 		switch (i) {
 		case 1:
-			installData.setVariable(InstallData.MODIFY_INSTALLATION, "false");
+			ModifyInstallationUtil.set(installData, Boolean.FALSE);
 			return true;
 		case 2:
-			installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+			ModifyInstallationUtil.set(installData, Boolean.TRUE);
 			return chooseComponent(installData, console);
 		default:
 			// want to exit

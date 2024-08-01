@@ -189,11 +189,9 @@
             <include name="HostnameValidator.java"/>
             <include name="InstallTypeNewPanel.java"/>
             <include name="InstallTypeNewPanelAutomationHelper.java"/>
-            <include name="InstallTypeConsolePanel.java"/>
-            <include name="InstallTypePanel.java"/>
-            <include name="InstallTypePanelAutomationHelper.java"/>
             <include name="InstallationTypePanelAutomationHelper.java"/>
             <include name="InstallationInformationHelper.java"/>
+            <include name="ModifyInstallationUtil.java"/>
             <include name="NodeIdentifierValidator.java"/>
             <include name="NodeIdentifierDataValidator.java"/>
             <include name="OsVersionHelper.java"/>			

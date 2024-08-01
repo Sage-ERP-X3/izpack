@@ -76,7 +76,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 
 		// boolean modifyinstallation =
 		// Boolean.valueOf(idata.getVariable(InstallData.MODIFY_INSTALLATION));
-		boolean modifyinstallation = Boolean.valueOf(this.installData.getVariable(InstallData.MODIFY_INSTALLATION));
+		boolean modifyinstallation = ModifyInstallationUtil.get(installData);
 
 		// normalinstall = new
 		// JRadioButton(parent.langpack.getString("InstallationTypePanel.normal"),
@@ -142,7 +142,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 			e.printStackTrace();
 		}
 
-		boolean modifyinstallation = Boolean.valueOf(this.installData.getVariable(InstallData.MODIFY_INSTALLATION));
+		boolean modifyinstallation = ModifyInstallationUtil.get(installData);
 
 		if (modifyinstallation) {
 			modifyinstall.setSelected(true);
@@ -178,14 +178,12 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 			installedComponents.clearSelection();
 
 			installedComponents.setEnabled(false);
-			// idata.setVariable(InstallData.MODIFY_INSTALLATION, "false");
-			this.installData.setVariable(InstallData.MODIFY_INSTALLATION, "false");
+			ModifyInstallationUtil.set(installData, Boolean.FALSE);
 		} else if (e.getSource() == modifyinstall) {
 			logger.log(Level.FINE, "InstallTypeNewPanel modification installation");
 			// Debug.trace("modification installation");
 			installedComponents.setEnabled(true);
-			// idata.setVariable(InstallData.MODIFY_INSTALLATION, "true");
-			this.installData.setVariable(InstallData.MODIFY_INSTALLATION, "true");
+			ModifyInstallationUtil.set(installData, Boolean.TRUE);
 
 			if (selectedKey != null) {
 				if (listItems.contains(selectedKey)) {
@@ -223,7 +221,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 	public boolean isValidated() {
 		// we must ensure .installinformation is present if in modification mode
 		// then set install_path
-		Boolean modifyinstallation = Boolean.valueOf(this.installData.getVariable(InstallData.MODIFY_INSTALLATION));
+		Boolean modifyinstallation = ModifyInstallationUtil.get(installData);
 
 		if (modifyinstallation) {
 
@@ -266,7 +264,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 	public String getSummaryBody() {
 
 		// if (Boolean.parseBoolean(idata.getVariable(InstallData.MODIFY_INSTALLATION)))
-		if (Boolean.parseBoolean(this.installData.getVariable(InstallData.MODIFY_INSTALLATION))) {
+		if (ModifyInstallationUtil.get(installData)) {
 			// return ResourcesHelper.getCustomPropString("InstallTypeNewPanel.modify");
 			return super.getString("InstallTypeNewPanel.modify");
 			// return parent.langpack.getString("InstallationTypePanel.modify");

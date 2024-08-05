@@ -1,14 +1,9 @@
 package com.sage.izpack;
 
-import java.io.File;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.coi.tools.os.win.RegDataContainer;
 import com.izforge.izpack.api.data.InstallData;
-import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.data.Pack;
+import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.resource.Resources;
@@ -18,10 +13,12 @@ import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.installer.data.UninstallData;
 import com.izforge.izpack.installer.unpacker.IUnpacker;
-import com.izforge.izpack.panels.checkedhello.RegistryHelper;
 import com.izforge.izpack.util.Housekeeper;
 
-import static com.izforge.izpack.panels.checkedhello.RegistryHelper.UNINSTALL_STRING;
+import java.io.File;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * 

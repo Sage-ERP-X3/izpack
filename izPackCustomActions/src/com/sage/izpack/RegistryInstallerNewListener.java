@@ -18,7 +18,10 @@ import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.installer.data.UninstallData;
 import com.izforge.izpack.installer.unpacker.IUnpacker;
+import com.izforge.izpack.panels.checkedhello.RegistryHelper;
 import com.izforge.izpack.util.Housekeeper;
+
+import static com.izforge.izpack.panels.checkedhello.RegistryHelper.UNINSTALL_STRING;
 
 /*
  * 
@@ -26,7 +29,9 @@ import com.izforge.izpack.util.Housekeeper;
  */
 public class RegistryInstallerNewListener extends com.izforge.izpack.event.RegistryInstallerListener {
 
-	private static Logger logger = Logger.getLogger(RegistryInstallerNewListener.class.getName());
+	private static final String JAVA_HOME = "JAVA_HOME";
+	private static final String UNINSTALL_STRING = "UninstallString";
+	private Logger logger = Logger.getLogger(RegistryInstallerNewListener.class.getName());
 	private final RegistryDefaultHandler myhandler;
 	private static final String LogPrefix = "RegistryInstallerNewListener - ";
 
@@ -89,11 +94,34 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 			if (myHandlerInstance.keyExist(keyName)) {
 				updateEntry(myHandlerInstance, keyName, "DisplayVersion", version);
 				updateEntry(myHandlerInstance, keyName, "Publisher", publisher);
+				updateUninstallString(myHandlerInstance, keyName);
 			}
 		} catch (NativeLibException e) {
 			e.printStackTrace();
 			logger.log(Level.WARNING, LogPrefix + "updateRegistry   Error while update registry path " + keyName
 					+ " Key: DisplayVersion, value: " + version);
+		}
+	}
+
+	private void updateUninstallString(RegistryHandler myHandlerInstance, String keyName) throws NativeLibException {
+		String javaHome = System.getenv(JAVA_HOME);
+		if (javaHome == null || javaHome.isBlank()) {
+			logger.log(Level.FINE, LogPrefix + "updateUninstallString: %JAVA_HOME% is not set, exiting.");
+			return;
+		} else {
+			javaHome = javaHome.replaceAll("\\\\", "\\"); // TODO: debug and check if this is correct
+		}
+		RegDataContainer uninstallString = myHandlerInstance.getValue(keyName, UNINSTALL_STRING);
+		if (uninstallString == null || uninstallString.getStringData() == null || uninstallString.getStringData().isBlank()) {
+			logger.log(Level.FINE, LogPrefix + "updateUninstallString: UninstallString is not set, exiting.");
+			return;
+		}
+		String uninstallStringValue = uninstallString.getStringData();
+		if (uninstallStringValue.contains(javaHome)) {
+			updateEntry(myHandlerInstance, keyName, UNINSTALL_STRING, uninstallStringValue.replaceAll(javaHome, "%JAVA_HOME%"));
+			logger.log(Level.FINE, LogPrefix + "updateUninstallString: done.");
+		} else {
+			logger.log(Level.FINE, LogPrefix + "updateUninstallString: \"main\" java was not used for this installation, exiting.");
 		}
 	}
 

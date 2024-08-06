@@ -19,10 +19,14 @@ https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5<br/>
 
 - X3-293749: Migration of Syracuse, MongoDb to IzPack 5
 
-- X3-309977:  mongo-java-driver-3.12.5.jar to support MongoDb 7.0 (previous: mongo-java-driver-3.4.2.jar)
-Add driver mongodb-driver-core-5.1.0.jar. 
+- X3-309977:  mongo-java-driver-3.12.5.jar to support MongoDb 7.0 (previous: mongo-java-driver-3.4.2.jar) <br>
+Add driver mongodb-driver-core-5.1.0.jar. <br>
 Source: https://repo.maven.apache.org/maven2/org/mongodb/mongodb-driver-core/5.1.0/
 
+- X3-293668: Migration of installers to IZPack 5 <br>
+  Changes made during migration: https://confluence.sage.com/display/CLX3IZPACK/Changes+made+during+migration
+
+<br>
 
 ## Version 5.2.1.0: 2024-05
 

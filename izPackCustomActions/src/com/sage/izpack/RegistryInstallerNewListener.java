@@ -42,9 +42,6 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks start");
 		super.afterPacks(packs, listener);
 
-		updateRegistry();
-
-
 		// Fix the bug when un-installing a product, sometimes, the Registry
 		// is not cleaned and on old file .installationinformation from a former setup
 		// can disturb the process. (Ex: X3-237732)
@@ -56,66 +53,6 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		}
 
 		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks end");
-	}
-
-	/*
-	 * While we update the Console, for ex from the previous 2.49 to 2.50,
-	 * Sometimes, the version in registry key is not updated.
-	 * Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\
-	 * Uninstall\Sage X3 Management Console\DisplayVersion
-	 */
-	private void updateRegistry() {
-
-		InstallationInformationHelper.restoreNewVersion(getInstallData());
-		Variables variables = getInstallData().getVariables();
-		String version = variables.get("app-version");
-		if (version == null)
-			version = variables.get("APP_VER");
-		String appName = variables.get("APP_NAME");
-		// String keyName = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + appName;
-		String publisher = variables.get("publisher");
-
-		String keyName = RegistryHandler.UNINSTALL_ROOT + appName;
-
-		logger.log(Level.FINE, LogPrefix + "updateRegistry   Updating DisplayVersion, Registry path " + keyName
-				+ " key: " + "DisplayVersion: " + version + " Publisher:" + publisher);
-
-		RegistryHandler myHandlerInstance = myhandler.getInstance();
-		try {
-			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
-			myHandlerInstance.setUninstallName("");
-			myHandlerInstance.setUninstallName(appName);
-
-			if (myHandlerInstance.keyExist(keyName)) {
-				updateEntry(myHandlerInstance, keyName, "DisplayVersion", version);
-				updateEntry(myHandlerInstance, keyName, "Publisher", publisher);
-			}
-		} catch (NativeLibException e) {
-			e.printStackTrace();
-			logger.log(Level.WARNING, LogPrefix + "updateRegistry   Error while update registry path " + keyName
-					+ " Key: DisplayVersion, value: " + version);
-		}
-	}
-
-	private void updateEntry(RegistryHandler myHandlerInstance, String keyName, String entryName, String entryValue)
-			throws NativeLibException {
-
-		if (!myHandlerInstance.valueExist(keyName, entryName)) { // "Publisher"
-			myHandlerInstance.setValue(keyName, entryName, entryValue);
-			logger.log(Level.FINE, LogPrefix + "updateRegistry " + entryName + " created, Registry path " + keyName
-					+ " key: " + entryName + " value: " + entryValue);
-		} else {
-			RegDataContainer contPublisher = myHandlerInstance.getValue(keyName, entryName);
-			if (contPublisher != null) {
-				String publisherVal = contPublisher.getStringData();
-				if (publisherVal != null && entryValue != null && !publisherVal.equals(entryValue)) {
-					myHandlerInstance.setValue(keyName, entryName, entryValue);
-
-					logger.log(Level.FINE, LogPrefix + "updateRegistry   Publisher updated, Registry path " + keyName
-							+ " key: " + entryName + " value: " + entryValue);
-				}
-			}
-		}
 	}
 
 	/*
@@ -136,14 +73,6 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 				logger.log(Level.FINE, "File " + installInformationFileName + " deleted.");
 			}
 		}
-	}
-
-	@Override
-	protected String getUninstallName() {
-		Variables variables = getInstallData().getVariables();
-		// We had to override this method to remove APP_VER
-		// return variables.get("APP_NAME") + " " + variables.get("APP_VER");
-		return variables.get("APP_NAME");
 	}
 
 }

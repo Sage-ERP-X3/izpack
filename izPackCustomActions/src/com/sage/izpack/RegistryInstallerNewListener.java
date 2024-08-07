@@ -75,4 +75,11 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		}
 	}
 
+	@Override
+	protected String getUninstallName() {
+		Variables variables = getInstallData().getVariables();
+		// We had to override this method to remove APP_VER
+		// return variables.get("APP_NAME") + " " + variables.get("APP_VER");
+		return variables.get("APP_NAME");
+	}
 }

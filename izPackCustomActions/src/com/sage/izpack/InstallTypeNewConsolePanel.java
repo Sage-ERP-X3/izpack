@@ -32,6 +32,7 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 	private final PromptUIHandler handler;
 	private RegistryHelper registryHelper;
 	private RegistryHandler registryHandler;
+	private InstallData installData;
 
 	public InstallTypeNewConsolePanel(RegistryDefaultHandler handler, InstallData installData, Resources resources,
 			Prompt prompt, PanelView<ConsolePanel> panel) {
@@ -45,7 +46,7 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 
 	@Override
 	public boolean run(InstallData installData, Properties p) {
-
+		this.installData = installData;
 		String strType = p.getProperty(InstallData.MODIFY_INSTALLATION.toUpperCase()).trim();
 		if (strType == null || "".equals(strType)) {
 			strType = p.getProperty(InstallData.MODIFY_INSTALLATION.toLowerCase()).trim();
@@ -159,8 +160,9 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 	}
 
 	@Override
-	public void createInstallationRecord(IXMLElement arg0) {
+	public void createInstallationRecord(IXMLElement panelRoot) {
 
+		new InstallTypeNewPanelAutomation(resources).createInstallationRecord(installData, panelRoot);
 		logger.log(Level.FINE, "InstallTypeNewConsolePanel createInstallationRecord.");
 
 	}

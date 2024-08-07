@@ -5,11 +5,18 @@ import com.izforge.izpack.api.adaptator.impl.XMLElementImpl;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Overrides;
 import com.izforge.izpack.api.exception.InstallerException;
+import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.installer.automation.PanelAutomation;
 
 public class InstallTypeNewPanelAutomation implements PanelAutomation {
 
 	private static final String INSTALLPATH = "installpath";
+	private final Resources resources;
+
+	public InstallTypeNewPanelAutomation(Resources resources) {
+		super();
+		this.resources = resources;
+	}
 
 	@Override
 	public void createInstallationRecord(InstallData installData, IXMLElement panelRoot) {
@@ -39,7 +46,6 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 
 	@Override
 	public void runAutomated(InstallData installData, IXMLElement panelRoot) throws InstallerException {
-
 		// part of MODIFY_INSTALLATION
 		ModifyInstallationUtil.set(installData, ModifyInstallationUtil.get(panelRoot));
 		// part of target path
@@ -50,16 +56,21 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 		try {
 			installpath = ipath2.getContent().trim();
 			installData.setInstallPath(installpath);
-
-			System.out.println();
-			System.out.println(ResourcesHelper.getCustomPropString("TargetPanel.summaryCaption"));
-			System.out.println(installpath);
-			System.out.println();
-
 		} catch (Exception ex) {
 			// assume a normal install
 			throw new InstallerException(ex.getLocalizedMessage());
 		}
+
+		if (!InstallationInformationHelper.hasAlreadyReadInformation(installData)) {
+			InstallationInformationHelper.readInformation(installData, resources);
+			// In case readInformation changes updatemode
+			ModifyInstallationUtil.set(installData, ModifyInstallationUtil.get(panelRoot));
+		}
+
+		System.out.println();
+		System.out.println(resources.getString("TargetPanel.summaryCaption"));
+		System.out.println(installpath);
+		System.out.println();
 
 	}
 

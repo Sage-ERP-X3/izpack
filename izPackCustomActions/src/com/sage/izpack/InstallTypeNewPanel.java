@@ -253,7 +253,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 	 */
 	@Override
 	public void createInstallationRecord(IXMLElement panelRoot) {
-		new InstallTypeNewPanelAutomation().createInstallationRecord(installData, panelRoot);
+		new InstallTypeNewPanelAutomation(getResources()).createInstallationRecord(installData, panelRoot);
 	}
 
 	/*

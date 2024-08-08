@@ -105,11 +105,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 	}
 
 	private static String getTargetPanelDir(InstallData installData) {
-		Platform platform = installData.getPlatform();
-		String path = null;
-		if (platform.getSymbolicName() != null) {
-			path = installData.getVariable(TARGET_PANEL_DIR_PREFIX + platform.getSymbolicName().toLowerCase());
-		}
+		String path = installData.getVariable(TARGET_PANEL_DIR_PREFIX + (OsVersion.IS_WINDOWS ? "windows" : "unix"));
 		if (path == null) {
 			path = installData.getVariable(TARGET_PANEL_DIR);
 		}

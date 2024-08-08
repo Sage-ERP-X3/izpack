@@ -112,7 +112,10 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		if (path == null || path.isBlank()) {
 			path = installData.getVariable(TARGET_PANEL_DIR);
 		}
-		return path != null && !path.isBlank() ? path : null;
+		if (path != null && path.isBlank()) {
+			path = null;
+		}
+		return path;
 	}
 
 	/*

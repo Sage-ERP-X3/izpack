@@ -19,12 +19,15 @@ import com.izforge.izpack.installer.gui.InstallerFrame;
 import com.izforge.izpack.panels.checkedhello.CheckedHelloPanel;
 import com.izforge.izpack.panels.checkedhello.RegistryHelper;
 import com.izforge.izpack.util.OsVersion;
+import com.izforge.izpack.util.Platform;
 
 /*
 * @author Franck DEPOORTERE
 */
 public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
+	public static final String TARGET_PANEL_DIR = "TargetPanel.dir";
+	private static final String TARGET_PANEL_DIR_PREFIX = TARGET_PANEL_DIR + ".";
 	private static Logger logger = Logger.getLogger(CheckedHelloNewPanel.class.getName());
 	private static final String logPrefix = "CheckedHelloNewPanel - ";
 
@@ -93,9 +96,23 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 
 			installData.setVariable(InstallData.INSTALL_PATH, path);
 			logger.log(Level.FINE, logPrefix + "Set INSTALL_PATH: " + path);
+		} else { // fresh installation
+			installData.setVariable(InstallData.INSTALL_PATH, getTargetPanelDir(installData));
 		}
 
 		logger.log(Level.FINE, logPrefix + "InitPath returned path:" + path);
+		return path;
+	}
+
+	private static String getTargetPanelDir(InstallData installData) {
+		Platform platform = installData.getPlatform();
+		String path = null;
+		if (platform.getSymbolicName() != null) {
+			path = installData.getVariable(TARGET_PANEL_DIR_PREFIX + platform.getSymbolicName().toLowerCase());
+		}
+		if (path == null) {
+			path = installData.getVariable(TARGET_PANEL_DIR);
+		}
 		return path;
 	}
 

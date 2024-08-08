@@ -68,7 +68,6 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 		}
 
 		System.out.println();
-		System.out.println(resources.getString("TargetPanel.summaryCaption"));
 		System.out.println(installpath);
 		System.out.println();
 

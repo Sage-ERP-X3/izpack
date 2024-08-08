@@ -97,7 +97,10 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 			installData.setVariable(InstallData.INSTALL_PATH, path);
 			logger.log(Level.FINE, logPrefix + "Set INSTALL_PATH: " + path);
 		} else { // fresh installation
-			installData.setVariable(InstallData.INSTALL_PATH, getTargetPanelDir(installData));
+			path = getTargetPanelDir(installData);
+			if (path != null) {
+				installData.setVariable(InstallData.INSTALL_PATH, path);
+			}
 		}
 
 		logger.log(Level.FINE, logPrefix + "InitPath returned path:" + path);
@@ -109,7 +112,7 @@ public class CheckedHelloNewPanel extends CheckedHelloPanel {
 		if (path == null || path.isBlank()) {
 			path = installData.getVariable(TARGET_PANEL_DIR);
 		}
-		return path;
+		return path != null && !path.isBlank() ? path : null;
 	}
 
 	/*

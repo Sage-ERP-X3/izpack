@@ -41,12 +41,12 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 		this.registryHandler = handler != null ? handler.getInstance() : null;
 		this.resources = resources;
 		this.handler = new PromptUIHandler(prompt);
+		this.installData = installData;
 		logger.log(Level.FINE, "InstallTypeNewConsolePanel instance.");
 	}
 
 	@Override
 	public boolean run(InstallData installData, Properties p) {
-		this.installData = installData;
 		String strType = p.getProperty(InstallData.MODIFY_INSTALLATION.toUpperCase()).trim();
 		if (strType == null || "".equals(strType)) {
 			strType = p.getProperty(InstallData.MODIFY_INSTALLATION.toLowerCase()).trim();

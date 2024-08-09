@@ -162,7 +162,7 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 	@Override
 	public void createInstallationRecord(IXMLElement panelRoot) {
 
-		new InstallTypeNewPanelAutomation(resources).createInstallationRecord(installData, panelRoot);
+		new InstallTypeNewPanelAutomation().createInstallationRecord(installData, panelRoot);
 		logger.log(Level.FINE, "InstallTypeNewConsolePanel createInstallationRecord.");
 
 	}

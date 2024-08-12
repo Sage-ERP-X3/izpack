@@ -5,18 +5,16 @@ import com.izforge.izpack.api.adaptator.impl.XMLElementImpl;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Overrides;
 import com.izforge.izpack.api.exception.InstallerException;
-import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.installer.automation.PanelAutomation;
+
+import java.util.Optional;
 
 public class InstallTypeNewPanelAutomation implements PanelAutomation {
 
 	private static final String INSTALLPATH = "installpath";
-	private final Resources resources;
-
-	public InstallTypeNewPanelAutomation(Resources resources) {
-		super();
-		this.resources = resources;
-	}
+	private static final String COMPONENT_NODE_NAME = "component.node.name";
+	private static final String COMPONENT_NODE_TYPE = "component.node.type";
+	private static final String NEED_SERVICE_CONFIGURATION_FIX = "need-service-configuration-fix";
 
 	@Override
 	public void createInstallationRecord(InstallData installData, IXMLElement panelRoot) {
@@ -24,7 +22,8 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 		IXMLElement ipath = new XMLElementImpl(InstallData.MODIFY_INSTALLATION, panelRoot);
 		// check this writes even if value is the default,
 		// because without the constructor, default does not get set.
-		ipath.setContent(ModifyInstallationUtil.get(installData).toString());
+		Boolean isModify = Optional.of(ModifyInstallationUtil.get(installData)).orElse(Boolean.FALSE);
+		ipath.setContent(isModify.toString());
 
 		IXMLElement prev = panelRoot.getFirstChildNamed(InstallData.MODIFY_INSTALLATION);
 		if (prev != null) {
@@ -42,12 +41,45 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 		}
 		panelRoot.addChild(ipath2);
 
+		/**
+		 * component.node.(name|type) are not being set properly during unattended upgrade.
+		 * this is a workaround, since they are working properly in gui and console and you
+		 * can only generate auto-install.xml in those modes, we save those variables to be
+		 * used in unattended mode - where they are not being read.
+		 */
+		boolean isSpecialBehavior = Boolean.parseBoolean(installData.getVariable(NEED_SERVICE_CONFIGURATION_FIX));
+		// installer needs to declare special variable to enable this behavior
+		if (!isModify || !isSpecialBehavior) {
+		    // we only need this on upgrade, on fresh install there is a panel that has this data
+			return;
+		}
+		String componentName = installData.getVariable(COMPONENT_NODE_NAME);
+		if (componentName != null && !componentName.isBlank()) { // installer might not declare/use this var
+			IXMLElement prevName = panelRoot.getFirstChildNamed(COMPONENT_NODE_NAME);
+			if (prevName != null) {
+				panelRoot.removeChild(prevName);
+			}
+			IXMLElement nodeName = new XMLElementImpl(COMPONENT_NODE_NAME, panelRoot);
+			nodeName.setContent(componentName);
+			panelRoot.addChild(nodeName);
+		}
+		String componentType = installData.getVariable(COMPONENT_NODE_TYPE);
+		if (componentType != null && !componentType.isBlank()) { // installer might not declare/use this var
+			IXMLElement prevType = panelRoot.getFirstChildNamed(COMPONENT_NODE_TYPE);
+			if (prevType != null) {
+				panelRoot.removeChild(prevType);
+			}
+			IXMLElement nodeType = new XMLElementImpl(COMPONENT_NODE_TYPE, panelRoot);
+			nodeType.setContent(componentType);
+			panelRoot.addChild(nodeType);
+		}
 	}
 
 	@Override
 	public void runAutomated(InstallData installData, IXMLElement panelRoot) throws InstallerException {
+		boolean isModify = ModifyInstallationUtil.get(panelRoot);
 		// part of MODIFY_INSTALLATION
-		ModifyInstallationUtil.set(installData, ModifyInstallationUtil.get(panelRoot));
+		ModifyInstallationUtil.set(installData, isModify);
 		// part of target path
 		IXMLElement ipath2 = panelRoot.getFirstChildNamed(INSTALLPATH);
 
@@ -60,17 +92,21 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 			// assume a normal install
 			throw new InstallerException(ex.getLocalizedMessage());
 		}
-
-		if (!InstallationInformationHelper.hasAlreadyReadInformation(installData)) {
-			InstallationInformationHelper.readInformation(installData, resources);
-			// In case readInformation changes updatemode
-			ModifyInstallationUtil.set(installData, ModifyInstallationUtil.get(panelRoot));
-		}
-
 		System.out.println();
 		System.out.println(installpath);
 		System.out.println();
 
+		boolean isSpecialBehavior = Boolean.parseBoolean(installData.getVariable(NEED_SERVICE_CONFIGURATION_FIX));
+		if (isSpecialBehavior && isModify) {
+			IXMLElement nodeName = panelRoot.getFirstChildNamed(COMPONENT_NODE_NAME);
+			if (nodeName != null && nodeName.getContent() != null) {
+				installData.setVariable(COMPONENT_NODE_NAME, nodeName.getContent().trim());
+			}
+			IXMLElement nodeType = panelRoot.getFirstChildNamed(COMPONENT_NODE_TYPE);
+			if (nodeType != null && nodeType.getContent() != null) {
+				installData.setVariable(COMPONENT_NODE_TYPE, nodeType.getContent().trim());
+			}
+		}
 	}
 
 	@Override
@@ -85,6 +121,18 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 		String installpath = overrides.fetch(INSTALLPATH);
 		if (installpath != null) {
 			installData.setVariable(INSTALLPATH, installpath.trim());
+		}
+
+		boolean isSpecialBehavior = Boolean.parseBoolean(installData.getVariable(NEED_SERVICE_CONFIGURATION_FIX));
+		if (isSpecialBehavior && Boolean.parseBoolean(modifyInstallation)) {
+			String nodeName = overrides.fetch(COMPONENT_NODE_NAME);
+			if (nodeName != null) {
+				installData.setVariable(COMPONENT_NODE_NAME, nodeName.trim());
+			}
+			String nodeType = overrides.fetch(COMPONENT_NODE_TYPE);
+			if (nodeType != null) {
+				installData.setVariable(COMPONENT_NODE_TYPE, nodeType.trim());
+			}
 		}
 	}
 

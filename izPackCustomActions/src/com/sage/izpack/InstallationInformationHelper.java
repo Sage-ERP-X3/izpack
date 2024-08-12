@@ -281,10 +281,12 @@ public final class InstallationInformationHelper {
 
 					DynamicVariable dynVar = getDynamicVariable(dynamicVariables, (String) key);
 
-					if ((dynVar != null && !dynVar.isCheckonce()) || envvariables.isBlockedVariableName((String) key)
+					if (dynVar == null
+					        || dynVar.isCheckonce()
+						    || envvariables.isBlockedVariableName((String) key)
 							|| envvariables.containsOverride((String) key)
 							|| VariablesExceptions.contains((String) key)) {
-						installData.setVariable((String) key + "-old", (String) variables.get(key));
+						installData.setVariable(key + "-old", (String) variables.get(key));
 						logger.log(Level.FINE, logPrefix + "Skip variable : " + key + ": " + variables.get(key));
 					} else {
 						installData.setVariable((String) key, (String) variables.get(key));
@@ -426,9 +428,12 @@ public final class InstallationInformationHelper {
 	private static void readVariables(com.izforge.izpack.api.data.InstallData installData, String logHeader,
 			Variables envvariables, List<DynamicVariable> dynamicVariables, Properties variables, Object key) {
 		DynamicVariable dynVariable = getDynamicVariable(dynamicVariables, (String) key);
-		if (((dynVariable != null && !dynVariable.isCheckonce())) || envvariables.isBlockedVariableName((String) key)
-				|| envvariables.containsOverride((String) key) || VariablesExceptions.contains((String) key)) {
-			installData.setVariable((String) key + "-old", (String) variables.get(key));
+		if (dynVariable == null
+			    || dynVariable.isCheckonce()
+			    || envvariables.isBlockedVariableName((String) key)
+				|| envvariables.containsOverride((String) key)
+			    || VariablesExceptions.contains((String) key)) {
+			installData.setVariable(key + "-old", (String) variables.get(key));
 			logger.log(Level.FINE, logHeader + "Skip variable : " + key + ": " + variables.get(key));
 		} else {
 			installData.setVariable((String) key, (String) variables.get(key));

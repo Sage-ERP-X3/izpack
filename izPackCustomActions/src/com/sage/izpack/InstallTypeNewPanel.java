@@ -218,6 +218,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 
 	}
 
+	@Override
 	public boolean isValidated() {
 		// we must ensure .installinformation is present if in modification mode
 		// then set install_path
@@ -253,7 +254,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 	 */
 	@Override
 	public void createInstallationRecord(IXMLElement panelRoot) {
-		new InstallTypeNewPanelAutomation().createInstallationRecord(installData, panelRoot);
+		new InstallTypeNewPanelAutomation().createInstallationRecord(this.installData, panelRoot);
 	}
 
 	/*

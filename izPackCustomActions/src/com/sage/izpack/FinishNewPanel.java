@@ -66,7 +66,7 @@ public class FinishNewPanel extends FinishPanel {
 
 		boolean result = true;
 		// X3-256055: Uninstaller (izpack 5.2)
-		boolean wasIzPack4 = InstallationInformationHelper.wasLegacyIzpackInfo();
+		boolean wasIzPack4 = InstallationInformationHelper.isLegacyIzpackInfo();
 		installData.setVariable("force-generate-uninstaller", String.valueOf(wasIzPack4));
 		boolean uninstallRequired = this.uninstallDataWriter.isUninstallRequired();
 		logger.log(Level.FINE, logPrefix + "writeUninstallData. uninstallRequired:" + uninstallRequired);

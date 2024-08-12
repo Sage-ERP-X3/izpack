@@ -44,7 +44,6 @@ import com.izforge.izpack.util.CleanupClient;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.helper.SpecHelper;
 import com.izforge.izpack.api.adaptator.IXMLElement;
-import com.izforge.izpack.api.data.InstallData;
 
 /*
  * Manage XML file adxinstalls.xml
@@ -54,25 +53,22 @@ import com.izforge.izpack.api.data.InstallData;
 public class AdxCompInstallerListener extends AbstractInstallerListener implements CleanupClient {
 
 	private static final Logger logger = Logger.getLogger(AdxCompInstallerListener.class.getName());
-	private static String LogPrefix = "AdxCompInstallerListener - ";
+	private static final String LogPrefix = "AdxCompInstallerListener - ";
 
 	private static final String SPEC_FILE_NAME = "AdxCompSpec.xml";
 
 	private SpecHelper specHelper = null;
-	private Resources resources = null;
-	private VariableSubstitutor variableSubstitutor;
+	private Resources resources;
 
 	private final com.izforge.izpack.api.data.InstallData installData;
 	private final com.izforge.izpack.installer.data.UninstallData uninstallData;
 	private final RegistryHandler registryHandler;
 
 	public AdxCompInstallerListener(com.izforge.izpack.api.data.InstallData installData, UninstallData uninstallData,
-			VariableSubstitutor variableSubstitutor, Resources resources, RegistryDefaultHandler handler) {
-
+			Resources resources, RegistryDefaultHandler handler) {
 		super();
 		this.installData = installData;
 		this.uninstallData = uninstallData;
-		this.variableSubstitutor = variableSubstitutor;
 		this.resources = resources;
 		this.registryHandler = handler.getInstance();
 	}
@@ -97,7 +93,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		if (this.installData.getInfo().isReadInstallationInformation()) {
 
 			if (!InstallationInformationHelper.hasAlreadyReadInformation(this.installData))
-				InstallationInformationHelper.readInformation(this.installData, this.resources);
+				InstallationInformationHelper.readInformation(this.installData);
 			else
 				logger.log(Level.FINE,
 						LogPrefix + "beforePacks  ReadInstallationInformation: "
@@ -189,7 +185,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	}
 
 	private void addDataToUninstaller(Transformer transformer, AdxCompHelper adxCompHelper, Element module)
-			throws FileNotFoundException, NativeLibException, IOException, Exception {
+			throws Exception {
 		// Add "AdxCompSpec.xml" within uninstaller, to fetch module name while
 		// uninstalling
 		// idata.uninstallOutJar.putNextEntry(new ZipEntry(SPEC_FILE_NAME));

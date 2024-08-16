@@ -267,7 +267,7 @@ public class RegistryHandlerX3 {
 			XPath xPath = XPathFactory.newInstance().newXPath();
 			String expression = "//module[@family='" + strComponentFamily + "'";
 
-			if (strComponentType != null)
+			if (strComponentType != null && !strComponentType.isBlank())
 				expression += " and @type='" + strComponentType + "'";
 
 			expression += "]";

@@ -108,6 +108,14 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 		}
 	}
 
+	@Override
+	public void createInstallationRecord(IXMLElement panelRoot) {
+
+		new InstallTypeNewPanelAutomation().createInstallationRecord(this.installData, panelRoot);
+		logger.log(Level.FINE, "InstallTypeNewConsolePanel createInstallationRecord.");
+
+	}
+
 	private boolean chooseComponent(InstallData installData, com.izforge.izpack.util.Console console) {
 		try {
 			ResourcesHelper resourcesHelper = new ResourcesHelper(installData, this.resources);
@@ -140,11 +148,11 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 						installPath = product[1];
 						installData.setInstallPath(installPath);
 						logger.log(Level.FINE, "User selected id " + j + " key: " + key + " value: "
-								+ Arrays.toString(product) + " installPath:" + installPath);
+							+ Arrays.toString(product) + " installPath:" + installPath);
 					} else {
 
 						logger.log(Level.SEVERE, "Cannot get InstallPath -  User selected id " + j + " key: " + key
-								+ " value: " + Arrays.toString(product) + " installPath:" + installPath);
+							+ " value: " + Arrays.toString(product) + " installPath:" + installPath);
 						return false;
 					}
 					return true;
@@ -157,14 +165,6 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 		}
 
 		return false;
-	}
-
-	@Override
-	public void createInstallationRecord(IXMLElement panelRoot) {
-
-		new InstallTypeNewPanelAutomation().createInstallationRecord(installData, panelRoot);
-		logger.log(Level.FINE, "InstallTypeNewConsolePanel createInstallationRecord.");
-
 	}
 
 	@Override

@@ -7,14 +7,13 @@ import com.izforge.izpack.api.data.Overrides;
 import com.izforge.izpack.api.exception.InstallerException;
 import com.izforge.izpack.installer.automation.PanelAutomation;
 
-import java.util.Optional;
 
 public class InstallTypeNewPanelAutomation implements PanelAutomation {
 
 	private static final String INSTALLPATH = "installpath";
-	private static final String COMPONENT_NODE_NAME = "component.node.name";
-	private static final String COMPONENT_NODE_TYPE = "component.node.type";
-	private static final String NEED_SERVICE_CONFIGURATION_FIX = "need-service-configuration-fix";
+	public static final String COMPONENT_NODE_NAME = "component.node.name";
+	public static final String COMPONENT_NODE_TYPE = "component.node.type";
+	public static final String NEED_SERVICE_CONFIGURATION_FIX = "need-service-configuration-fix";
 
 	@Override
 	public void createInstallationRecord(InstallData installData, IXMLElement panelRoot) {
@@ -22,7 +21,7 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 		IXMLElement ipath = new XMLElementImpl(InstallData.MODIFY_INSTALLATION, panelRoot);
 		// check this writes even if value is the default,
 		// because without the constructor, default does not get set.
-		Boolean isModify = Optional.of(ModifyInstallationUtil.get(installData)).orElse(Boolean.FALSE);
+		Boolean isModify = ModifyInstallationUtil.get(installData);
 		ipath.setContent(isModify.toString());
 
 		IXMLElement prev = panelRoot.getFirstChildNamed(InstallData.MODIFY_INSTALLATION);
@@ -41,7 +40,7 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 		}
 		panelRoot.addChild(ipath2);
 
-		/**
+		/*
 		 * component.node.(name|type) are not being set properly during unattended upgrade.
 		 * this is a workaround, since they are working properly in gui and console and you
 		 * can only generate auto-install.xml in those modes, we save those variables to be
@@ -53,6 +52,7 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 		    // we only need this on upgrade, on fresh install there is a panel that has this data
 			return;
 		}
+		PacksNewPanelAutomationHelper.readInstallationInformation(installData);
 		String componentName = installData.getVariable(COMPONENT_NODE_NAME);
 		if (componentName != null && !componentName.isBlank()) { // installer might not declare/use this var
 			IXMLElement prevName = panelRoot.getFirstChildNamed(COMPONENT_NODE_NAME);
@@ -83,7 +83,7 @@ public class InstallTypeNewPanelAutomation implements PanelAutomation {
 		// part of target path
 		IXMLElement ipath2 = panelRoot.getFirstChildNamed(INSTALLPATH);
 
-		String installpath = null;
+		String installpath;
 
 		try {
 			installpath = ipath2.getContent().trim();

@@ -19,7 +19,6 @@ import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.data.Panel;
 import com.izforge.izpack.api.factory.ObjectFactory;
 import com.izforge.izpack.api.resource.Resources;
-import com.izforge.izpack.api.rules.RulesEngine;
 import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.installer.gui.InstallerFrame;
 import com.izforge.izpack.panels.packs.PacksModel;
@@ -33,30 +32,11 @@ public class PacksNewPanel extends PacksPanel {
 	private static final long serialVersionUID = 2809544763635023846L;
 
 	private static final Logger logger = Logger.getLogger(PacksNewPanel.class.getName());
-	private static String prefixLabel = "PacksNewPanel - ";
-
-	/**
-	 * The packs messages.
-	 */
+	private static final String prefixLabel = "PacksNewPanel - ";
 
 	public PacksNewPanel(Panel panel, InstallerFrame frame, GUIInstallData installData, Resources resources,
-			ObjectFactory factory, RulesEngine rules) {
+			ObjectFactory factory) {
 		super(panel, frame, installData, resources, factory);
-		
-		// Update case : read .installationinformation
-		if (installData.getInfo().isReadInstallationInformation()) {
-
-			if (!InstallationInformationHelper.hasAlreadyReadInformation(installData)) {
-				InstallationInformationHelper.readInformation(installData, resources);
-			} else {
-				logger.log(Level.FINE,
-						prefixLabel + "ReadInstallationInformation: "
-								+ installData.getInfo().isReadInstallationInformation() + " AlreadyRead: "
-								+ InstallationInformationHelper.hasAlreadyReadInformation(installData));
-			}
-
-		}
-		
 	}
 
 	/**
@@ -75,18 +55,7 @@ public class PacksNewPanel extends PacksPanel {
 		logger.log(Level.FINE, prefixLabel + "createPacksTable");
 
 		// List<Pack> selectedPacks = new LinkedList<Pack>();
-		for (Pack p : this.installData.getAvailablePacks()) {
-
-			if (p.isRequired()) {
-				// selectedPacks.add(p);
-				p.setHidden(false);
-				p.setPreselected(true);
-			}
-
-			logger.log(Level.FINE, prefixLabel + "createPacksTable - Pack " + p.getName() + " Required: "
-					+ p.isRequired() + " Preselected: " + p.isPreselected());
-		}
-
+		PacksNewPanelAutomationHelper.preselectRequired(this.installData);
 //		this.installData.setSelectedPacks(selectedPacks);
 
 		JTable table = super.createPacksTable(width, scroller, layout, constraints);
@@ -112,6 +81,7 @@ public class PacksNewPanel extends PacksPanel {
 	public void panelActivate() {
 		logger.log(Level.FINE, prefixLabel + "panelActivate");
 
+		PacksNewPanelAutomationHelper.readInstallationInformation(this.installData);
 		if (installData.getSelectedPacks().isEmpty()) {
 			logger.log(Level.FINE, prefixLabel + "panelActivate : getSelectedPacks().isEmpty()");
 

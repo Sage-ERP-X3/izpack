@@ -139,10 +139,10 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 					Platforms.WINDOWS);			
 			data.setInstallPath(installPath);
 			System.out.println(LogPrefix + "Trying to read " + installPath + "\\.installationinformation");
-			InstallationInformationHelper.readInformation(data, resources);
-			unInstallName = data.getVariable("APP_NAME");
+			InstallationInformationHelper.readInformation(data);
+			unInstallName = data.getVariable("UNINSTALL_NAME");
 			if (unInstallName == null)
-				unInstallName = data.getVariable("UNINSTALL_NAME");
+				unInstallName = data.getVariable("APP_NAME");
 			System.out.println(
 					LogPrefix + "unInstallName read from .installationinformation - APP_NAME:" + unInstallName);
 			if (unInstallName == null) {

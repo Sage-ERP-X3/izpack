@@ -26,16 +26,13 @@ import com.izforge.izpack.util.Housekeeper;
  */
 public class RegistryInstallerNewListener extends com.izforge.izpack.event.RegistryInstallerListener {
 
-	private static Logger logger = Logger.getLogger(RegistryInstallerNewListener.class.getName());
-	private final RegistryDefaultHandler myhandler;
-	private static final String LogPrefix = "RegistryInstallerNewListener - ";
+	private static final Logger logger = Logger.getLogger(RegistryInstallerNewListener.class.getName());
 
-	public RegistryInstallerNewListener(IUnpacker unpacker, VariableSubstitutor substitutor, InstallData installData,
+    public RegistryInstallerNewListener(IUnpacker unpacker, VariableSubstitutor substitutor, InstallData installData,
 			UninstallData uninstallData, Resources resources, RulesEngine rules, Housekeeper housekeeper,
 			RegistryDefaultHandler handler) {
 		super(unpacker, substitutor, installData, uninstallData, resources, rules, housekeeper, handler);
-		myhandler = handler;
-	}
+    }
 
 	@Override
 	public void afterPacks(List<Pack> packs, ProgressListener listener) {
@@ -69,7 +66,8 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 			String installInformationFileName = installDir + File.separator + InstallData.INSTALLATION_INFORMATION;
 			File installationInfo = new File(installInformationFileName);
 			if (installationInfo.exists()) {
-				installationInfo.delete();
+                //noinspection ResultOfMethodCallIgnored
+                installationInfo.delete();
 				logger.log(Level.FINE, "File " + installInformationFileName + " deleted.");
 			}
 		}

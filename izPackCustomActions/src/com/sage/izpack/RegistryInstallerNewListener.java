@@ -19,6 +19,7 @@ import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.installer.data.UninstallData;
 import com.izforge.izpack.installer.unpacker.IUnpacker;
 import com.izforge.izpack.util.Housekeeper;
+import com.izforge.izpack.util.IoHelper;
 
 /*
  * 
@@ -92,7 +93,8 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		if (appName == null || appName.isBlank()) {
 			appName = variables.get("APP_NAME");
 		}
-		// String keyName = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + appName;
+		String uninstallerPath = getInstallData().getInstallPath() + File.separator + "Uninstaller" + File.separator + "uninstaller.jar";
+		String uninstallString = "\"" + getInstallData().getVariable("JAVA_HOME") + "\\bin\\javaw.exe\" -jar \"" + uninstallerPath + "\"";
 		String publisher = variables.get("Publisher");
 
 		String keyName = RegistryHandler.UNINSTALL_ROOT + appName;
@@ -106,6 +108,7 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 			if (myHandlerInstance.keyExist(keyName)) {
 				updateEntry(myHandlerInstance, keyName, "DisplayVersion", version);
 				updateEntry(myHandlerInstance, keyName, "Publisher", publisher);
+				updateEntry(myHandlerInstance, keyName, "UninstallString", uninstallString);
 			}
 		} catch (NativeLibException e) {
 			e.printStackTrace();

@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Pack;
@@ -183,10 +184,14 @@ public final class InstallationInformationHelper {
         try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(installInfo))) {
             // noinspection unchecked
             List<com.izforge.izpack.api.data.Pack> packsinstalled = (List<com.izforge.izpack.api.data.Pack>) oin.readObject();
-            Set<Pack> selectedPacks = new HashSet<>(installData.getSelectedPacks());
-            selectedPacks.addAll(packsinstalled);
-            installData.setSelectedPacks(new ArrayList<>(selectedPacks));
             logger.log(Level.FINE, logPrefix + "Found " + packsinstalled.size() + " installed packs");
+
+            List<Pack> selectedPacks = new ArrayList<>(installData.getSelectedPacks());
+            selectedPacks.addAll(installData.getAvailablePacks().stream()
+                        .filter(p->containsPack(p, packsinstalled))
+                        .filter(p->!containsPack(p, installData.getSelectedPacks()))
+                        .collect(Collectors.toList()));
+            installData.setSelectedPacks(selectedPacks);
 
             Properties variables = (Properties) oin.readObject();
             for (Object key : variables.keySet()) {
@@ -199,6 +204,13 @@ public final class InstallationInformationHelper {
             logger.warning(logPrefix + "Could not read Pack installation information in current izPack version: " + e.getMessage());
             return Boolean.FALSE;
         }
+    }
+
+    private static boolean containsPack(Pack p, List<Pack> packs) {
+        Optional<Pack> found = packs.stream()
+            .filter(a -> p.getName().equals(a.getName()))
+            .findFirst();
+        return found.isPresent();
     }
 
     private static boolean loadLegacyInstallationInformation(com.izforge.izpack.api.data.InstallData installData) {
@@ -246,13 +258,14 @@ public final class InstallationInformationHelper {
 
     private static void readLegacyPackages(com.izforge.izpack.api.data.InstallData installData, @SuppressWarnings("rawtypes") ArrayList variables) {
         logger.log(Level.FINE, "readVariables ArrayList objects: " + variables + " : " + variables.getClass().getName());
-        Set<com.izforge.izpack.api.data.Pack> packLists = new HashSet<>(installData.getSelectedPacks());
+        List<com.izforge.izpack.api.data.Pack> packLists = new ArrayList<>(installData.getSelectedPacks());
         for (Object key : variables) {
             logger.log(Level.FINE, "keyType:" + key.getClass().getName());
             if (key instanceof com.izforge.izpack.Pack) {
                 com.izforge.izpack.Pack theFormerPack = (com.izforge.izpack.Pack) key;
                 installData.getAvailablePacks().stream()
                     .filter(p -> p.getName().equals(theFormerPack.name))
+                    .filter(p -> !containsPack(p, installData.getSelectedPacks()))
                     .findFirst()
                     .ifPresent(packLists::add);
             }

@@ -27,18 +27,19 @@ import com.izforge.izpack.util.Housekeeper;
 public class RegistryInstallerNewListener extends com.izforge.izpack.event.RegistryInstallerListener {
 
 	private static final Logger logger = Logger.getLogger(RegistryInstallerNewListener.class.getName());
-
+	private final RegistryDefaultHandler myhandler;
     public RegistryInstallerNewListener(IUnpacker unpacker, VariableSubstitutor substitutor, InstallData installData,
 			UninstallData uninstallData, Resources resources, RulesEngine rules, Housekeeper housekeeper,
 			RegistryDefaultHandler handler) {
 		super(unpacker, substitutor, installData, uninstallData, resources, rules, housekeeper, handler);
-    }
+		this.myhandler = handler;
+	}
 
 	@Override
 	public void afterPacks(List<Pack> packs, ProgressListener listener) {
 		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks start");
 		super.afterPacks(packs, listener);
-
+		updateRegistry();
 		// Fix the bug when un-installing a product, sometimes, the Registry
 		// is not cleaned and on old file .installationinformation from a former setup
 		// can disturb the process. (Ex: X3-237732)
@@ -79,5 +80,51 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		// We had to override this method to remove APP_VER
 		// return variables.get("APP_NAME") + " " + variables.get("APP_VER");
 		return variables.get("APP_NAME");
+	}
+
+	private void updateRegistry() {
+
+		Variables variables = getInstallData().getVariables();
+		String version = variables.get("app-version");
+		if (version == null)
+			version = variables.get("APP_VER");
+		String appName = variables.get("UNINSTALL_NAME");
+		if (appName == null || appName.isBlank()) {
+			appName = variables.get("APP_NAME");
+		}
+		// String keyName = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + appName;
+		String publisher = variables.get("Publisher");
+
+		String keyName = RegistryHandler.UNINSTALL_ROOT + appName;
+
+		RegistryHandler myHandlerInstance = myhandler.getInstance();
+		try {
+			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+			myHandlerInstance.setUninstallName("");
+			myHandlerInstance.setUninstallName(appName);
+
+			if (myHandlerInstance.keyExist(keyName)) {
+				updateEntry(myHandlerInstance, keyName, "DisplayVersion", version);
+				updateEntry(myHandlerInstance, keyName, "Publisher", publisher);
+			}
+		} catch (NativeLibException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void updateEntry(RegistryHandler myHandlerInstance, String keyName, String entryName, String entryValue)
+		throws NativeLibException {
+
+		if (!myHandlerInstance.valueExist(keyName, entryName)) {
+			myHandlerInstance.setValue(keyName, entryName, entryValue);
+		} else {
+			RegDataContainer contVal = myHandlerInstance.getValue(keyName, entryName);
+			if (contVal != null) {
+				String stringVal = contVal.getStringData();
+				if (stringVal != null && entryValue != null && !stringVal.equals(entryValue)) {
+					myHandlerInstance.setValue(keyName, entryName, entryValue);
+				}
+			}
+		}
 	}
 }

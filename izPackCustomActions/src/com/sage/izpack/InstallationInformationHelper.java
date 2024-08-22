@@ -117,18 +117,6 @@ public final class InstallationInformationHelper {
                     logger.warning(logHeader + "Could not read Pack installation information: " + e.getMessage());
                 }
 
-                try {
-                    if (oin != null) {
-                        Properties variables = (Properties) oin.readObject();
-                        for (Object key : variables.keySet()) {
-                            logger.log(Level.FINE, logHeader + "Read variable " + key + ": " + variables.get(key));
-                        }
-                    }
-                } catch (Exception e) {
-                    result = true;
-                    logger.warning(logHeader + "Could not read Properties installation information: " + e.getMessage());
-                }
-
                 // Previous version of izPack 4.3
                 if (result) {
 
@@ -142,22 +130,9 @@ public final class InstallationInformationHelper {
                             logger.log(Level.FINE, logHeader + "installedpack: " + installedpack.name);
                         }
                         logger.log(Level.FINE, logHeader + "Found Legacy " + packsinstalled2.size() + " installed packs");
+                        result = false;
                     } catch (Exception e) {
                         logger.warning(logHeader + "Could not read Legacy 'Pack' installation information: " + e.getMessage());
-                    }
-
-                    try {
-                        if (oin != null) {
-                            Properties variables = (Properties) oin.readObject();
-                            result = false;
-                            for (Object key : variables.keySet()) {
-                                logger.log(Level.FINE, logHeader + "Legacy variable : " + key + ": " + variables.get(key));
-                            }
-                            logger.log(Level.FINE, logHeader + "InstallationInformation legacy read");
-                        }
-                    } catch (Exception e) {
-                        result = true;
-                        logger.warning(logHeader + "Could not read Legacy 'Properties' installation information: " + e.getMessage());
                     }
                 }
             }

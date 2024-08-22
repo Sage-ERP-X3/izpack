@@ -1,5 +1,6 @@
 package com.sage.izpack;
 
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.izforge.izpack.api.data.Panel;
@@ -8,6 +9,7 @@ import com.izforge.izpack.gui.log.Log;
 import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.installer.gui.InstallerFrame;
 import com.izforge.izpack.panels.target.TargetPanel;
+import com.izforge.izpack.panels.target.TargetPanelHelper;
 
 /*
  *  @author Franck DEPOORTERE
@@ -74,6 +76,24 @@ public class TargetNewPanel extends TargetPanel {
 					logPrefix + "saveData path: " + path + "  setVariable  '" + variableName + "': " + variableValue);
 		}
 
+	}
+
+	@Override
+	public boolean isValidated() {
+		boolean result = false;
+		File targetPathFile = new File(installData.getVariables().replace(getPath()));
+		if (InstallationInformationHelper.isIncompatibleInstallation(getPath(), installData.getInfo().isReadInstallationInformation())) {
+			emitError(error, getMessage("incompatibleInstallation"));
+		} else if (targetPathFile.isFile()) {
+			emitError(error, getMessage("isfile"));
+			return false;
+		} else {
+			String path = getPath();
+			path = installData.getVariables().replace(path);
+			installData.setInstallPath(path);
+			result = true;
+		}
+		return result;
 	}
 
 }

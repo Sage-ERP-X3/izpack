@@ -113,23 +113,23 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 	// public void afterPack(Pack pack, Integer i, AbstractUIProgressHandler
 	// handler) throws Exception
 	public void afterPack(Pack pack) throws InstallerException {
-		try {
-			// super.afterPack(pack, i, handler);
-			super.afterPack(pack);
-
-			if (ModifyInstallationUtil.get(getInstallData())) {
-				// fetchAndExcuteResource(pack.id + "_" + AFTER_UPDATE_SCRIPT + "_" + PLATFORM,
-				// getInstallData());
-				fetchAndExecuteResource(pack.getLangPackId() + "_" + AFTER_UPDATE_SCRIPT + "_" + PLATFORM, null,
-						getInstallData());
-			} else {
-				fetchAndExecuteResource(pack.getLangPackId() + "_" + AFTER_INSTALL_SCRIPT + "_" + PLATFORM, null,
-						getInstallData());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InstallerException(e.getMessage());
-		}
+//		try {
+//			// super.afterPack(pack, i, handler);
+//			super.afterPack(pack);
+//
+//			if (ModifyInstallationUtil.get(getInstallData())) {
+//				// fetchAndExcuteResource(pack.id + "_" + AFTER_UPDATE_SCRIPT + "_" + PLATFORM,
+//				// getInstallData());
+//				fetchAndExecuteResource(pack.getLangPackId() + "_" + AFTER_UPDATE_SCRIPT + "_" + PLATFORM, null,
+//						getInstallData());
+//			} else {
+//				fetchAndExecuteResource(pack.getLangPackId() + "_" + AFTER_INSTALL_SCRIPT + "_" + PLATFORM, null,
+//						getInstallData());
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new InstallerException(e.getMessage());
+//		}
 	}
 
 	/*
@@ -163,15 +163,15 @@ public class UpdateListener extends AbstractProgressInstallerListener { // imple
 	// public void beforePack(Pack pack, Integer i, AbstractUIProgressHandler
 	// handler) throws Exception
 	public void beforePack(Pack pack) {
-		try {
-
-			super.beforePack(pack);
-
-			beforePacksCommon();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//
+//			super.beforePack(pack);
+//
+//			beforePacksCommon();
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	private void beforePacksCommon() throws Exception {

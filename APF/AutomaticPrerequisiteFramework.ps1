@@ -1,4 +1,20 @@
 #Requires -RunAsAdministrator
+#Requires -Version 5.1
+<#PSScriptInfo
+
+    .VERSION 1.0
+    .GUID bobfrdep-10a9-481d-a27d-188f4e0e1344
+    .AUTHOR Sage X3 R&D
+    .COMPANYNAME Sage
+    .COPYRIGHT (c) Copyright SAGE 2006-2025. All Rights Reserved.
+    .TAGS MS Windows Linux
+    .EXTERNALMODULEDEPENDENCIES
+    .REQUIREDSCRIPTS 
+    .EXTERNALSCRIPTDEPENDENCIES Powershell-5.1 / PWSH 7.2
+    .RELEASENOTES
+    .PRIVATEDATA
+    .DESCRIPTION 
+#>   
 
 param(
     [Parameter(Mandatory=$false)][string][ValidateSet('adxadmin', 'runtime')]$componentRequirement = 'runtime',

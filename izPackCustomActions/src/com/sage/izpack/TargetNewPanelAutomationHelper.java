@@ -3,8 +3,8 @@ package com.sage.izpack;
 import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Overrides;
-import com.izforge.izpack.panels.target.TargetPanelAutomation;
 import com.izforge.izpack.api.exception.InstallerException;
+import com.izforge.izpack.panels.target.TargetPanelAutomation;
 
 public class TargetNewPanelAutomationHelper extends TargetPanelAutomation {
 

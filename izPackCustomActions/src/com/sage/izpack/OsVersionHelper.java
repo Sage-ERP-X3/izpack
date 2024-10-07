@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 
 import com.izforge.izpack.util.FileUtil;
 import com.izforge.izpack.util.OsVersion;
+import com.izforge.izpack.util.OsVersionConstants;
+import com.izforge.izpack.util.StringConstants;
 import com.izforge.izpack.util.StringTool;
 
 public class OsVersionHelper {
@@ -29,14 +31,14 @@ public class OsVersionHelper {
 	public static final String OS_VERSION = (OsVersion.IS_LINUX) ? getLinuxversion() : System.getProperty(OsVersion.OSVERSION);
 
 	public static float getOsVersionFl() {
-		String version = System.getProperty(OsVersion.OSVERSION);
-		if (OsVersion.IS_LINUX) 
+		String version = System.getProperty(OsVersionConstants.OSVERSION);
+		if (OsVersion.IS_LINUX)
 			version = getLinuxversion();
 	 float result =  Float.parseFloat(version);
 	 logger.log(Level.FINE, "OsVersionHelper getOsVersionFl():" + result);
 	 return result;
 	}
-	
+
     public static final boolean IS_REDHAT_7_MIN = OsVersion.IS_LINUX && OsVersion.IS_REDHAT_LINUX && (getOsVersionFl() >= 7.0);
     public static final boolean IS_REDHAT_8_MIN = OsVersion.IS_LINUX && OsVersion.IS_REDHAT_LINUX && (getOsVersionFl() >= 8.0);
     public static final boolean IS_REDHAT_9_MIN = OsVersion.IS_LINUX && OsVersion.IS_REDHAT_LINUX && (getOsVersionFl() >= 9.0);
@@ -77,7 +79,7 @@ public class OsVersionHelper {
      * MACHINE_ID_REGISTERED = Machine_ID != null
      */
     public static final boolean MACHINE_ID_REGISTERED = OsVersion.IS_LINUX && (MACHINE_ID != null);
-    
+
 	/**
 	 * True if Oracle Linux was detected
 	 */
@@ -94,14 +96,14 @@ public class OsVersionHelper {
      * True if Amazon AMI Linux was detected
      */
     public static final boolean IS_AMI_LINUX = OsVersion.IS_LINUX && fileContains(getReleaseFileName(), AMI);
-	
-    
+
+
 
 	private static Boolean fileContains(String filename, String str) {
-		Boolean result = false;
+		boolean result = false;
 
 		try {
-			List<String> contentList = getFileContent(filename);			
+			List<String> contentList = getFileContent(filename);
 			// return contentList.contains(str);
 			for (String strItem : contentList) {
 	            if (strItem.indexOf(str) >=0 ) {
@@ -119,7 +121,7 @@ public class OsVersionHelper {
 	}
 
 	private static List<String> getFileContent(String fileName) throws IOException {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 
 		File aFile = new File(fileName);
 		if (!aFile.isFile()) {
@@ -166,23 +168,23 @@ public class OsVersionHelper {
 
 
     /*
-     * Samples: 
-     * Red Hat/older CentOS: 
-     * $ cat /etc/redhat-release 
+     * Samples:
+     * Red Hat/older CentOS:
+     * $ cat /etc/redhat-release
      * CentOS release 5.3 (Final)
-     * 
-     * newer CentOS: 
-     * $ cat /etc/centos-release 
+     *
+     * newer CentOS:
+     * $ cat /etc/centos-release
      * CentOS Linux release 7.1.1503 (Core)
-     * 
-     * $ more /etc/lsb-release 
-     * DISTRIB_ID=Ubuntu 
+     *
+     * $ more /etc/lsb-release
+     * DISTRIB_ID=Ubuntu
      * DISTRIB_RELEASE=16.04
-     * DISTRIB_CODENAME=xenial 
+     * DISTRIB_CODENAME=xenial
      * DISTRIB_DESCRIPTION="Ubuntu 16.04.2 LTS"
-     * 
-     * @return version number with the pattern $MAJOR.$MINOR.$SECURITY. 
-     * Ex: "16.04.2", "5.3", "7.1.1503", etc ... 
+     *
+     * @return version number with the pattern $MAJOR.$MINOR.$SECURITY.
+     * Ex: "16.04.2", "5.3", "7.1.1503", etc ...
      */
     private static String getLinuxVersionFromFile(String strReleaseFile) {
         final String regex = "^(?:(\\d+)\\.)?(?:(\\d+)\\.)?(\\*|\\d+)$";
@@ -197,12 +199,12 @@ public class OsVersionHelper {
 
                 String[] strPattern = strline.trim().split(" |=");
 
-                for (int i = 0; i < strPattern.length; i++) {
+                for (String element : strPattern) {
                     // result = Float.valueOf(strPattern[i]).toString();
                     // Improvement to manage version string like $MAJOR.$MINOR.$SECURITY like "16.04.09"
                     // Full match   0-8 `16.04.09`  Group 1.    0-2 `16` Group 2.   3-5 `04` Group 3.   6-8 `09`
-                    if (strPattern[i].matches(regex)) {
-                        result = strPattern[i];
+                    if (element.matches(regex)) {
+                        result = element;
                         break;
                     }
                 }
@@ -218,12 +220,12 @@ public class OsVersionHelper {
 
     private static String _linuxVersion = null;
     private static String getLinuxversion() {
-		
+
     	if (_linuxVersion != null)
 			return _linuxVersion;
 
 		String result = null;
-	
+
         if (OsVersion.IS_SUSE_LINUX) {
             result = getLinuxVersionFromFile("/etc/sles-release");
             if (result == null)
@@ -267,11 +269,11 @@ public class OsVersionHelper {
         } else {
             result = getLinuxVersionFromFile(getReleaseFileName());
         }
-        
+
         logger.log(Level.FINE, "getLinuxversion result: "+ result);
 
         _linuxVersion = result;
-        
+
         return result;
     }
 
@@ -279,7 +281,7 @@ public class OsVersionHelper {
     /**
      * Gets the Details of a Linux Distribution
      *
-     * @return description string of the Linux distribution 
+     * @return description string of the Linux distribution
      * Ex: Red Hat 7.2, SuSE
      *         Linux 15.3
      */
@@ -288,15 +290,15 @@ public class OsVersionHelper {
 
         if (OsVersion.IS_SUSE_LINUX) {
             try {
-                result = OsVersion.SUSE + OsVersion.SP + OsVersion.LINUX + OsVersion.NL
+                result = OsVersionConstants.SUSE + StringConstants.SP + OsVersionConstants.LINUX + StringConstants.NL
                         + StringTool.listToString(getFileContent(getReleaseFileName()));
             } catch (IOException e) {
                 // TODO ignore
             }
         } else if (OsVersion.IS_UBUNTU_LINUX) {
             try {
-                result = OsVersion.UBUNTU + OsVersion.SP + OsVersion.LINUX + OsVersion.NL + getLinuxversion();
-                // NOOK:  java.lang.ArrayIndexOutOfBoundsException: 
+                result = OsVersionConstants.UBUNTU + StringConstants.SP + OsVersionConstants.LINUX + StringConstants.NL + getLinuxversion();
+                // NOOK:  java.lang.ArrayIndexOutOfBoundsException:
                 // result = (String)FileUtil.getFileContent(getReleaseFileName()).get(3);
                 // result = result.split("\"")[1];
             } catch (Exception e) {
@@ -305,45 +307,45 @@ public class OsVersionHelper {
         } else if (OsVersion.IS_REDHAT_LINUX) {
             try {
                 // result = OsVersion.REDHAT + OsVersion.SP + OsVersion.LINUX + OsVersion.NL + StringTool.listToString(getFileContent("/etc/redhat-release"));
-                result = OsVersion.REDHAT + OsVersion.SP + OsVersion.LINUX + OsVersion.NL + StringTool.listToString(getFileContent("/etc/redhat-release"));
+                result = OsVersionConstants.REDHAT + StringConstants.SP + OsVersionConstants.LINUX + StringConstants.NL + StringTool.listToString(getFileContent("/etc/redhat-release"));
             } catch (IOException e) {
                 // TODO ignore
             }
         } else if (IS_CENTOS_LINUX) {
             try {
-                result = CENTOS + OsVersion.SP + OsVersion.LINUX + OsVersion.NL + StringTool.listToString(getFileContent("/etc/centos-release"));
+                result = CENTOS + StringConstants.SP + OsVersionConstants.LINUX + StringConstants.NL + StringTool.listToString(getFileContent("/etc/centos-release"));
             } catch (IOException e) {
                 // TODO ignore
             }
         } else if (IS_ORACLE_LINUX) {
             try {
-                result = ORACLE + OsVersion.SP + OsVersion.LINUX + OsVersion.NL + StringTool.listToString(getFileContent("/etc/oracle-release"));
+                result = ORACLE + StringConstants.SP + OsVersionConstants.LINUX + StringConstants.NL + StringTool.listToString(getFileContent("/etc/oracle-release"));
             } catch (IOException e) {
                 // TODO ignore
             }
         } else if (OsVersion.IS_FEDORA_LINUX) {
             try {
-                result = OsVersion.FEDORA + OsVersion.SP + OsVersion.LINUX + OsVersion.NL + StringTool.listToString(getFileContent(getReleaseFileName()));
+                result = OsVersionConstants.FEDORA + StringConstants.SP + OsVersionConstants.LINUX + StringConstants.NL + StringTool.listToString(getFileContent(getReleaseFileName()));
             } catch (IOException e) {
-                // TODO ignore
+                // Nothing to do
             }
         } else if (OsVersion.IS_MANDRAKE_LINUX) {
             try {
-                result = OsVersion.MANDRAKE + OsVersion.SP + OsVersion.LINUX + OsVersion.NL + StringTool.listToString(getFileContent(getReleaseFileName()));
+                result = OsVersionConstants.MANDRAKE + StringConstants.SP + OsVersionConstants.LINUX + StringConstants.NL + StringTool.listToString(getFileContent(getReleaseFileName()));
             } catch (IOException e) {
-                // TODO ignore
+                // Nothing to do
             }
         } else if (OsVersion.IS_MANDRIVA_LINUX) {
             try {
-                result = OsVersion.MANDRIVA + OsVersion.SP + OsVersion.LINUX + OsVersion.NL + StringTool.listToString(getFileContent(getReleaseFileName()));
+                result = OsVersionConstants.MANDRIVA + StringConstants.SP + OsVersionConstants.LINUX + StringConstants.NL + StringTool.listToString(getFileContent(getReleaseFileName()));
             } catch (IOException e) {
-                // TODO ignore
+                // Nothing to do
             }
         } else if (OsVersion.IS_DEBIAN_LINUX) {
             try {
-                result = OsVersion.DEBIAN + OsVersion.SP + OsVersion.LINUX + OsVersion.NL + StringTool.listToString(getFileContent("/etc/debian_version"));
+                result = OsVersionConstants.DEBIAN + StringConstants.SP + OsVersionConstants.LINUX + StringConstants.NL + StringTool.listToString(getFileContent("/etc/debian_version"));
             } catch (IOException e) {
-                // TODO ignore
+                // Nothing to do
             }
         } else {
             try {
@@ -356,7 +358,7 @@ public class OsVersionHelper {
         logger.log(Level.FINE, "getLinuxDistribution result: "+ result);
         return result;
     }
-    
+
     /**
      * returns a String which contains details of known OSs
      *
@@ -364,14 +366,14 @@ public class OsVersionHelper {
      */
     public static String getOsDetails() {
         StringBuffer result = new StringBuffer();
-        result.append("OS_NAME=").append(OsVersion.OS_NAME).append(OsVersion.NL);
+        result.append("OS_NAME=").append(OsVersion.OS_NAME).append(StringConstants.NL);
 
         if (OsVersion.IS_UNIX) {
             if (OsVersion.IS_LINUX) {
-                result.append(getLinuxDistribution()).append(OsVersion.NL);
+                result.append(getLinuxDistribution()).append(StringConstants.NL);
             } else {
                 try {
-                    result.append(getFileContent(getReleaseFileName())).append(OsVersion.NL);
+                    result.append(getFileContent(getReleaseFileName())).append(StringConstants.NL);
                 } catch (IOException e) {
                 	logger.log(Level.FINE, "Unable to get release file contents in 'getOsDetails'.");
                 }
@@ -379,13 +381,13 @@ public class OsVersionHelper {
         }
 
         if (OsVersion.IS_WINDOWS) {
-            result.append(System.getProperty(OsVersion.OSNAME)).append(OsVersion.SP).append(System.getProperty("sun.os.patch.level", "")).append(OsVersion.NL);
+            result.append(System.getProperty(OsVersionConstants.OSNAME)).append(StringConstants.SP).append(System.getProperty("sun.os.patch.level", "")).append(StringConstants.NL);
         }
         logger.log(Level.FINE, "getOsDetails result: "+ result.toString());
 
         return result.toString();
     }
-    
+
     private static String getLinuxMachineId() {
         String result = null;
 
@@ -395,7 +397,7 @@ public class OsVersionHelper {
             if (!machineIdFile.exists())
                 machineIdFile = new File("/etc/machine-id");
             if (machineIdFile.exists())
-                result = (String) FileUtil.getFileContent(machineIdFile.getAbsolutePath()).get(0);
+                result = FileUtil.getFileContent(machineIdFile.getAbsolutePath()).get(0);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

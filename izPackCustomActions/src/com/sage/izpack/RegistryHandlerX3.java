@@ -1,9 +1,5 @@
 package com.sage.izpack;
 
-import com.izforge.izpack.core.os.RegistryHandler;
-import com.izforge.izpack.core.resource.ResourceManager;
-import com.izforge.izpack.util.OsVersion;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -27,12 +23,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.coi.tools.os.win.MSWinConstants;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.exception.NativeLibException;
+import com.izforge.izpack.core.os.RegistryHandler;
+import com.izforge.izpack.core.resource.ResourceManager;
+import com.izforge.izpack.util.OsVersion;
 
 /**
  * Class Helper about AdxAdmin, Registry, and xml file adxInstall.xml
- * 
+ *
  * @author Franck DEPOORTERE
  */
 public class RegistryHandlerX3 {
@@ -44,7 +44,7 @@ public class RegistryHandlerX3 {
 	public static String ADX_NODE_FAMILY = "component.node.family";
 	private static final String SPEC_FILE_NAME = "productsSpec.txt";
 	private static final String LogPrefix = "RegistryHandlerX3 - ";
-	
+
 	public static final String AdxAdmFileWindows = "c:\\sage\\adxadm";
 	public static final String AdxAdmFileLinux = "/sage/adxadm";
 
@@ -84,7 +84,7 @@ public class RegistryHandlerX3 {
 
 	/**
 	 * Check if AdxAdmin is installed Check the Registry if Windows
-	 * 
+	 *
 	 * @return
 	 * @throws NativeLibException
 	 */
@@ -97,7 +97,7 @@ public class RegistryHandlerX3 {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 * @throws NativeLibException
 	 */
@@ -111,7 +111,7 @@ public class RegistryHandlerX3 {
 	/**
 	 * String keyName64Bits = "SOFTWARE\\Adonix\\X3RUNTIME\\ADXADMIN"; String
 	 * keyName32Bits = "SOFTWARE\\Wow6432Node\\Adonix\\X3RUNTIME\\ADXADMIN";
-	 * 
+	 *
 	 * @return C:\Sage\SafeX3\ADXADMIN
 	 * @throws NativeLibException
 	 */
@@ -130,7 +130,7 @@ public class RegistryHandlerX3 {
 		}
 
 		int oldVal = this.registryHandler.getRoot();
-		this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+		this.registryHandler.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
 		boolean exists64bits = this.registryHandler.keyExist(AdxCompHelper.ADXADMIN_REG_KeyName64Bits);
 		// boolean exists32bits =
 		// this.registryHandler.keyExist(AdxCompHelper.ADXADMIN_REG_KeyName32Bits);
@@ -217,7 +217,7 @@ public class RegistryHandlerX3 {
 
 	private HashMap<String, String[]> loadListFromAdxadmin() {
 
-		HashMap<String, String[]> lstCompPropsParam = new HashMap<String, String[]>();
+		HashMap<String, String[]> lstCompPropsParam = new HashMap<>();
 
 		try {
 			String adxAdminPath = this.getAdxAdminDirPath();
@@ -316,14 +316,14 @@ public class RegistryHandlerX3 {
 
 	private HashMap<String, String[]> loadListFromRegistry() {
 
-		HashMap<String, String[]> lstCompPropsParam = new HashMap<String, String[]>();
+		HashMap<String, String[]> lstCompPropsParam = new HashMap<>();
 		try {
 			// need to process prefix
 
 			String uninstallName = this.installData.getVariable("UNINSTALL_NAME");
 			String uninstallKeySuffix = this.installData.getVariable("UninstallKeySuffix");
 			String uninstallKeyPrefix = new String(uninstallName);
-			ArrayList<String> uninstallKeyPrefixList = new ArrayList<String>();
+			ArrayList<String> uninstallKeyPrefixList = new ArrayList<>();
 
 			if (uninstallKeySuffix != null && !"".equals(uninstallKeySuffix)) {
 				uninstallKeyPrefix = uninstallKeyPrefix.substring(0,
@@ -363,7 +363,7 @@ public class RegistryHandlerX3 {
 
 			String UninstallKeyName = RegistryHandler.UNINSTALL_ROOT; // "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
 			int oldVal = rh.getRoot();
-			rh.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+			rh.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
 
 			List<String> lstSubKeys = Arrays.asList(rh.getSubkeys(UninstallKeyName));
 

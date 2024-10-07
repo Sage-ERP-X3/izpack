@@ -14,18 +14,18 @@ import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import com.izforge.izpack.gui.IzPanelLayout;
-import com.izforge.izpack.gui.LabelFactory;
 import com.izforge.izpack.api.data.Panel;
 import com.izforge.izpack.api.resource.Resources;
-import com.izforge.izpack.installer.data.GUIInstallData;
+import com.izforge.izpack.gui.IzPanelLayout;
+import com.izforge.izpack.gui.LabelFactory;
 import com.izforge.izpack.gui.log.Log;
+import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.installer.gui.InstallerFrame;
 import com.izforge.izpack.installer.gui.IzPanel;
 
 /**
  * Readme Panel: Html page + Checkbox to check
- * 
+ *
  * @author Franck DEPOORTERE
  *
  */

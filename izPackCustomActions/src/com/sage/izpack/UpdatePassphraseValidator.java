@@ -56,7 +56,7 @@ public class UpdatePassphraseValidator implements DataValidator {
 			String strPassphrasePath = adata.getVariable("INSTALL_PATH") + "\\syracuse"; // ${INSTALL_PATH}${FILE_SEPARATOR}syracuse
 			String strCertsDir = adata.getVariable("syracuse.dir.certs"); // syracuse.dir.certs
 
-			Boolean certCreate = Boolean.valueOf(adata.getVariable("syracuse.certificate.install"));
+			boolean certCreate = Boolean.parseBoolean(adata.getVariable("syracuse.certificate.install"));
 
 			// String strHOST_NAME = adata.getVariable("syracuse.certificate.hostname");
 			String strHOST_NAME = adata.getVariable("HOST_NAME").toLowerCase();
@@ -213,8 +213,8 @@ public class UpdatePassphraseValidator implements DataValidator {
 	private static String asciiToHex(String asciiValue) {
 		char[] chars = asciiValue.toCharArray();
 		StringBuffer hex = new StringBuffer();
-		for (int i = 0; i < chars.length; i++) {
-			hex.append(Integer.toHexString((int) chars[i]));
+		for (char element : chars) {
+			hex.append(Integer.toHexString(element));
 		}
 		return hex.toString();
 	}

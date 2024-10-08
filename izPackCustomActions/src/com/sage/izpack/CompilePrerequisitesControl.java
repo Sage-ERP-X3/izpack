@@ -1,5 +1,7 @@
 package com.sage.izpack;
 
+import static com.sage.izpack.CTextLineUtils.toInsecable;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
 
@@ -23,12 +26,11 @@ import com.izforge.izpack.util.Debug;
 import com.izforge.izpack.util.OsVersion;
 // import com.izforge.izpack.util.sage.CWordList.EKindOfFinding;
 import com.sage.izpack.CWordList.EKindOfFinding;
-import static com.sage.izpack.CTextLineUtils.toInsecable;
 
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
- * 
- * 
+ *
+ *
  * @author ogattaz
  *
  */
@@ -44,7 +46,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 	private GUIInstallData guiInstallData;
 
 	/**
-	 * 
+	 *
 	 */
 	public CompilePrerequisitesControl(GUIInstallData installData, Resources resources) {
 		super();
@@ -113,7 +115,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.izforge.izpack.installer.DataValidator#getDefaultAnswer()
 	 */
 	@Override
@@ -124,7 +126,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.izforge.izpack.installer.DataValidator#getErrorMessageId()
 	 */
 	@Override
@@ -140,7 +142,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 * 57[SYSTEM_os_name]=[MacOSX]
 	 * 58[SYSTEM_os_version]=[10.15.7]
 	 * </pre>
-	 * 
+	 *
 	 * @return
 	 */
 	private String getOsDetails(InstallData aData) {
@@ -152,7 +154,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.izforge.izpack.installer.DataValidator#getWarningMessageId()
 	 */
 	@Override
@@ -167,7 +169,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 	 * ...
 	 * -  67[SYSTEM_sun_java_command  ]=[com.izforge.izpack.installer.Installer -console -language eng]
 	 * </pre>
-	 * 
+	 *
 	 * @return
 	 */
 	private boolean isConsoleMode(InstallData aData) {
@@ -338,7 +340,7 @@ public class CompilePrerequisitesControl implements DataValidator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.izforge.izpack.installer.DataValidator#validateData(com.izforge.
 	 * izpack.installer.AutomatedInstallData)
 	 */

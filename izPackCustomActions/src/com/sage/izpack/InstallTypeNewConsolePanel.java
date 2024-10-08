@@ -73,7 +73,7 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 	 * <p/>
 	 * This displays a prompt "Press 1 for a new install, 2 to update, 3 to exit"
 	 *
-	 * 
+	 *
 	 * @param installData the installation date
 	 * @param console     the console to use
 	 * @return {@code true} to accept, {@code false} to reject. If the panel is
@@ -122,7 +122,7 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 			String strQuestion = resourcesHelper.getCustomString("InstallTypeNewPanel.askUpdatePath");
 			RegistryHandlerX3 helper = new RegistryHandlerX3(this.registryHandler, installData);
 			HashMap<String, String[]> installedProducts = helper.loadComponentsList();
-			List<String> keysArray = new ArrayList<String>();
+			List<String> keysArray = new ArrayList<>();
 
 			System.out.println();
 
@@ -142,7 +142,7 @@ public class InstallTypeNewConsolePanel extends com.izforge.izpack.installer.con
 
 				if (j > -1 && j < installedProducts.size()) {
 					String key = keysArray.get(j);
-					String[] product = (String[]) installedProducts.get(key);
+					String[] product = installedProducts.get(key);
 					String installPath = null;
 					if (product.length > 1) {
 						installPath = product[1];

@@ -17,7 +17,7 @@ https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5<br/>
 
 ## Version 5.2.2.0: 2024-10
 
-
+- Include APF within IzPack
 
 
 ## Version 5.2.1.1: 2024-09

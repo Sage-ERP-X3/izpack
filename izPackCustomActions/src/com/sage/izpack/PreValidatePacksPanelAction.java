@@ -13,9 +13,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// import com.izforge.izpack.api.data.Pack; 
-// com.izforge.izpack.Pack; 
-import com.izforge.izpack.api.data.AutomatedInstallData;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.PanelActionConfiguration;
 import com.izforge.izpack.api.handler.AbstractUIHandler;
@@ -32,8 +29,8 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
 		// then we must select already installed packs
 
 		boolean modifyinstallation = ModifyInstallationUtil.get(installData);
-		this.installedpacks = new HashMap<String, com.izforge.izpack.Pack>();
-		HashMap<String, com.izforge.izpack.api.data.Pack> installedpacksBis = new HashMap<String, com.izforge.izpack.api.data.Pack>();
+		this.installedpacks = new HashMap<>();
+		HashMap<String, com.izforge.izpack.api.data.Pack> installedpacksBis = new HashMap<>();
 		if (modifyinstallation) {
 			// installation shall be modified
 			// load installation information
@@ -41,7 +38,7 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
 
 			try {
 				File file = new File(
-						installData.getInstallPath() + File.separator + AutomatedInstallData.INSTALLATION_INFORMATION);
+						installData.getInstallPath() + File.separator + InstallData.INSTALLATION_INFORMATION);
 				FileInputStream fin = new FileInputStream(file);
 				ObjectInputStream oin = new ObjectInputStream(fin);
 				List<?> packsinstalled = (List<?>) oin.readObject();
@@ -70,7 +67,7 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
 				// TODO: FRDEPO
 				// adata.installedPacks = packsinstalled;
 
-				List<com.izforge.izpack.api.data.Pack> packages = new ArrayList<com.izforge.izpack.api.data.Pack>();
+				List<com.izforge.izpack.api.data.Pack> packages = new ArrayList<>();
 				for (com.izforge.izpack.api.data.Pack aPack : installData.getAvailablePacks()) {
 					if (installedpacks.containsKey(aPack.getName()) || installedpacksBis.containsKey(aPack.getName())) {
 						aPack.setPreselected(true);
@@ -95,7 +92,7 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
 					// if (Character.isLowerCase(key.charAt(0)) || "UNINSTALL_NAME".equals(key)) {
 					if (key.equals("UNINSTALL_NAME")) {
 						installData.setVariable(key, (String) variables.get(key));
-						logger.log(Level.FINE, prefixLabel + (String) key + "=" + (String) variables.get(key));
+						logger.log(Level.FINE, prefixLabel + key + "=" + (String) variables.get(key));
 					}
 
 					// TODO : verrue !
@@ -129,7 +126,7 @@ public class PreValidatePacksPanelAction implements com.izforge.izpack.data.Pane
 	}
 
 	private void removeAlreadyInstalledPacks(List<com.izforge.izpack.api.data.Pack> selectedpacks) {
-		List<com.izforge.izpack.api.data.Pack> removepacks = new ArrayList<com.izforge.izpack.api.data.Pack>();
+		List<com.izforge.izpack.api.data.Pack> removepacks = new ArrayList<>();
 
 		for (com.izforge.izpack.api.data.Pack selectedpack : selectedpacks) {
 			String key = selectedpack.getName();

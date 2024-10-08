@@ -14,40 +14,40 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
- 
+
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
- 
+
 import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.DistributionPointName;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
-import org.bouncycastle.asn1.x509.Extension;
- 
+
 /**
  * Class that verifies CRLs for given X509 certificate. Extracts the CRL
  * distribution points from the certificate (if available) and checks the
  * certificate revocation status against the CRLs coming from the
  * distribution points. Supports HTTP, HTTPS, FTP and LDAP based URLs.
- * 
+ *
  * @author Svetlin Nakov
  */
 public class CRLVerifier {
- 
+
     /**
      * Extracts the CRL distribution points from the certificate (if available)
      * and checks the certificate revocation status against the CRLs coming from
      * the distribution points. Supports HTTP, HTTPS, FTP and LDAP based URLs.
-     * 
+     *
      * @param cert the certificate to be checked for revocation
      * @throws CertificateVerificationException if the certificate is revoked
      */
@@ -67,12 +67,12 @@ public class CRLVerifier {
                 throw (CertificateVerificationException) ex;
             } else {
                 throw new CertificateVerificationException(
-                        "Can not verify CRL for certificate: " + 
+                        "Can not verify CRL for certificate: " +
                         cert.getSubjectX500Principal());
             }
         }
     }
- 
+
     /**
      * Downloads CRL from given URL. Supports http, https, ftp and ldap based URLs.
      */
@@ -92,19 +92,19 @@ public class CRLVerifier {
                     "distribution point: " + crlURL);
         }
     }
- 
+
     /**
      * Downloads a CRL from given LDAP url, e.g.
      * ldap://ldap.infonotary.com/dc=identity-ca,dc=infonotary,dc=com
      */
-    private static X509CRL downloadCRLFromLDAP(String ldapURL) 
-            throws CertificateException, NamingException, CRLException, 
+    private static X509CRL downloadCRLFromLDAP(String ldapURL)
+            throws CertificateException, NamingException, CRLException,
             CertificateVerificationException {
-        Hashtable<String , String> env = new Hashtable<String , String>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, 
+        Hashtable<String , String> env = new Hashtable<>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY,
                 "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, ldapURL);
- 
+
         DirContext ctx = new InitialDirContext(env);
         Attributes avals = ctx.getAttributes("");
         Attribute aval = avals.get("certificateRevocationList;binary");
@@ -119,7 +119,7 @@ public class CRLVerifier {
             return crl;
         }
     }
-     
+
     /**
      * Downloads a CRL from given HTTP/HTTPS/FTP URL, e.g.
      * http://crl.infonotary.com/crl/identity-ca.crl
@@ -137,18 +137,18 @@ public class CRLVerifier {
             crlStream.close();
         }
     }
- 
+
     /**
      * Extracts all CRL distribution point URLs from the "CRL Distribution Point"
      * extension in a X.509 certificate. If CRL distribution point extension is
-     * unavailable, returns an empty list. 
+     * unavailable, returns an empty list.
      */
     public static List<String> getCrlDistributionPoints(
             X509Certificate cert) throws CertificateParsingException, IOException {
         byte[] crldpExt = cert.getExtensionValue(
                 Extension.cRLDistributionPoints.getId());
         if (crldpExt == null) {
-            List<String> emptyList = new ArrayList<String>();
+            List<String> emptyList = new ArrayList<>();
             return emptyList;
         }
         ASN1InputStream oAsnInStream = new ASN1InputStream(
@@ -160,7 +160,7 @@ public class CRLVerifier {
                 new ByteArrayInputStream(crldpExtOctets));
         ASN1Primitive derObj2 = oAsnInStream2.readObject();
         CRLDistPoint distPoint = CRLDistPoint.getInstance(derObj2);
-        List<String> crlUrls = new ArrayList<String>();
+        List<String> crlUrls = new ArrayList<>();
         for (DistributionPoint dp : distPoint.getDistributionPoints()) {
             DistributionPointName dpn = dp.getDistributionPoint();
             // Look for URIs in fullName
@@ -169,10 +169,10 @@ public class CRLVerifier {
                     GeneralName[] genNames = GeneralNames.getInstance(
                         dpn.getName()).getNames();
                     // Look for an URI
-                    for (int j = 0; j < genNames.length; j++) {
-                        if (genNames[j].getTagNo() == GeneralName.uniformResourceIdentifier) {
+                    for (GeneralName genName : genNames) {
+                        if (genName.getTagNo() == GeneralName.uniformResourceIdentifier) {
                             String url = DERIA5String.getInstance(
-                                genNames[j].getName()).getString();
+                                genName.getName()).getString();
                             crlUrls.add(url);
                         }
                     }
@@ -181,5 +181,5 @@ public class CRLVerifier {
         }
         return crlUrls;
     }
- 
+
 }

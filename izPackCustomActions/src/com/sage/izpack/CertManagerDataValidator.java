@@ -14,6 +14,7 @@ import java.security.cert.X509Certificate;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.openssl.PEMWriter;
+
 // Java 8
 // import sun.security.x509.X500Name;
 import com.izforge.izpack.api.data.InstallData;
@@ -38,6 +39,7 @@ public class CertManagerDataValidator implements DataValidator {
 		return strMessageId;
 	}
 
+	@Override
 	public boolean getDefaultAnswer() {
 		return false;
 	}
@@ -53,12 +55,12 @@ public class CertManagerDataValidator implements DataValidator {
         }
         return null; // Or throw an exception if CN is not found
     }
-    
+
 	@Override
 	public Status validateData(InstallData adata) {
 
 		Boolean modifyinstallation = ModifyInstallationUtil.get(adata);
-		Boolean mongoSSL = Boolean.valueOf(adata.getVariable("mongodb.ssl.enable"));
+		boolean mongoSSL = Boolean.parseBoolean(adata.getVariable("mongodb.ssl.enable"));
 
 		Status statusReturn = Status.OK;
 		try {
@@ -70,7 +72,7 @@ public class CertManagerDataValidator implements DataValidator {
 				String localHOST_NAME = adata.getVariable("HOST_NAME").toLowerCase();
 				String strCertPath = adata.getVariable("syracuse.dir.certs") + File.separator + localHOST_NAME;
 				String hostname = "";
-				Boolean certCreate = Boolean.valueOf(adata.getVariable("syracuse.certificate.install"));
+				boolean certCreate = Boolean.parseBoolean(adata.getVariable("syracuse.certificate.install"));
 
 				if (certCreate) {
 					certCreate(adata);
@@ -94,15 +96,15 @@ public class CertManagerDataValidator implements DataValidator {
 					X509Certificate cert = (X509Certificate) factory.generateCertificate(inPemCertFile);
 
 					// Java 8
-                    // sun.security.x509.X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName()); 
+                    // sun.security.x509.X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName());
 					// hostname = x500Name.getCommonName().toLowerCase();
 					// adata.setVariable("syracuse.certificate.serverpassphrase", adata.getVariable("syracuse.ssl.pemkeypassword"));
                     // Java 11
                     X500Principal x500Principal = cert.getSubjectX500Principal();
-                    String name = x500Principal.getName();                    
+                    String name = x500Principal.getName();
                     String commonName = extractCommonName(name);
                     hostname = commonName.toLowerCase();
-                    
+
                     adata.setVariable("syracuse.certificate.serverpassphrase",adata.getVariable("syracuse.ssl.pemkeypassword"));
 				}
 				adata.setVariable("mongodb.ssl.server.serverpassphrase", adata.getVariable("syracuse.certificate.serverpassphrase"));
@@ -112,8 +114,8 @@ public class CertManagerDataValidator implements DataValidator {
 				///////////////////////////////////////////////////////////////////////////////////////////
 				// Second MongoDB part
 				if (!modifyinstallation) {
-					Boolean mongodbInstall = Boolean.valueOf(adata.getVariable("mongodb.service.install"));
-					Boolean certCreate = Boolean.valueOf(adata.getVariable("syracuse.certificate.install"));
+					boolean mongodbInstall = Boolean.parseBoolean(adata.getVariable("mongodb.service.install"));
+					boolean certCreate = Boolean.parseBoolean(adata.getVariable("syracuse.certificate.install"));
 					if (certCreate) {
 						if (mongodbInstall) {
 							clientCertCreate(adata);
@@ -132,17 +134,17 @@ public class CertManagerDataValidator implements DataValidator {
 
 							// X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName());
 		                    // Java 8
-		                    // sun.security.x509.X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName()); 
-		                    // hostname = x500Name.getCommonName().toLowerCase();                    
+		                    // sun.security.x509.X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName());
+		                    // hostname = x500Name.getCommonName().toLowerCase();
 							// adata.setVariable("mongodb.service.hostname", x500Name.getCommonName().toLowerCase());
 
 	                        // Java 11
 	                        X500Principal x500Principal = cert.getSubjectX500Principal();
-	                        String name = x500Principal.getName();                    
+	                        String name = x500Principal.getName();
 	                        String commonName = extractCommonName(name);
 
 	                        adata.setVariable("mongodb.service.hostname",commonName.toLowerCase());
-	                        
+
 						} else {
 							clientPutInPlace(adata, adata.getVariable("mongodb.ssl.pemcafile"));
 						}
@@ -292,10 +294,10 @@ public class CertManagerDataValidator implements DataValidator {
 
         // Java 11
         X500Principal x500Principal = cert.getSubjectX500Principal();
-        String name = x500Principal.getName();                    
+        String name = x500Principal.getName();
         String cn = extractCommonName(name);
 
-        
+
 		// copy Cert in output directory
 		File sourceserverCRT = new File(fieldPemCertFile);
 		File certToolOutputServerCRT = new File(
@@ -322,7 +324,7 @@ public class CertManagerDataValidator implements DataValidator {
 		pem.close();
 
 		// public key in x3runtime
-		Boolean setx3runtime = Boolean.valueOf(adata.getVariable("syracuse.certificate.setx3runtime"));
+		boolean setx3runtime = Boolean.parseBoolean(adata.getVariable("syracuse.certificate.setx3runtime"));
 		if (setx3runtime) {
 			String strX3RuntimePath = adata.getVariable("syracuse.certificate.x3runtime");
 			String pemName = localHOST_NAME.replace('@', '_').replace('$', '_').replace('.', '_');
@@ -331,7 +333,7 @@ public class CertManagerDataValidator implements DataValidator {
 		}
 
 		// public key in x3webserver
-		Boolean setx3webserver = Boolean.valueOf(adata.getVariable("syracuse.certificate.setx3webserver"));
+		boolean setx3webserver = Boolean.parseBoolean(adata.getVariable("syracuse.certificate.setx3webserver"));
 		if (setx3webserver) {
 			String strX3WebserverPath = adata.getVariable("syracuse.certificate.x3webserverdata");
 			String pemName = localHOST_NAME.replace('@', '_').replace('$', '_').replace('.', '_');
@@ -450,7 +452,7 @@ public class CertManagerDataValidator implements DataValidator {
 		pem.close();
 
 		// public key in x3runtime
-		Boolean setx3runtime = Boolean.valueOf(adata.getVariable("syracuse.certificate.setx3runtime"));
+		boolean setx3runtime = Boolean.parseBoolean(adata.getVariable("syracuse.certificate.setx3runtime"));
 		if (setx3runtime) {
 			String strX3RuntimePath = adata.getVariable("syracuse.certificate.x3runtime");
 			String pemName = localHOST_NAME.replace('@', '_').replace('$', '_').replace('.', '_');
@@ -459,7 +461,7 @@ public class CertManagerDataValidator implements DataValidator {
 		}
 
 		// public key in x3webserver
-		Boolean setx3webserver = Boolean.valueOf(adata.getVariable("syracuse.certificate.setx3webserver"));
+		boolean setx3webserver = Boolean.parseBoolean(adata.getVariable("syracuse.certificate.setx3webserver"));
 		if (setx3webserver) {
 			String strX3WebserverPath = adata.getVariable("syracuse.certificate.x3webserverdata");
 			String pemName = localHOST_NAME.replace('@', '_').replace('$', '_').replace('.', '_');

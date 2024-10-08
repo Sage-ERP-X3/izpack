@@ -46,7 +46,7 @@ public class CheckCertificateDataValidator implements DataValidator {
 		String fieldPemKeyFile = adata.getVariable("mongodb.ssl.pemkeyfile");
 		String fieldPemKeyPassword = adata.getVariable("mongodb.ssl.pemkeypassword");
 		String fieldPemCaFile = adata.getVariable("mongodb.ssl.pemcafile");
-		Boolean useCaFile = false;
+		boolean useCaFile = false;
 
 		// notcreatecert + update
 		// pem has

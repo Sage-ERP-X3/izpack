@@ -1,18 +1,18 @@
 package com.sage.izpack;
 
-import java.awt.Container;
 import java.awt.Component;
+import java.awt.Container;
 import java.lang.reflect.ParameterizedType;
 
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
- * 
+ *
  * Browsing of the GUI components tree to find the JTextPane instance having the
  * index N.
- * 
- * 
+ *
+ *
  * Sample:
- * 
+ *
  * <pre>
     IsTextPane=[false] Component=[JScrollPane][null                                    ]
 	IsTextPane=[false] Component=[JViewport  ][null                                    ]
@@ -31,9 +31,9 @@ import java.lang.reflect.ParameterizedType;
 	IsTextPane=[false] Component=[ScrollBar  ][null                                    ]
 	IsTextPane=[false] Component=[ScrollBar  ][null                                    ]
  * </pre>
- * 
- * 
- * 
+ *
+ *
+ *
  * @author ogattaz
  *
  */

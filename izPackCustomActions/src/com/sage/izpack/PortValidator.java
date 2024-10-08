@@ -15,14 +15,14 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
 
 	private static final Logger logger = Logger.getLogger(PortValidator.class.getName());
 	private static final String PARAM_EXCLUDED_PORTS = "excluded";
-	
+
 	private InstallData installData;
-	
+
 	public PortValidator(InstallData installData) {
 		super();
 		this.installData = installData;
 	}
-	
+
 	@Override
 	public boolean validate(ProcessingClient client) {
 
@@ -30,12 +30,12 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
 		String moduleName = client.getText();
 
 		logger.log(Level.FINE, "PortValidator.validate  ModuleName: " + moduleName);
-		
+
 		InetAddress inet = null;
         String host = "localhost";
         int numfields = client.getNumFields();
-        List<String> exludedPorts = new ArrayList<String>();
-        
+        List<String> exludedPorts = new ArrayList<>();
+
 		boolean modifyinstallation = ModifyInstallationUtil.get(installData);
 
 		// VariableSubstitutor substitutor = new VariableSubstitutorImpl(this.installData.getVariables());
@@ -44,8 +44,8 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
 		if (client.hasParams())
         {
             String param = client.getValidatorParams().get(PARAM_EXCLUDED_PORTS);
-            
-            if (param!=null && !"".equals(param)) 
+
+            if (param!=null && !"".equals(param))
             {
                 VariableSubstitutor vs = new VariableSubstitutor(adata.getVariables());
                 param = vs.substitute(param, null);
@@ -53,7 +53,7 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
             }
         }
 */
-		
+
         for (int i = 0; i < numfields; i++)
         {
             String value = client.getFieldContents(i);
@@ -62,10 +62,10 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
         		logger.log(Level.FINE, "PortValidator.validate  Port value is null");
                 return false;
             }
-            else if (modifyinstallation && exludedPorts.contains(value.trim())) { 
+            else if (modifyinstallation && exludedPorts.contains(value.trim())) {
             	continue;
             }
-            
+
             try
             {
                 Socket socket = new Socket("localhost",Integer.parseInt(value));
@@ -82,7 +82,7 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
                 result=true;
             }
         }
-		
+
 		return result;
 	}
 
@@ -96,12 +96,12 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
 
 	@Override
 	public String getErrorMessageId() {
-		return "portinuse";	
+		return "portinuse";
 	}
 
 	@Override
 	public String getWarningMessageId() {
-		return "portinuse";	
+		return "portinuse";
 		}
 
 	@Override
@@ -112,7 +112,7 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
 }
 
 /*
- 
+
     private static final String PARAM_EXCLUDED_PORTS = "excluded";
 
     public boolean validate(ProcessingClient client, AutomatedInstallData adata)
@@ -127,8 +127,8 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
         if (client.hasParams())
         {
             String param = client.getValidatorParams().get(PARAM_EXCLUDED_PORTS);
-            
-            if (param!=null && !"".equals(param)) 
+
+            if (param!=null && !"".equals(param))
             {
                 VariableSubstitutor vs = new VariableSubstitutor(adata.getVariables());
                 param = vs.substitute(param, null);
@@ -163,5 +163,5 @@ public class PortValidator implements DataValidator, com.izforge.izpack.panels.u
         }
         return retValue;
     }
- 
- */ 
+
+ */

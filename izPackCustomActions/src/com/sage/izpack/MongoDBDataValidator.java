@@ -32,7 +32,7 @@ public class MongoDBDataValidator implements DataValidator {
 
 	/*
 	 * Syracuse supports MongoDb 3, 4 and 7 from Sage X3 2024 R2
-	 * 
+	 *
 	 * @param version: ex = "7.0.11"
 	 */
 	private static boolean isSupportedVersion(String version) {
@@ -46,7 +46,7 @@ public class MongoDBDataValidator implements DataValidator {
 			majorVersion = Integer.valueOf(verStr1[0]);
 		} catch (NumberFormatException e) {
 			majorVersion = 0;
-			
+
 		}
 		return majorVersion >= 3;
 		// return version.startsWith("3.") || version.startsWith("4.") || version.startsWith("7.");
@@ -97,7 +97,7 @@ public class MongoDBDataValidator implements DataValidator {
 				Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
 				CertificateFactory factory = CertificateFactory.getInstance("X.509");
-				ArrayList<X509Certificate> chainArray = new ArrayList<X509Certificate>();
+				ArrayList<X509Certificate> chainArray = new ArrayList<>();
 
 				if (pemcaFile != null && !"".equals(pemcaFile)) {
 					// create truststore
@@ -139,7 +139,7 @@ public class MongoDBDataValidator implements DataValidator {
 				X509Certificate[] chain = new X509Certificate[chainArray.size()];
 				chain[0] = cert;
 				if (chainArray.size() > 1)
-					chain[1] = (X509Certificate) chainArray.get(0);
+					chain[1] = chainArray.get(0);
 
 				keyStore.setKeyEntry("importkey", kp.getPrivate(), "keystore".toCharArray(), chain);
 

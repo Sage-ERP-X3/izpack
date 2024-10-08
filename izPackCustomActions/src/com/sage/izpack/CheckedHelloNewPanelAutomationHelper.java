@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.coi.tools.os.win.MSWinConstants;
 import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Variables;
@@ -109,7 +110,7 @@ public class CheckedHelloNewPanelAutomationHelper extends CheckedHelloPanelAutom
 			String newUninstallName = uninstallName + "(" + Integer.toString(uninstallModifier) + ")";
 			// Then we "create" the reg key with it.
 			String keyName = RegistryHandler.UNINSTALL_ROOT + newUninstallName;
-			registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+			registryHandler.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
 			if (!registryHandler.keyExist(keyName)) { // That's the name for which we searched.
 														// Change the uninstall name in the reg helper.
 				registryHandler.setUninstallName(newUninstallName);

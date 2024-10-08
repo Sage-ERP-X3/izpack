@@ -1,11 +1,11 @@
 package com.sage.izpack;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import static com.izforge.izpack.api.handler.Prompt.Option.YES;
 import static com.izforge.izpack.api.handler.Prompt.Options.YES_NO;
 import static com.izforge.izpack.api.handler.Prompt.Type.ERROR;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Variables;

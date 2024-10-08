@@ -1,17 +1,21 @@
 package com.sage.izpack;
 
+import static com.izforge.izpack.api.data.InstallData.MODIFY_INSTALLATION;
+import static com.sage.izpack.InstallTypeNewPanelAutomation.NEED_SERVICE_CONFIGURATION_FIX;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Pack;
-
-import static com.izforge.izpack.api.data.InstallData.MODIFY_INSTALLATION;
-import static com.sage.izpack.InstallTypeNewPanelAutomation.NEED_SERVICE_CONFIGURATION_FIX;
 
 public final class InstallationInformationHelper {
 
@@ -144,7 +148,7 @@ public final class InstallationInformationHelper {
 
             Properties variables = (Properties) oin.readObject();
             for (Object key : variables.keySet()) {
-                if (!VARIABLES_EXCEPTIONS.contains((String) key)) {
+                if (!VARIABLES_EXCEPTIONS.contains(key)) {
                     installData.setVariable((String) key, (String) variables.get(key));
                 }
             }

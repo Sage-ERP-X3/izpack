@@ -25,14 +25,17 @@ public class NodeIdentifierDataValidator implements DataValidator {
 		return validate(adata.getVariable("component.node.name"), adata.getVariable("APP_NAME"));
 	}
 
+	@Override
 	public String getErrorMessageId() {
 		return "nodealreadyexisterror";
 	}
 
+	@Override
 	public String getWarningMessageId() {
 		return "nodealreadyexistwarn";
 	}
 
+	@Override
 	public boolean getDefaultAnswer() {
 		// can we validate in automated mode ?
 		// say yes for now
@@ -46,7 +49,7 @@ public class NodeIdentifierDataValidator implements DataValidator {
 			String nodeName = pstrNodeName;
 			String svcExt = ".service";
 
-			ArrayList<String> uninstallKeyPrefixList = new ArrayList<String>();
+			ArrayList<String> uninstallKeyPrefixList = new ArrayList<>();
 			uninstallKeyPrefixList.add(pstrAppName);
 
 			// load additionnal prefix from resource

@@ -89,7 +89,7 @@ public final class InstallationInformationHelper {
             if (installInfo.exists()) {
                 try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(installInfo))) {
                     // noinspection rawtypes
-                    List objects = (List) oin.readObject();
+                    List<?> objects = (List<?>) oin.readObject();
                     for (Object pack : objects) {
                         if (pack instanceof com.izforge.izpack.Pack) {
                             logger.log(Level.FINE, logHeader + "found legacy pack: " + ((com.izforge.izpack.Pack) pack).name);
@@ -120,7 +120,7 @@ public final class InstallationInformationHelper {
         }
         try (ObjectInputStream oin = new ObjectInputStream(new FileInputStream(installInfo))) {
             // noinspection rawtypes
-            List packsinstalled = (List) oin.readObject();
+            List<?> packsinstalled = (List<?>) oin.readObject();
             logger.log(Level.FINE, logPrefix + "Found " + packsinstalled.size() + " installed packs");
 
             final List<Pack> selectedPacks = new ArrayList<>(installData.getSelectedPacks());

@@ -135,7 +135,8 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 			logger.log(Level.FINE, LogPrefix + "updateUninstallString: %JAVA_HOME% is not set, exiting.");
 			return;
 		} else {
-			javaHome = javaHome.replaceAll("\\\\", "\\"); // TODO: debug and check if this is correct
+			javaHome = javaHome.replaceAll("\\\\", "\\\\"); // Double escape for both backslashes
+			// javaHome = javaHome.replaceAll("\\\\", "\\"); // TODO: debug and check if this is correct
 		}
 		RegDataContainer uninstallString = myHandlerInstance.getValue(keyName, UNINSTALL_STRING);
 		if (uninstallString == null || uninstallString.getStringData() == null

@@ -15,6 +15,11 @@ https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5<br/>
 # Version 5.2.1
 
 
+## Version 5.2.2.0: 2024-10
+
+
+
+
 ## Version 5.2.1.1: 2024-09
 
 - X3-293749: Migration of Syracuse, MongoDb to IzPack 5

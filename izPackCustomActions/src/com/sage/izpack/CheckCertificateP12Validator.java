@@ -1,16 +1,5 @@
 package com.sage.izpack;
 
-// FRDEPO: error: package javax.xml.bind does not exist
-// import javax.xml.bind.DatatypeConverter;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMDecryptorProvider;
-import org.bouncycastle.openssl.PEMEncryptedKeyPair;
-import org.bouncycastle.openssl.PEMKeyPair;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
-import org.bouncycastle.util.io.pem.PemReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,15 +13,28 @@ import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.security.cert.Certificate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 // Java 8
 // import sun.security.x509.X500Name;
 import javax.security.auth.x500.X500Principal;
+
+// FRDEPO: error: package javax.xml.bind does not exist
+// import javax.xml.bind.DatatypeConverter;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMDecryptorProvider;
+import org.bouncycastle.openssl.PEMEncryptedKeyPair;
+import org.bouncycastle.openssl.PEMKeyPair;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
+import org.bouncycastle.util.io.pem.PemReader;
 
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.installer.DataValidator;
@@ -90,7 +92,7 @@ public class CheckCertificateP12Validator implements DataValidator {
 			byte[] certBytes = tokens[0].concat(delimiter).getBytes();
 			byte[] keyBytes = tokens[1].getBytes();
 
-			inCertFile = (InputStream) new ByteArrayInputStream(certBytes);
+			inCertFile = new ByteArrayInputStream(certBytes);
 			keyStreamReader = new InputStreamReader(new ByteArrayInputStream(keyBytes));
 
 		} else {
@@ -105,14 +107,14 @@ public class CheckCertificateP12Validator implements DataValidator {
 		// Java 8
 		// X500Name x500Name = new X500Name(servercert.getSubjectX500Principal().getName());
 		// String cname = x500Name.getCommonName();
-		
+
         // Java 11
         X500Principal x500Principal = servercert.getSubjectX500Principal();
-        String name = x500Principal.getName();                    
+        String name = x500Principal.getName();
         String cname = CertManagerDataValidator.extractCommonName(name);
-        
+
 		adata.setVariable("mongodb.ssl.certificate.cname", cname);
-		;
+
 		logger.log(Level.FINE, "Set certificate cname " + cname);
 
 		String thumbPrint = getThumbprint(servercert);
@@ -158,8 +160,8 @@ public class CheckCertificateP12Validator implements DataValidator {
 
 	private static String bytesToHex(byte[] hash) {
 	    StringBuilder hexString = new StringBuilder(2 * hash.length);
-	    for (int i = 0; i < hash.length; i++) {
-	        String hex = Integer.toHexString(0xff & hash[i]);
+	    for (byte element : hash) {
+	        String hex = Integer.toHexString(0xff & element);
 	        if(hex.length() == 1) {
 	            hexString.append('0');
 	        }
@@ -167,7 +169,7 @@ public class CheckCertificateP12Validator implements DataValidator {
 	    }
 	    return hexString.toString().toLowerCase();
 	}
-	
+
 	@Override
 	public String getErrorMessageId() {
 		return strMessageId;

@@ -10,6 +10,7 @@ import java.security.cert.PKIXCertPathBuilderResult;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+
 import javax.crypto.Cipher;
 
 import org.bouncycastle.openssl.PEMDecryptorProvider;
@@ -18,7 +19,7 @@ import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
-// TODO: FRDEPO => DEPRECATED in java 9 and superior
+// Java 11: DEPRECATED in java 9 and superior
 // import org.icepdf.core.pobjects.acroform.signature.certificates.CertificateVerifier;
 
 import com.izforge.izpack.api.data.InstallData;
@@ -33,41 +34,41 @@ public class CheckCertificateSyrDataValidator implements DataValidator{
 
 	@Override
 	public Status validateData(InstallData adata) {
-		
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());        
-        
+
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+
         //String strCertPath = adata.getVariable("mongodb.dir.certs");
         //String hostname = adata.getVariable("HOST_NAME");
 
-        // notcreatecert  + notupdate        
+        // notcreatecert  + notupdate
         // at least pemkeyfile and certfile must be provided
         String fieldPemCertFile = adata.getVariable("syracuse.ssl.certfile");
         String fieldPemKeyFile = adata.getVariable("syracuse.ssl.pemkeyfile");
         String fieldPemKeyPassword = adata.getVariable("syracuse.ssl.pemkeypassword");
         String fieldPemCaFile = adata.getVariable("syracuse.ssl.pemcafile");
         //Boolean useCaFile = false;
-        
-        // notcreatecert  + update        
+
+        // notcreatecert  + update
         // pem has
         //String fieldPemCertFile = adata.getVariable("mongodb.ssl.certfile");
         //String fieldPemKeyFile = adata.getVariable("mongodb.ssl.pemkeyfile");
         //String fieldPemKeyPassword = adata.getVariable("mongodb.ssl.pemkeypassword");
-        //String fieldPemCaFile = adata.getVariable("mongodb.ssl.pemcafile");       
-               
-        
+        //String fieldPemCaFile = adata.getVariable("mongodb.ssl.pemcafile");
+
+
         try
         {
             InputStream inPemKeyFile = new FileInputStream(fieldPemKeyFile);
             InputStream inPemCertFile = new FileInputStream(fieldPemCertFile);
-            
+
             // first check the certificate
             CertificateFactory factory = CertificateFactory.getInstance("X.509");
             X509Certificate cert = (X509Certificate) factory.generateCertificate(inPemCertFile);
-            
+
             // if a CA was provided then we need to check the validity of our certificate
             InputStream inPemCaFile = new FileInputStream(fieldPemCaFile);
             Collection<X509Certificate> certCAChain = (Collection<X509Certificate>) factory.generateCertificates(inPemCaFile);
-            
+
             // cert should be part of the path  to be validated
             certCAChain.add(cert);
             // TODO: FRDEPO =>  error: cannot find symbol
@@ -93,9 +94,9 @@ public class CheckCertificateSyrDataValidator implements DataValidator{
                 kp = converter.getKeyPair(ukp);
             }
             pemParser.close();
-            
+
             byte[] input = "1234567890ABCDEF".getBytes();
-            
+
             //System.out.println("input: " + new String(input));
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.ENCRYPT_MODE, cert.getPublicKey() );
@@ -105,13 +106,13 @@ public class CheckCertificateSyrDataValidator implements DataValidator{
 
             cipher.init(Cipher.DECRYPT_MODE, kp.getPrivate());
             byte[] decrypted = cipher.doFinal(cipherText);
-            
+
             //System.out.println("plain : " + new String(decrypted));
 
 
             if (Arrays.equals(decrypted, input))
             {
-                return Status.OK;  
+                return Status.OK;
             }
             else
             {
@@ -127,20 +128,23 @@ public class CheckCertificateSyrDataValidator implements DataValidator{
             adata.setVariable(strMessageValue, strMessage);
             return Status.ERROR;
         }
-        
+
     }
 
-    public String getErrorMessageId()
+    @Override
+	public String getErrorMessageId()
     {
         return strMessageId;
     }
 
-    public String getWarningMessageId()
+    @Override
+	public String getWarningMessageId()
     {
         return strMessageId;
     }
 
-    public boolean getDefaultAnswer()
+    @Override
+	public boolean getDefaultAnswer()
     {
         // By default do not continue if an error occurs
         return false;

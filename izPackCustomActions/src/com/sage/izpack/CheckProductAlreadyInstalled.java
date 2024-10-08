@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.coi.tools.os.win.MSWinConstants;
 import com.coi.tools.os.win.RegDataContainer;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.installer.DataValidator;
@@ -36,7 +37,7 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 		InputStream input = null;
 
 		try {
-			
+
 			input = new ResourceManager().getInputStream(SPEC_FILE_NAME);
 			logger.log(Level.FINE, "CheckProductAlreadyInstalled input: " + input);
 
@@ -45,7 +46,7 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 				errMessage = "specFileMissing";
 				logger.log(Level.FINE, "CheckProductAlreadyInstalled  input: " + errMessage);
 				return Status.ERROR;
-			} else 
+			} else
 			{
 				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 				StringBuilder out = new StringBuilder();
@@ -55,16 +56,16 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 					logger.log(Level.FINE,"line:" + line);
 					line = line.trim();
 
-					this.registryHandler.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+					this.registryHandler.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
 					if (registryHandler.keyExist(RegistryHandler.UNINSTALL_ROOT + line)) {
 						logger.log(Level.FINE, "CheckProductAlreadyInstalled  MODIFY_INSTALLATION=true - Registry key exists:" + RegistryHandler.UNINSTALL_ROOT
 								+ line);
 						RegDataContainer oldInstallPath = registryHandler.getValue(RegistryHandler.UNINSTALL_ROOT + line, "DisplayIcon");
 						String path = oldInstallPath.getStringData().substring(0, oldInstallPath.getStringData().indexOf("Uninstaller") - 1);
 						installData.setInstallPath(path);
-						ModifyInstallationUtil.set(installData, Boolean.TRUE);;
+						ModifyInstallationUtil.set(installData, Boolean.TRUE);
 						logger.log(Level.FINE, "CheckProductAlreadyInstalled  Detected path: " + path);
-						
+
 						//  INSTALLER_GUI = 0, INSTALLER_AUTO = 1, INSTALLER_CONSOLE = 2;
 						// if (Installer.getInstallerMode() == Installer.INSTALLER_AUTO) {
 						// X3-301654: [ ERROR: compFoundAskUpdate ] We avoid any warning or Error in batch mode
@@ -73,16 +74,16 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 						// 	<str id="compFoundAskUpdate" txt="An earlier version of this component has been found on this host, do you want to update this installation ?"/>
 						// this.warnMessage = "compFoundAskUpdate";
 						// return Status.WARNING;
-						
+
 						// X3-302700: Print Server 2.29 installer displays message twice when updating
 						// This warning is already managed by CheckedHelloNewPanel.java
 						return Status.OK;
-						
+
 					} else {
 						logger.log(Level.FINE, "CheckProductAlreadyInstalled  MODIFY_INSTALLATION=false - Registry key not found:"
 								+ RegistryHandler.UNINSTALL_ROOT + line);
 					}
-					
+
 				}
 				reader.close();
 			}
@@ -95,14 +96,17 @@ public class CheckProductAlreadyInstalled implements DataValidator {
 		return Status.OK;
 	}
 
+	@Override
 	public String getErrorMessageId() {
 		return errMessage;
 	}
 
+	@Override
 	public String getWarningMessageId() {
 		return warnMessage;
 	}
 
+	@Override
 	public boolean getDefaultAnswer() {
 		// unfortunately we can't say yes by default
 		return false;

@@ -1,26 +1,26 @@
 package com.sage.izpack;
 
+import static com.sage.izpack.CTextLineUtils.generateLineBeginEnd;
+import static com.sage.izpack.CTextLineUtils.generateLineFull;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-import java.lang.reflect.Field;
-
-import static com.sage.izpack.CTextLineUtils.generateLineFull;
-import static com.sage.izpack.CTextLineUtils.generateLineBeginEnd;
 
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
- * 
+ *
  * @author ogattaz
  *
  */
 public class CLoggerUtils {
 
 	/**
-	 * 
+	 *
 	 * <pre>
 	 * DATE(1)                   LEVEL(4) THREAD(3)         SOURCE(2): INSTANCE + METHOD                            LINE (5) + (6)
 	 * <------- 24 car ------->..<-7c-->..<---- 16c ----->..<--------------------- 54c -------------------------->..<------------------ N characters  -------...
@@ -32,11 +32,11 @@ public class CLoggerUtils {
 	 * Logger console
 	 * 2019/02/12; 15:59:28:339;   Infos;             main; apps.impl.CTestLogging_0842;                    doTest; SimpleFormatter current format=[%1$tY/%1$tm/%1$td; %1$tH:%1$tM:%1$tS:%1$tL; %4$7.7s; %3$16.016s; %2$54.54s; %5$s%6$s%n]
 	 * 2019/02/12; 15:59:28:344;   Infos;             main; apps.impl.CTestLogging_0842;                    doTest; SimpleFormatter jvm property  =[%1$tY/%1$tm/%1$td; %1$tH:%1$tM:%1$tS:%1$tL; %4$7.7s; %3$16.016s; %2$54.54s; %5$s%6$s%n]
-	 * 2019/02/12; 15:59:28:345;   Infos;             main; apps.impl.CTestLogging_0842;                    doTest; IsSimpleFormatterFormatValid=[true] / JulLogger: Name=[] Level=[ALL] 
+	 * 2019/02/12; 15:59:28:345;   Infos;             main; apps.impl.CTestLogging_0842;                    doTest; IsSimpleFormatterFormatValid=[true] / JulLogger: Name=[] Level=[ALL]
 	 * 2019/02/12; 15:59:28:346;   Infos;             main; apps.impl.CTestLogging_0842;                    doTest; logInfo: Ligne log info
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <pre>
 	 * SimpleFormat=[%1$tY/%1$tm/%1$td; %1$tH:%1$tM:%1$tS:%1$tL; %4$7.7s; %3$16.016s; %2$54.54s; %5$s%6$s%n]
 	 * </pre>
@@ -46,16 +46,16 @@ public class CLoggerUtils {
 	private static final Logger sLoggerRoot = Logger.getLogger("");
 
 	/**
-	 * 
+	 *
 	 */
 	static {
 		// Doesn't work with Java 11:
-		
+
 //		Caused by: java.lang.IllegalArgumentException: null object for private final java.lang.String java.util.logging.SimpleFormatter.format
 //		at java.base/java.lang.reflect.AccessibleObject.canAccess(AccessibleObject.java:457)
 //		at com.izforge.izpack.util.sage.CLoggerUtils.setPrivateStaticFinalString(CLoggerUtils.java:196)
 
-		
+
 //		try {
 //			String wLoggerInitReport = setFormatOfSimpleFormatter( SIMPLE_FORMATTER_FORMAT);
 //			logInfo(wLoggerInitReport);
@@ -160,12 +160,12 @@ public class CLoggerUtils {
 	}
 
 	/**
-	 * 
+	 *
 	 * <pre>
 	 * 61    // format string for printing the log record
 	 * 62    private static final String format = LoggingSupport.getSimpleFormat();
 	 * </pre>
-	 * 
+	 *
 	 * @param aFormat
 	 *            the format to replace the format given by the method
 	 *            "LoggingSupport.getSimpleFormat() "
@@ -179,7 +179,7 @@ public class CLoggerUtils {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aClass
 	 * @param aFieldName
 	 * @param aValue

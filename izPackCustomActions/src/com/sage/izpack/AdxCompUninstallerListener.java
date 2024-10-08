@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.w3c.dom.Document;
+
 import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.handler.Prompt;
 import com.izforge.izpack.api.resource.Messages;
@@ -14,11 +15,11 @@ import com.izforge.izpack.core.os.RegistryDefaultHandler;
 import com.izforge.izpack.core.os.RegistryHandler;
 
 /*
- * Note this class DOES NOT work on Linux for the moment, due to a reference to the RegistryDefaultHandler class 
+ * Note this class DOES NOT work on Linux for the moment, due to a reference to the RegistryDefaultHandler class
  * Version: IzPack 5.2.0 - 2024.01.01
  * Caused by: java.lang.ClassNotFoundException: com.coi.tools.os.win.MSWinConstants
  * We need to use AdxCompUninstallerListenerLinux for the moment
- * 
+ *
  * @author Franck DEPOORTERE
  */
 public class AdxCompUninstallerListener extends AdxCompUninstallerListenerCommon {
@@ -35,13 +36,13 @@ public class AdxCompUninstallerListener extends AdxCompUninstallerListenerCommon
 		this.registryHandler = handler.getInstance();
 	}
 
-	
+
 	@Override
 	protected Document getAdxInstallDocument() throws FileNotFoundException, NativeLibException, IOException, Exception {
 		AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, null);
 		Document adxInstallXmlDoc = adxCompHelper.getAdxInstallDocument();
 		return adxInstallXmlDoc;
-	}	
+	}
 
 
 	@Override
@@ -55,6 +56,6 @@ public class AdxCompUninstallerListener extends AdxCompUninstallerListenerCommon
 		AdxCompHelper adxCompHelper = new AdxCompHelper(this.registryHandler, null);
 		return adxCompHelper.getAdxInstallFile(adxAdminDir);
 	}
-	
+
 
 }

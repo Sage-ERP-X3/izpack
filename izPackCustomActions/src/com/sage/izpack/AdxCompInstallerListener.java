@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
@@ -13,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -29,10 +29,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.data.Pack;
 import com.izforge.izpack.api.event.AbstractInstallerListener;
 import com.izforge.izpack.api.event.ProgressListener;
-import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.resource.Resources;
 import com.izforge.izpack.api.substitutor.SubstitutionType;
 import com.izforge.izpack.api.substitutor.VariableSubstitutor;
@@ -43,11 +43,10 @@ import com.izforge.izpack.installer.data.UninstallData;
 import com.izforge.izpack.util.CleanupClient;
 import com.izforge.izpack.util.OsVersion;
 import com.izforge.izpack.util.helper.SpecHelper;
-import com.izforge.izpack.api.adaptator.IXMLElement;
 
 /*
  * Manage XML file adxinstalls.xml
- * 
+ *
  * @author Franck DEPOORTERE
  */
 public class AdxCompInstallerListener extends AbstractInstallerListener implements CleanupClient {
@@ -76,10 +75,12 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	/**
 	 * Remove all registry entries on failed installation
 	 */
+	@Override
 	public void cleanUp() {
 		// installation was not successful now rewind adxinstalls.xml changes
 	}
 
+	@Override
 	public void beforePacks(List<Pack> packs) {
 		super.beforePacks(packs);
 
@@ -312,7 +313,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 
 	/***
 	 * Create XML module
-	 * 
+	 *
 	 * @param adxInstallXmlDoc
 	 * @param moduleName
 	 * @param moduleFamily
@@ -322,29 +323,29 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 	/*
 	 * private Element createReportModule(Document adxInstallXmlDoc, IXMLElement
 	 * moduleSpec, String moduleName, String moduleFamily, String moduleType) {
-	 * 
+	 *
 	 * Element module = adxInstallXmlDoc.createElement("module");
 	 * module.setAttribute("name", moduleName); module.setAttribute("family",
 	 * moduleFamily); module.setAttribute("type", moduleType);
-	 * 
-	 * 
+	 *
+	 *
 	 * Node status = module .appendChild(adxInstallXmlDoc.createElement("component."
 	 * + moduleFamily.toLowerCase() + ".installstatus"));
 	 * status.setTextContent("idle");
-	 * 
+	 *
 	 * Node path = module.appendChild(adxInstallXmlDoc.createElement("component." +
 	 * moduleFamily.toLowerCase() + ".path"));
 	 * path.setTextContent(this.installData.getVariable(InstallData.INSTALL_PATH));
-	 * 
+	 *
 	 * Node nodeVersion = module
 	 * .appendChild(adxInstallXmlDoc.createElement("component." +
 	 * moduleFamily.toLowerCase() + ".version"));
 	 * nodeVersion.setTextContent(this.installData.getVariable("component.version"))
 	 * ;
-	 * 
-	 * 
+	 *
+	 *
 	 * adxInstallXmlDoc.getDocumentElement().appendChild(module);
-	 * 
+	 *
 	 * return module; }
 	 */
 
@@ -400,39 +401,39 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 		 * (module == null) throw new Exception( String.format(ResourceBundle.getBundle(
 		 * "com/izforge/izpack/ant/langpacks/messages") .getString("sectionNotFound"),
 		 * name));
-		 * 
+		 *
 		 * Node status = module.getElementsByTagName("component." + family.toLowerCase()
 		 * + ".installstatus") .item(0); if (status == null) { status =
 		 * module.appendChild(xdoc.createElement("component." + family.toLowerCase() +
 		 * ".installstatus")); status.setTextContent("update"); }
-		 * 
+		 *
 		 * // module = (Element) status.getParentNode(); if
 		 * (status.getTextContent().equalsIgnoreCase("active")) {
 		 * status.setTextContent("update"); }
-		 * 
+		 *
 		 * Node nodeVersion = module.getElementsByTagName("component." +
 		 * family.toLowerCase() + ".version") .item(0); if (nodeVersion == null)
 		 * nodeVersion = module .appendChild(xdoc.createElement("component." +
 		 * family.toLowerCase() + ".version")); nodeVersion.setTextContent(version);
-		 * 
+		 *
 		 * if (family.equalsIgnoreCase("RUNTIME")) { // SAM (Syracuse) 99562 New Bug
 		 * 'Performance issue with Oracle Instant Client' // do not use instant client
 		 * by default but only when n-tiers
-		 * 
+		 *
 		 * // runtime.odbc.dbhome Node nodedbhome =
 		 * module.getElementsByTagName("runtime.odbc.dbhome").item(0); if (nodedbhome ==
 		 * null) nodedbhome =
 		 * module.appendChild(xdoc.createElement("runtime.odbc.dbhome")); // X3-134671 :
 		 * In update mode, we have to let the console manage this node. We // let the
 		 * value retreived // nodedbhome.setTextContent("");
-		 * 
+		 *
 		 * // runtime.odbc.forcedblink Node nodedblink =
 		 * module.getElementsByTagName("runtime.odbc.forcedblink").item(0); if
 		 * (nodedblink == null) nodedblink =
 		 * module.appendChild(xdoc.createElement("runtime.odbc.forcedblink")); //
 		 * X3-134671 : In update mode, we have to let the console manage this node. We
 		 * // let the value retreived // nodedblink.setTextContent("False");
-		 * 
+		 *
 		 * }
 		 */
 
@@ -453,7 +454,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			fileAdxinstalls.createNewFile();
 
 			if (OsVersion.IS_UNIX) {
-				Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
+				Set<PosixFilePermission> perms = new HashSet<>();
 				// add owners permission
 				perms.add(PosixFilePermission.OWNER_READ);
 				perms.add(PosixFilePermission.OWNER_WRITE);
@@ -484,7 +485,7 @@ public class AdxCompInstallerListener extends AbstractInstallerListener implemen
 			xdoc.getDocumentElement().normalize();
 		}
 
-		XMLHelper.cleanEmptyTextNodes((Node) xdoc);
+		XMLHelper.cleanEmptyTextNodes(xdoc);
 
 		logger.log(Level.FINE, LogPrefix + "getXml  Xml file: " + fileAdxinstalls.getPath() + ". Root element: "
 				+ xdoc.getDocumentElement().getNodeName());

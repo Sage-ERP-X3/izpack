@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.coi.tools.os.win.MSWinConstants;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.IzPackException;
@@ -23,9 +24,9 @@ import com.izforge.izpack.util.Platforms;
 
 /*
  * This class fixes the bug when un-installing a product, sometimes, the Registry is not cleaned (Ex: X3-237732)
- *  
+ *
  *  Ex: Delete HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + getUninstallName();
- *  
+ *
  *  @author Franck DEPOORTERE
  */
 public class RegistryUninstallerNewListener extends RegistryUninstallerListener {
@@ -74,7 +75,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		} catch (WrappedNativeLibException exception) {
 			// GetPromptUIHandler().emitWarning("Error", this.getString("privilegesIssue",
 			// AdxCompUninstallerListener.PrivilegesFriendlyMessage));
-			emitError(this.getString("privilegesIssue", AdxCompUninstallerListener.PrivilegesFriendlyMessage),
+			emitError(this.getString("privilegesIssue", AdxCompUninstallerListenerCommon.PrivilegesFriendlyMessage),
 					exception);
 			throw exception;
 		} catch (Exception exception) {
@@ -136,7 +137,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 			// Warning: Cannot use com.izforge.izpack.installer.data.InstallData within Uninstaller package: error NoClassDefFoundError
 			// InstallData data = new com.izforge.izpack.installer.data.InstallData(new DefaultVariables(), Platforms.WINDOWS);
 			InstallData data = new InstallDataSage(new DefaultVariables(),
-					Platforms.WINDOWS);			
+					Platforms.WINDOWS);
 			data.setInstallPath(installPath);
 			System.out.println(LogPrefix + "Trying to read " + installPath + "\\.installationinformation");
 			InstallationInformationHelper.readInformation(data);
@@ -155,7 +156,7 @@ public class RegistryUninstallerNewListener extends RegistryUninstallerListener 
 		logger.log(Level.ALL, LogPrefix + "UninstallName Registry key " + keyName);
 
 		try {
-			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+			myHandlerInstance.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
 
 			if (myHandlerInstance.keyExist(keyName)) {
 				// myHandlerInstance.deleteValue(keyName, "DisplayVersion");

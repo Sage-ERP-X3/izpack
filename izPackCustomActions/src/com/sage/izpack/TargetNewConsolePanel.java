@@ -1,5 +1,7 @@
 package com.sage.izpack;
 
+import static com.izforge.izpack.panels.target.TargetPanel.PANEL_NAME;
+
 import java.io.File;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -13,10 +15,7 @@ import com.izforge.izpack.installer.panel.PanelView;
 import com.izforge.izpack.installer.util.InstallPathHelper;
 import com.izforge.izpack.panels.path.PathInputBase;
 import com.izforge.izpack.panels.target.TargetConsolePanel;
-import com.izforge.izpack.panels.target.TargetPanelHelper;
 import com.izforge.izpack.util.Console;
-
-import static com.izforge.izpack.panels.target.TargetPanel.PANEL_NAME;
 
 public class TargetNewConsolePanel extends TargetConsolePanel {
 

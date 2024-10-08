@@ -7,7 +7,7 @@ import com.izforge.izpack.util.Debug;
 
 /*
   Display message in a process panel
-  
+
   Ex: ProcessPanelSpec.xml
   	<job name="Microsoft .NET framework 4.7.2 already installed" condition="dotNet472OrHigherInstalled">
 		<os family="windows" />
@@ -29,8 +29,7 @@ public class PrintMessage {
 
 			if (args != null && args.length > 0) {
 
-				for (int i = 0; i < args.length; i++) {
-					String messageId = args[i];
+				for (String messageId : args) {
 					message = messageId;
 
 					// TODO: FRDEPO => search in XML files

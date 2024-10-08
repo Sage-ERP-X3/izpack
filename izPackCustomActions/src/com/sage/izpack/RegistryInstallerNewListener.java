@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.coi.tools.os.win.MSWinConstants;
 import com.coi.tools.os.win.RegDataContainer;
 import com.izforge.izpack.api.data.InstallData;
-import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.data.Pack;
+import com.izforge.izpack.api.data.Variables;
 import com.izforge.izpack.api.event.ProgressListener;
 import com.izforge.izpack.api.exception.NativeLibException;
 import com.izforge.izpack.api.resource.Resources;
@@ -19,17 +20,17 @@ import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.installer.data.UninstallData;
 import com.izforge.izpack.installer.unpacker.IUnpacker;
 import com.izforge.izpack.util.Housekeeper;
-import com.izforge.izpack.util.IoHelper;
 
 /*
- * 
+ *
  * @author Franck DEPOORTERE
  */
 public class RegistryInstallerNewListener extends com.izforge.izpack.event.RegistryInstallerListener {
 
 	private static final Logger logger = Logger.getLogger(RegistryInstallerNewListener.class.getName());
 	private final RegistryDefaultHandler myhandler;
-    public RegistryInstallerNewListener(IUnpacker unpacker, VariableSubstitutor substitutor, InstallData installData,
+
+	public RegistryInstallerNewListener(IUnpacker unpacker, VariableSubstitutor substitutor, InstallData installData,
 			UninstallData uninstallData, Resources resources, RulesEngine rules, Housekeeper housekeeper,
 			RegistryDefaultHandler handler) {
 		super(unpacker, substitutor, installData, uninstallData, resources, rules, housekeeper, handler);
@@ -38,11 +39,13 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 
 	@Override
 	public void afterPacks(List<Pack> packs, ProgressListener listener) {
-		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks start");
+		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks
+		// start");
 		super.afterPacks(packs, listener);
 		updateRegistry();
 		// Fix the bug when un-installing a product, sometimes, the Registry
-		// is not cleaned and on old file .installationinformation from a former setup
+		// is not cleaned and on old file .installationinformation from a former
+		// setup
 		// can disturb the process. (Ex: X3-237732)
 		// readinstallationinformation
 		// writeinstallationinformation
@@ -51,13 +54,14 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 			deleteInstallInformation();
 		}
 
-		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks end");
+		// logger.log(Level.FINE, "RegistryInstallerNewListener.afterPacks
+		// end");
 	}
 
 	/*
-	 * This class fix the bug when un-installing a product, sometimes, the Registry
-	 * is not cleaned and on old file .installationinformation from a former setup
-	 * can disturb the process. (Ex: X3-237732)
+	 * This class fix the bug when un-installing a product, sometimes, the
+	 * Registry is not cleaned and on old file .installationinformation from a
+	 * former setup can disturb the process. (Ex: X3-237732)
 	 */
 	private void deleteInstallInformation() {
 		InstallData installData = getInstallData();
@@ -68,8 +72,8 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 			String installInformationFileName = installDir + File.separator + InstallData.INSTALLATION_INFORMATION;
 			File installationInfo = new File(installInformationFileName);
 			if (installationInfo.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                installationInfo.delete();
+				// noinspection ResultOfMethodCallIgnored
+				installationInfo.delete();
 				logger.log(Level.FINE, "File " + installInformationFileName + " deleted.");
 			}
 		}
@@ -93,21 +97,25 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 		if (appName == null || appName.isBlank()) {
 			appName = variables.get("APP_NAME");
 		}
-		String uninstallerPath = getInstallData().getInstallPath() + File.separator + "Uninstaller" + File.separator + "uninstaller.jar";
-		String uninstallString = "\"" + getInstallData().getVariable("JAVA_HOME") + "\\bin\\javaw.exe\" -jar \"" + uninstallerPath + "\"";
+		String uninstallerPath = getInstallData().getInstallPath() + File.separator + "Uninstaller" + File.separator
+				+ "uninstaller.jar";
+		String uninstallString = "\"" + getInstallData().getVariable("JAVA_HOME") + "\\bin\\javaw.exe\" -jar \""
+				+ uninstallerPath + "\"";
 		String publisher = variables.get("Publisher");
 
 		String keyName = RegistryHandler.UNINSTALL_ROOT + appName;
 
 		RegistryHandler myHandlerInstance = myhandler.getInstance();
 		try {
-			myHandlerInstance.setRoot(RegistryHandler.HKEY_LOCAL_MACHINE);
+			myHandlerInstance.setRoot(MSWinConstants.HKEY_LOCAL_MACHINE);
 			myHandlerInstance.setUninstallName("");
 			myHandlerInstance.setUninstallName(appName);
 
 			if (myHandlerInstance.keyExist(keyName)) {
-				updateEntry(myHandlerInstance, keyName, "DisplayVersion", version);
-				updateEntry(myHandlerInstance, keyName, "Publisher", publisher);
+				if (version != null)
+					updateEntry(myHandlerInstance, keyName, "DisplayVersion", version);
+				if (publisher != null)
+					updateEntry(myHandlerInstance, keyName, "Publisher", publisher);
 				updateEntry(myHandlerInstance, keyName, "UninstallString", uninstallString);
 			}
 		} catch (NativeLibException e) {
@@ -116,7 +124,7 @@ public class RegistryInstallerNewListener extends com.izforge.izpack.event.Regis
 	}
 
 	private void updateEntry(RegistryHandler myHandlerInstance, String keyName, String entryName, String entryValue)
-		throws NativeLibException {
+			throws NativeLibException {
 
 		if (!myHandlerInstance.valueExist(keyName, entryName)) {
 			myHandlerInstance.setValue(keyName, entryName, entryValue);

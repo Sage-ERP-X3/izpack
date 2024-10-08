@@ -41,7 +41,7 @@ public class UnixGroupsValidator implements DataValidator, com.izforge.izpack.pa
 	}
 
 	private void initGroups() {
-		this.groups = new ArrayList<String>();
+		this.groups = new ArrayList<>();
 
 		String retValue = "";
 		String filepath = "/etc/group";

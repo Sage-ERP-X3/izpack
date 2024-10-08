@@ -64,7 +64,7 @@ public class PacksNewPanel extends PacksPanel {
 		/*
 		 * Pack pack = this.packsModel.getPackAtRow(0); if (pack != null &&
 		 * !pack.isPreselected()) pack.setPreselected(true);
-		 * 
+		 *
 		 * this.packsModel.updateTable();
 		 */
 		return table;
@@ -85,7 +85,7 @@ public class PacksNewPanel extends PacksPanel {
 		if (installData.getSelectedPacks().isEmpty()) {
 			logger.log(Level.FINE, prefixLabel + "panelActivate : getSelectedPacks().isEmpty()");
 
-			List<Pack> selectedPacks = new LinkedList<Pack>();
+			List<Pack> selectedPacks = new LinkedList<>();
 			for (Pack p : installData.getAvailablePacks()) {
 				if (p.isRequired() && !selectedPacks.contains(p)) {
 					selectedPacks.add(p);
@@ -111,9 +111,9 @@ public class PacksNewPanel extends PacksPanel {
 		//	logger.log(Level.FINE, prefixLabel + "panelActivate : Backup variables");
 		//	for (Entry<Object, Object> wEntry : variables.getProperties().entrySet()) {
 		//		v.put(String.valueOf(wEntry.getKey()), String.valueOf(wEntry.getValue()));
-		//	}			
+		//	}
 		//}
-			
+
 		super.panelActivate();
 
 
@@ -122,14 +122,14 @@ public class PacksNewPanel extends PacksPanel {
 		//	Variables variables2 = installData.getVariables();
 		//	for (Entry<String, String> wEntry : v.entrySet()) {
 		//		variables2.set(wEntry.getKey(), wEntry.getValue());
-		//	}	
+		//	}
 		//}
-			
-		
+
+
 		if (installData.getSelectedPacks().isEmpty()) {
 			logger.log(Level.FINE, prefixLabel + "panelActivate2 : getSelectedPacks().isEmpty()");
 
-			List<Pack> selectedPacks = new LinkedList<Pack>();
+			List<Pack> selectedPacks = new LinkedList<>();
 			for (Pack p : installData.getAvailablePacks()) {
 				if (p.isRequired() && !selectedPacks.contains(p)) {
 					selectedPacks.add(p);
@@ -143,7 +143,7 @@ public class PacksNewPanel extends PacksPanel {
 			if (!installData.getSelectedPacks().isEmpty()) {
 				parent.unlockNextButton();
 			}
-			
+
 		} else {
 			logger.log(Level.FINE,
 					prefixLabel + "panelActivate2 : getSelectedPacks() : " + installData.getSelectedPacks());

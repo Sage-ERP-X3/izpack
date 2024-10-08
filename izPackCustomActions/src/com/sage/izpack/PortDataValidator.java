@@ -8,7 +8,6 @@ import java.net.ServerSocket;
 import java.util.List;
 import java.util.Properties;
 
-import com.izforge.izpack.api.data.AutomatedInstallData;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.installer.DataValidator;
 
@@ -31,7 +30,7 @@ public class PortDataValidator implements DataValidator {
 			// load old installadata
 			try {
 				FileInputStream fin = new FileInputStream(new File(
-						adata.getInstallPath() + File.separator + AutomatedInstallData.INSTALLATION_INFORMATION));
+						adata.getInstallPath() + File.separator + InstallData.INSTALLATION_INFORMATION));
 				ObjectInputStream oin = new ObjectInputStream(fin);
 				List packsinstalled = (List) oin.readObject();
 				Properties variables = (Properties) oin.readObject();

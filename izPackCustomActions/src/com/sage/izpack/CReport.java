@@ -1,23 +1,23 @@
 package com.sage.izpack;
 
+import static com.sage.izpack.CTextLineUtils.CHAR_SPACE_INSECABLE;
+import static com.sage.izpack.CTextLineUtils.generateLineBeginEnd;
+import static com.sage.izpack.CTextLineUtils.generateLineFull;
+import static com.sage.izpack.CTextLineUtils.toInsecable;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.sage.izpack.CTextLineUtils.toInsecable;
-import static com.sage.izpack.CTextLineUtils.generateLineBeginEnd;
-import static com.sage.izpack.CTextLineUtils.generateLineFull;
-import static com.sage.izpack.CTextLineUtils.CHAR_SPACE_INSECABLE;
-
 /**
  * X3-250275 Compile Prerequisite Control (on OL and RHEL) #367
- * 
+ *
  * @author ogattaz
  *
  */
 public class CReport {
 
 	/**
-	 * 
+	 *
 	 */
 	public enum EKindOfBanner {
 		//
@@ -69,7 +69,7 @@ public class CReport {
 	private final int pWidth;
 
 	/**
-	 * 
+	 *
 	 */
 	public CReport(final String aName) {
 		this(aName, REPORT_WITDH);
@@ -246,9 +246,9 @@ public class CReport {
 
 	/**
 	 * <pre>
-	 * 
+	 *
 	 * </pre>
-	 * 
+	 *
 	 * @param aOutPut
 	 * @return
 	 */
@@ -397,7 +397,7 @@ public class CReport {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

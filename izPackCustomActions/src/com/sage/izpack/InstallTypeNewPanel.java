@@ -20,18 +20,19 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import com.izforge.izpack.api.adaptator.IXMLElement;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.data.Panel;
 import com.izforge.izpack.api.resource.Resources;
+import com.izforge.izpack.core.os.RegistryDefaultHandler;
+import com.izforge.izpack.core.os.RegistryHandler;
 import com.izforge.izpack.gui.IzPanelLayout;
 import com.izforge.izpack.gui.LabelFactory;
 import com.izforge.izpack.gui.log.Log;
 import com.izforge.izpack.installer.data.GUIInstallData;
 import com.izforge.izpack.installer.gui.InstallerFrame;
 import com.izforge.izpack.installer.gui.IzPanel;
-import com.izforge.izpack.core.os.RegistryHandler;
-import com.izforge.izpack.core.os.RegistryDefaultHandler;
 
 public class InstallTypeNewPanel extends IzPanel implements ActionListener, ListSelectionListener {
 
@@ -96,10 +97,10 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 		// add(modifyinstall, NEXT_LINE);
 		topPanel.add(modifyinstall);
 
-		lstCompProps = new HashMap<String, String[]>();
+		lstCompProps = new HashMap<>();
 
-		listItems = new DefaultListModel<String>();
-		installedComponents = new JList<String>(listItems);
+		listItems = new DefaultListModel<>();
+		installedComponents = new JList<>(listItems);
 		installedComponents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		installedComponents.setLayoutOrientation(JList.VERTICAL);
 		installedComponents.setVisibleRowCount(5);
@@ -123,9 +124,10 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.izforge.izpack.installer.IzPanel#panelActivate()
 	 */
+	@Override
 	public void panelActivate() {
 		listItems.clear();
 		lstCompProps.clear();
@@ -169,6 +171,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		logger.log(Level.FINE, "InstallTypeNewPanel installation type changed");
 		// Debug.trace("installation type changed");
@@ -209,8 +212,8 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 		String compPath = null;
 
 		if (installedComponents.getSelectedValue() != null) {
-			String key = (String) installedComponents.getSelectedValue();
-			String[] compProps = (String[]) lstCompProps.get(key);
+			String key = installedComponents.getSelectedValue();
+			String[] compProps = lstCompProps.get(key);
 			compPath = compProps[1];
 		}
 
@@ -241,7 +244,7 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 			// TargetPanel..reset();
 			// idata.setInstallPath(compPath);
 			installData.setInstallPath(compPath);
-			selectedKey = (String) installedComponents.getSelectedValue();
+			selectedKey = installedComponents.getSelectedValue();
 		}
 
 		return super.isValidated();
@@ -259,9 +262,10 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.izforge.izpack.installer.IzPanel#getSummaryBody()
 	 */
+	@Override
 	public String getSummaryBody() {
 
 		// if (Boolean.parseBoolean(idata.getVariable(InstallData.MODIFY_INSTALLATION)))
@@ -276,8 +280,9 @@ public class InstallTypeNewPanel extends IzPanel implements ActionListener, List
 		}
 	}
 
+	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		selectedKey = (String) installedComponents.getSelectedValue();
+		selectedKey = installedComponents.getSelectedValue();
 
 	}
 

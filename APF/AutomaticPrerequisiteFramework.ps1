@@ -12,8 +12,8 @@
     .REQUIREDSCRIPTS 
     .EXTERNALSCRIPTDEPENDENCIES Powershell-5.1 / PWSH 7.2
     .RELEASENOTES
-    .PRIVATEDATA
     .DESCRIPTION 
+    APF: Automatic Prerequisite Framework
 #>   
 
 param(

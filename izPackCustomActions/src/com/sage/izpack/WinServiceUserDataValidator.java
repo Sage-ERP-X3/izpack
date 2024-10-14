@@ -64,6 +64,26 @@ public class WinServiceUserDataValidator implements DataValidator {
                 bUseDomain = "false";
             }
             
+             HANDLEByReference phToken = new  HANDLEByReference();
+
+            if (! Advapi32.INSTANCE.LogonUser(userName, strDomain, passWord, WinBase.LOGON32_LOGON_NETWORK, WinBase.LOGON32_PROVIDER_DEFAULT, phToken))
+            {
+                throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+            }
+
+            Kernel32.INSTANCE.CloseHandle(phToken.getValue());
+if (! Advapi32.INSTANCE.LogonUser(userName, strDomain, passWord, WinBase.LOGON32_LOGON_SERVICE, WinBase.LOGON32_PROVIDER_DEFAULT, phToken))
+            {
+                bReturn = Status.ERROR;
+                errorMsg = errLogonService;
+                return bReturn;
+            }
+            else
+            {
+                bReturn = Status.OK;
+            }
+
+            Kernel32.INSTANCE.CloseHandle(phToken.getValue());
             /*
             HANDLEByReference phToken = new  HANDLEByReference();
             if (! Advapi32.INSTANCE.LogonUser(userName, strDomain, passWord, WinBase.LOGON32_LOGON_NETWORK, WinBase.LOGON32_PROVIDER_DEFAULT, phToken))
@@ -93,6 +113,13 @@ public class WinServiceUserDataValidator implements DataValidator {
                 // local database
                 adata.setVariable("syracuse.winservice.username", userName);
             }
+
+String passwordBase64 = adata.getVariable("syracuse.winservice.pwdbase64")
+if ( passwordBase64 != null && passwordBase64.equals("true", IgnoreCase) ) {
+    String encodedString = Base64.getEncoder().encodeToString( "base64:" passWord.getBytes());
+  adata.setVariable("syracuse.winservice.password", encodedString);
+}
+
             bReturn = Status.OK;
         }
         catch (Exception ex)

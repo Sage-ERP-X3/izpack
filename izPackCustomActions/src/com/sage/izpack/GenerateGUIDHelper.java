@@ -16,6 +16,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import com.izforge.izpack.api.data.InstallData;
 import com.izforge.izpack.api.handler.Prompt;
+import com.izforge.izpack.panels.userinput.action.ButtonAction;
+import com.izforge.izpack.util.Console;
 
 /**
  * Generate GUID (X3 Services Setup)
@@ -35,19 +37,14 @@ public class GenerateGUIDHelper extends ButtonAction {
 	@Override
 	public boolean execute() {
 		boolean reachable = false;
-		try {
+		Random random = new Random();
+		long msb = random.nextLong();
+		long lsb = random.nextLong();
+		UUID uuid = new UUID(msb, lsb);
+		System.out.println(uuid); // Output: a custom-generated UUID
 
-			Random random = new Random();
-			long msb = random.nextLong();
-			long lsb = random.nextLong();
-			UUID uuid = new UUID(msb, lsb);
-			System.out.println(uuid); // Output: a custom-generated UUID
-
-			// var variable = this.installData.getVariable("syracuse.generateclientid");
-			this.installData.setVariable("syracuse.generateclientid", uuid);
-		} catch (IOException e) {
-			// Could not ping address
-		}
+		// var variable = this.installData.getVariable("syracuse.generateclientid");
+		this.installData.setVariable("syracuse.generateclientid", uuid.toString());
 		return reachable;
 	}
 

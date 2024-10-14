@@ -34,7 +34,7 @@ public class GeneratePasswordHelper extends ButtonAction {
 		String password = generateStrongPassword(20);
 		System.out.println(password);
 
-		this.installData.setVariable("userinput.guid.clientid", password);
+		this.installData.setVariable("userinput.guid.clientsecret", password);
 		
 		return true;
 	}
@@ -84,8 +84,6 @@ public class GeneratePasswordHelper extends ButtonAction {
 
 		// Shuffle the password for added randomness
 		String shuffledPassword = shuffleString(result.toString());
-
-		this.installData.setVariable("userinput.guid.clientsecret", shuffledPassword);
 
 		return shuffledPassword;
 	}

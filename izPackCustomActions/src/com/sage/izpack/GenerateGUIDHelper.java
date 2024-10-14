@@ -26,12 +26,12 @@ import com.izforge.izpack.util.Console;
  */
 public class GenerateGUIDHelper extends ButtonAction {
 
-	private static final Logger logger = Logger.getLogger(AdxCompHelper.class.getName());
-	private InstallData installData;
+	private static final Logger logger = Logger.getLogger(GenerateGUIDHelper.class.getName());
+	// private InstallData installData;
 
 	public GenerateGUIDHelper(InstallData installData) {
 		super(installData);
-		this.installData = installData;
+		// this.installData = installData;
 	}
 
 	@Override
@@ -43,8 +43,7 @@ public class GenerateGUIDHelper extends ButtonAction {
 		UUID uuid = new UUID(msb, lsb);
 		System.out.println(uuid); // Output: a custom-generated UUID
 
-		// var variable = this.installData.getVariable("syracuse.generateclientid");
-		this.installData.setVariable("syracuse.generateclientid", uuid.toString());
+		this.installData.setVariable("userinput.guid.clientid", uuid.toString());
 		return reachable;
 	}
 
@@ -65,4 +64,5 @@ public class GenerateGUIDHelper extends ButtonAction {
 		}
 		return true;
 	}
+
 }

@@ -42,7 +42,7 @@
     <property name="rel" value="5"/>
     <property name="build.number" value="${ver}.${rel}"/>
 
-    <property name="src.dir" value="${basedir}/izPackCustomActions/src"/>
+    <property name="src.dir" value="${basedir}/izPackCustomActions/src/main/java"/>
     <property name="img.dir" value="${basedir}/src/img"/>
     <property name="lib.dir" value="${basedir}/lib"/>
     <property name="bin.dir" value="${basedir}/izPackCustomActions/bin"/>
@@ -168,39 +168,49 @@
     <target name="build.com.sage.izpack">
 
         <build-installer-listener name="com.sage.izpack" classpath-ext="${basedir}/lib/izpack-core-5.2.2.jar;${basedir}/lib/izpack-uninstaller-5.2.2.jar;${basedir}/lib/izpack-util-5.2.2.jar;${basedir}/lib/izpack-api-5.2.2.jar;${basedir}/lib/izpack-tools-5.2.2.jar;${basedir}/lib/izpack-event-5.2.2.jar;${basedir}/lib/izpack-installer-5.2.2.jar;${basedir}/lib/izpack-panel-5.2.2.jar;${basedir}/lib/izpack-gui-5.2.2.jar;${basedir}/lib/jline-2.12.1.jar;${basedir}/izPackCustomActions/libs/bcpkix-jdk15on-150.jar;${basedir}/izPackCustomActions/libs/bcprov-jdk15on-150.jar;${basedir}/izPackCustomActions/libs/mongo-java-driver-3.12.5.jar;${basedir}/izPackCustomActions/libs/jna-5.14.0.jar;${basedir}/izPackCustomActions/libs/jna-platform-5.14.0.jar">
-            <include name="ArchitectureChecker.java"/>
+
             <include name="AdxCompHelper.java"/>
             <include name="AdxCompInstallerListener.java"/>
             <include name="AdxCompUninstallerListener.java"/>
-            <include name="CheckProductAlreadyInstalled.java"/>
+            <include name="ArchitectureChecker.java"/>
+            <include name="CertificateVerificationException.java"/>
+            <include name="CertificateVerificationResult.java"/>
+            <include name="CertificateVerifier.java"/>
+            <include name="CheckCertificateDataValidator.java"/>
             <include name="CheckedHelloNewConsolePanel.java"/>
             <include name="CheckedHelloNewPanel.java"/>
             <include name="CheckedHelloNewPanelAutomationHelper.java"/>
-            <include name="CheckCertificateDataValidator.java"/>
-            <include name="CertificateVerifier.java"/>
+            <include name="CheckProductAlreadyInstalled.java"/>
             <include name="CRLVerifier.java"/>
-            <include name="CertificateVerificationResult.java"/>
-            <include name="CertificateVerificationException.java"/>
+            <include name="eng.xml"/>
             <include name="FinishNewConsolePanel.java"/>
             <include name="FinishNewPanel.java"/>
             <include name="FinishNewPanelAutomationHelper.java"/>
             <include name="FinishNewPanelValidator.java"/>
+            <include name="fra.xml"/>
             <include name="HexaPassphraseProcessor.java"/>
             <include name="HostnameValidator.java"/>
+            <include name="InstallationInformationHelper.java"/>
+            <include name="InstallationTypePanelAutomationHelper.java"/>
             <include name="InstallTypeNewPanel.java"/>
             <include name="InstallTypeNewPanelAutomationHelper.java"/>
-            <include name="InstallationTypePanelAutomationHelper.java"/>
-            <include name="InstallationInformationHelper.java"/>
+            <include name="messages_en.properties"/>
+            <include name="messages_fr.properties"/>
             <include name="ModifyInstallationUtil.java"/>
-            <include name="NodeIdentifierValidator.java"/>
+            <include name="MoreAdvApi32.java"/>
             <include name="NodeIdentifierDataValidator.java"/>
+            <include name="NodeIdentifierValidator.java"/>
+            <include name="OsConstraint.java"/>
             <include name="OsVersionHelper.java"/>			
+            <include name="Pack.java"/>
+            <include name="PacksNewPanel.java"/>
             <include name="PacksNewPanelAutomationHelper.java"/>
             <include name="PacksNewPanelValidator.java"/>
-            <include name="PacksNewPanel.java"/>
             <include name="PanelAutomationHelper.java"/>
             <include name="PortDataValidator.java"/>
             <include name="PostValidateSSLRedoAction.java"/>
+            <include name="PrintMessage.java"/>
+            <include name="PreValidateServiceGUIDConfiguration.java"/>			
             <include name="RegistryHandlerX3.java"/>
             <include name="RegistryInstallerNewListener.java"/>
             <include name="StringUtil.java"/>
@@ -209,19 +219,10 @@
             <include name="TargetNewPanelAutomationHelper.java"/>
             <include name="TargetNewPanelValidator.java"/>
             <include name="UpdateListener.java"/>
-            <include name="MoreAdvApi32.java"/>
             <include name="UpdatePassphraseValidator.java"/>
             <include name="X3RuntimeValidator.java"/>
             <include name="X3WebServerValidatorProcessor.java"/>
             <include name="XMLHelper.java"/>
-            <include name="PrintMessage.java"/>
-            <include name="eng.xml"/>
-            <include name="fra.xml"/>
-            <include name="messages_en.properties"/>
-            <include name="messages_fr.properties"/>
-
-            <include name="Pack.java"/>
-            <include name="OsConstraint.java"/>
 
         </build-installer-listener>
     </target>

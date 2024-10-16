@@ -27,12 +27,13 @@ public class PreValidateServiceGUIDConfiguration implements com.izforge.izpack.d
 		UUID uuid = new UUID(msb, lsb);
 		System.out.println(uuid); // Output: a custom-generated UUID
 
-		installData.setVariable("userinput.guid.clientid", uuid.toString());
-		
+		// installData.setVariable("userinput.guid.clientid", uuid.toString());
+		installData.setVariable("syracuse.clientid", uuid.toString());
+		// 		
 		GeneratePasswordHelper helper = new GeneratePasswordHelper(installData);
 		String password = helper.generateStrongPassword(20);
 		System.out.println(password);
-		installData.setVariable("userinput.guid.clientsecret", password);		
+		installData.setVariable("syracuse.secret", password);		
 	}
 
 	@Override

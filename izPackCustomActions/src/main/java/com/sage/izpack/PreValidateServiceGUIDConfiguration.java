@@ -31,7 +31,7 @@ public class PreValidateServiceGUIDConfiguration implements com.izforge.izpack.d
 		installData.setVariable("syracuse.clientid", uuid.toString());
 		// 		
 		GeneratePasswordHelper helper = new GeneratePasswordHelper(installData);
-		String password = helper.generateStrongPassword(20);
+		String password = helper.generateStrongPassword(32);
 		System.out.println(password);
 		installData.setVariable("syracuse.secret", password);		
 	}

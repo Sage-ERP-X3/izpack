@@ -17,6 +17,7 @@ https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/491528/IzPack+5<br/>
 
 ## Version 5.2.2.0: 2024-10
 
+- IzPack 5.2.2.0 Release: https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/3023011871/5.2.2 
 - Include APF within IzPack
 
 
@@ -34,6 +35,8 @@ Source: https://repo.maven.apache.org/maven2/org/mongodb/mongodb-driver-core/5.1
 <br>
 
 ## Version 5.2.1.0: 2024-05
+
+- IzPack 5.2.1.0 Release: https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/3051323393/5.2.1
 
 - X3-311594 Migration of installers: Support Java 11
 
@@ -59,6 +62,8 @@ Source: https://repo.maven.apache.org/maven2/org/mongodb/mongodb-driver-core/5.1
 - X3-278420 : When updating print server to 2.26 with print-server-2.26.0.2-win.jar does not update record in Windows Programs and Features
 
 ## Version 5.2.0.1: 2022-01
+  
+- IzPack 5.2.0.0 Release: https://izpack.atlassian.net/wiki/spaces/IZPACK/pages/3051552769/5.2.0
 
 - update to IZPACK 5.2.0 to fix uninstaller process. <br/>
 

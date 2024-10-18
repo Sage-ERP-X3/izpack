@@ -49,7 +49,13 @@ public class WinServiceUserDataValidator implements DataValidator {
 		try {
 
 			String userName = adata.getVariable("syracuse.winservice.username");
+			if ( userName== null || userName.length() == 0) {
+				userName = adata.getVariable("winservice.username");
+			}				
 			String passWord = adata.getVariable("syracuse.winservice.password");
+			if ( passWord== null || passWord.length() == 0) {
+				passWord = adata.getVariable("winservice.password");
+			}				
 			String strDomain = ".";
 			String bUseDomain = "true";
 

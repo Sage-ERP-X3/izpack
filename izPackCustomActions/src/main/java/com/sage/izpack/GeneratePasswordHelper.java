@@ -31,7 +31,7 @@ public class GeneratePasswordHelper extends ButtonAction {
 	@Override
 	public boolean execute() {
 		
-		String password = generateStrongPassword(20);
+		String password = generateStrongPassword(24);
 		System.out.println(password);
 
 		this.installData.setVariable("userinput.guid.clientsecret", password);
@@ -59,7 +59,7 @@ public class GeneratePasswordHelper extends ButtonAction {
 	
 	
 	
-	public String generateStrongPassword(int length) {
+	public String generateStrongPassword(int length, boolean useSpecialCharacters) {
 		StringBuilder result = new StringBuilder(length);
 
 		// At least 2 chars (lowercase)
@@ -80,7 +80,7 @@ public class GeneratePasswordHelper extends ButtonAction {
 		// result.append(strSpecialChar);
 
 		// Remaining characters (random)
-		String strOther = generateRandomString(getAllowedChars(length - 8), length - 8);
+		String strOther = generateRandomString(getAllowedChars(length - 8, useSpecialCharacters), length - 8);
 		result.append(strOther);
 
 		// Shuffle the password for added randomness
@@ -118,9 +118,12 @@ public class GeneratePasswordHelper extends ButtonAction {
 		return result.toString();
 	}
 
-	private static String getAllowedChars(int length) {
+	private static String getAllowedChars(int length, boolean useSpecialCharacters) {
 		StringBuilder allowedChars = new StringBuilder();
-		allowedChars.append(CHAR_LOWERCASE).append(CHAR_UPPERCASE).append(DIGIT).append(OTHER_SPECIAL);
+		allowedChars.append(CHAR_LOWERCASE).append(CHAR_UPPERCASE).append(DIGIT);
+		if (useSpecialCharacters) {
+			allowedChars.append(OTHER_SPECIAL);
+		}
 		return allowedChars.toString();
 	}
 

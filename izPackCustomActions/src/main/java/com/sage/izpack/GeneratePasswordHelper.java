@@ -71,12 +71,13 @@ public class GeneratePasswordHelper extends ButtonAction {
 		result.append(strUppercaseCase);
 
 		// At least 2 digits
-		String strDigit = generateRandomString(DIGIT, 2);
+		// String strDigit = generateRandomString(DIGIT, 2);
+		String strDigit = generateRandomString(DIGIT, 4);
 		result.append(strDigit);
 
 		// At least 2 special characters
-		String strSpecialChar = generateRandomString(OTHER_SPECIAL, 2);
-		result.append(strSpecialChar);
+		// String strSpecialChar = generateRandomString(OTHER_SPECIAL, 2);
+		// result.append(strSpecialChar);
 
 		// Remaining characters (random)
 		String strOther = generateRandomString(getAllowedChars(length - 8), length - 8);

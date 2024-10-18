@@ -31,7 +31,7 @@ public class GeneratePasswordHelper extends ButtonAction {
 	@Override
 	public boolean execute() {
 		
-		String password = generateStrongPassword(24);
+		String password = generateStrongPassword(24, false);
 		System.out.println(password);
 
 		this.installData.setVariable("userinput.guid.clientsecret", password);
